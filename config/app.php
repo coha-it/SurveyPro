@@ -83,10 +83,10 @@ return [
     'locale' => 'de',
 
     'locales' => [
-        'en' => 'EN',
-        'zh-CN' => '中文',
-        'es' => 'ES',
         'de' => 'DE',
+        'en' => 'EN',
+        'es' => 'ES',
+        'zh-CN' => '中文',
     ],
 
     /*
