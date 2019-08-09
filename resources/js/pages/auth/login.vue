@@ -1,5 +1,10 @@
 <template>
-  <div class="row">
+  <div class="coha--login-wrapper">
+
+    <router-link :to="{ name: 'auth' }" class="small ml-auto my-auto">
+      {{ $t('auth') }}
+    </router-link>
+
     <div class="col-lg-8 m-auto">
       <card :title="$t('login')">
         <form @submit.prevent="login" @keydown="form.onKeydown($event)">
@@ -41,9 +46,6 @@
               <v-button :loading="form.busy">
                 {{ $t('login') }}
               </v-button>
-
-              <!-- GitHub Login Button -->
-              <login-with-github />
             </div>
           </div>
         </form>
@@ -54,14 +56,10 @@
 
 <script>
 import Form from 'vform'
-import LoginWithGithub from '~/components/LoginWithGithub'
 
 export default {
   middleware: 'guest',
-
-  components: {
-    LoginWithGithub
-  },
+  layout: 'rightsided',
 
   metaInfo () {
     return { title: this.$t('login') }
@@ -95,3 +93,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.coha--login-wrapper {
+    background-color: #E8D03E;
+    height: 100%;
+}
+</style>

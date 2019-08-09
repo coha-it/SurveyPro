@@ -1,8 +1,20 @@
-@import 'variables';
-@import '~bootstrap/scss/bootstrap';
+// @import 'variables';
+// @import '~bootstrap/scss/bootstrap';
 @import '~sweetalert2/src/sweetalert2';
 
-@import 'elements/card';
-@import 'elements/navbar';
-@import 'elements/buttons';
+// @import 'elements/card';
+// @import 'elements/navbar';
+// @import 'elements/buttons';
 @import 'elements/transitions';
+
+@import '~vuetify/dist/vuetify.min.css';
+
+html body {
+    font-family: Roboto;
+    color: #425D64;
+    padding-top: 4px;
+}
+
+.theme--light.v-footer {
+    background-color: rgba(0, 0, 0, 0.04);
+}

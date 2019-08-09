@@ -7,6 +7,10 @@ import App from '~/components/App'
 import '~/plugins'
 import '~/components'
 
+// Import Vuetify
+import Vuetify from 'vuetify'
+Vue.use(Vuetify)
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
