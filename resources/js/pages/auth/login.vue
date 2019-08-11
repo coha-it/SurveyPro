@@ -1,9 +1,7 @@
 <template>
   <div class="coha--login-wrapper">
 
-    <router-link :to="{ name: 'auth' }" class="small ml-auto my-auto">
-      {{ $t('auth') }}
-    </router-link>
+    <Back />
 
     <div class="col-lg-8 m-auto">
       <card :title="$t('login')">
@@ -56,10 +54,14 @@
 
 <script>
 import Form from 'vform'
+import Back from '~/components/Back.vue'
 
 export default {
   middleware: 'guest',
   layout: 'rightsided',
+  components: {
+    Back
+  },
 
   metaInfo () {
     return { title: this.$t('login') }
@@ -72,6 +74,10 @@ export default {
     }),
     remember: false
   }),
+
+  created: function() {
+    this.$parent.backgroundImage = "url('/storage/student-849825-1.jpg')";
+  },
 
   methods: {
     async login () {

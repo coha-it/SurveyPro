@@ -5,7 +5,7 @@
             <v-layout wrap class="v-application" fill-height>
                 <v-flex md6 xs12 class="hidden-sm-and-down">
                     <div class="coha--banner-wrapper">
-                        <div class="image" style="background-image: url(/storage/analysis-analytics-analyze-590022-test2.jpg)"></div>
+                        <div class="image" v-bind:style="{ backgroundImage: backgroundImage }"></div>
                         <div class="text"></div>
                     </div>
                 </v-flex>
@@ -29,7 +29,14 @@ export default {
 
   components: {
     Footer
-  }
+  },
+
+  data() {
+      return {
+          backgroundImage: "url(/storage/analysis-analytics-analyze-590022-test2.jpg)"
+      }
+  },
+
 }
 </script>
 
@@ -50,7 +57,7 @@ export default {
     justify-content: center;
 
     .image {
-        background-image: url('/storage/student-849825-1.jpg');
+        // background-image: url('/storage/student-849825-1.jpg');
         position: absolute;
         left: 0;
         right: 0;

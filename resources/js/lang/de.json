@@ -40,6 +40,8 @@
     "failed_to_verify_email": "E-Mail verifikation fehlgeschlagen.",
     "verify_email_address": "Wir senden dir eine E-Mail mit dem Verifikations-Link.",
     "You must :linkOpen verify :linkClose your email first." : "aggna",
-    "You must {a} verify {b} your email first." : "usni"
+    "You must {a} verify {b} your email first." : "usni",
+    "back": "zurück",
+    "authentificate": "authentifizieren"
   }
   
