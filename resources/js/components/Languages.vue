@@ -1,49 +1,22 @@
 <template>
-
-  <div>
-
+  <span data-app>
     <template>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ locales[locale] }}
-        </a>
-        <div class="dropdown-menu">
-          <a v-for="(value, key) in locales" :key="key" class="dropdown-item" href="#" @click.prevent="setLocale(key)">
-            {{ value }}
-          </a>
-        </div>
-      </li>
+        <v-overlay :value="sheet"></v-overlay>
+        <v-bottom-sheet v-model="sheet" scrollable>
+          <template v-slot:activator="{ on }">
+            <a href="#" v-on="on" >{{ $t(locales[locale]) }}</a>
+          </template>
+          <v-sheet class="text-center" scrollable>
+            <v-container fluid>
+              <v-radio-group style="display: inline-block;" v-model="localeRadio" :mandatory="true" @change="setLocale(localeRadio)">
+                <v-radio v-for="(value, key) in locales" :label="$t(value)" :value="key" :key="key"></v-radio>
+              </v-radio-group>
+            </v-container>
+            <v-btn class="mt-6" text color="error" @click="sheet = !sheet">{{ $t('closer_button') }}</v-btn>
+          </v-sheet>
+        </v-bottom-sheet>
     </template>
-
-
-  <template>
-    <div class="text-center">
-      <v-overlay :value="sheet"></v-overlay>
-      <v-bottom-sheet v-model="sheet" inset scrollable>
-        <template v-slot:activator="{ on }">
-          <v-btn color="orange" dark v-on="on">
-            Open Inset
-          </v-btn>
-        </template>
-        <v-sheet class="text-center" scrollable>
-
-          <v-container fluid style="display: inline-block;">
-            <v-radio-group v-model="localeRadio" :mandatory="true" @change="setLocale(localeRadio)">
-              <v-radio v-for="(value, key) in locales" :label="value" :value="key" :key="key"></v-radio>
-            </v-radio-group>
-          </v-container>
-
-          <v-btn class="mt-6" text color="error" @click="sheet = !sheet">close</v-btn>
-        </v-sheet>
-      </v-bottom-sheet>
-    </div>
-  </template>
-
-
-
-
-  </div>
-
+  </span>
 </template>
 
 
@@ -82,6 +55,12 @@ export default {
       sheet: false,
     }
   },
+
+  mounted() {
+    if(this.locale) {
+      this.localeRadio = this.locale;
+    }
+  }
 
 }
 </script>

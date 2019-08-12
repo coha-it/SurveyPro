@@ -8,38 +8,38 @@
         </router-link>
 
         <div style="max-width: 500px;">
-          <v-card color="#E8D03E" dark ripple :to="{ name: 'login' }">
-              <v-list-item three-line>
 
-                <v-list-item-content class="align-self-center">
-                  <v-list-item-title class="headline mb-2" v-text="'PAN & PIN'" ></v-list-item-title>
-                  <v-list-item-subtitle v-text="'jo'"></v-list-item-subtitle>
-                </v-list-item-content>
 
-                <!-- <v-list-item-avatar size="125" tile>
-                  <v-img src="'item.src'"></v-img>
-                </v-list-item-avatar> -->
+          <v-subheader class="divider"><span>{{ $t('pin_and_pan') }}</span></v-subheader>
+          <AuthPanel 
+            :title="$t('pin_and_pan')"
+            :text="$t('pin_and_pan_desc')" 
+            :route="'login'"
+            :color="'#E8D03E'" 
+            />
 
-                <v-list-item-icon class="align-self-center">
-                  <v-icon x-large v-text="'mdi-dialpad'"></v-icon>
-                </v-list-item-icon>
 
-              </v-list-item>
-            </v-card>
         </div>
 
     </div>
 </template>
 
 <script>
+
+import AuthPanel from '~/components/AuthPanel';
+
 export default {
   
   middleware: 'guest',
-
+  
   layout: 'rightsided',
 
+  components: {
+    AuthPanel
+  },
+
   metaInfo () {
-    return { title: this.$t('authentificate') }
+    return { title: this.$t('authentificate_title') }
   },
 
 }

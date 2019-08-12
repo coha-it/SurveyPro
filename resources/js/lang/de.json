@@ -42,6 +42,13 @@
     "You must :linkOpen verify :linkClose your email first." : "aggna",
     "You must {a} verify {b} your email first." : "usni",
     "back": "zurück",
-    "authentificate": "authentifizieren"
+    "authentificate_title": "Authentifizieren",
+    "closer_button": "schließen",
+    "DE": "Deutsch",
+    "EN": "Englisch",
+    "ES": "Spanisch",
+    "中文": "Chinesisch",
+    "pin_and_pan": "PIN & PAN",
+    "pin_and_pan_desc": "Ich besitze PAN und PIN und möchte mich damit anmelden"
   }
   

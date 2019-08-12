@@ -35,5 +35,13 @@
   "send_verification_link": "Send Verification Link",
   "resend_verification_link": "Resend Verification Link ?",
   "failed_to_verify_email": "Failed to verify email.",
-  "verify_email_address": "We sent you an email with an the verification link."
+  "verify_email_address": "We sent you an email with an the verification link.",
+  "authentificate_title": "Authentificate",
+  "closer_button": "close",
+  "DE": "German",
+  "EN": "English",
+  "ES": "Spanish",
+  "中文": "Chinese",
+  "pin_and_pan": "PIN & PAN",
+  "pin_and_pan_desc": "I know my PIN and PAN and want to authentificate with it"
 }
