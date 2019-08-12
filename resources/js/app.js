@@ -9,7 +9,11 @@ import '~/components'
 
 // Import Vuetify
 import Vuetify from 'vuetify'
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  icons: {
+    iconfont: 'mdi'
+  }
+})
 
 Vue.config.productionTip = false
 
@@ -18,5 +22,7 @@ new Vue({
   i18n,
   store,
   router,
+  Vuetify,
+  render: h => h(App),
   ...App
 })
