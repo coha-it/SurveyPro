@@ -8,16 +8,28 @@
         </router-link>
 
         <div style="max-width: 500px;">
-
-
+          
           <v-subheader class="divider"><span>{{ $t('pin_and_pan') }}</span></v-subheader>
           <AuthPanel 
             :title="$t('pin_and_pan')"
             :text="$t('pin_and_pan_desc')" 
-            :route="'login'"
-            :color="'#E8D03E'" 
+            :route="'pin'"
+            :color="'primary'" 
             />
 
+          <v-subheader class="divider"><span>{{ $t('with_email') }}</span></v-subheader>
+          <AuthPanel 
+            :title="$t('register')"
+            :text="$t('register_desc')" 
+            :route="'register'"
+            :color="'secondary'" 
+            />
+          <AuthPanel 
+            :title="$t('login')"
+            :text="$t('login_desc')" 
+            :route="'login'"
+            :color="'info'" 
+            />
 
         </div>
 

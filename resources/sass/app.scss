@@ -36,5 +36,20 @@ html body {
     }
 }
 
-
-
+.auth-panel {
+    margin-bottom: 15px;
+    .v-list-item {
+        padding: 6px 22px;
+        .headline {
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 2rem !important;
+            letter-spacing: .1em !important;
+            margin: 0 !important;
+            font-family: Raleway, Roboto, sans-serif !important;
+        }
+        .v-list-item__subtitle {
+            font-size: 1.15rem;
+        }
+    }
+}

@@ -1,5 +1,5 @@
 <template>
-    <v-card :color="color" dark ripple :to="{ name: route }">
+    <v-card :color="color" dark ripple :to="{ name: route }" class="auth-panel">
       <v-list-item three-line>
 
         <v-list-item-content class="align-self-center">
