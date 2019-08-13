@@ -13,5 +13,20 @@
 }
 .fade-enter,
 .fade-leave-to {
-  opacity: 0
+  opacity: 0;
+}
+
+.rightsided-content > div {
+  transition: 200ms;
+}
+
+.rightsided-content {
+  &.page-enter,
+  &.page-leave-to,
+  &.fade-enter,
+  &.fade-leave-to {
+    & > div {
+      transform: translateX(10%);
+    }
+  }
 }

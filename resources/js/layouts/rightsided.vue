@@ -10,7 +10,7 @@
               </v-flex>
               <v-flex md6 xs12 style="display: grid; grid-template-rows: 1fr auto; grid-template-columns: 100%;">
                 <child />
-                <Footer :backgroundColor="footerBackground" v-on:changedBackground="changedBackground" />
+                <Footer />
               </v-flex>
             </v-layout>
         </v-container>
@@ -78,5 +78,9 @@ export default {
         color: #fff;
         font-size: 3rem;
     }
+}
+
+.v-footer {
+  transition: 0ms;
 }
 </style>

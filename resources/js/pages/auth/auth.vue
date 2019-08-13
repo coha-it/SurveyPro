@@ -1,5 +1,6 @@
 <template>
-    <div style="padding: 25px;">
+    <div class="rightsided-content">
+      <div>
         <h1>Willkommen</h1>
         <p style="max-width: 400px;">Um sich in ihr SurveyPro-Konto anzumelden, klicken Sie auf eine der drei unterstehenden Optionen</p>
 
@@ -31,7 +32,7 @@
             />
 
         </div>
-
+      </div>
     </div>
 </template>
 
