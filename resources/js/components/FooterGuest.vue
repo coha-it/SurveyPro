@@ -1,8 +1,8 @@
 <template>
-    <v-footer absolute>
+    <v-footer>
       <v-layout wrap align-center>
         <v-flex xs12 sm6>
-          <Languages />
+          <LocaleSwitcher />
         </v-flex>
         <v-flex xs12 sm6 text-right>
           <span>Corporate Happiness &copy; {{ new Date().getFullYear() }}</span>
@@ -12,11 +12,16 @@
 </template>
 
 <script>
-import Languages from "~/components/Languages";
+import LocaleSwitcher from "~/components/LocaleSwitcher";
 export default {
   name: 'FooterGuest',
   components: {
-    Languages
+    LocaleSwitcher
   },
+  props: [
+
+  ],
+  created: function() {
+  }
 }
 </script>

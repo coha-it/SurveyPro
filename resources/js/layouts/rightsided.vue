@@ -8,9 +8,9 @@
                       <div class="text"></div>
                   </div>
               </v-flex>
-              <v-flex md6 xs12>
+              <v-flex md6 xs12 style="display: grid; grid-template-rows: 1fr auto; grid-template-columns: 100%;">
                 <child />
-                <Footer />
+                <Footer :backgroundColor="footerBackground" v-on:changedBackground="changedBackground" />
               </v-flex>
             </v-layout>
         </v-container>
@@ -30,10 +30,13 @@ export default {
   },
 
   data() {
-      return {
-          backgroundImage: "url(/storage/analysis-analytics-analyze-590022-test2.jpg)"
-      }
+    return {
+        backgroundImage: 'url(/storage/analysis-analytics-analyze-590022-test2.jpg)'
+    }
   },
+
+  methods: {
+  }
 
 }
 </script>

@@ -72,12 +72,18 @@ import Form from 'vform'
 import Back from '~/components/AuthBack.vue'
 
 export default {
+  name: 'Login',
   middleware: 'guest',
   layout: 'rightsided',
   components: {
     Back
   },
+  props: [
 
+  ],
+  created: function() {
+
+  },
   metaInfo () {
     return { title: this.$t('login') }
   },
@@ -91,11 +97,8 @@ export default {
     show1: false,
   }),
 
-  created: function() {
-    this.$parent.backgroundImage = "url('/storage/student-849825-1.jpg')";
-  },
-
   methods: {
+
     async login () {
       // Submit the form.
       const { data } = await this.form.post('/api/login')
@@ -112,7 +115,8 @@ export default {
       // Redirect home.
       this.$router.push({ name: 'home' })
     }
-  }
+  },
+
 }
 </script>
 
