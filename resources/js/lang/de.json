@@ -48,12 +48,13 @@
     "EN": "Englisch",
     "ES": "Spanisch",
     "中文": "Chinesisch",
-    "pin_and_pan": "PIN & PAN",
-    "pin_and_pan_desc": "Ich besitze PAN und PIN und möchte mich damit anmelden",
+    "pan_and_pin": "PIN & PAN",
+    "pan_and_pin_desc": "Ich besitze PAN und PIN und möchte mich damit anmelden",
     "login":"Anmelden",
     "login_desc":"Ich besitze ein Konto und möchte mich darin anmelden",
     "register":"Registrieren",
     "register_desc":"Ich will ein neues Konto mit meiner E-Mail Adresse erstellen",
-    "with_email": "Mit E-Mail"
+    "with_email": "Mit E-Mail",
+    "free_register": "Jetzt kostenlos registrieren"
   }
   

@@ -8,7 +8,7 @@
         </v-list-item-content>
 
         <v-list-item-icon class="align-self-center">
-          <v-icon x-large v-text="'mdi-dialpad'"></v-icon>
+          <v-icon x-large v-text="icon"></v-icon>
         </v-list-item-icon>
 
       </v-list-item>
@@ -21,7 +21,8 @@ export default {
         'title',
         'text',
         'color',
-        'route'
+        'route',
+        'icon'
     ]
 }
 </script>

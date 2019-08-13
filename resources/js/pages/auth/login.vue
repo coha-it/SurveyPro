@@ -1,60 +1,75 @@
 <template>
-  <div class="coha--login-wrapper">
+  <div class="rightsided-content coha--login-wrapper">
+    <div style="max-width: 750px;">
+      <v-container>
+        <v-row>  
+          <v-col cols="12" sm="12" md="12">
+            <Back />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" sm="7" md="7" align-self="center">
+            <h1>{{ $t('login') }}</h1>
+            <p class="subtitle">{{ $t('login_desc') }}</p>
+          </v-col>
+          <v-col cols="12" sm="5" md="5" align-self="center">
+            <v-icon x-large color="white">mdi-account</v-icon>
+          </v-col>
+        </v-row>
+      </v-container>
 
-    <Back />
-
-    <div class="col-lg-8 m-auto">
-      <card :title="$t('login')">
-        <form @submit.prevent="login" @keydown="form.onKeydown($event)">
-          <!-- Email -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
-              <has-error :form="form" field="email" />
-            </div>
-          </div>
-
-          <!-- Password -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('password') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.password" :class="{ 'is-invalid': form.errors.has('password') }" class="form-control" type="password" name="password">
-              <has-error :form="form" field="password" />
-            </div>
-          </div>
-
-          <!-- Remember Me -->
-          <div class="form-group row">
-            <div class="col-md-3" />
-            <div class="col-md-7 d-flex">
-              <checkbox v-model="remember" name="remember">
-                {{ $t('remember_me') }}
-              </checkbox>
-
-              <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">
-                {{ $t('forgot_password') }}
-              </router-link>
-            </div>
-          </div>
-
-          <div class="form-group row">
-            <div class="col-md-7 offset-md-3 d-flex">
+      <v-form @submit.prevent="login" @keydown="form.onKeydown($event)">
+        <v-container>
+          <v-row>
+            <v-col cols="12" sm="12" md="12">
+              <!-- Email -->
+              <v-text-field v-model="form.email" :label="$t('E-MAIL')" color='black' :error="form.errors.has('email')" type="email" name="email" required></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" sm="12" md="12">
+              <!-- Password -->
+              <v-text-field 
+              v-model="form.password" 
+              :label="$t('PASSWORD')" 
+              color='black' 
+              :error="form.errors.has('password')"  
+              name="password" 
+              :type="show1 ? 'text' : 'password'"
+              :append-icon="show1 ? 'visibility' : 'visibility_off'"
+              @click:append="show1 = !show1"
+              required
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" sm="12" md="12" style="padding-bottom: 0;">
+              <!-- Remember Me -->
+              <v-checkbox v-model="remember" :label="$t('remember_me')" name="remember"></v-checkbox>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" sm="12" md="12" align="right">
               <!-- Submit Button -->
-              <v-button :loading="form.busy">
-                {{ $t('login') }}
-              </v-button>
-            </div>
-          </div>
-        </form>
-      </card>
+              <v-btn color="accent" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
+            </v-col>
+            <v-col cols="12" sm="12" md="12" align="center">
+
+              <p>Neu hier? <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">{{ $t('free_register') }}</router-link></p>
+              <p>Haben Sie Ihr <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">{{ $t('forgot_password') }}</router-link></p>
+
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-form>
     </div>
+  
   </div>
 </template>
 
 <script>
 import Form from 'vform'
-import Back from '~/components/Back.vue'
+import Back from '~/components/AuthBack.vue'
 
 export default {
   middleware: 'guest',
@@ -72,7 +87,8 @@ export default {
       email: '',
       password: ''
     }),
-    remember: false
+    remember: false,
+    show1: false,
   }),
 
   created: function() {
@@ -101,8 +117,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .coha--login-wrapper {
-    background-color: #E8D03E;
-    height: 100%;
+  color: rgba(0,0,0,.6);
+  background-color: #b6b6b6;
+
+  h1,
+  .subtitle {
+    color: #fff;
+  }
+
+  .subtitle {
+    font-size: 1.15rem;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .v-form {
+    max-width: 450px;
+  }
+  .v-input--selection-controls {
+    margin-top: 0;
+  }
 }
+
 </style>

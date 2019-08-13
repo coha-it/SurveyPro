@@ -42,6 +42,6 @@
   "EN": "English",
   "ES": "Spanish",
   "中文": "Chinese",
-  "pin_and_pan": "PIN & PAN",
-  "pin_and_pan_desc": "I know my PIN and PAN and want to authentificate with it"
+  "pan_and_pin": "PIN & PAN",
+  "pan_and_pin_desc": "I know my PIN and PAN and want to authentificate with it"
 }

@@ -12,12 +12,9 @@
 </template>
 
 <script>
-
 import Languages from "~/components/Languages";
-
 export default {
   name: 'FooterGuest',
-
   components: {
     Languages
   },

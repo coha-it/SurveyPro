@@ -3,18 +3,15 @@
         <h1>Willkommen</h1>
         <p style="max-width: 400px;">Um sich in ihr SurveyPro-Konto anzumelden, klicken Sie auf eine der drei unterstehenden Optionen</p>
 
-        <router-link :to="{ name: 'login' }">
-          {{ $t('login') }}
-        </router-link>
-
         <div style="max-width: 500px;">
           
-          <v-subheader class="divider"><span>{{ $t('pin_and_pan') }}</span></v-subheader>
+          <v-subheader class="divider"><span>{{ $t('pan_and_pin') }}</span></v-subheader>
           <AuthPanel 
-            :title="$t('pin_and_pan')"
-            :text="$t('pin_and_pan_desc')" 
-            :route="'pin'"
+            :title="$t('pan_and_pin')"
+            :text="$t('pan_and_pin_desc')" 
+            :route="'pan'"
             :color="'primary'" 
+            :icon="'mdi-dialpad'"
             />
 
           <v-subheader class="divider"><span>{{ $t('with_email') }}</span></v-subheader>
@@ -23,12 +20,14 @@
             :text="$t('register_desc')" 
             :route="'register'"
             :color="'secondary'" 
+            :icon="'mdi-account-plus'"
             />
           <AuthPanel 
             :title="$t('login')"
             :text="$t('login_desc')" 
             :route="'login'"
             :color="'info'" 
+            :icon="'mdi-account'"
             />
 
         </div>
@@ -43,7 +42,6 @@ import AuthPanel from '~/components/AuthPanel';
 export default {
   
   middleware: 'guest',
-  
   layout: 'rightsided',
 
   components: {

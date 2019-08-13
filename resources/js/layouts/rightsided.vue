@@ -1,21 +1,19 @@
 <template>
   <div>
-    <div>
         <v-container grid-list-md fluid style="padding: 0; height: 100vh;">
             <v-layout wrap class="v-application" fill-height>
-                <v-flex md6 xs12 class="hidden-sm-and-down">
-                    <div class="coha--banner-wrapper">
-                        <div class="image" v-bind:style="{ backgroundImage: backgroundImage }"></div>
-                        <div class="text"></div>
-                    </div>
-                </v-flex>
-                <v-flex md6 xs12>
-                  <child />
-                  <Footer />
-                </v-flex>
+              <v-flex md6 xs12 class="hidden-sm-and-down">
+                  <div class="coha--banner-wrapper">
+                      <div class="image" v-bind:style="{ backgroundImage: backgroundImage }"></div>
+                      <div class="text"></div>
+                  </div>
+              </v-flex>
+              <v-flex md6 xs12>
+                <child />
+                <Footer />
+              </v-flex>
             </v-layout>
         </v-container>
-    </div>
   </div>
 </template>
 
