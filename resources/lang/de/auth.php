@@ -1,4 +1,6 @@
-<?php
+<?php 
+
+// resources/lang/de/auth/login.php
 
 return [
 
@@ -13,8 +15,5 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-    'acc_locked' => 'Your account is locked for :hours hours!'
-
+    'acc_locked' => 'Dein Account wurde für :hours Stunden gesperrt!'
 ];

@@ -55,6 +55,10 @@
     "register":"Registrieren",
     "register_desc":"Ich will ein neues Konto mit meiner E-Mail Adresse erstellen",
     "with_email": "Mit E-Mail",
-    "free_register": "Jetzt kostenlos registrieren"
+    "free_register": "Jetzt kostenlos registrieren",
+    "PAN": "PAN",
+    "PIN": "PIN",
+    "The given data was invalid.": "Ihre Eingabedaten waren nicht korrekt.",
+    "Welcome": "Willkommen"
   }
   
