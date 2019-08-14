@@ -1,10 +1,10 @@
 <template>
     <v-footer>
       <v-layout wrap align-center>
-        <v-flex xs12 sm6>
+        <v-flex xs4 sm6>
           <LocaleSwitcher />
         </v-flex>
-        <v-flex xs12 sm6 text-right>
+        <v-flex xs8 sm6 text-right>
           <span>Corporate Happiness &copy; {{ new Date().getFullYear() }}</span>
         </v-flex>
       </v-layout>

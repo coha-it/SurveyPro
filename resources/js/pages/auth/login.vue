@@ -8,11 +8,11 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12" sm="7" md="7" align-self="center">
+          <v-col cols="9" sm="7" md="7" align-self="center">
             <h1>{{ $t('login') }}</h1>
             <p class="subtitle">{{ $t('login_desc') }}</p>
           </v-col>
-          <v-col cols="12" sm="5" md="5" align-self="center">
+          <v-col cols="3" sm="5" md="5" align-self="center">
             <v-icon x-large color="white">mdi-account</v-icon>
           </v-col>
         </v-row>
