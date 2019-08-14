@@ -9,6 +9,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
+use App\User;
+use Carbon\Carbon;
+
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
@@ -45,6 +48,129 @@ class LoginController extends Controller
         $this->guard()->setToken($token);
 
         return true;
+    }
+
+    /**
+     * Attempt to log the user into the application via his PAN
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function attemptLoginPan(Request $req)
+    {
+        // Validate Request
+        $req->validate([
+            'pan' => 'required',
+            'pin' => 'required',
+        ]);
+
+        // 1. Check PAN!
+        // Try to Find the User
+        $now = Carbon::now();
+        $user = User::where('pan', $req->pan)->first();
+
+        if(!$user) {
+            // Found no User
+            return $this->loginPanErrorResponse(
+                "PAN & PIN Combination failed", 
+                [
+                    "pan" => ["auth.failed"],
+                    "pin" => ["auth.failed"]
+                ]
+            );
+        }
+
+        // 2. Check dates "locked_until"
+        if($user->locked_until) {
+
+            // If Account is still Locked for XX Hours
+            if($now <= $user->locked_until) {
+
+                // Display time to wait. Should be 24 Hours
+                return $this->sendLockedResponse($user, $now);
+            }
+        }
+
+        // 3. Check "Failed Login Attempts"!
+        if($user->failed_logins) {
+
+            // if more than 15
+            if($user->failed_logins >= 15) {
+                // Add 24 Hours and Lock user, but reset failed attempts to 0
+                $this->lockAccount($user);
+
+                // Display time to wait. Should be 24 Hours
+                return $this->sendLockedResponse($user, $now);
+            }
+        }
+
+        // 4. Check PAN && PIN
+        if($req->pan != $user->pan || $req->pin != $user->pin)
+        {
+            // Login Failed
+            $user->failed_logins += 1;
+            $user->save();
+
+            return $this->loginPanErrorResponse(
+                "PAN & PIN Combination failed",
+                [
+                    "pan" => ["auth.failed"],
+                    "pin" => ["auth.failed"]
+                ]
+            );
+        } else {
+            // Login Success
+            \Auth::login($user);
+
+            // Send PAN Login Credentials
+            $token = (string) $this->guard()->getToken();
+            $expiration = $this->guard()->getPayload()->get('exp');
+            return response()->json([
+                'token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => $expiration - time(),
+            ]);
+        }
+    }
+
+    /**
+     * Lock the Users Account
+     *
+     * @param \App\User $user
+     */
+    protected function lockAccount($user) {
+        // Lock Account
+        $user->locked_until = $now->copy()->addHours(24);
+        $user->failed_logins = 0;
+        $user->save();
+    }
+
+    /**
+     * Send the User is locked Response
+     *
+     * @param \App\User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function sendLockedResponse($user, $now) {
+        $diff = $now->diffInHours($user->locked_until);
+        return $this->loginPanErrorResponse(
+            __("auth.acc_locked", ['hours' => $diff]), [], $status=423
+        );
+    }
+
+    /**
+     * Return the Error-Response for failed Pan-Login
+     *
+     * @param  string $message
+     * @param  array  $errors
+     * @param  int    $status
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function loginPanErrorResponse($message, $errors = [], $status = 400) {
+        return response()->json([
+            "message" => $message,
+            "errors" => $errors
+        ], $status);
     }
 
     /**
