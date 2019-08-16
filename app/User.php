@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
+class User extends Authenticatable implements JWTSubject//, MustVerifyEmail
 {
     use Notifiable;
 
@@ -104,5 +104,13 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * Get the info record associated with the user.
+     */
+    public function info()
+    {
+        return $this->hasOne('App\UserInfo', 'user_id');
     }
 }

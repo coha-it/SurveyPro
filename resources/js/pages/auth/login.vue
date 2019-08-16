@@ -23,7 +23,15 @@
           <v-row>
             <v-col cols="12" sm="12" md="12">
               <!-- Email -->
-              <v-text-field v-model="form.email" :label="$t('E-MAIL')" color='black' :error="form.errors.has('email')" type="email" name="email" required></v-text-field>
+              <v-text-field 
+                v-model="form.email" 
+                :label="$t('E-MAIL')" 
+                color='black' 
+                :error="form.errors.has('email')" 
+                type="email" 
+                name="email" 
+                required
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row>
