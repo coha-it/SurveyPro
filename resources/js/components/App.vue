@@ -32,7 +32,7 @@ export default {
 
   data: () => ({
     layout: null,
-    defaultLayout: 'naked'
+    defaultLayout: 'user'
   }),
 
   metaInfo () {

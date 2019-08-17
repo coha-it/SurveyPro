@@ -59,6 +59,8 @@
     "PAN": "PAN",
     "PIN": "PIN",
     "The given data was invalid.": "Ihre Eingabedaten waren nicht korrekt.",
-    "Welcome": "Willkommen"
+    "Welcome": "Willkommen",
+    "password_label": "PASSWORT",
+    "email_label": "E-MAIL"
   }
   

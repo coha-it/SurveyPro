@@ -32,7 +32,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  layout: 'guest',
+  layout: 'naked',
 
   metaInfo () {
     return { title: this.$t('home') }

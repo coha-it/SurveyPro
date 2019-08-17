@@ -15,13 +15,15 @@ export default [
   { path: '/email/resend', name: 'verification.resend', component: page('auth/verification/resend.vue') },
 
   { path: '/home', name: 'home', component: page('home.vue') },
-  { path: '/settings',
-    component: page('settings/index.vue'),
-    children: [
-      { path: '', redirect: { name: 'settings.profile' } },
-      { path: 'profile', name: 'settings.profile', component: page('settings/profile.vue') },
-      { path: 'password', name: 'settings.password', component: page('settings/password.vue') }
-    ] },
+  // { path: '/settings',
+  //   component: page('settings/index.vue'),
+  //   children: [
+  //     { path: '', redirect: { name: 'settings.profile' } },
+  //     { path: 'profile', name: 'settings.profile', component: page('settings/profile.vue') },
+  //     { path: 'password', name: 'settings.password', component: page('settings/password.vue') }
+  //   ] },
+
+  { path: '/user', name: 'user', component: page('user/user.vue') },
 
   { path: '*', component: page('errors/404.vue') }
 ]

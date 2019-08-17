@@ -12,7 +12,7 @@
 html body {
     font-family: Roboto;
     color: #425D64;
-    padding: 4px 4px 0;
+    // padding: 4px 4px 0;
 }
 
 .v-subheader.divider {
@@ -24,10 +24,11 @@ html body {
     letter-spacing: .1em;
     &:before {
         content: "";position: absolute;background: #757575;width: 100%;height: 1px;right: 0;
-        z-index: -1;
+        z-index: 0;
     }
     & > span {
-        background: #fff;
+        background: #fafafa;
+        z-index: 1;
         padding: 0 20px;
     }
 }

@@ -1,6 +1,7 @@
 <template>
-  <div>
-        <v-container grid-list-md fluid style="padding: 0; height: 100vh;">
+  <v-app>
+    <v-content>
+        <v-container fluid style="padding: 0; height: 100vh;">
             <v-layout wrap class="v-application" fill-height>
               <v-flex md6 xs12 class="hidden-sm-and-down coha--banner-wrapper">
                   <div class="coha--banner">
@@ -14,7 +15,8 @@
               </v-flex>
             </v-layout>
         </v-container>
-  </div>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
@@ -31,7 +33,7 @@ export default {
 
   data() {
     return {
-        backgroundImage: 'url(/storage/analysis-analytics-analyze-590022-test2.jpg)'
+        backgroundImage: 'url(/storage/student-2.jpg)'
     }
   },
 
@@ -69,7 +71,7 @@ export default {
           position: absolute;
           left: 0;
           right: 0;
-          margin: auto;
+          margin: 0;
           top: 0;
           bottom: 0;
           background-position: 60% 70%;

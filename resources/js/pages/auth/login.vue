@@ -25,7 +25,7 @@
               <!-- Email -->
               <v-text-field 
                 v-model="form.email" 
-                :label="$t('E-MAIL')" 
+                :label="$t('email_label')" 
                 color='black' 
                 :error="form.errors.has('email')" 
                 type="email" 
@@ -39,7 +39,7 @@
               <!-- Password -->
               <v-text-field 
               v-model="form.password" 
-              :label="$t('PASSWORD')" 
+              :label="$t('password_label')" 
               color='black' 
               :error="form.errors.has('password')"  
               name="password" 

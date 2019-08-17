@@ -11,6 +11,7 @@
 <script>
 export default {
   middleware: 'auth',
+  layout: 'user',
 
   metaInfo () {
     return { title: this.$t('home') }

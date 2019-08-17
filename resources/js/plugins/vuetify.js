@@ -7,6 +7,9 @@ export default new Vuetify({
   icons: {
     iconfont: 'mdi'
   },
+  options: {
+    customProperties: true
+  },
   theme: {
     themes: {
       light: {
@@ -16,7 +19,8 @@ export default new Vuetify({
         error: '#dc6161', //#C9876E
         info: '#C6C6C6',
         success: '#6CAE75',
-        warning: '#E6BE72'
+        warning: '#E6BE72',
+        background: '#fafafa'
       }
     }
   }
