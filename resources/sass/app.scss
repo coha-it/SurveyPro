@@ -72,3 +72,23 @@ html body {
 .coha--login-wrapper + .v-footer {background-color: rgb(171, 171, 171);}
 .coha--pan-wrapper   + .v-footer {background-color: #d2bc37;}
 .coha--register-wrapper + .v-footer {background-color: #9ac0c9;}
+
+// V-Dialogs
+.v-dialog {
+    &.naked {
+        box-shadow: unset;
+    }
+    &.dark {
+        color: #fff;
+    }
+    &.centered {
+        text-align: center;
+    }
+}
+
+
+// V-Navigation Sidebar
+.v-navigation-drawer {
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100) !important;
+}
