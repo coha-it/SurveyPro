@@ -15,5 +15,5 @@ return [
     |
     */
 
-    'acc_locked' => 'Dein Account wurde für :hours Stunden gesperrt!'
+    'acc_locked' => 'Aus Sicherheitsgründen mussten wir für :hours Stunden den Account sperren'
 ];
