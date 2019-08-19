@@ -59,10 +59,16 @@ class LoginController extends Controller
     protected function attemptLoginPan(Request $req)
     {
         // Validate Request
-        $req->validate([
-            'pan' => 'required',
-            'pin' => 'required',
-        ]);
+        $this->validate(
+            $req, 
+            [
+                'pan' => 'required',
+                'pin' => 'required',
+            ],
+            [
+                'required' => 'schlamm'
+            ]
+        );
 
         // 1. Check PAN!
         // Try to Find the User
@@ -97,7 +103,7 @@ class LoginController extends Controller
             // if more than 15
             if($user->failed_logins >= 15) {
                 // Add 24 Hours and Lock user, but reset failed attempts to 0
-                $this->lockAccount($user);
+                $this->lockAccount($user, 24);
 
                 // Display time to wait. Should be 24 Hours
                 return $this->sendLockedResponse($user, $now);
@@ -138,9 +144,9 @@ class LoginController extends Controller
      *
      * @param \App\User $user
      */
-    protected function lockAccount($user) {
+    protected function lockAccount($user, $hours) {
         // Lock Account
-        $user->locked_until = $now->copy()->addHours(24);
+        $user->locked_until = Carbon::now()->copy()->addHours($hours);
         $user->failed_logins = 0;
         $user->save();
     }
