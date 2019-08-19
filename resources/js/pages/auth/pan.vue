@@ -1,35 +1,39 @@
 <template>
     <div class="rightsided-content coha--pan-wrapper">
 
+      <template>
+        <div class="text-center">
+          <v-snackbar v-model="snackbar" :multi-line="true" right color="error">{{ $t(snackbarText) }}<v-btn color="black" text @click="snackbar = false">{{ $t('closer_button') }}</v-btn></v-snackbar>
+        </div>
+      </template>
 
-        <template>
-          <div class="text-center">
-            <v-snackbar
-              v-model="snackbar"
-              :multi-line="true"
-              right 
-              color="error"
-            >
-              {{ $t(snackbarText) }}
-              <v-btn
-                color="black"
-                text
-                @click="snackbar = false"
-              >
-                {{ $t('closer_button') }}
-              </v-btn>
-            </v-snackbar>
-          </div>
-        </template>
-
-
-        <Back />
-
-        <v-form @submit.prevent="loginpan" @keydown="form.onKeydown($event)">
-            <v-text-field v-model="form.pan" :label="$t('PAN')" color='black' :error="form.errors.has('pan')" type="text" name="pan" required></v-text-field><br>
-            <v-text-field v-model="form.pin" :label="$t('PIN')" color='black' :error="form.errors.has('pin')" type="password" name="pin" required></v-text-field><br>
-            <v-btn color="accent" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
-        </v-form>
+      <div class="inner-content">
+          <v-container>
+            <v-row>  
+              <v-col cols="12" sm="12" md="12">
+                <Back />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="10" sm="10" md="10" align-self="center">
+                <h1>{{ $t('pan_title') }}</h1>
+                <p class="subtitle">{{ $t('pan_desc') }}</p>
+              </v-col>
+              <v-col cols="2" sm="2" md="2" align-self="center">
+                <v-icon x-large color="white">mdi-account</v-icon>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-form @submit.prevent="loginpan" @keydown="form.onKeydown($event)">
+                    <v-text-field v-model="form.pan" :label="$t('PAN')" color='black' :error="form.errors.has('pan')" type="text" name="pan" required></v-text-field><br>
+                    <v-text-field v-model="form.pin" :label="$t('PIN')" color='black' :error="form.errors.has('pin')" type="password" name="pin" required></v-text-field><br>
+                    <v-btn color="accent" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
+                </v-form>
+              </v-col>
+            </v-row>
+          </v-container>
+        </div>
     </div>
 </template>
 
@@ -90,6 +94,7 @@ export default {
 <style lang="scss" scoped>
 .coha--pan-wrapper {
     background-color: #E8D03E;
+    color: #434343;
     a {
         color: #000;
     }

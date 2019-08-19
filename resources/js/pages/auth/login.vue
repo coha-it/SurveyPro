@@ -1,6 +1,6 @@
 <template>
   <div class="rightsided-content coha--login-wrapper">
-    <div style="max-width: 750px;">
+    <div class="inner-content">
       <v-container>
         <v-row>  
           <v-col cols="12" sm="12" md="12">
@@ -8,11 +8,11 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="9" sm="7" md="7" align-self="center">
-            <h1>{{ $t('login') }}</h1>
+          <v-col cols="10" sm="10" md="10" align-self="center">
+            <h1>{{ $t('login_title') }}</h1>
             <p class="subtitle">{{ $t('login_desc') }}</p>
           </v-col>
-          <v-col cols="3" sm="5" md="5" align-self="center">
+          <v-col cols="2" sm="2" md="2" align-self="center">
             <v-icon x-large color="white">mdi-account</v-icon>
           </v-col>
         </v-row>
@@ -63,7 +63,7 @@
             </v-col>
             <v-col cols="12" sm="12" md="12" align="center">
 
-              <p>Neu hier? <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">{{ $t('free_register') }}</router-link></p>
+              <p>Neu hier? <router-link :to="{ name: 'register' }" class="small ml-auto my-auto">{{ $t('free_register') }}</router-link></p>
               <p>Haben Sie Ihr <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">{{ $t('forgot_password') }}</router-link></p>
 
             </v-col>
@@ -133,6 +133,9 @@ export default {
 .coha--login-wrapper {
   color: rgba(0,0,0,.6);
   background-color: #b6b6b6;
+
+  .inner-content {
+  }
 
   h1,
   .subtitle {

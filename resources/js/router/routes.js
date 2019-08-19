@@ -14,7 +14,10 @@ export default [
   { path: '/email/verify/:id', name: 'verification.verify', component: page('auth/verification/verify.vue') },
   { path: '/email/resend', name: 'verification.resend', component: page('auth/verification/resend.vue') },
 
+  // Landing Pages
   { path: '/home', name: 'home', component: page('home.vue') },
+  { path: '/faq', name: 'faq', component: page('faq.vue') },
+
   // { path: '/settings',
   //   component: page('settings/index.vue'),
   //   children: [
@@ -24,6 +27,7 @@ export default [
   //   ] },
 
   { path: '/user', name: 'user', component: page('user/user.vue') },
+  { path: '/surveys', name: 'surveys', component: page('surveys/surveys.vue') },
 
   { path: '*', component: page('errors/404.vue') }
 ]

@@ -8,8 +8,8 @@
           
           <v-subheader class="divider"><span>{{ $t('pan_and_pin') }}</span></v-subheader>
           <AuthPanel 
-            :title="$t('pan_and_pin')"
-            :text="$t('pan_and_pin_desc')" 
+            :title="$t('pan_title')"
+            :text="$t('pan_desc')" 
             :route="'pan'"
             :color="'primary'" 
             :icon="'mdi-dialpad'"
