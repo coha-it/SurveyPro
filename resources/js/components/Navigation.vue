@@ -11,11 +11,12 @@
               {{ title }}
             </v-list-item-title>
             <v-list-item-subtitle>
-              {{ user.pan ? '#' + user.pan : user.email }}
+              {{ $t('sidebar_subtitle') }}
             </v-list-item-subtitle>
           </v-list-item-content>
       </v-list-item>
       <v-divider></v-divider>
+      <!-- SideNavigation Categories / Pages -->
       <template>
         <div v-for="(cat, key) in sidenav" v-bind:key="key">
           <v-subheader v-if="cat.title">{{ $t(cat.title) }}</v-subheader>
@@ -32,23 +33,23 @@
                 </v-list-item-icon>
 
                 <v-list-item-content>
-                  <v-list-item-title>{{ $t(item.title) }}</v-list-item-title>
+                  <v-list-item-title style="white-space: pre;">{{ $t(item.title) }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
           </v-list>
         </div>
       </template>
       <!-- Bottom of Sidenav -->
-     <template v-slot:append>
+     <template v-slot:append fixed bottom>
         <div class="pa-2">
-          <v-btn block outlined depressed color="grey">Logout</v-btn>
+          <v-btn block outlined depressed color="grey" @click.stop="logoutDialog = true">Logout</v-btn>
         </div>
       </template>
     </v-navigation-drawer>
 
     <!-- BottomBar -->
     <template>
-      <v-bottom-navigation shift fixed bottom color="black accent-4" class="d-none d-md-flex d-sm-flex d-flex d-lg-none">
+      <v-bottom-navigation shift color="black accent-4" class="d-none d-md-flex d-sm-flex d-flex d-lg-none">
         <v-btn :input-value="drawer" @click.stop="drawer = !drawer">
           <span>{{ $t('bottombar_menu') }}</span>
           <v-icon>menu</v-icon>
@@ -62,6 +63,20 @@
       </v-bottom-navigation>
     </template>
 
+    <!-- Logout Dialog -->
+    <v-dialog v-model="logoutDialog" max-width="290" dark content-class="naked dark centered">
+        <h2 class="display-2">{{ $t('logout_title') }}</h2>
+        <p>{{ $t('logout_desc') }}</p>
+        <v-container fluid>
+          <v-row align="center">
+            <v-col class="text-center" cols="12" sm="12">
+              <v-btn depressed @click="logoutDialog = false" outlined>{{ $t('logout_btn_stay_here') }}</v-btn>
+              <v-btn depressed @click.prevent="logout" color="error">{{ $t('logout_btn_logout') }}</v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -71,7 +86,7 @@ import { mapGetters } from 'vuex'
 
 export default {
 
-computed: mapGetters({
+  computed: mapGetters({
     user: 'auth/user'
   }),
 
@@ -107,9 +122,21 @@ computed: mapGetters({
       ],
 
       right: null,
+
+      logoutDialog: false,
       
     }
   },
+
+  methods: {
+    async logout () {
+      // Log out the user.
+      await this.$store.dispatch('auth/logout')
+
+      // Redirect to login.
+      this.$router.push({ name: 'login' })
+    }
+  }
 
 
 }
@@ -125,7 +152,6 @@ computed: mapGetters({
 
 <style lang="scss" scoped>
 .v-item-group.v-bottom-navigation {
-
   .v-btn {
       min-width: 60px;
       width: 20%;

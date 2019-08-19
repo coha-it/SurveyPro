@@ -4,7 +4,7 @@
       <Navigation />
       <v-content>
         <v-container fluid>
-          <div class="main-layout">
+          <div class="main-layout coha-app--view">
             <child />
           </div>
         </v-container>

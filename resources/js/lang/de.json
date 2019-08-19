@@ -68,6 +68,7 @@
     "bottombar_home": "Home",
     "bottombar_surveys": "Umfragen",
     "bottombar_faq": "FAQ",
+    "sidebar_subtitle": "Befragungen Online",
     "sidenav_home": "Home",
     "sidenav_profile": "Konto",
     "sidebar_surveys": "Ihre Umfragen",
@@ -76,6 +77,10 @@
     "sidebar_backend_groups": "Gruppen",
     "sidebar_backend_surveys": "Umfragen",
     "sidebar_backend_statistics": "Statistiken",
-    "sidebar_faq": "FAQ"
+    "sidebar_faq": "FAQ  /  Hilfe",
+    "logout_title": "Abmelden",
+    "logout_desc": "Möchten Sie sich abmelden?",
+    "logout_btn_stay_here":"Hier bleiben",
+    "logout_btn_logout": "Abmelden"
   }
   
