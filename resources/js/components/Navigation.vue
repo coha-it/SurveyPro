@@ -1,12 +1,11 @@
 <template>
   <div>
+    <!-- SideNavigation -->
     <v-navigation-drawer app left absolute light resize v-model="drawer">
       <v-list-item>
-
           <v-list-item-avatar>
             <v-img :src="'/storage/corporate-happiness-gmbh.svg'"></v-img>
           </v-list-item-avatar>
-
           <v-list-item-content>
             <v-list-item-title class="title">
               {{ title }}
@@ -15,11 +14,8 @@
               {{ user.pan ? '#' + user.pan : user.email }}
             </v-list-item-subtitle>
           </v-list-item-content>
-
       </v-list-item>
-
       <v-divider></v-divider>
-
       <template>
         <div v-for="(cat, key) in sidenav" v-bind:key="key">
           <v-subheader v-if="cat.title">{{ $t(cat.title) }}</v-subheader>
@@ -42,10 +38,15 @@
           </v-list>
         </div>
       </template>
-
+      <!-- Bottom of Sidenav -->
+     <template v-slot:append>
+        <div class="pa-2">
+          <v-btn block outlined depressed color="grey">Logout</v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
 
-    <!-- Bottom Bar -->
+    <!-- BottomBar -->
     <template>
       <v-bottom-navigation shift fixed bottom color="black accent-4" class="d-none d-md-flex d-sm-flex d-flex d-lg-none">
         <v-btn :input-value="drawer" @click.stop="drawer = !drawer">
@@ -81,12 +82,11 @@ computed: mapGetters({
         {
           pages: [
             { title: 'sidenav_home', icon: 'home', route: {name:'home'} },
-            { title: 'sidenav_profile', icon: 'person', route: {name:'profile'} },
             { title: 'sidebar_surveys', icon: 'poll', route: {name: 'surveys'} },
+            { title: 'sidenav_profile', icon: 'person', route: {name:'profile'} },
             { title: 'sidebar_faq', icon: 'help', route: {name: 'faq'} }
           ]
         },
-
         {
           title: 'sidenav_backend',
           pages: [

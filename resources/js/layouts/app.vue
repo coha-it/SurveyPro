@@ -17,10 +17,20 @@
 import Navigation from '~/components/Navigation'
 
 export default {
-  name: 'UserLayout',
+  name: 'AppLayout',
 
   components: {
     Navigation
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.container {
+  padding: 25px;
+
+  .main-layout {
+    max-width: 1080px;
+  }
+}
+</style>

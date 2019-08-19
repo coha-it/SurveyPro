@@ -1,5 +1,5 @@
 <template>
     <div>
-        Surveys
+        <h1>Surveys</h1>
     </div>
 </template>

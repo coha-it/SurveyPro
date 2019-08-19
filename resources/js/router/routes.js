@@ -5,27 +5,27 @@ function page (path) {
 export default [
 
   // Unauthentificated
-  { path: '/', name: 'welcome', component: page('guest/welcome.vue') },
-  { path: '/auth', name: 'auth', component: page('guest/auth/auth.vue') },
-  { path: '/pan', name: 'pan', component: page('guest/auth/pan.vue') },
-  { path: '/login', name: 'login', component: page('guest/auth/login.vue') },
-  { path: '/register', name: 'register', component: page('guest/auth/register.vue') },
-  { path: '/password/reset', name: 'password.request', component: page('guest/auth/password/email.vue') },
-  { path: '/password/reset/:token', name: 'password.reset', component: page('guest/auth/password/reset.vue') },
-  { path: '/email/verify/:id', name: 'verification.verify', component: page('guest/auth/verification/verify.vue') },
-  { path: '/email/resend', name: 'verification.resend', component: page('guest/auth/verification/resend.vue') },
+  { path: '/', name: 'welcome', component: page('_guest/welcome.vue') },
+  { path: '/auth', name: 'auth', component: page('_guest/auth/auth.vue') },
+  { path: '/pan', name: 'pan', component: page('_guest/auth/pan.vue') },
+  { path: '/login', name: 'login', component: page('_guest/auth/login.vue') },
+  { path: '/register', name: 'register', component: page('_guest/auth/register.vue') },
+  { path: '/password/reset', name: 'password.request', component: page('_guest/auth/password/email.vue') },
+  { path: '/password/reset/:token', name: 'password.reset', component: page('_guest/auth/password/reset.vue') },
+  { path: '/email/verify/:id', name: 'verification.verify', component: page('_guest/auth/verification/verify.vue') },
+  { path: '/email/resend', name: 'verification.resend', component: page('_guest/auth/verification/resend.vue') },
 
   // Authentificated
   { path: '/',
-    component: page('user/index.vue'),
+    component: page('index.vue'),
     children: [
       // Landing Pages
-      { path: '/home', name: 'home', component: page('user/home.vue') },
-      { path: '/faq', name: 'faq', component: page('user/faq.vue') },
+      { path: '/home', name: 'home', component: page('home.vue') },
+      { path: '/faq', name: 'faq', component: page('faq.vue') },
 
       // Account Settings
-      { path: '/surveys', name: 'surveys', component: page('user/surveys/surveys.vue') },
-      { path: '/profile', name: 'profile', component: page('user/profile/profile.vue') }
+      { path: '/surveys', name: 'surveys', component: page('surveys/surveys.vue') },
+      { path: '/profile', name: 'profile', component: page('profile/profile.vue') }
 
       // Old Settings
       // { path: '/settings',
@@ -42,15 +42,15 @@ export default [
 
   // Managment
   { path: '/backend',
-    component: page('user/backend/index.vue'),
+    component: page('backend/index.vue'),
     children: [
-      { path: 'users', name: 'backend.users', component: page('user/backend/users.vue') },
-      { path: 'groups', name: 'backend.groups', component: page('user/backend/groups.vue') },
-      { path: 'surveys', name: 'backend.surveys', component: page('user/backend/surveys.vue') },
-      { path: 'statistics', name: 'backend.statistics', component: page('user/backend/statistics.vue') }
+      { path: 'users', name: 'backend.users', component: page('backend/users.vue') },
+      { path: 'groups', name: 'backend.groups', component: page('backend/groups.vue') },
+      { path: 'surveys', name: 'backend.surveys', component: page('backend/surveys.vue') },
+      { path: 'statistics', name: 'backend.statistics', component: page('backend/statistics.vue') }
     ]
   },
 
   // All
-  { path: '*', component: page('all/errors/404.vue') }
+  { path: '*', component: page('_all/errors/404.vue') }
 ]
