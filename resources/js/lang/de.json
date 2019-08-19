@@ -64,13 +64,18 @@
     "password_label": "PASSWORT",
     "email_label": "E-MAIL",
     "bottombar_menu": "Menü",
-    "bottombar_user": "Konto",
+    "bottombar_profile": "Konto",
     "bottombar_home": "Home",
     "bottombar_surveys": "Umfragen",
     "bottombar_faq": "FAQ",
     "sidenav_home": "Home",
-    "sidenav_user": "Konto",
+    "sidenav_profile": "Konto",
     "sidebar_surveys": "Ihre Umfragen",
+    "sidenav_backend": "Verwaltung",
+    "sidebar_backend_users": "Benutzer",
+    "sidebar_backend_groups": "Gruppen",
+    "sidebar_backend_surveys": "Umfragen",
+    "sidebar_backend_statistics": "Statistiken",
     "sidebar_faq": "FAQ"
   }
   

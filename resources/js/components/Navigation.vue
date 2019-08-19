@@ -4,7 +4,7 @@
       <v-list-item>
 
           <v-list-item-avatar>
-            <v-img :src="'storage/corporate-happiness-gmbh.svg'"></v-img>
+            <v-img :src="'/storage/corporate-happiness-gmbh.svg'"></v-img>
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -20,25 +20,28 @@
 
       <v-divider></v-divider>
 
-      <v-list>
-        <v-list-item
-          v-for="item in sidenav"
-          :key="item.title"
-          link
-          :to="item.route"
-          color="accent"
-        >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
+      <template>
+        <div v-for="(cat, key) in sidenav" v-bind:key="key">
+          <v-subheader v-if="cat.title">{{ $t(cat.title) }}</v-subheader>
+          <v-list>
+              <v-list-item
+                v-for="item in cat.pages"
+                :key="item.title"
+                link
+                :to="item.route"
+                color="accent"
+              >
+                <v-list-item-icon>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-icon>
 
-          <v-list-item-content>
-            <v-list-item-title>{{ $t(item.title) }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-
-      <v-subheader>Verwaltung</v-subheader>
+                <v-list-item-content>
+                  <v-list-item-title>{{ $t(item.title) }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+          </v-list>
+        </div>
+      </template>
 
     </v-navigation-drawer>
 
@@ -75,22 +78,36 @@ computed: mapGetters({
     return {
       title: window.config.appName,
       sidenav: [
-        { title: 'sidenav_home', icon: 'home', route: {name:'home'} },
-        { title: 'sidenav_user', icon: 'person', route: {name:'user'} },
-        { title: 'sidebar_surveys', icon: 'poll', route: {name: 'surveys'} },
-        { title: 'sidebar_faq', icon: 'help', route: {name: 'faq'} },
+        {
+          pages: [
+            { title: 'sidenav_home', icon: 'home', route: {name:'home'} },
+            { title: 'sidenav_profile', icon: 'person', route: {name:'profile'} },
+            { title: 'sidebar_surveys', icon: 'poll', route: {name: 'surveys'} },
+            { title: 'sidebar_faq', icon: 'help', route: {name: 'faq'} }
+          ]
+        },
 
+        {
+          title: 'sidenav_backend',
+          pages: [
+            { title: 'sidebar_backend_users', icon: 'person_add', route: {name: 'backend.users'} },
+            { title: 'sidebar_backend_groups', icon: 'group_add', route: {name: 'backend.groups'} },
+            { title: 'sidebar_backend_surveys', icon: 'forum', route: {name: 'backend.surveys'} },
+            { title: 'sidebar_backend_statistics', icon: 'pie_chart', route: {name: 'backend.statistics'} }
+          ]
+        }
       ],
 
+      drawer: null,
       bottomnav: [
-        { title: 'bottombar_user', icon: 'person', route: {name: 'user'} },
+        { title: 'bottombar_profile', icon: 'person', route: {name: 'profile'} },
         { title: 'bottombar_home', icon: 'home', route: {name: 'home'} },
         { title: 'bottombar_surveys', icon: 'poll', route: {name: 'surveys'} },
         { title: 'bottombar_faq', icon: 'help', route: {name: 'faq'} },
       ],
 
       right: null,
-      drawer: null,
+      
     }
   },
 
@@ -104,11 +121,16 @@ computed: mapGetters({
     background-size: 75%;
   }
 }
+</style>
 
+<style lang="scss" scoped>
+.v-item-group.v-bottom-navigation {
 
-.v-item-group.v-bottom-navigation .v-btn {
-    min-width: 60px;
-    width: 20%;
-    max-width: 125px;
+  .v-btn {
+      min-width: 60px;
+      width: 20%;
+      max-width: 125px;
+      letter-spacing: inherit;
+  }
 }
 </style>

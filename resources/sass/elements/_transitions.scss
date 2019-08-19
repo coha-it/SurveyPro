@@ -16,17 +16,22 @@
   opacity: 0;
 }
 
-.rightsided-content > div {
-  transition: 200ms;
-}
 
 .rightsided-content {
+
+  transition: 200ms;
+
+  & > div {
+    transition: 200ms;
+  }
+
   &.page-enter,
   &.page-leave-to,
   &.fade-enter,
   &.fade-leave-to {
     & > div {
       transform: translateX(10%);
+      opacity: 0;
     }
   }
 }
