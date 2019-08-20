@@ -12,25 +12,25 @@
 */
 
 // Test 2
-// Route::get('test', function() {
+Route::get('test', function() {
 
-//     // Get User By Info-Field where User's Info is Johan
-//     $user = App\User::whereHas('info', function ($query) {
-//         $query->where('firstname', '=', 'johan');
-//     })->first();
+    // Get User By Info-Field where User's Info is Johan
+    $user = App\User::whereHas('info', function ($query) {
+        $query->where('firstname', '=', 'johan');
+    })->first();
 
-//     dd($user);
-// });
+    dd($user);
+});
 
 // Test!
-// Route::get('test-update-relationed-value', function() {
-//     $user = App\User::find(1)->with('info')->first();
+Route::get('test-update-relationed-value', function() {
+    $user = App\User::find(1)->with('info')->first();
 
-//     $user->info->firstname = "Alexander 123";
-//     $user->info->save();
+    $user->info->firstname = "Alexander 123";
+    $user->info->save();
 
-//     dd($user->info->firstname);
-// });
+    dd($user->info->firstname);
+});
 
 Route::get('{path}', function () {
     return view('index');

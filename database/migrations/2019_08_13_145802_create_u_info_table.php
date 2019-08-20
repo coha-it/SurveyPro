@@ -18,8 +18,8 @@ class CreateUInfoTable extends Migration
     {
         Schema::create($this->tblnm, function (Blueprint $table) {
             // Table Columns
-            $table->bigIncrements('id');
-            $table->bigInteger('user_id')->unsigned()->index();
+            // $table->bigIncrements('id');
+            $table->bigInteger('user_id')->unsigned()->unique()->index();
             $table->string('firstname');
             $table->string('lastname');
             $table->timestamps();

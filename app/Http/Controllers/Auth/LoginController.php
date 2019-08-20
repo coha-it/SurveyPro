@@ -73,7 +73,10 @@ class LoginController extends Controller
         // 1. Check PAN!
         // Try to Find the User
         $now = Carbon::now();
-        $user = User::where('pan', $req->pan)->first();
+
+        $user = User::whereHas('pan', function ($query) use ($req) {
+            $query->where('pan', '=', $req->pan);
+        })->first();
 
         if(!$user) {
             // Found no User
@@ -84,38 +87,40 @@ class LoginController extends Controller
                     "pin" => ["auth.failed"]
                 ]
             );
+        } else {
+            $upan = $user->pan;
         }
 
         // 2. Check dates "locked_until"
-        if($user->locked_until) {
+        if($upan->locked_until) {
 
             // If Account is still Locked for XX Hours
-            if($now <= $user->locked_until) {
+            if($now <= $upan->locked_until) {
 
                 // Display time to wait. Should be 24 Hours
-                return $this->sendLockedResponse($user, $now);
+                return $this->sendLockedResponse($upan, $now);
             }
         }
 
         // 3. Check "Failed Login Attempts"!
-        if($user->failed_logins) {
+        if($upan->failed_logins) {
 
             // if more than 15
-            if($user->failed_logins >= 15) {
+            if($upan->failed_logins >= 15) {
                 // Add 24 Hours and Lock user, but reset failed attempts to 0
-                $this->lockAccount($user, 24);
+                $this->lockAccount($upan, 24);
 
                 // Display time to wait. Should be 24 Hours
-                return $this->sendLockedResponse($user, $now);
+                return $this->sendLockedResponse($upan, $now);
             }
         }
 
         // 4. Check PAN && PIN
-        if($req->pan != $user->pan || $req->pin != $user->pin)
+        if($req->pan != $upan->pan || $req->pin != $upan->pin)
         {
             // Login Failed
-            $user->failed_logins += 1;
-            $user->save();
+            $upan->failed_logins += 1;
+            $upan->save();
 
             return $this->loginPanErrorResponse(
                 "PAN & PIN Combination failed",
@@ -127,6 +132,10 @@ class LoginController extends Controller
         } else {
             // Login Success
             \Auth::login($user);
+
+            // Reset Failed Logins
+            $upan->failed_logins = 0;
+            $upan->save();
 
             // Send PAN Login Credentials
             $token = (string) $this->guard()->getToken();
@@ -146,9 +155,9 @@ class LoginController extends Controller
      */
     protected function lockAccount($user, $hours) {
         // Lock Account
-        $user->locked_until = Carbon::now()->copy()->addHours($hours);
-        $user->failed_logins = 0;
-        $user->save();
+        $user->pan->locked_until = Carbon::now()->copy()->addHours($hours);
+        $user->pan->failed_logins = 0;
+        $user->pan->save();
     }
 
     /**

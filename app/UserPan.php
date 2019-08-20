@@ -5,14 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\User;
 
-class UserRight extends Model
+class UserPan extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'u_rights';
+    protected $table = 'u_pans';
     protected $primaryKey = 'user_id';
 
     /**

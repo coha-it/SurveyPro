@@ -17,6 +17,7 @@
 import Navigation from '~/components/Navigation'
 
 export default {
+  middlware: 'auth',
   name: 'AppLayout',
 
   components: {

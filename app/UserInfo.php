@@ -13,6 +13,7 @@ class UserInfo extends Model
      * @var string
      */
     protected $table = 'u_infos';
+    protected $primaryKey = 'user_id';
 
     /**
      * Get the user record associated with the info.
