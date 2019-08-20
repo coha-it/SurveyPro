@@ -26,8 +26,21 @@
             <v-row>
               <v-col cols="12">
                 <v-form @submit.prevent="loginpan" @keydown="form.onKeydown($event)">
-                    <v-text-field v-model="form.pan" :label="$t('PAN')" color='black' :error="form.errors.has('pan')" type="text" name="pan" required></v-text-field><br>
-                    <v-text-field v-model="form.pin" :label="$t('PIN')" color='black' :error="form.errors.has('pin')" type="password" name="pin" required></v-text-field><br>
+                    <v-text-field 
+                    v-model="form.pan" 
+                    :label="$t('PAN')" 
+                    color='black' 
+                    :error="form.errors.has('pan')" 
+                    type="text" 
+                    name="pan" 
+                    required 
+                    ref="pan" 
+                    counter 
+                    maxlength="6" 
+                    autocomplete="newpassword" 
+
+                    ></v-text-field><br>
+                    <v-text-field v-model="form.pin" :label="$t('PIN')" color='black' :error="form.errors.has('pin')" type="password" name="pin" required autocomplete="newpassword"></v-text-field><br>
                     <v-btn color="accent" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
                 </v-form>
               </v-col>
@@ -50,6 +63,9 @@ export default {
       Back
   },
 
+  directives: {
+  },
+
   data: () => ({
     form: new Form({
       pan: '',
@@ -58,6 +74,12 @@ export default {
     snackbar: false,
     snackbarText: '',
   }),
+
+  // created: function() {},
+
+  mounted(){
+    this.$refs.pan.focus();
+  },
 
   methods: {
 

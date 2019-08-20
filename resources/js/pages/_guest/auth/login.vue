@@ -1,6 +1,8 @@
 <template>
   <div class="rightsided-content coha--login-wrapper">
     <div class="inner-content">
+
+      <!-- Back and Header -->
       <v-container>
         <v-row>  
           <v-col cols="12" sm="12" md="12">
@@ -18,6 +20,7 @@
         </v-row>
       </v-container>
 
+      <!-- Form -->
       <v-form @submit.prevent="login" @keydown="form.onKeydown($event)">
         <v-container>
           <v-row>
@@ -31,6 +34,7 @@
                 type="email" 
                 name="email" 
                 required
+                ref="email"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -91,6 +95,9 @@ export default {
   ],
   created: function() {
 
+  },
+  mounted(){
+    this.$refs.email.focus();
   },
   metaInfo () {
     return { title: this.$t('login') }

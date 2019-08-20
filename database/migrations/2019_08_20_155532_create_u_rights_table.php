@@ -26,7 +26,7 @@ class CreateURightsTable extends Migration
             $table->boolean('create_groups')->default(false);
             $table->boolean('create_pan_users')->default(false);
 
-            $table->boolean('superadmin')->default(false);
+            $table->boolean('admin')->default(false);
 
             $table->timestamps();
         });

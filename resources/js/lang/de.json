@@ -5,6 +5,7 @@
     "error_alert_text": "Irgendwas lief falsch, versuche es erneut",
     "token_expired_alert_title": "Session Abgelaufen!",
     "token_expired_alert_text": "Bitte einloggen um weiter zu machen",
+    "auth": "Anmelden",
     "login": "Anmelden",
     "register": "Registrieren",
     "page_not_found": "Seite nicht gefunden",
@@ -48,6 +49,7 @@
     "EN": "Englisch",
     "ES": "Spanisch",
     "中文": "Chinesisch",
+    "pan_and_pin": "PAN & PIN",
     "pan_title": "PIN & PAN",
     "pan_desc": "Ich besitze PAN und PIN und möchte mich damit anmelden",
     "login_title":"Anmelden",
@@ -81,6 +83,8 @@
     "logout_title": "Abmelden",
     "logout_desc": "Möchten Sie sich abmelden?",
     "logout_btn_stay_here":"Hier bleiben",
-    "logout_btn_logout": "Abmelden"
+    "logout_btn_logout": "Abmelden",
+    "password_hint": "Zeichen",
+    "password_repeat_hint": "Passwort wiederholen"
   }
   
