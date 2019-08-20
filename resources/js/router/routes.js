@@ -18,6 +18,9 @@ export default [
   // Authentificated
   { path: '/',
     component: page('index.vue'),
+    meta: {
+      middleware: 'auth'
+    },
     children: [
       // Landing Pages
       { path: '/home', name: 'home', component: page('home.vue') },
@@ -43,6 +46,9 @@ export default [
   // Managment
   { path: '/backend',
     component: page('backend/index.vue'),
+    meta: {
+      middleware: 'guest'
+    },
     children: [
       { path: 'users', name: 'backend.users', component: page('backend/users.vue') },
       { path: 'groups', name: 'backend.groups', component: page('backend/groups.vue') },

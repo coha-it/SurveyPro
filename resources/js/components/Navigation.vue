@@ -49,7 +49,7 @@
 
     <!-- BottomBar -->
     <template>
-      <v-bottom-navigation shift color="black accent-4" class="d-none d-md-flex d-sm-flex d-flex d-lg-none">
+      <v-bottom-navigation bottom fixed shift color="black accent-4" class="d-none d-md-flex d-sm-flex d-flex d-lg-none">
         <v-btn :input-value="drawer" @click.stop="drawer = !drawer">
           <span>{{ $t('bottombar_menu') }}</span>
           <v-icon>menu</v-icon>

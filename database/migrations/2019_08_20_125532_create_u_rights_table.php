@@ -4,10 +4,10 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUInfoTable extends Migration
+class CreateURightsTable extends Migration
 {
 
-    public $tblnm = 'u_infos';
+    public $tblnm = 'u_rights';
 
     /**
      * Run the migrations.
@@ -17,11 +17,15 @@ class CreateUInfoTable extends Migration
     public function up()
     {
         Schema::create($this->tblnm, function (Blueprint $table) {
-            // Table Columns
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned()->index();
-            $table->string('firstname');
-            $table->string('lastname');
+
+            // Rights
+            $table->boolean('update_own_profile')->default(false);
+            $table->boolean('create_surveys')->default(false);
+            $table->boolean('create_groups')->default(false);
+            $table->boolean('create_pan_users')->default(false);
+
             $table->timestamps();
         });
 

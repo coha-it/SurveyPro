@@ -28,7 +28,7 @@ class User extends Authenticatable implements JWTSubject//, MustVerifyEmail
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'pan', 'pin'
+        'password', 'remember_token', 'pan', 'pin', 'failed_logins'
     ];
 
     /**
@@ -45,19 +45,7 @@ class User extends Authenticatable implements JWTSubject//, MustVerifyEmail
      *
      * @var array
      */
-    protected $appends = [
-        'photo_url',
-    ];
-
-    /**
-     * Get the profile photo URL attribute.
-     *
-     * @return string
-     */
-    public function getPhotoUrlAttribute()
-    {
-        return 'https://www.gravatar.com/avatar/'.md5(strtolower($this->email)).'.jpg?s=200&d=mm';
-    }
+    protected $appends = [];
 
     /**
      * Get the oauth providers.
@@ -112,5 +100,13 @@ class User extends Authenticatable implements JWTSubject//, MustVerifyEmail
     public function info()
     {
         return $this->hasOne('App\UserInfo', 'user_id');
+    }
+
+    /**
+     * Get the info record associated with the user.
+     */
+    public function right()
+    {
+        return $this->hasOne('App\UserRight', 'user_id');
     }
 }
