@@ -32,6 +32,7 @@ const qs = (params) => Object.keys(params).map(key => `${key}=${params[key]}`).j
 
 export default {
   middleware: 'guest',
+  layout: 'rightsided',
 
   metaInfo () {
     return { title: this.$t('verify_email') }
