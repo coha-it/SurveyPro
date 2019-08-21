@@ -16,6 +16,15 @@ class UserPan extends Model
     protected $primaryKey = 'user_id';
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'pan', 'pin', 'failed_logins'
+    ];
+
+    /**
      * Get the user record associated with the info.
      */
     public function user()
