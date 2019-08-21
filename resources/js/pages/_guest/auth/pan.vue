@@ -3,7 +3,7 @@
 
       <template>
         <div class="text-center">
-          <v-snackbar v-model="snackbar" :multi-line="true" right color="error">{{ $t(snackbarText) }}<v-btn color="black" text @click="snackbar = false">{{ $t('closer_button') }}</v-btn></v-snackbar>
+          <v-snackbar v-model="snackbar" top :multi-line="true" right color="error">{{ $t(snackbarText) }}<v-btn color="black" text @click="snackbar = false">{{ $t('closer_button') }}</v-btn></v-snackbar>
         </div>
       </template>
 

@@ -85,6 +85,7 @@
     "logout_btn_stay_here":"Hier bleiben",
     "logout_btn_logout": "Abmelden",
     "password_hint": "Zeichen",
-    "password_repeat_hint": "Passwort wiederholen"
+    "password_repeat_hint": "Passwort wiederholen",
+    "auth.failed": "Login fehlgeschlagen"
   }
   

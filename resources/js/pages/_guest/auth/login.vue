@@ -6,7 +6,21 @@
       <v-container>
         <v-row>  
           <v-col cols="12" sm="12" md="12">
+
+            <!-- Alert -->
+              <v-alert color="blue-grey" dark dense icon="mdi-email" prominent v-if="form.errors.has('email')">
+                <template v-for="errors in form.errors">
+                  <template v-for="error in errors">
+                    <template v-for="(e, i) in error">
+                      <div v-html="$t(e)" v-bind:key="i"></div>
+                    </template>
+                  </template>
+                </template>
+              </v-alert>
+
+            <!-- Back -->
             <Back />
+
           </v-col>
         </v-row>
         <v-row>
