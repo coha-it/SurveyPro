@@ -76,10 +76,26 @@ html body {
     }
 }
 
-.coha--login-wrapper + .v-footer {background-color: rgb(171, 171, 171);}
-.coha--register-wrapper + .v-footer {background-color: #9ac0c9;}
+// Login
+.coha--login-wrapper { 
+    color: rgba(0,0,0,.6);
+    background-color: #b6b6b6;
 
-// PAN - LOGIN 
+    & + .v-footer {
+        background-color: rgb(171, 171, 171);
+    }
+}
+
+// Register
+.coha--register-wrapper {
+    background-color: #9ac0c9;
+
+    & + .v-footer {
+        background-color: #9ac0c9;
+    }
+}
+
+// PAN
 .coha--pan-wrapper {
 
     & + .v-footer {
@@ -129,4 +145,13 @@ html body {
 .v-navigation-drawer {
     height: 100vh;
     height: calc(var(--vh, 1vh) * 100) !important;
+}
+
+
+// List Item disabled
+.v-list-item--disabled {
+    opacity: .5;
+    &.theme--light {
+        background: #fefefe;
+    }
 }

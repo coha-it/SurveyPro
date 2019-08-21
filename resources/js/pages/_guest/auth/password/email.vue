@@ -1,39 +1,85 @@
 <template>
-  <div class="row">
-    <div class="col-lg-8 m-auto">
-      <card :title="$t('reset_password')">
-        <form @submit.prevent="send" @keydown="form.onKeydown($event)">
-          <alert-success :form="form" :message="status" />
+  <div class="rightsided-content coha--login-wrapper">
+    <div class="inner-content">
 
-          <!-- Email -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
-              <has-error :form="form" field="email" />
-            </div>
-          </div>
+      <!-- Back and Header -->
+      <v-container>
+        <v-row>  
+          <v-col cols="12" sm="12" md="12">
 
-          <!-- Submit Button -->
-          <div class="form-group row">
-            <div class="col-md-9 ml-md-auto">
-              <v-button :loading="form.busy">
-                {{ $t('send_password_reset_link') }}
-              </v-button>
-            </div>
-          </div>
-        </form>
-      </card>
+            <!-- Alert -->
+              <v-alert
+                color="blue-grey"
+                dark
+                icon="mdi-email-mark-as-unread"
+                prominent
+                dismissible
+                v-model="alert"
+                v-show="status"
+              >
+                <div v-html="$t(status)"></div>
+              </v-alert>
+
+            <!-- Back -->
+            <Back :to="{name: 'login'}" />
+
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="10" sm="10" md="10" align-self="center">
+            <h1>{{ $t('prm_title') }}</h1>
+            <p class="subtitle">{{ $t('prm_desc') }}</p>
+          </v-col>
+          <v-col cols="2" sm="2" md="2" align-self="center">
+            <v-icon x-large >email</v-icon>
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <!-- Form -->
+      <v-form @submit.prevent="send" @keydown="form.onKeydown($event)">
+        <v-container>
+          <v-row>
+            <v-col cols="12" sm="12" md="12">
+              <!-- Email -->
+              <v-text-field 
+                v-model="form.email" 
+                :label="$t('email_label')" 
+                color='black' 
+                :error="form.errors.has('email')" 
+                type="email" 
+                name="email" 
+                required
+                ref="email"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col cols="12" sm="12" md="12" align="right">
+              <!-- Submit Button -->
+              <v-btn color="accent" large block :loading="form.busy" type="submit">{{ $t('send_password_reset_link') }}</v-btn>
+            </v-col>
+          </v-row>
+
+        </v-container>
+      </v-form>
+
     </div>
   </div>
 </template>
 
 <script>
 import Form from 'vform'
+import Back from '~/components/AuthBack.vue'
 
 export default {
   middleware: 'guest',
   layout: 'rightsided',
+
+  components: {
+    Back
+  },
 
   metaInfo () {
     return { title: this.$t('reset_password') }
@@ -43,15 +89,16 @@ export default {
     status: '',
     form: new Form({
       email: ''
-    })
+    }),
+    alert: true,
   }),
 
   methods: {
     async send () {
       const { data } = await this.form.post('/api/password/email')
 
+      this.alert = true;
       this.status = data.status
-
       this.form.reset()
     }
   }

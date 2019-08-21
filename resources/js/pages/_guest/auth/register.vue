@@ -6,7 +6,7 @@
       <v-container>
         <v-row>  
           <v-col cols="12" sm="12" md="12">
-            <Back />
+            <Back :to="{ name:'auth' }" />
           </v-col>
         </v-row>
         <v-row>
@@ -170,9 +170,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.coha--register-wrapper {
-  background-color: #9ac0c9;
-}
-</style>

@@ -8,7 +8,7 @@
           <v-col cols="12" sm="12" md="12">
 
             <!-- Alert -->
-              <v-alert color="blue-grey" dark dense icon="mdi-email" prominent v-if="form.errors.has('email')">
+              <v-alert color="blue-grey" dark icon="mdi-email" prominent v-if="form.errors.has('email')" dismissible>
                 <template v-for="errors in form.errors">
                   <template v-for="error in errors">
                     <template v-for="(e, i) in error">
@@ -19,7 +19,7 @@
               </v-alert>
 
             <!-- Back -->
-            <Back />
+            <Back :to="{ name:'auth' }" />
 
           </v-col>
         </v-row>
@@ -152,8 +152,6 @@ export default {
 <style lang="scss" scoped>
 
 .coha--login-wrapper {
-  color: rgba(0,0,0,.6);
-  background-color: #b6b6b6;
 
   .inner-content {
   }

@@ -19,24 +19,28 @@
       <!-- SideNavigation Categories / Pages -->
       <template>
         <div v-for="(cat, key) in sidenav" v-bind:key="key">
-          <v-subheader v-if="cat.title">{{ $t(cat.title) }}</v-subheader>
-          <v-list>
-              <v-list-item
-                v-for="item in cat.pages"
-                :key="item.title"
-                link
-                :to="item.route"
-                color="accent"
-              >
-                <v-list-item-icon>
-                  <v-icon>{{ item.icon }}</v-icon>
-                </v-list-item-icon>
+          <template v-if="!(cat.hide_for_pan && user.pan)">
+            <v-subheader v-if="cat.title">{{ $t(cat.title) }}</v-subheader>
+              <v-list>
+                <template v-for="item in cat.pages">
+                  <v-list-item
+                    :key="item.title"
+                    link
+                    :to="item.route"
+                    color="accent" 
+                    v-if="checkRights(item.check_rights)"
+                  >
+                      <v-list-item-icon>
+                        <v-icon>{{ item.icon }}</v-icon>
+                      </v-list-item-icon>
 
-                <v-list-item-content>
-                  <v-list-item-title style="white-space: pre;">{{ $t(item.title) }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-          </v-list>
+                      <v-list-item-content>
+                        <v-list-item-title style="white-space: pre;">{{ $t(item.title) }}</v-list-item-title>
+                      </v-list-item-content>
+                  </v-list-item>
+                </template>
+              </v-list>
+            </template>
         </div>
       </template>
       <!-- Bottom of Sidenav -->
@@ -104,11 +108,12 @@ export default {
         },
         {
           title: 'sidenav_backend',
+          hide_for_pan: true,
           pages: [
-            { title: 'sidebar_backend_users', icon: 'person_add', route: {name: 'backend.users'} },
-            { title: 'sidebar_backend_groups', icon: 'group_add', route: {name: 'backend.groups'} },
-            { title: 'sidebar_backend_surveys', icon: 'forum', route: {name: 'backend.surveys'} },
-            { title: 'sidebar_backend_statistics', icon: 'pie_chart', route: {name: 'backend.statistics'} }
+            { title: 'sidebar_backend_users', icon: 'person_add', route: {name: 'backend.users'},             check_rights: 'create_pan_users',               },
+            { title: 'sidebar_backend_groups', icon: 'group_add', route: {name: 'backend.groups'},            check_rights: 'create_groups',                },
+            { title: 'sidebar_backend_surveys', icon: 'forum', route: {name: 'backend.surveys'},              check_rights: 'create_surveys',              },
+            { title: 'sidebar_backend_statistics', icon: 'pie_chart', route: {name: 'backend.statistics'},}
           ]
         }
       ],
@@ -120,8 +125,6 @@ export default {
         { title: 'bottombar_surveys', icon: 'poll', route: {name: 'surveys'} },
         { title: 'bottombar_faq', icon: 'help', route: {name: 'faq'} },
       ],
-
-      right: null,
 
       logoutDialog: false,
       
@@ -135,6 +138,13 @@ export default {
 
       // Redirect to login.
       this.$router.push({ name: 'welcome' })
+    },
+
+    checkRights (check_right) {
+      if(!this.user.right.admin && check_right && this.user.right[check_right] != 1) {
+        return false;
+      }
+      return true;
     }
   }
 
