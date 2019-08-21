@@ -19,8 +19,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('/user', 'User\UserController@self');
 
-    Route::patch('settings/profile', 'Settings\ProfileController@update');
-    Route::patch('settings/password', 'Settings\PasswordController@update');
+    // Update Profile
+    Route::patch('settings/profile', 'Settings\ProfileController@update')->middleware('auth.user.email');
+    Route::patch('settings/password', 'Settings\PasswordController@update')->middleware('auth.user.email');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {

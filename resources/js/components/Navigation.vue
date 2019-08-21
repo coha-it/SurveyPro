@@ -35,7 +35,7 @@
                       </v-list-item-icon>
 
                       <v-list-item-content>
-                        <v-list-item-title style="white-space: pre;">{{ $t(item.title) }}</v-list-item-title>
+                        <v-list-item-title style="white-space: pre;">{{ $t( item.title) }}</v-list-item-title>
                       </v-list-item-content>
                   </v-list-item>
                 </template>
@@ -46,7 +46,7 @@
       <!-- Bottom of Sidenav -->
      <template v-slot:append fixed bottom>
         <div class="pa-2">
-          <v-btn block outlined depressed color="grey" @click.stop="logoutDialog = true">Logout</v-btn>
+          <v-btn block outlined depressed color="grey" @click.stop="logoutDialog = true">{{ $t('logout.btn') }}</v-btn>
         </div>
       </template>
     </v-navigation-drawer>
@@ -75,7 +75,7 @@
           <v-row align="center">
             <v-col class="text-center" cols="12" sm="12">
               <v-btn depressed @click="logoutDialog = false" outlined>{{ $t('logout.btn_stay_here') }}</v-btn>
-              <v-btn depressed @click.prevent="logout" color="error">{{ $t('logout.btn_logout') }}</v-btn>
+              <v-btn depressed @click.prevent="logout" color="error">{{ $t('logout.btn') }}</v-btn>
             </v-col>
           </v-row>
         </v-container>

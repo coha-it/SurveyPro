@@ -5,12 +5,11 @@
     "error_alert_text": "Irgendwas lief falsch, versuche es erneut",
     "token_expired_alert_title": "Session Abgelaufen!",
     "token_expired_alert_text": "Bitte einloggen um weiter zu machen",
-    "auth": "Anmelden",
+    "entry": "Anmelden",
     "login": "Anmelden",
     "register": "Registrieren",
     "page_not_found": "Seite nicht gefunden",
     "go_home": "Home",
-    "logout": "Abmelden",
     "email": "E-Mail",
     "your_email": "Ihre E-Mail Adresse",
     "check_mails": "Mail wurde versendet!",
@@ -88,8 +87,8 @@
     "logout": {
       "title": "Abmelden",
       "desc": "Möchten Sie sich abmelden?",
-      "btn_stay_here":"Hier bleiben",
-      "btn_logout": "Abmelden"
+      "btn": "Abmelden",
+      "btn_stay_here":"Hier bleiben"
     },
     "password_hint": "Zeichen",
     "password_repeat_hint": "Passwort wiederholen",

@@ -125,4 +125,25 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->with(['pan', 'right'])->find($this->id);
     }
+
+    /**
+     * Check if this User Is a Pan User
+     */
+    public function isPanUser() {
+        return $this->pan && $this->pan->is_pan_user === 1;
+    }
+
+    /**
+     * Check if this User is a E-Mail and not a PAN-User
+     */
+    public function isEmailUser() {
+        return !$this->isPanUser();
+    }
+
+    /**
+     * Check if Is Pan User
+     */
+    public function isAdminUser() {
+        return $this->right && $this->right->admin === 1;
+    }
 }

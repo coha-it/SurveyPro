@@ -51,8 +51,8 @@ export default [
     },
     children: [
       { path: 'users', name: 'backend.users', component: page('backend/users.vue') },
-      { path: 'groups', name: 'backend.groups', component: page('backend/groups.vue') },
-      { path: 'surveys', name: 'backend.surveys', component: page('backend/surveys.vue') },
+      { path: 'groups', name: 'backend.groups', component: page('backend/groups.vue'), middleware: 'emailuser' },
+      { path: 'surveys', name: 'backend.surveys', component: page('backend/surveys.vue'), middleware: 'guest' },
       { path: 'statistics', name: 'backend.statistics', component: page('backend/statistics.vue') }
     ]
   },
