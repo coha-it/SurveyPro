@@ -1,27 +1,32 @@
 <template>
-  <card :title="$t('your_info')">
-    <form @submit.prevent="update" @keydown="form.onKeydown($event)">
-      <alert-success :form="form" :message="$t('info_updated')" />
+  <div>
 
-      <!-- Email -->
-      <div class="form-group row">
-        <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
-        <div class="col-md-7">
-          <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
-          <has-error :form="form" field="email" />
-        </div>
-      </div>
+    <h1>{{ $t('profile.h1') }}</h1>
 
-      <!-- Submit Button -->
-      <div class="form-group row">
-        <div class="col-md-9 ml-md-auto">
-          <v-button :loading="form.busy" type="success">
-            {{ $t('update') }}
-          </v-button>
+    <card :title="$t('your_info')">
+      <form @submit.prevent="update" @keydown="form.onKeydown($event)">
+        <alert-success :form="form" :message="$t('info_updated')" />
+
+        <!-- Email -->
+        <div class="form-group row">
+          <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
+          <div class="col-md-7">
+            <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
+            <has-error :form="form" field="email" />
+          </div>
         </div>
-      </div>
-    </form>
-  </card>
+
+        <!-- Submit Button -->
+        <div class="form-group row">
+          <div class="col-md-9 ml-md-auto">
+            <v-button :loading="form.busy" type="success">
+              {{ $t('update') }}
+            </v-button>
+          </div>
+        </div>
+      </form>
+    </card>
+  </div>
 </template>
 
 <script>
@@ -32,7 +37,7 @@ export default {
   scrollToTop: false,
 
   metaInfo () {
-    return { title: this.$t('profile') }
+    return { title: this.$t('profile.title') }
   },
 
   data: () => ({

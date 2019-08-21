@@ -69,13 +69,13 @@
 
     <!-- Logout Dialog -->
     <v-dialog v-model="logoutDialog" max-width="290" dark content-class="naked dark centered">
-        <h2 class="display-2">{{ $t('logout_title') }}</h2>
-        <p>{{ $t('logout_desc') }}</p>
+        <h2 class="display-2">{{ $t('logout.title') }}</h2>
+        <p>{{ $t('logout.desc') }}</p>
         <v-container fluid>
           <v-row align="center">
             <v-col class="text-center" cols="12" sm="12">
-              <v-btn depressed @click="logoutDialog = false" outlined>{{ $t('logout_btn_stay_here') }}</v-btn>
-              <v-btn depressed @click.prevent="logout" color="error">{{ $t('logout_btn_logout') }}</v-btn>
+              <v-btn depressed @click="logoutDialog = false" outlined>{{ $t('logout.btn_stay_here') }}</v-btn>
+              <v-btn depressed @click.prevent="logout" color="error">{{ $t('logout.btn_logout') }}</v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -149,7 +149,7 @@ export default {
         return true;
       }
 
-      if(sPermission && this.user.right && this.user.right[sPermission] != 1) {
+      if(sPermission && this.user && this.user.right && this.user.right[sPermission] != 1) {
         return false;
       }
 
