@@ -19,7 +19,7 @@
       <!-- SideNavigation Categories / Pages -->
       <template>
         <div v-for="(cat, key) in sidenav" v-bind:key="key">
-          <template v-if="!(cat.hide_for_pan && user.pan)">
+          <template v-if="!(cat.hide_for_pan && user && user.pan)">
             <v-subheader v-if="cat.title">{{ $t(cat.title) }}</v-subheader>
               <v-list>
                 <template v-for="item in cat.pages">
@@ -28,7 +28,7 @@
                     link
                     :to="item.route"
                     color="accent" 
-                    v-if="checkRights(item.check_rights)"
+                    v-if="checkRights(item.sPermission)"
                   >
                       <v-list-item-icon>
                         <v-icon>{{ item.icon }}</v-icon>
@@ -110,9 +110,9 @@ export default {
           title: 'sidenav_backend',
           hide_for_pan: true,
           pages: [
-            { title: 'sidebar_backend_users', icon: 'person_add', route: {name: 'backend.users'},             check_rights: 'create_pan_users',               },
-            { title: 'sidebar_backend_groups', icon: 'group_add', route: {name: 'backend.groups'},            check_rights: 'create_groups',                },
-            { title: 'sidebar_backend_surveys', icon: 'forum', route: {name: 'backend.surveys'},              check_rights: 'create_surveys',              },
+            { title: 'sidebar_backend_users', icon: 'person_add', route: {name: 'backend.users'},             sPermission: 'create_pan_users',               },
+            { title: 'sidebar_backend_groups', icon: 'group_add', route: {name: 'backend.groups'},            sPermission: 'create_groups',                },
+            { title: 'sidebar_backend_surveys', icon: 'forum', route: {name: 'backend.surveys'},              sPermission: 'create_surveys',              },
             { title: 'sidebar_backend_statistics', icon: 'pie_chart', route: {name: 'backend.statistics'},}
           ]
         }
@@ -140,10 +140,19 @@ export default {
       this.$router.push({ name: 'welcome' })
     },
 
-    checkRights (check_right) {
-      if(!this.user.right.admin && check_right && this.user.right[check_right] != 1) {
+    userIsAdmin() {
+      return this.user && this.user.right && this.user.right.admin ? true : false;
+    },
+
+    checkRights (sPermission) {
+      if(this.userIsAdmin() || typeof sPermission === "undefined" || sPermission === null) {
+        return true;
+      }
+
+      if(sPermission && this.user.right && this.user.right[sPermission] != 1) {
         return false;
       }
+
       return true;
     }
   }

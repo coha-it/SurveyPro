@@ -8,15 +8,15 @@
           <v-col cols="12" sm="12" md="12">
 
             <!-- Alert -->
-              <v-alert color="blue-grey" dark icon="mdi-email" prominent v-if="form.errors.has('email')" dismissible>
-                <template v-for="errors in form.errors">
-                  <template v-for="error in errors">
-                    <template v-for="(e, i) in error">
-                      <div v-html="$t(e)" v-bind:key="i"></div>
-                    </template>
+            <v-alert color="blue-grey" dark icon="mdi-email" prominent v-if="form.errors.has('email')" dismissible>
+              <template v-for="errors in form.errors">
+                <template v-for="error in errors">
+                  <template v-for="(e, i) in error">
+                    <div v-html="$t(e)" v-bind:key="i"></div>
                   </template>
                 </template>
-              </v-alert>
+              </template>
+            </v-alert>
 
             <!-- Back -->
             <Back :to="{ name:'auth' }" />
