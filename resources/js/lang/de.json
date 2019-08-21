@@ -27,6 +27,8 @@
     "send_password_reset_link": "Sende Passwort-Zurücksetzen-Link",
     "prm_title": "Passwort Zurücksetzen",
     "prm_desc": "Falls Sie Ihr Passwort vergessen haben, geben Sei unten Ihre E-Mail Adresse des Kontos ein und folgen Sie die Schritte innerhalb E-Mail",
+    "pr_title": "Neues Passwort",
+    "pr_desc": "Vergeben Sie ein neues Passwort für Ihr Benutzerkonto",
     "settings": "Einstellungen",
     "profile": "Profil",
     "your_info": "Deine Infos",
@@ -62,8 +64,6 @@
     "free_register": "Jetzt kostenlos registrieren",
     "PAN": "PAN",
     "PIN": "PIN",
-    "The given data was invalid.": "Ihre Eingabedaten waren nicht korrekt.",
-    "The given data was invalid": "Ihre Eingabedaten waren nicht korrekt",
     "Welcome": "Willkommen",
     "password_label": "PASSWORT",
     "email_label": "E-MAIL",
@@ -88,6 +88,7 @@
     "logout_btn_logout": "Abmelden",
     "password_hint": "Zeichen",
     "password_repeat_hint": "Passwort wiederholen",
-    "auth.failed": "Login fehlgeschlagen"
+    "auth.failed": "Login fehlgeschlagen",
+    "invalid_given_data": "Die eingegeben Daten waren nicht korrekt"
   }
   

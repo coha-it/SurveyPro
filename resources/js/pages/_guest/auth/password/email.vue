@@ -16,6 +16,7 @@
                 dismissible
                 v-model="alert"
                 v-show="status"
+                class="animated tdDropInLeft"
               >
                 <div v-html="$t(status)"></div>
               </v-alert>
