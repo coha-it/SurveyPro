@@ -80,9 +80,11 @@ export default {
         y: 0,
     }),
 
-    computed: mapGetters({
-        user: 'auth/user',
-    }),
+    computed: {
+        ...mapGetters({
+            user: 'auth/user',
+        }),
+    },
 
     watch: {
         company (val, prev) {
@@ -123,16 +125,17 @@ export default {
             } else {
                 this.editing = null
                 this.index = -1
-                console.log('finished');
                 // Update Company
                 this.updateCompany(item);
             }
         },
 
-        setCompanyForUser(id) {
+        setCompanyForUser(id, name) {
             axios.patch('/api/user/company/set', { 
                 id: id
             });
+            this.user.company.id = id;
+            this.user.company.name = name;
         },
 
         updateCompany(item) {
@@ -160,22 +163,20 @@ export default {
 
             if(this.company && this.company.length && this.company.length >= 1) {
                 // Update Company ID
-                console.log('Change Company ID');
+                // console.log('Change Company ID');
 
                 var comp = this.company[this.company.length-1];
 
                 if(typeof comp === 'string') {
-                // Make a request for a user with a given ID
-                axios.post('/api/company/create', {
-                    name:comp
-                }).then(function (response) {
-                    console.log(response.data);
-                    _this.setCompanyForUser(response.data);
-                });
-
+                    // Make a request for a user with a given ID
+                    axios.post('/api/company/create', {
+                        name:comp
+                    }).then(function (response) {
+                        _this.setCompanyForUser(response.data, comp);
+                    });
                 } else if (typeof comp === 'object') {
-                // Use Existing Company!
-                _this.setCompanyForUser(comp.id)
+                    // Use Existing Company!
+                    _this.setCompanyForUser(comp.id, comp.name);
                 }
             } else {
                 // Empty Company ID from User
