@@ -1,5 +1,13 @@
 <template>
     <div>
-        <h1>Surveys</h1>
+        <h1>Surveys Management</h1>
     </div>
 </template>
+
+<script>
+
+export default {
+    middleware: 'canCreateSurveys'
+}
+
+</script>

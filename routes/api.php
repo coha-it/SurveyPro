@@ -13,17 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['middleware' => 'auth:api'], function () {
-    // Logout
-    Route::post('logout', 'Auth\LoginController@logout');
-
-    Route::get('/user', 'User\UserController@self');
-
-    // Update Profile
-    Route::patch('settings/profile', 'Settings\ProfileController@update')->middleware('auth.user.email');
-    Route::patch('settings/password', 'Settings\PasswordController@update')->middleware('auth.user.email');
-});
-
 Route::group(['middleware' => 'guest:api'], function () {
     Route::post('login', 'Auth\LoginController@login');
     Route::post('loginpan', 'Auth\LoginController@attemptLoginPan');
@@ -37,4 +26,15 @@ Route::group(['middleware' => 'guest:api'], function () {
 
     Route::post('oauth/{driver}', 'Auth\OAuthController@redirectToProvider');
     Route::get('oauth/{driver}/callback', 'Auth\OAuthController@handleProviderCallback')->name('oauth.callback');
+});
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::post('logout', 'Auth\LoginController@logout');
+
+    Route::get('/user', 'User\UserController@self');
+
+    Route::group(['middleware' => 'auth.user.email'], function() {
+        Route::patch('settings/profile', 'Settings\ProfileController@update');
+        Route::patch('settings/password', 'Settings\PasswordController@update');
+    });
 });
