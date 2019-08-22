@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-app>
+    <v-app class="coha-app--view">
       <Navigation />
       <v-content>
         <v-container fluid>
-          <div class="main-layout coha-app--view">
+          <div class="main-layout">
             <child />
           </div>
         </v-container>

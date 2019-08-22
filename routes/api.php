@@ -36,5 +36,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['middleware' => ['auth.user.email' ] ], function() {
         Route::patch('settings/profile', 'Settings\ProfileController@update');
         Route::patch('settings/password', 'Settings\PasswordController@update');
+
+        Route::patch('/user/company/set', 'User\Usercontroller@setCompanyId');
+        Route::get('/companies/all', 'User\Usercontroller@getAllCompanies');
+        Route::post('/company/create', 'User\Usercontroller@createCompany');
+        Route::patch('/company/update', 'User\Usercontroller@updateCompany');
     });
 });

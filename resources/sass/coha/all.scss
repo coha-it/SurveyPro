@@ -21,6 +21,13 @@ html body {
 
 // App-View
 .coha-app--view {
+
+    main {
+        & > .v-content__wrap {
+            padding-bottom: 50px;
+        }
+    }
+
     h1 {
         font-weight: 300;
         font-size: 2.85em;

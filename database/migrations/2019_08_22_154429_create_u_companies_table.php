@@ -4,10 +4,9 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUNewsletterTable extends Migration
+class CreateUCompaniesTable extends Migration
 {
-
-    public $tbl = 'u_newsletter';
+    public $tbl = 'u_companies';
 
     /**
      * Run the migrations.
@@ -18,12 +17,14 @@ class CreateUNewsletterTable extends Migration
     {
         Schema::create($this->tbl, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('created_by')->unsigned()->nullable();
+            $table->string('name');
+            $table->boolean('public')->default(false);
             $table->timestamps();
         });
 
         Schema::table($this->tbl, function (Blueprint $table) {
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

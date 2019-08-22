@@ -31,7 +31,10 @@
     "settings": "Einstellungen",
     "profile": {
       "title": "Profil",
-      "h1": "Profil"
+      "h1": "Profil",
+      "company": {
+        "create": "Erstelle Firma"
+      }
     },
     "your_info": "Ihre Infos",
     "info_updated": "Ihre Infos wurden aktualisiert!",

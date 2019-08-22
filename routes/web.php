@@ -43,6 +43,27 @@
 //     return '';
 // });
 
+// Create Users company
+Route::get('create-company', function() {
+    $usr = Auth()->user();
+    $usr->company->create([
+        'name' => 'Neue Firma 123',
+        'created_by' => $usr->id,
+    ]);
+});
+
+// Get User's Company
+Route::get('company', function() {
+    dd(Auth()->user()->company->name);
+    return '';
+});
+
+// Get Companies created by the User
+Route::get('companies', function() {
+    dd(Auth()->user()->createdCompanies);
+    return '';
+});
+
 Route::get('{path}', function () {
     return view('index');
 })->where('path', '(.*)');
