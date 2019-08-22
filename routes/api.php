@@ -33,7 +33,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('/user', 'User\UserController@self');
 
-    Route::group(['middleware' => 'auth.user.email'], function() {
+    Route::group(['middleware' => ['auth.user.email' ] ], function() {
         Route::patch('settings/profile', 'Settings\ProfileController@update');
         Route::patch('settings/password', 'Settings\PasswordController@update');
     });

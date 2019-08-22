@@ -37,6 +37,12 @@
 //     return "jo";
 // })->middleware('auth.user.pan');
 
+// // Newsletter
+// Route::get('newsletter', function() {
+//     dd(Auth()->user()->newsletter);
+//     return '';
+// });
+
 Route::get('{path}', function () {
     return view('index');
 })->where('path', '(.*)');
