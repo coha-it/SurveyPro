@@ -11,7 +11,7 @@
             :title="$t('pan_title')"
             :text="$t('pan_desc')" 
             :route="'pan'"
-            :color="'primary'" 
+            :color="'accent'" 
             :icon="'mdi-dialpad'"
             />
 

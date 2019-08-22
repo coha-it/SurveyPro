@@ -27,7 +27,6 @@
                     :key="item.title"
                     link
                     :to="item.route"
-                    color="accent" 
                     v-if="checkRights(item)"
                   >
                       <v-list-item-icon>
@@ -55,7 +54,7 @@
     <template>
       <v-bottom-navigation bottom fixed shift color="black accent-4" class="d-none d-md-flex d-sm-flex d-flex d-lg-none">
         <v-btn :input-value="drawer" @click.stop="drawer = !drawer">
-          <span>{{ $t('bottombar_menu') }}</span>
+          <span>{{ $t('bottombar.menu') }}</span>
           <v-icon>menu</v-icon>
         </v-btn>
 

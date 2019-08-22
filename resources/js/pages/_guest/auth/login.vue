@@ -77,7 +77,7 @@
           <v-row>
             <v-col cols="12" sm="12" md="12" align="right">
               <!-- Submit Button -->
-              <v-btn color="accent" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
+              <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
             </v-col>
             <v-col cols="12" sm="12" md="12" align="center">
 

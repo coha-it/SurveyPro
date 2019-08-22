@@ -41,7 +41,7 @@
 
                     ></v-text-field><br>
                     <v-text-field v-model="form.pin" :label="$t('PIN')" color='black' :error="form.errors.has('pin')" type="password" name="pin" required autocomplete="newpassword"></v-text-field><br>
-                    <v-btn color="accent" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
+                    <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
                 </v-form>
               </v-col>
             </v-row>
