@@ -1,0 +1,104 @@
+.alert {
+    background: #f2f2f2;
+    font-size: 16px;
+    margin-bottom: 16px;
+    padding: 16px 55px;
+    display: block;
+    border-radius: 4px;
+    position: relative;
+    transition: box-shadow .28s cubic-bezier(.4,0,.2,1);
+    will-change: box-shadow;
+
+    // Animations
+    animation-name: tdSwingIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
+
+    button.close {
+        font-size: 0;
+        width: 0;
+        height: 0;
+        display: block;
+
+        &:before {
+            content: "\F159";
+            display: inline-block;
+            font: normal normal normal 24px/1 "Material Design Icons";
+            font-size: inherit;
+            text-rendering: auto;
+            line-height: inherit;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-size: 24px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            height: 24px;
+            line-height: 1;
+            right: 15px;
+        }
+    }
+
+    &:before {
+        content: "\F2FC";
+        display: inline-block;
+        font: normal normal normal 24px/1 "Material Design Icons";
+        font-size: inherit;
+        text-rendering: auto;
+        line-height: inherit;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 24px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        height: 24px;
+        line-height: 1;
+        left: 15px;
+    }
+
+    &:before,
+    button.close:before {
+        color: #575757;
+    }
+
+
+    /* Success */
+    &.alert-success {
+        animation-name: tdSwingIn;
+        background: #6cae75;
+
+        &,
+        &:before,
+        & button.close:before {
+            color: #fff;
+        }
+
+        &:before {
+            content: "\F5E0";
+        }
+    }
+
+
+    /* Error */
+    &.alert-danger {
+        background: #dc6161;
+        animation-name: tdDropInLeft;
+
+        &,
+        &:before,
+        & button.close:before {
+            color: #fff;
+        }
+    
+    
+        &:before {
+            content: "\F026";
+        }
+    }
+
+}
