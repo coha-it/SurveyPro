@@ -11,7 +11,7 @@
               {{ title }}
             </v-list-item-title>
             <v-list-item-subtitle>
-              {{ $t('sidebar_subtitle') }}
+              {{ $t('sidenav.subtitle') }}
             </v-list-item-subtitle>
           </v-list-item-content>
       </v-list-item>
@@ -28,7 +28,7 @@
                     link
                     :to="item.route"
                     color="accent" 
-                    v-if="checkRights(item.sPermission)"
+                    v-if="checkRights(item)"
                   >
                       <v-list-item-icon>
                         <v-icon>{{ item.icon }}</v-icon>
@@ -100,30 +100,30 @@ export default {
       sidenav: [
         {
           pages: [
-            { title: 'sidenav_home', icon: 'home', route: {name:'home'} },
-            { title: 'sidebar_surveys', icon: 'poll', route: {name: 'surveys'} },
-            { title: 'sidenav_profile', icon: 'person', route: {name:'profile'} },
-            { title: 'sidebar_faq', icon: 'help', route: {name: 'faq'} }
+            { title: 'sidenav.home', icon: 'home', route: {name:'home'} },
+            { title: 'sidenav.surveys', icon: 'poll', route: {name: 'surveys'} },
+            { title: 'sidenav.profile', icon: 'person', route: {name:'profile'} },
+            { title: 'sidenav.faq', icon: 'help', route: {name: 'faq'} }
           ]
         },
         {
-          title: 'sidenav_backend',
+          title: 'sidenav.backend.title',
           hide_for_pan: true,
           pages: [
-            { title: 'sidebar_backend_users', icon: 'person_add', route: {name: 'backend.users'},             sPermission: 'create_pan_users',               },
-            { title: 'sidebar_backend_groups', icon: 'group_add', route: {name: 'backend.groups'},            sPermission: 'create_groups',                },
-            { title: 'sidebar_backend_surveys', icon: 'forum', route: {name: 'backend.surveys'},              sPermission: 'create_surveys',              },
-            { title: 'sidebar_backend_statistics', icon: 'pie_chart', route: {name: 'backend.statistics'},}
+            { title: 'sidenav.backend.users', icon: 'person_add', route: {name: 'backend.users'},             sPermission: 'create_users',               },
+            { title: 'sidenav.backend.groups', icon: 'group_add', route: {name: 'backend.groups'},            sPermission: 'create_groups',                },
+            { title: 'sidenav.backend.surveys', icon: 'forum', route: {name: 'backend.surveys'},              sPermission: 'create_surveys',              },
+            { title: 'sidenav.backend.statistics', icon: 'pie_chart', route: {name: 'backend.statistics'},}
           ]
         }
       ],
 
       drawer: null,
       bottomnav: [
-        { title: 'bottombar_profile', icon: 'person', route: {name: 'profile'} },
-        { title: 'bottombar_home', icon: 'home', route: {name: 'home'} },
-        { title: 'bottombar_surveys', icon: 'poll', route: {name: 'surveys'} },
-        { title: 'bottombar_faq', icon: 'help', route: {name: 'faq'} },
+        { title: 'bottombar.profile', icon: 'person', route: {name: 'profile'} },
+        { title: 'bottombar.home', icon: 'home', route: {name: 'home'} },
+        { title: 'bottombar.surveys', icon: 'poll', route: {name: 'surveys'} },
+        { title: 'bottombar.faq', icon: 'help', route: {name: 'faq'} },
       ],
 
       logoutDialog: false,
@@ -144,12 +144,14 @@ export default {
       return this.user && this.user.right && this.user.right.admin ? true : false;
     },
 
-    checkRights (sPermission) {
-      if(this.userIsAdmin() || typeof sPermission === "undefined" || sPermission === null) {
+    checkRights (item) {
+      var perm = item.sPermission;
+
+      if(this.userIsAdmin() || typeof perm === "undefined" || perm === null) {
         return true;
       }
 
-      if(sPermission && this.user && this.user.right && this.user.right[sPermission] != 1) {
+      if(perm && this.user && this.user.right && this.user.right[perm] != 1) {
         return false;
       }
 

@@ -1,8 +1,7 @@
 <template>
   <div class="main-layout">
-    <card :title="$t('home')">
-      {{ $t('you_are_logged_in') }}
-    </card>
+    <h1>{{$t('home')}}</h1>
+    <p>{{ $t('you_are_logged_in') }}</p>
   </div>
 </template>
 

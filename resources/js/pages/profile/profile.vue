@@ -1,31 +1,50 @@
 <template>
   <div>
 
-    <h1>{{ $t('profile.h1') }}</h1>
+    <!-- PAN - User -->
+    <template v-if="user && user.pan && user.pan.is_pan_user === 1">
+      
+    </template>
 
-    <card :title="$t('your_info')">
-      <form @submit.prevent="update" @keydown="form.onKeydown($event)">
-        <alert-success :form="form" :message="$t('info_updated')" />
+    <!-- E-Mail User -->
+    <template v-else>
+      <!-- Alert -->
+      <alert-success :form="form" :message="$t('info_updated')" />
+      <alert-error :form="form" :message="$t('error_alert_text')" />
 
-        <!-- Email -->
-        <div class="form-group row">
-          <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
-          <div class="col-md-7">
-            <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
-            <has-error :form="form" field="email" />
-          </div>
-        </div>
+      <h1>{{ $t('profile.h1') }}</h1>
+      <p>{{ $t('your_info') }}</p>
 
-        <!-- Submit Button -->
-        <div class="form-group row">
-          <div class="col-md-9 ml-md-auto">
-            <v-button :loading="form.busy" type="success">
-              {{ $t('update') }}
-            </v-button>
-          </div>
-        </div>
-      </form>
-    </card>
+      <!-- Form -->
+      <v-form @submit.prevent="update" @keydown="form.onKeydown($event)" style="    max-width: 350px;">
+        <v-container>
+          <v-row>
+            <v-col cols="12" sm="12" md="12" class="pa-0">
+              <!-- Email -->
+              <v-text-field 
+                v-model="form.email" 
+                :label="$t('email_label')" 
+                color='black' 
+                :error="form.errors.has('email')" 
+                type="email" 
+                name="email" 
+                required
+                ref="email"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col cols="12" sm="12" md="12" class="pa-0" align="right">
+              <!-- Submit Button -->
+              <v-btn color="accent" large block :loading="form.busy" type="submit">{{ $t('update') }}</v-btn>
+            </v-col>
+          </v-row>
+
+        </v-container>
+      </v-form>
+    </template>
+
   </div>
 </template>
 
@@ -56,8 +75,6 @@ export default {
     this.form.keys().forEach(key => {
       this.form[key] = this.user[key]
     })
-
-    console.log(this.user);
   },
 
   methods: {
