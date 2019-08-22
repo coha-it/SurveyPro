@@ -69,21 +69,31 @@
     "Welcome": "Willkommen",
     "password_label": "PASSWORT",
     "email_label": "E-MAIL",
-    "bottombar_menu": "Menü",
-    "bottombar_profile": "Konto",
-    "bottombar_home": "Home",
-    "bottombar_surveys": "Umfragen",
-    "bottombar_faq": "FAQ",
-    "sidebar_subtitle": "Befragungen Online",
-    "sidenav_home": "Home",
-    "sidenav_profile": "Konto",
-    "sidebar_surveys": "Ihre Umfragen",
-    "sidenav_backend": "Verwaltung",
-    "sidebar_backend_users": "Benutzer",
-    "sidebar_backend_groups": "Gruppen",
-    "sidebar_backend_surveys": "Umfragen",
-    "sidebar_backend_statistics": "Statistiken",
-    "sidebar_faq": "FAQ  /  Hilfe",
+
+    "bottombar": {
+      "menu": "Menü",
+      "profile": "Konto",
+      "home": "Home",
+      "surveys": "Umfragen",
+      "faq": "FAQ"
+    },
+
+    "sidenav": {
+      "subtitle": "Befragungen Online",
+      "home": "Home",
+      "profile": "Konto",
+      "surveys": "Ihre Umfragen",
+      "faq": "FAQ  /  Hilfe",
+
+      "backend": {
+        "title": "Verwaltung",
+        "users": "Benutzer",
+        "groups": "Gruppen",
+        "surveys": "Umfragen",
+        "statistics": "Statistiken"
+      }
+    },
+
     "logout": {
       "title": "Abmelden",
       "desc": "Möchten Sie sich abmelden?",
