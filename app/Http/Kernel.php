@@ -64,6 +64,9 @@ class Kernel extends HttpKernel
         'auth.user.pan' => \App\Http\Middleware\IsPanUser::class,
         'auth.user.email' => \App\Http\Middleware\IsEmailUser::class,
         'auth.user.admin' => \App\Http\Middleware\IsAdminUser::class,
+        'auth.user.can_create_users' => \App\Http\Middleware\canCreateUsers::class,
+        'auth.user.can_create_groups' => \App\Http\Middleware\canCreateGroups::class,
+        'auth.user.can_create_surveys' => \App\Http\Middleware\canCreateSurveys::class,
     ];
 
     /**

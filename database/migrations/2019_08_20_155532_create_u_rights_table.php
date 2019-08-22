@@ -24,7 +24,7 @@ class CreateURightsTable extends Migration
             $table->boolean('update_own_profile')->default(false);
             $table->boolean('create_surveys')->default(false);
             $table->boolean('create_groups')->default(false);
-            $table->boolean('create_pan_users')->default(false);
+            $table->boolean('create_users')->default(false);
 
             $table->boolean('admin')->default(false);
 
