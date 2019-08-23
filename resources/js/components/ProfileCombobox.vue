@@ -94,7 +94,7 @@ export default {
 
     created() {
         if(!this.all_companies || !this.all_companies.length) {
-        this.getCompanies();
+            this.getCompanies();
         }
 
         this.company[0] = this.user.company;
