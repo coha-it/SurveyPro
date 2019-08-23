@@ -175,6 +175,30 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
 
     /**
+     * Get the company record associated with the user.
+     */
+    public function groups()
+    {
+        return $this->belongsToMany('App\Group');
+    }
+
+    /**
+     * Get the company record associated with the user.
+     */
+    public function groupsMembering()
+    {
+        return $this->belongsToMany('App\Group')->wherePivot('is_member', 1);
+    }
+
+    /**
+     * Get the company record associated with the user.
+     */
+    public function groupsModerating()
+    {
+        return $this->belongsToMany('App\Group')->wherePivot('is_mod', 1);
+    }
+
+    /**
      * Get the info record associated with the user.
      */
     public function getSelfWithRelations()
