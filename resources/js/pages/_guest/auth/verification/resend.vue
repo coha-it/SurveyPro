@@ -1,29 +1,46 @@
 <template>
-  <div class="row">
-    <div class="col-lg-8 m-auto">
-      <card :title="$t('verify_email')">
+  <div class="rightsided-content coha--login-wrapper">
+    <div class="inner-content">
+      <!-- Back and Header -->
+      <v-container>
+        <v-row>  
+          <v-col cols="12" sm="12" md="12">
+            <!-- Alert -->
+            <alert-success :form="form" :message="status" />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="10" sm="10" md="10" align-self="center">
+            <h1>{{ $t('verify_email') }}</h1>
+            <p class="subtitle">{{ $t('verify_email_desc') }}</p>
+          </v-col>
+        </v-row>
+
         <form @submit.prevent="send" @keydown="form.onKeydown($event)">
-          <alert-success :form="form" :message="status" />
-
-          <!-- Email -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
-              <has-error :form="form" field="email" />
-            </div>
-          </div>
-
-          <!-- Submit Button -->
-          <div class="form-group row">
-            <div class="col-md-9 ml-md-auto">
-              <v-button :loading="form.busy">
-                {{ $t('send_verification_link') }}
-              </v-button>
-            </div>
-          </div>
+          <v-row>
+            <v-col>
+              
+                <!-- Email -->
+                <v-text-field 
+                  v-model="form.email" 
+                  :label="$t('email_label')" 
+                  color='black' 
+                  :error="form.errors.has('email')" 
+                  type="email" 
+                  name="email" 
+                  required
+                  ref="email"
+                ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+              <v-col cols="12" sm="12" md="12" align="right">
+                <!-- Submit Button -->
+                <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('send_verification_link') }}</v-btn>
+              </v-col>
+          </v-row>
         </form>
-      </card>
+      </v-container>
     </div>
   </div>
 </template>

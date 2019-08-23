@@ -25,6 +25,10 @@ html body {
     main {
         & > .v-content__wrap {
             padding-bottom: 50px;
+
+            p {
+                color: rgba(0,0,0,.6);
+            }
         }
     }
 
@@ -37,9 +41,7 @@ html body {
         font-size: 2em;
     }
 
-    p {
-        color: rgba(0,0,0,.6);
-    }
+
 }
 
 // Button 

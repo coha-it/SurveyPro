@@ -45,6 +45,7 @@
     "login_with": "Anmelden mit",
     "register_with": "Registrieren mit",
     "verify_email": "E-Mail verifizieren",
+    "verify_email_desc": "Versenden Sie einen Link an Ihre untenstehende E-Mail-Adresse um Ihr Konto zu verifizieren",
     "send_verification_link": "Sende Verifikations-Link",
     "resend_verification_link": "Verifikations-Link erneut senden?",
     "failed_to_verify_email": "E-Mail verifikation fehlgeschlagen.",

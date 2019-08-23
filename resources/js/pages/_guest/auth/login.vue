@@ -71,7 +71,7 @@
           <v-row>
             <v-col cols="12" sm="12" md="12" style="padding-bottom: 0;">
               <!-- Remember Me -->
-              <v-checkbox v-model="remember" :label="$t('remember_me')" name="remember"></v-checkbox>
+              <v-checkbox color="primary" v-model="remember" :label="$t('remember_me')" name="remember"></v-checkbox>
             </v-col>
           </v-row>
           <v-row>

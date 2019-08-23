@@ -1,26 +1,62 @@
 <template>
-  <div class="row">
-    <div class="col-lg-8 m-auto">
-      <card :title="$t('verify_email')">
-        <template v-if="success">
-          <div class="alert alert-success" role="alert">
-            {{ success }}
-          </div>
+  <div class="rightsided-content coha--login-wrapper">
+    <div class="inner-content">
 
-          <router-link :to="{ name: 'login' }" class="btn btn-primary">
-            {{ $t('login') }}
-          </router-link>
-        </template>
-        <template v-else>
-          <div class="alert alert-danger" role="alert">
-            {{ error || $t('failed_to_verify_email') }}
-          </div>
+      <!-- Back and Header -->
+      <v-container>
 
-          <router-link :to="{ name: 'verification.resend' }" class="small float-right">
-            {{ $t('resend_verification_link') }}
-          </router-link>
-        </template>
-      </card>
+
+        <v-row>
+          <v-col cols="12" sm="12" md="12">
+            <h1>{{ $t('verify_email') }}</h1>
+          </v-col>
+        </v-row>
+
+        <v-row>  
+          <v-col cols="12" sm="12" md="12">
+            <!-- Alert -->
+            <template v-if="success">
+              <div>
+                  <v-alert
+                  color="blue-grey"
+                  dark
+                  icon="mdi-email-mark-as-unread"
+                  prominent
+                  dismissible
+                  v-if="success"
+                  class="animated tdDropInLeft"
+                >
+                  <div v-html="$t(success)"></div>
+                </v-alert>
+
+                <router-link :to="{ name: 'login' }" class="btn btn-primary">
+                  {{ $t('login') }}
+                </router-link>
+              </div>
+            </template>
+            <!-- Error -->
+            <template v-else>
+              <div>
+                <v-alert
+                  color="warning"
+                  dark
+                  icon="mdi-email-mark-as-unread"
+                  prominent
+                  dismissible
+                  class="animated tdDropInLeft"
+                >
+                  <span v-html="error || $t('failed_to_verify_email')"></span>
+                </v-alert>
+
+                <router-link :to="{ name: 'verification.resend' }" class="small float-right">
+                  {{ $t('resend_verification_link') }}
+                </router-link>
+              </div>
+            </template>
+          </v-col>
+        </v-row>
+
+      </v-container>
     </div>
   </div>
 </template>
