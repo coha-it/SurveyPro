@@ -1,22 +1,21 @@
 <template>
     <div>
         <v-combobox
-            v-model="company"
+            v-model="model"
             :filter="filter"
             :hide-no-data="!search"
-            :items="all_companies"
+            :items="list"
             :item-text="'name'"
             :item-value="'id'"
             :search-input.sync="search"
-            label="Search for an option"
+            :label="$t(sInputLabel)"
             multiple
             dense 
-            solo 
-            autocomplete="off"
+            autocomplete="new-password"
         >
             <template v-slot:no-data>
             <v-list-item>
-                <span class="subheading">{{ $t('profile.company.create') }}</span>&nbsp; "{{ search }}"
+                <span class="subheading">{{ $t(create_text) }}</span>&nbsp; "{{ search }}"
             </v-list-item>
             </template>
             <template v-slot:selection="{ attrs, item, parent, selected }">
@@ -56,7 +55,8 @@
             </template>
         </v-combobox>
 
-        <v-btn @click="getCompanies">Firmen Aktualisieren</v-btn>
+        <!-- <v-btn @click="getListArray">Aktualisieren</v-btn> -->
+        <br>
   </div>
 </template>
 
@@ -66,19 +66,33 @@ import axios from 'axios'
 
 export default {
 
-    data: () => ({
-        all_companies: [],
-        activator: null,
-        attach: null,
-        editing: null,
-        index: -1,
-        nonce: 1,
-        menu: false,
-        company: [],
-        x: 0,
-        search: null,
-        y: 0,
-    }),
+    props: [
+        'create_text',
+        'p_oModel',
+        'p_sModel',
+        'p_sModels',
+        'p_sInputLabel'
+    ],
+
+    data () {
+        return {
+            list: [],
+            activator: null,
+            attach: null,
+            editing: null,
+            index: -1,
+            nonce: 1,
+            menu: false,
+            x: 0,
+            search: null,
+            y: 0,
+
+            model: this.p_oModel,
+            sModel: this.p_sModel,
+            sModels: this.p_sModels,
+            sInputLabel: this.p_sInputLabel
+        };
+    },
 
     computed: {
         ...mapGetters({
@@ -87,27 +101,27 @@ export default {
     },
 
     watch: {
-        company (val, prev) {
+        model (val, prev) {
             this.watchProfileInput(val, prev);
         },
     },
 
     created() {
-        if(!this.all_companies || !this.all_companies.length) {
-            this.getCompanies();
+        if(!this.list || !this.list.length) {
+            this.getListArray();
         }
 
-        this.company[0] = this.user.company;
+        this.model[0] = this.user[this.sModel];
     },
 
     methods: {
-        getCompanies() {
+        getListArray() {
             var _this = this;
             // Make a request for a user with a given ID
-            axios.get('/api/companies/all')
+            axios.get('/api/'+ this.sModels +'/all')
             .then(function (response) {
                 // handle success
-                _this.all_companies = response.data;
+                _this.list = response.data;
             })
             .catch(function (error) {
                 // handle error
@@ -125,21 +139,21 @@ export default {
             } else {
                 this.editing = null
                 this.index = -1
-                // Update Company
-                this.updateCompany(item);
+                // Update Model for Example the Company
+                this.updateModel(item);
             }
         },
 
-        setCompanyForUser(id, name) {
-            axios.patch('/api/user/company/set', { 
+        setModelForUser(id, name) {
+            axios.patch('/api/user/' + this.sModel + '/set', { 
                 id: id
             });
-            this.user.company.id = id;
-            this.user.company.name = name;
+            this.user[this.sModel].id = id;
+            this.user[this.sModel].name = name;
         },
 
-        updateCompany(item) {
-            axios.patch('/api/company/update', {
+        updateModel(item) {
+            axios.patch('/api/' + this.sModel + '/update', {
                 id: item.id,
                 name: item.name
             });
@@ -161,40 +175,42 @@ export default {
             
             if (val.length === prev.length) return
 
-            if(this.company && this.company.length && this.company.length >= 1) {
+            if(this.model && this.model.length && this.model.length >= 1) {
                 // Update Company ID
                 // console.log('Change Company ID');
 
-                var comp = this.company[this.company.length-1];
+                var comp = this.model[this.model.length-1];
 
                 if(typeof comp === 'string') {
-                    // Make a request for a user with a given ID
-                    axios.post('/api/company/create', {
+                    // Make a request for a new one
+                    axios.post('/api/' + this.sModel + '/create', {
                         name:comp
                     }).then(function (response) {
-                        _this.setCompanyForUser(response.data, comp);
+                        _this.setModelForUser(response.data, comp);
+                        _this.list[_this.list.length-1].id = response.data;
                     });
                 } else if (typeof comp === 'object') {
                     // Use Existing Company!
-                    _this.setCompanyForUser(comp.id, comp.name);
+                    _this.setModelForUser(comp.id, comp.name);
                 }
             } else {
                 // Empty Company ID from User
-                axios.patch('/api/user/company/set', {
-                id: null
+                axios.patch('/api/user/' + this.sModel + '/set', {
+                    id: null
                 });
             }
         
             
             if (val.length > 1) {
-                this.$nextTick(() => this.company.shift())
+                this.$nextTick(() => this.model.shift())
             }
-            this.company = val.map(v => {
+            this.model = val.map(v => {
                 if (typeof v === 'string') {
                 v = {
                     name: v,
+
                 }
-                this.all_companies.push(v)
+                this.list.push(v)
                 this.nonce++
                 }
                 return v

@@ -143,11 +143,43 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
 
     /**
+     * Get the company record associated with the user.
+     */
+    public function department()
+    {
+        return $this->belongsTo('App\UserDepartment');
+    }
+
+    /**
+     * Get the company record associated with the user.
+     */
+    public function departments()
+    {
+        return $this->hasMany('App\UserDepartment', 'created_by');
+    }
+
+    /**
+     * Get the company record associated with the user.
+     */
+    public function location()
+    {
+        return $this->belongsTo('App\UserLocation');
+    }
+
+    /**
+     * Get the company record associated with the user.
+     */
+    public function locations()
+    {
+        return $this->hasMany('App\UserLocation', 'created_by');
+    }
+
+    /**
      * Get the info record associated with the user.
      */
     public function getSelfWithRelations()
     {
-        return $this->with(['pan', 'right', 'company'])->find($this->id);
+        return $this->with(['pan', 'right', 'company', 'department', 'location'])->find($this->id);
     }
 
     /**

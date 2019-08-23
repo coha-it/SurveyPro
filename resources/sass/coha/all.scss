@@ -25,6 +25,8 @@ html body {
     main {
         & > .v-content__wrap {
             padding-bottom: 50px;
+            overflow: scroll;
+            max-height: 100vh;
 
             p {
                 color: rgba(0,0,0,.6);

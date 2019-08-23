@@ -33,7 +33,16 @@
       "title": "Profil",
       "h1": "Profil",
       "company": {
-        "create": "Erstelle Firma"
+        "create": "Erstelle Firma",
+        "choose": "Firma auswählen"
+      },
+      "department": {
+        "create": "Erstelle eine Abteilung",
+        "choose": "Wähle eine Abteilung"
+      },
+      "location": {
+        "create": "Erstelle einen Ort",
+        "choose": "Wähle einen Ort"
       }
     },
     "your_info": "Ihre Infos",

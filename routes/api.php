@@ -37,9 +37,23 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::patch('settings/profile', 'Settings\ProfileController@update');
         Route::patch('settings/password', 'Settings\PasswordController@update');
 
+        
+        // Company
+        Route::get('/companies/all', 'User\Usercontroller@getCompanies');
         Route::patch('/user/company/set', 'User\Usercontroller@setCompanyId');
-        Route::get('/companies/all', 'User\Usercontroller@getAllCompanies');
         Route::post('/company/create', 'User\Usercontroller@createCompany');
         Route::patch('/company/update', 'User\Usercontroller@updateCompany');
+        
+        // Department
+        Route::get('/departments/all', 'User\Usercontroller@getDepartments');
+        Route::patch('/user/department/set', 'User\Usercontroller@setDepartmentId');
+        Route::post('/department/create', 'User\Usercontroller@createDepartment');
+        Route::patch('/department/update', 'User\Usercontroller@updateDepartment');
+
+        // Locations
+        Route::get('/locations/all', 'User\Usercontroller@getLocations');
+        Route::patch('/user/location/set', 'User\Usercontroller@setLocationId');
+        Route::post('/location/create', 'User\Usercontroller@createLocation');
+        Route::patch('/location/update', 'User\Usercontroller@updateLocation');
     });
 });

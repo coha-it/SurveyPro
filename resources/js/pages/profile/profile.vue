@@ -58,7 +58,29 @@
               <br>
 
               <!-- Companies Combobox -->
-              <Combobox />
+              <Combobox 
+                create_text="profile.company.create"
+                p_sInputLabel="profile.company.choose"
+                :p_oModel="company"
+                :p_sModel="'company'"
+                :p_sModels="'companies'"
+                />
+
+              <Combobox 
+                create_text="profile.company.create"
+                p_sInputLabel="profile.department.choose"
+                p_sModel="department"
+                p_sModels="departments"
+                :p_oModel="department"
+                />
+
+              <Combobox 
+                create_text="profile.location.create"
+                p_sInputLabel="profile.location.choose"
+                p_sModel="location"
+                p_sModels="locations"
+                :p_oModel="location"
+                />
 
             </v-col>
 
@@ -94,6 +116,9 @@ export default {
       name: '',
       email: ''
     }),
+    company: [],
+    department: [],
+    location: []
   }),
 
   computed: mapGetters({
