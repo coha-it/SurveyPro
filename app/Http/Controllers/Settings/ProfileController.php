@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Settings;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\UserNewsletter as Newsletter;
+
 class ProfileController extends Controller
 {
     /**
@@ -16,12 +18,20 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = $request->user();
-
         $this->validate($request, [
-            // 'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$user->id,
         ]);
 
-        return tap($user)->update($request->only('name', 'email'));
+
+        if($request->newsletter === false) {
+            $user->newsletter()->delete();
+        } 
+        else if($request->newsletter === true) {
+            $user->newsletter()->updateOrCreate([
+                'user_id' => $request->user()->id
+            ]);
+        } 
+
+        return tap($user)->update($request->only('email', 'newsletter'));
     }
 }

@@ -15,6 +15,15 @@ class UserNewsletter extends Model
     protected $table = 'u_newsletter';
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'user_id'
+    ];
+
+    /**
      * Get the user record associated with the info.
      */
     public function user()

@@ -119,6 +119,10 @@
       "failed": "Login fehlgeschlagen"
     },
     "invalid_given_data": "Die eingegeben Daten waren nicht korrekt",
-    "company": "Firma"
+    "company": "Firma",
+
+    "newsletter": {
+      "newsletter": "Newsletter"
+    }
   }
   

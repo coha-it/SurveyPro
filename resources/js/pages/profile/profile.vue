@@ -20,6 +20,12 @@
         <v-container>
           <v-row>
             <v-col cols="12" sm="12" md="12" class="pa-0">
+
+              <v-checkbox
+                v-model="form.newsletter"
+                :label="$t('newsletter.newsletter')"
+              ></v-checkbox>
+
               <!-- Email -->
               <v-text-field 
                 v-model="form.email" 
@@ -130,6 +136,8 @@ export default {
     this.form.keys().forEach(key => {
       this.form[key] = this.user[key]
     })
+
+    this.form.newsletter = this.user.newsletter ? true : false;
   },
 
   methods: {

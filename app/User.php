@@ -179,7 +179,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function getSelfWithRelations()
     {
-        return $this->with(['pan', 'right', 'company', 'department', 'location'])->find($this->id);
+        return $this->with(['pan', 'right', 'company', 'department', 'location', 'newsletter'])->find($this->id);
     }
 
     /**
