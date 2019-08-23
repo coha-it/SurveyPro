@@ -39,4 +39,17 @@ class UserCompany extends Model
         return $this->hasOne('App\User', 'id', 'created_by');
     }
 
+    /**
+     * Scope a query to only include active users.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAllowed($query)
+    {
+        return $query->where(
+            'created_by', \Auth::user()->id
+        );
+    }
+
 }

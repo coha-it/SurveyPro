@@ -26,7 +26,7 @@ class UserController extends Controller
 
     public function getAllCompanies(Request $request) 
     {
-        return $request->user()->createdCompanies->toArray();
+        return $request->user()->companies->toArray();
     }
 
     public function createCompany(Request $request) 
@@ -41,13 +41,15 @@ class UserController extends Controller
     public function setCompanyId(Request $request)
     {
         $usr = $request->user();
-        $usr->company_id = $request->id;
-        $usr->save();
+        if($usr->companies()->allowed()->find($request->id)) {
+            $usr->company_id = $request->id;
+            $usr->save();
+        }
     }
 
     public function updateCompany(Request $request)
     {
-        $company = $request->user()->createdCompanies->where('id', '=', $request->id)->first();
+        $company = $request->user()->companies->where('id', $request->id)->first();
         $company->name = $request->name;
         $company->save();
     }
