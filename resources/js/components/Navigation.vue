@@ -17,7 +17,7 @@
       </v-list-item>
       <v-divider></v-divider>
       <!-- SideNavigation Categories / Pages -->
-      <template>
+      <template v-if="user">
         <div v-for="(cat, key) in sidenav" v-bind:key="key">
           <template v-if="!(cat.hide_for_pan && user && user.pan)">
             <v-subheader v-if="cat.title">{{ $t(cat.title) }}</v-subheader>
