@@ -185,9 +185,17 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     /**
      * Get the company record associated with the user.
      */
-    public function groupsMembering()
+    public function users()
     {
-        return $this->belongsToMany('App\Group')->wherePivot('is_member', 1);
+        return $this->hasMany('App\User', 'created_by')->with(['pan', 'groups']);
+    }
+
+    /**
+     * Get the company record associated with the user.
+     */
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'created_by');
     }
 
     /**
@@ -196,6 +204,14 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function groupsModerating()
     {
         return $this->belongsToMany('App\Group')->wherePivot('is_mod', 1);
+    }
+
+    /**
+     * Get the company record associated with the user.
+     */
+    public function groupsMembering()
+    {
+        return $this->belongsToMany('App\Group')->wherePivot('is_member', 1);
     }
 
     /**

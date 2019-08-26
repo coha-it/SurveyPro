@@ -44,11 +44,11 @@ class CreateULocations extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists($this->tbl);
-
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign('users_location_id_foreign');
             $table->dropColumn('location_id');
         });
+
+        Schema::dropIfExists($this->tbl);
     }
 }

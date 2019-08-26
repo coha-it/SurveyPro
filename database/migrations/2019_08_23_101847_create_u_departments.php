@@ -44,11 +44,11 @@ class CreateUDepartments extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists($this->tbl);
-
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign('users_department_id_foreign');
             $table->dropColumn('department_id');
         });
+
+        Schema::dropIfExists($this->tbl);
     }
 }

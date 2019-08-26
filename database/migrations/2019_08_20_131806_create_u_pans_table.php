@@ -30,9 +30,6 @@ class CreateUPansTable extends Migration
             $table->tinyInteger('failed_logins')->default(0);
             $table->timestamp('locked_until')->nullable();
 
-            // Created By
-            $table->bigInteger('created_by')->unsigned()->index()->nullable();
-
             // Timestamps
             $table->timestamps();
             $table->softDeletes();
@@ -43,9 +40,6 @@ class CreateUPansTable extends Migration
             $table->foreign('user_id')
                   ->references('id')->on('users')
                   ->onDelete('cascade');
-
-            // Connect Foreign Key
-            $table->foreign('created_by')->references('id')->on('users');
         });
     }
 
