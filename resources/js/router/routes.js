@@ -7,7 +7,8 @@ export default [
   // Unauthentificated
   { path: '/', name: 'welcome', component: page('_guest/welcome.vue') },
   { path: '/auth', name: 'auth', component: page('_guest/auth/auth.vue') },
-  { path: '/pan', name: 'pan', component: page('_guest/auth/pan.vue') },
+  { path: '/p/:pan', redirect: { path: '/pan/:pan' } },
+  { path: '/pan*', name: 'pan', component: page('_guest/auth/pan.vue') },
   { path: '/login', name: 'login', component: page('_guest/auth/login.vue') },
   { path: '/register', name: 'register', component: page('_guest/auth/register.vue') },
   { path: '/password/reset', name: 'password.request', component: page('_guest/auth/password/email.vue') },
