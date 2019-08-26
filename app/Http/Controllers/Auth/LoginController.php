@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
+use Mail;
 use App\User;
 use Carbon\Carbon;
 
@@ -70,12 +71,19 @@ class LoginController extends Controller
             ]
         );
 
+        // Transform PAN
+        $pan = $req->pan;
+        $pin = $req->pin;
+
+        // Remove Whitespace
+        $pan = str_replace(' ', '', $pan);
+
         // 1. Check PAN!
         // Try to Find the User
         $now = Carbon::now();
 
-        $user = User::whereHas('pan', function ($query) use ($req) {
-            $query->where('pan', '=', $req->pan);
+        $user = User::whereHas('pan', function ($query) use ($pan) {
+            $query->where('pan', '=', $pan);
         })->first();
 
         if(!$user) {
@@ -108,7 +116,7 @@ class LoginController extends Controller
             // if more than 15
             if($upan->failed_logins >= 15) {
                 // Add 24 Hours and Lock user, but reset failed attempts to 0
-                $this->lockAccount($upan, 24);
+                $this->lockAccount($upan, 24, $req->ip());
 
                 // Display time to wait. Should be 24 Hours
                 return $this->sendLockedResponse($upan, $now);
@@ -116,7 +124,7 @@ class LoginController extends Controller
         }
 
         // 4. Check PAN && PIN
-        if($req->pan != $upan->pan || $req->pin != $upan->pin)
+        if($pan != $upan->pan || $pin != $upan->pin)
         {
             // Login Failed
             $upan->failed_logins += 1;
@@ -140,6 +148,7 @@ class LoginController extends Controller
             // Send PAN Login Credentials
             $token = (string) $this->guard()->getToken();
             $expiration = $this->guard()->getPayload()->get('exp');
+
             return response()->json([
                 'token' => $token,
                 'token_type' => 'bearer',
@@ -153,11 +162,23 @@ class LoginController extends Controller
      *
      * @param \App\User $user
      */
-    protected function lockAccount($user, $hours) {
+    protected function lockAccount($upan, $hours, $ip = "") {
         // Lock Account
-        $user->pan->locked_until = Carbon::now()->copy()->addHours($hours);
-        $user->pan->failed_logins = 0;
-        $user->pan->save();
+        $upan->locked_until = Carbon::now()->copy()->addHours($hours);
+        $upan->failed_logins = 0;
+        $upan->save();
+
+        // Send Mail
+        $msg = '';
+        $msg .= "Account ID: \"".$upan->user()->first()->id."\" locked! \r\n";
+        $msg .= "Login try from IP:\"$ip\" \r\n";
+
+        Mail::raw($msg, function($message)
+        {
+            $message->from('it@corporate-happiness.de', env('APP_NAME'));
+            $message->subject('Account Locked');
+            $message->to('it@corporate-happiness.de');
+        });
     }
 
     /**

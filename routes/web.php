@@ -89,14 +89,36 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
         dd(Auth()->user()->groups);
     });
 
+    // Send Mail
+    Route::get('send-mail', function() {
+        Mail::raw('Hallo Welt', function($message)
+        {
+            $message->from('it@corporate-happiness.de', env('APP_NAME'));
+            $message->subject('Account Locked');
+            $message->to('it@corporate-happiness.de');
+        });
+    });
+
+
+    // Get PAN and then get User
+    Route::get('user/pan', function() {
+        dd(
+            App\UserPan::find(12)->user()->first()->id
+        );
+
+        return "";
+    });
+
+    // Get Companies created by the User
+    Route::get('companies', function() {
+        dd(Auth()->user()->createdCompanies);
+        return '';
+    });
+
 
 });
 
-// Get Companies created by the User
-Route::get('companies', function() {
-    dd(Auth()->user()->createdCompanies);
-    return '';
-});
+
 
 Route::get('{path}', function () {
     return view('index');
