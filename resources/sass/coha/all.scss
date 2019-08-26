@@ -43,7 +43,6 @@ html body {
         font-size: 2em;
     }
 
-
 }
 
 // Button 
@@ -127,7 +126,7 @@ html body {
         padding-bottom: 2px;
         height: auto;
         max-height: inherit;
-        font-family: Consolas, monospace, monospaced;
+        font-family: Roboto Mono, Consolas, monospace, monospaced;
     }
 
     .v-label {
@@ -144,6 +143,14 @@ html body {
     }
 }
 
+// PIN
+.v-input.pin {
+    input {
+        -moz-appearance: textfield;
+        -webkit-appearance: textfield;
+        -webkit-text-security: disc;
+    }
+}
 
 // V-Dialogs
 .v-dialog {

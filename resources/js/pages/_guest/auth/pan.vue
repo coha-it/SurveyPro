@@ -35,12 +35,32 @@
                     name="pan" 
                     required 
                     ref="pan" 
-                    counter 
-                    maxlength="6" 
-                    autocomplete="newpassword" 
-
+                    :hint="form.pan.replace(/\s/g, '').length + ' / ' + (pan_maxlength - 1)"
+                    :maxlength="pan_maxlength" 
+                    autocomplete="off" 
+                    v-mask="'XXX XXX'" 
+                    v-on:input="changePan" 
+                    persistent-hint 
                     ></v-text-field><br>
-                    <v-text-field v-model="form.pin" :label="$t('PIN')" color='black' :error="form.errors.has('pin')" type="password" name="pin" required autocomplete="newpassword"></v-text-field><br>
+
+                    <v-text-field 
+                    v-model="form.pin" 
+                    :label="$t('PIN')" 
+                    color='black' 
+                    :error="form.errors.has('pin')" 
+                    type="text" 
+                    pattern="[0-9]*"
+                    name="pin" 
+                    ref="pin"
+                    required 
+                    autocomplete="off" 
+                    :maxlength="pin_maxlength" 
+                    :hint="form.pin.length + ' / ' + (pin_maxlength)" 
+                    v-mask="'####'" 
+                    v-on:input="changePin" 
+                    class="pin" 
+                    persistent-hint 
+                    ></v-text-field><br>
                     <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
                 </v-form>
               </v-col>
@@ -53,6 +73,7 @@
 <script>
 import Form from 'vform'
 import Back from '~/components/AuthBack.vue'
+import {mask, TheMask} from 'vue-the-mask'
 
 export default {
   middleware: 'guest',
@@ -60,13 +81,17 @@ export default {
   layout: 'rightsided',
 
   components: {
-      Back
+      Back,
+      TheMask
   },
 
   directives: {
+    mask,
   },
 
   data: () => ({
+    pan_maxlength: 7,
+    pin_maxlength: 4,
     form: new Form({
       pan: '',
       pin: ''
@@ -75,21 +100,75 @@ export default {
     snackbarText: '',
   }),
 
-  // created: function() {},
+  created: function() {
+    // Check if PAN is in URL
+    var urlPan = this.$router.history.current.params.pathMatch.replace("/", "");
+
+    if(urlPan) {
+      this.form.pan = urlPan;
+    }
+  },
 
   mounted(){
-    this.$refs.pan.focus();
+    this.focusPan();
+    this.changePan();
   },
 
   methods: {
+    changePan() {
+      this.form.pan = this.form.pan.toUpperCase();
+      if(this.panIsFull()) {
+        if(this.pinIsFull()) {
+          this.loginpan();
+        } else {
+          this.focusPin();
+        }
+      }
+    },
+
+    changePin() {
+      if(this.pinIsFull()) {
+        if(this.panIsFull()) {
+          this.loginpan();
+        } else {
+          this.focusPan();
+        }
+      }
+    },
+
+    focusPin() {
+      if(this.$refs.pin) {
+        this.$refs.pin.focus();
+      }
+    },
+
+    focusPan() {
+      if(this.$refs.pan) {
+        this.$refs.pan.focus();
+      }
+    },
+
+    panIsFull() {
+      return this.form.pan.length >= this.pan_maxlength;
+    },
+
+    pinIsFull() {
+      return this.form.pin.length >= this.pin_maxlength;
+    },
+
 
     async loginpan () {
+
+      var _this = this;
+
+      if(this.form.busy) return;
 
       this.snackbar = false;
 
       // Submit the form.
       const { data } = await this.form.post('/api/loginpan')
       .catch((error) => {
+        _this.form.pin = '';
         if(error && error.response && error.response.data) {
           this.snackbarText = error.response.data.message;
           this.snackbar = false;
@@ -108,8 +187,10 @@ export default {
 
       // Redirect home.
       this.$router.push({ name: 'home' })
-    }
+    },
+
   },
+
 }
 </script>
 
