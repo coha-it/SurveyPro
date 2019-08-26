@@ -123,6 +123,11 @@
 
     "newsletter": {
       "newsletter": "Newsletter"
-    }
+    },
+
+    "groups": "Gruppen",
+    "updated_at": "Aktualisiert am",
+    "created_at": "Erstellt am"
+
   }
   

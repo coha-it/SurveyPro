@@ -39,4 +39,8 @@ class BackendController extends Controller
         return $request->user()->users->toArray();
     }
 
+    public function getGroupsModerating(Request $request) {
+        return $request->user()->groupsModerating->toArray();
+    }
+
 }

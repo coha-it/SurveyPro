@@ -58,5 +58,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         // Created Users
         Route::get('get/users/created', 'Backend\BackendController@getCreatedUsers');
+
+        // Moderating Groups
+        Route::get('get/groups/moderating', 'Backend\BackendController@getGroupsModerating');
     });
 });

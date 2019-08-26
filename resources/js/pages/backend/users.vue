@@ -21,7 +21,7 @@
                 </v-card-title>
                 <v-data-table
                     :headers="headers"
-                    :items="list"
+                    :items="users"
                     :search="search"
                     show-select
                     >
@@ -39,6 +39,13 @@
                     <!-- Groups -->
                     <template v-slot:item.groups="{ item }">
                         <v-chip v-for="group in item.groups" v-bind:key="group.id" dark>{{ group.name }}</v-chip>
+                        &nbsp;
+                        <v-chip>
+                            <select>
+                                <option selected>{{ $t('+ Add') }}</option>
+                                <option v-for="group in all_groups" v-if="!item.groups.includes(group)" v-bind:key="group.id">{{ group.name }}</option>
+                            </select>
+                        </v-chip>
                     </template>
 
                     <template v-slot:item.action="{ item }">
@@ -70,9 +77,14 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
     middleware: 'canCreateUsers',
+
+    computed: mapGetters({
+        user: 'auth/user'
+    }),
 
     data () {
       return {
@@ -83,39 +95,53 @@ export default {
             align: 'left',
             value: 'id',
           },
-          { text: 'PAN', value: 'pan.pan' },
-          { text: 'PIN', value: 'pan.pin' },
-          { text: 'Groups', value: 'groups'},
+          { text: this.$t('PAN'), value: 'pan.pan' },
+          { text: this.$t('PIN'), value: 'pan.pin' },
+          { text: this.$t('groups'), value: 'groups'},
+          { text: this.$t('updated_at'), value: 'updated_at'},
+          { text: this.$t('created_at'), value: 'created_at'},
         //   { text: 'Locked', value: 'pan.locked_until'},
           { text: 'Actions', value: 'action', sortable: false },
         ],
 
-        list: [],
+        all_groups: [],
+
+        users: [],
       }
     },
 
     created: function() {
         this.getUsers();
+        this.getGroups();
     },
 
 
     methods: {
         getUsers() {
             var _this = this;
-            // Make a request for a user with a given ID
             axios.get('/api/get/users/created')
                 .then(function (response) {
-                    // handle success
-                    _this.list = response.data;
+                    _this.users = response.data;
                 })
                 .catch(function (error) {
-                    // handle error
                     console.log(error);
                 })
                 .finally(function () {
-                    // always executed
                 });
         },
+
+        getGroups() {
+            var _this = this;
+            axios.get('/api/get/groups/moderating')
+                .then(function (response) {
+                    _this.all_groups = response.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+                .finally(function () {
+                });
+        }
     }
 
 }
