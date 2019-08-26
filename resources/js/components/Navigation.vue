@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- SideNavigation -->
-    <v-navigation-drawer app left absolute light resize v-model="drawer">
+    <v-navigation-drawer app left fixed light resize v-model="drawer">
       <v-list-item>
           <v-list-item-avatar>
             <v-img :src="'/storage/corporate-happiness-gmbh.svg'"></v-img>
