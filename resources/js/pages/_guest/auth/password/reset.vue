@@ -26,6 +26,7 @@
                 class="animated tdDropInLeft"
               >
                 <div v-html="$t(status)"></div>
+                <router-link :to="{ name: 'login' }">{{ $t('login') }}</router-link>
               </v-alert>
 
             <!-- Back -->

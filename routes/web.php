@@ -115,6 +115,16 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
         return '';
     });
 
+    Route::get('creator', function() {
+        dd(Auth()->user()->creator->pan);
+        return '';
+    });
+
+    Route::get('users', function() {
+        dd(Auth()->user()->users);
+        return '';
+    });
+
 
 });
 

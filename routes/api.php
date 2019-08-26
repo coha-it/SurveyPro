@@ -39,21 +39,24 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         
         // Company
-        Route::get('/companies/all', 'User\Usercontroller@getCompanies');
-        Route::patch('/user/company/set', 'User\Usercontroller@setCompanyId');
-        Route::post('/company/create', 'User\Usercontroller@createCompany');
-        Route::patch('/company/update', 'User\Usercontroller@updateCompany');
+        Route::get('companies/all', 'User\UserController@getCompanies');
+        Route::patch('user/company/set', 'User\UserController@setCompanyId');
+        Route::post('company/create', 'User\UserController@createCompany');
+        Route::patch('company/update', 'User\UserController@updateCompany');
         
         // Department
-        Route::get('/departments/all', 'User\Usercontroller@getDepartments');
-        Route::patch('/user/department/set', 'User\Usercontroller@setDepartmentId');
-        Route::post('/department/create', 'User\Usercontroller@createDepartment');
-        Route::patch('/department/update', 'User\Usercontroller@updateDepartment');
+        Route::get('departments/all', 'User\UserController@getDepartments');
+        Route::patch('user/department/set', 'User\UserController@setDepartmentId');
+        Route::post('department/create', 'User\UserController@createDepartment');
+        Route::patch('department/update', 'User\UserController@updateDepartment');
 
         // Locations
-        Route::get('/locations/all', 'User\Usercontroller@getLocations');
-        Route::patch('/user/location/set', 'User\Usercontroller@setLocationId');
-        Route::post('/location/create', 'User\Usercontroller@createLocation');
-        Route::patch('/location/update', 'User\Usercontroller@updateLocation');
+        Route::get('locations/all', 'User\UserController@getLocations');
+        Route::patch('user/location/set', 'User\UserController@setLocationId');
+        Route::post('location/create', 'User\UserController@createLocation');
+        Route::patch('location/update', 'User\UserController@updateLocation');
+
+        // Created Users
+        Route::get('get/users/created', 'Backend\BackendController@getCreatedUsers');
     });
 });
