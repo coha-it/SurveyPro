@@ -11,14 +11,19 @@
                 <v-card-title>
                     Created Users
                     <div class="flex-grow-1"></div>
-                    <v-text-field
-                        v-model="search"
-                        append-icon="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                    ></v-text-field>
                 </v-card-title>
+                <v-card-text> 
+                    <v-row no-gutters align-content="end" align="end" justify="end"> 
+                        <v-col cols="12" md="6">
+                            <v-btn small color="primary" text outlined @click="createCompany(header)">Firma erstellen</v-btn>
+                            <v-btn small color="primary" text outlined @click="createCompany(header)">Abteilung erstellen</v-btn>
+                            <v-btn small color="primary" text outlined @click="createCompany(header)">Ort erstellen</v-btn>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                            <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
                 <v-data-table
                     v-if="usersCreated && usersCreated.length >= 1"
                     :headers="headers"
@@ -311,6 +316,7 @@
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { mask, TheMask } from 'vue-the-mask'
+import { setTimeout } from 'timers';
 
 
 export default {
@@ -395,8 +401,9 @@ export default {
 
     methods: {
 
-        createCompany() {
-            console.log('jo');
+        createCompany(header) {
+            // header.sort = false;
+            // header.sortDesc = 0;
         },
 
         validUser(item) {
