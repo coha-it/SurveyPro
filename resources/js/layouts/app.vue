@@ -31,7 +31,7 @@ export default {
   padding: 25px;
 
   .main-layout {
-    max-width: 1080px;
+    max-width: 1580px;
   }
 }
 </style>

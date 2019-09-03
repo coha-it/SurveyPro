@@ -71,6 +71,7 @@ export default {
         'p_oModel',
         'p_sModel',
         'p_sModels',
+        'p_oUser',
         'p_sInputLabel'
     ],
 
@@ -90,6 +91,7 @@ export default {
             model: this.p_oModel,
             sModel: this.p_sModel,
             sModels: this.p_sModels,
+            oUser: this.p_oUser,
             sInputLabel: this.p_sInputLabel
         };
     },
@@ -111,7 +113,7 @@ export default {
             this.getListArray();
         }
 
-        this.model[0] = this.user[this.sModel];
+        this.model[0] = this.oUser[this.sModel];
     },
 
     methods: {
@@ -148,8 +150,8 @@ export default {
             axios.patch('/api/user/' + this.sModel + '/set', { 
                 id: id
             });
-            this.user[this.sModel].id = id;
-            this.user[this.sModel].name = name;
+            this.oUser[this.sModel].id = id;
+            this.oUser[this.sModel].name = name;
         },
 
         updateModel(item) {

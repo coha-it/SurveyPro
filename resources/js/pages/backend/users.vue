@@ -25,7 +25,10 @@
                     :items="usersCreated"
                     item-key="id"
                     :search="search"
-                    show-select
+                    show-select 
+                    multi-sort 
+                    :loading="loading"
+                    :loading-text="$t('loading.text')"
                     >
 
                     <!-- PAN -->
@@ -42,7 +45,9 @@
                                 persistent
                                 ref="dialog"
                             >
-                                <span class="pan--part">{{ item.pan.pan.substring(0,3) }}</span><span class="pan--part">{{ item.pan.pan.substring(3,6) }}</span>
+                                <span :class="!panIsOk(item) ? 'red--text' : ''">
+                                    <span class="pan--part">{{ item.pan.pan.substring(0,3) }}</span><span class="pan--part">{{ item.pan.pan.substring(3,6) }}</span>
+                                </span>
                                 <template v-slot:input>
                                     <div class="pan--dialog-input c-code-text">
                                         <v-text-field 
@@ -51,6 +56,7 @@
                                             :label="$t('edit')"
                                             single-line
                                             v-on:change="changePan(item)" 
+                                            :error="!panIsOk(item)" 
                                             counter
                                         ></v-text-field>
                                     </div>
@@ -72,7 +78,9 @@
                                 persistent
                             >
                                 <span class="coha--list-item pin">
-                                    <template v-if="item.pan.pin">{{ item.pan.pin }}</template>
+                                    <template v-if="item.pan.pin">
+                                        <span :class="!pinIsOk(item) ? 'red--text' : ''">{{ item.pan.pin }}</span>
+                                    </template>
                                     <template v-else>
                                         <span style="text-transform: uppercase;" class="red--text">{{ $t('empty') }}</span>
                                     </template>
@@ -224,6 +232,43 @@
                         </template>
                     </template>
 
+                    <!-- Company -->
+                    <template v-slot:item.company="{ item }">
+                        <select v-model="item.company_id">
+                            <option 
+                                :value="company.id" 
+                                :selected="item.company.id == company.id"
+                                v-for="company in user.companies" 
+                                v-bind:key="company.id"
+                                >{{ company.name }}</option>
+                        </select>
+                    </template>
+
+                    <!-- Department -->
+                    <template v-slot:item.department="{ item }">
+                        <select v-model="item.department_id">
+                            <option 
+                                :value="department.id" 
+                                :selected="item.department.id == department.id"
+                                v-for="department in user.departments" 
+                                v-bind:key="department.id"
+                                >{{ department.name }}</option>
+                        </select>
+                    </template>
+
+                    <!-- Location -->
+                    <template v-slot:item.location="{ item }">
+                        <select v-model="item.location_id">
+                            <option 
+                                :value="location.id" 
+                                :selected="item.location.id == location.id"
+                                v-for="location in user.locations" 
+                                v-bind:key="location.id"
+                                >{{ location.name }}</option>
+                        </select>
+                    </template>
+
+                    <!-- Action Buttons -->
                     <template v-slot:item.action="{ item }">
                         <v-btn
                             small
@@ -232,16 +277,23 @@
                             depressed 
                             class="mr-2"
                             @click="updateUser(item)"
-                            :disabled="!unsafed(item)"
+                            :disabled="!unsafed(item) || !validUser(item)"
                         >{{ $t('save') }}</v-btn>
+                        
+                        <v-tooltip top>
+                            <template v-slot:activator="{ on }">
+                                <v-icon :disabled="!unsafed(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
+                            </template>
+                            <span>{{ $t('reset') }}</span>
+                        </v-tooltip>
                         <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
-                        <v-icon small @click="deleteItem(item)" >delete</v-icon>
+                        <v-icon small @click="deleteItem(item)">delete</v-icon>
                     </template>
 
                 </v-data-table>
 
-                <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-                    {{ $t(snackText) }}
+                <v-snackbar v-model="snack" :timeout="snackTimeout" :color="snackColor" top>
+                    <span v-html="snackText"></span>
                     <v-btn text @click="snack = false">{{ $t('closer_button') }}</v-btn>
                 </v-snackbar>
 
@@ -294,6 +346,7 @@ export default {
 
         usersCreatedOld: [],
 
+        loading: false,
         search: '',
         headers: [
           {
@@ -304,6 +357,9 @@ export default {
           { text: this.$t('PAN'), value: 'pan.pan' },
           { text: this.$t('PIN'), value: 'pan.pin' },
           { text: this.$t('groups'), value: 'groups'},
+          { text: this.$t('company'), value: 'company'},
+          { text: this.$t('department'), value: 'department'},
+          { text: this.$t('location'), value: 'location'},
           { text: this.$t('updated_at'), value: 'updated_at'},
           { text: this.$t('created_at'), value: 'created_at'},
         //   { text: 'Locked', value: 'pan.locked_until'},
@@ -319,6 +375,7 @@ export default {
         snack: false,
         snackColor: '',
         snackText: '',
+        snackTimeout: 3000,
 
       }
     },
@@ -338,26 +395,51 @@ export default {
 
     methods: {
 
-        getKey(item) {
+        createCompany() {
+            console.log('jo');
+        },
+
+        validUser(item) {
+            if(
+                this.pinIsOk(item) && 
+                this.panIsOk(item)
+            ) {
+                return true;
+            }
+            return false;
+        },
+
+        pinIsOk(item) {
+            return item.pan.pin.length == 4;
+        },
+
+        panIsOk(item) {
+            return item.pan.pan.length == 6;
+        },
+
+        getOldUsersKey(item) {
             return this.usersCreated.map(function(x) {
                 return x.id;
             }).indexOf(item.id);
         },
 
         unsafed(item) {
-            var key = this.getKey(item);
+            var key = this.getOldUsersKey(item);
             var itemLeft = item;
             var itemRight = this.usersCreatedOld[key];
 
             return JSON.stringify(itemLeft) != JSON.stringify(itemRight);
         },
 
+        resetUser(item) {
+            var key = this.getOldUsersKey(item);
+            Object.assign(item, JSON.parse(JSON.stringify(this.usersCreatedOld[key])))
+        },
+
         updateUser(user) {
             // Variables
             var _this = this;
-
-            // Activate Snack
-            this.snack = true
+            this.loading = true;
 
             // Update User
             this.$store.dispatch('users/updateUser', {
@@ -365,32 +447,45 @@ export default {
             }).then(function(e) {
                 // Success
                 if(!e || !e.reponse || !e.reponse.data || !e.response.data.error) {
+                    _this.snackTimeout = 3000;
+                    _this.snack = true;
                     _this.snackColor = 'success'
-                    _this.snackText = 'data_saved'
+                    _this.snackText = _this.$t('data_saved')
 
                     // Save Old
-                    var key = _this.getKey(user);
+                    var key = _this.getOldUsersKey(user);
                     Object.assign(_this.usersCreatedOld[key], JSON.parse(JSON.stringify(user)))
                 }
+                _this.loading = false;
             }).catch(function(e) {
                 // Error
-                var res = JSON.parse(e.response.data.user);
-                Object.assign(user, res);
+                var res = e.response.data;
+                var err = res.error;
+                var errText = '';
+                for (var e in err) {
+                    errText += ': ' + err[e];
+                }
 
-                _this.snackColor = 'error'
-                _this.snackText = 'Data not safed'
+                _this.snackTimeout = 6000;
+                _this.snack = true;
+                _this.snackColor = 'error';
+                _this.snackText = _this.$t('attribute_unsaved') + "<br />" + errText;
+
+                _this.loading = false;
             });
         },
 
         save() {
-          this.snack = true
-          this.snackColor = 'primary'
-          this.snackText = 'attribute_changed'
+            this.snackTimeout = 3000;
+            this.snack = true
+            this.snackColor = 'primary'
+            this.snackText = this.$t('attribute_changed')
         },
         cancel () {
-          this.snack = true
-          this.snackColor = 'primary'
-          this.snackText = 'canceled'
+            this.snackTimeout = 3000;
+            this.snack = true
+            this.snackColor = 'primary'
+            this.snackText = this.$t('canceled')
         },
         open () {
         },

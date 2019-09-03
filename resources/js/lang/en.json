@@ -43,5 +43,8 @@
   "ES": "Spanish",
   "中文": "Chinese",
   "pan_and_pin": "PIN & PAN",
-  "pan_and_pin_desc": "I know my PIN and PAN and want to authentificate with it"
+  "pan_and_pin_desc": "I know my PIN and PAN and want to authentificate with it",
+  "loading": {
+    "text": "Loading... Please wait"
+  }
 }

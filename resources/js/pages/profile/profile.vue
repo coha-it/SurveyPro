@@ -70,6 +70,7 @@
                 :p_oModel="company"
                 :p_sModel="'company'"
                 :p_sModels="'companies'"
+                :p_oUser="user"
                 />
 
               <Combobox 
@@ -78,6 +79,7 @@
                 p_sModel="department"
                 p_sModels="departments"
                 :p_oModel="department"
+                :p_oUser="user"
                 />
 
               <Combobox 
@@ -86,6 +88,7 @@
                 p_sModel="location"
                 p_sModels="locations"
                 :p_oModel="location"
+                :p_oUser="user"
                 />
 
             </v-col>

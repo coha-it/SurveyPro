@@ -67,6 +67,7 @@ class BackendController extends Controller
         $validator = \Validator::make($request->all(), [
             'user' => 'required',
             'user.pan.pan' => 'required|unique:u_pans,pan,'. $request->user['id'] .',user_id',
+            'user.pan.pin' => 'required|min:4|max:4'
         ]);
       
         // Get Data

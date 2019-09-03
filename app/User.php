@@ -19,7 +19,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'email', 'password',
+        'email', 'password', 'company_id', 'department_id', 'location_id'
     ];
 
     /**
@@ -187,7 +187,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function users()
     {
-        return $this->hasMany('App\User', 'created_by')->with(['pan', 'groups']);
+        return $this->hasMany('App\User', 'created_by')->with(['pan', 'groups', 'company', 'department', 'location']);
     }
 
     /**
@@ -219,7 +219,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function getSelfWithRelations()
     {
-        return $this->with(['pan', 'right', 'company', 'department', 'location', 'newsletter'])->find($this->id);
+        return $this->with(['pan', 'right', 'company', 'companies', 'department', 'departments', 'location', 'locations', 'newsletter'])->find($this->id);
     }
 
     /**

@@ -124,6 +124,8 @@
     },
     "invalid_given_data": "Die eingegeben Daten waren nicht korrekt",
     "company": "Firma",
+    "department": "Abteilung",
+    "location": "Ort",
 
     "newsletter": {
       "newsletter": "Newsletter"
@@ -139,7 +141,12 @@
     "canceled": "Abgebrochen",
     "attribute_changed": "Attribut angepasst",
     "attribute_opened": "Attribut Geöffnet",
-    "data_saved": "Daten gespeichert"
+    "attribute_unsaved": "Attribut nicht gespeichert",
+    "data_saved": "Daten gespeichert",
+    "reset": "Zurücksetzen",
+    "loading": {
+      "text": "Bitte warten ..."
+    }
 
   }
   
