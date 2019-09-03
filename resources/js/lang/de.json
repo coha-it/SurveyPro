@@ -9,7 +9,7 @@
     "login": "Anmelden",
     "register": "Registrieren",
     "page_not_found": "Seite nicht gefunden",
-    "go_home": "Home",
+    "go_home": "Zur Startseite",
     "email": "E-Mail",
     "your_email": "Ihre E-Mail Adresse",
     "check_mails": "Mail wurde versendet!",
@@ -18,6 +18,10 @@
     "forgot_password": "Passwort vergessen?",
     "confirm_password": "Passwort wiederholen",
     "name": "Name",
+    "save": "speichern",
+    "edit": "Bearbeiten",
+    "empty": "leer",
+    "delete": "löschen",
     "your_name": "Ihr Name",
     "toggle_navigation": "Navigation umschalten",
     "home": "Home",
@@ -127,7 +131,15 @@
 
     "groups": "Gruppen",
     "updated_at": "Aktualisiert am",
-    "created_at": "Erstellt am"
+    "created_at": "Erstellt am",
+
+    "remove": "Entfernen",
+    "added": "Hinzugefügt",
+    "add_to": "Hinzufügen",
+    "canceled": "Abgebrochen",
+    "attribute_changed": "Attribut angepasst",
+    "attribute_opened": "Attribut Geöffnet",
+    "data_saved": "Daten gespeichert"
 
   }
   

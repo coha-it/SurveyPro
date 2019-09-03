@@ -73,7 +73,7 @@
 <script>
 import Form from 'vform'
 import Back from '~/components/AuthBack.vue'
-import {mask, TheMask} from 'vue-the-mask'
+import {mask} from 'vue-the-mask'
 
 export default {
   middleware: 'guest',
@@ -81,8 +81,7 @@ export default {
   layout: 'rightsided',
 
   components: {
-      Back,
-      TheMask
+      Back
   },
 
   directives: {

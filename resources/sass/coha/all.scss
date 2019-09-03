@@ -42,8 +42,18 @@ html body {
         font-weight: 300;
         font-size: 2em;
     }
-
 }
+
+
+// SELECT IN CHIP
+.v-chip__content > select {
+    height: 100%;
+    width: calc(100% + 20px);
+    margin: 0 -10px;
+    padding: 0px 10px;
+}
+
+
 
 // Button 
 .v-btn__content {
@@ -179,4 +189,45 @@ html body {
     &.theme--light {
         background: #fefefe;
     }
+}
+
+
+// 
+
+.c-code-text {
+    &,
+    & input {
+        font-family: Roboto Mono;
+        font-size: 1.15em;
+    }
+}
+
+
+.pan--dialog-input {
+    .v-text-field__slot > *,
+    input {
+        text-transform: uppercase;
+    }
+} 
+
+.coha--list-item {
+
+    &.c-code-text {
+        &,
+        & > .v-small-dialog__activator {
+            width: 100%;
+            display: inline-block;
+        }
+    }
+
+    &.pan {
+        .pan--part:first-child {
+            margin-right: .275em;
+        }
+    }
+
+    &.pin {
+
+    }
+
 }
