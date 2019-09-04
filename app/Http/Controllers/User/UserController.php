@@ -104,7 +104,7 @@ class UserController extends Controller
     public function updateCompany(Request $request)
     {
         if($request->id) {
-            $m = $request->user()->companies()->allowed()->where('id', $request->id)->first();
+            $m = $request->user()->companies()->allowed()->find($request->id)->firstOrFail();
             $m->name = $request->name;
             $m->save();
         }
@@ -113,7 +113,7 @@ class UserController extends Controller
     public function updateDepartment(Request $request)
     {
         if($request->id) {
-            $m = $request->user()->departments()->allowed()->where('id', $request->id)->first();
+            $m = $request->user()->departments()->allowed()->find($request->id)->firstOrFail();
             $m->name = $request->name;
             $m->save();
         }
@@ -122,7 +122,7 @@ class UserController extends Controller
     public function updateLocation(Request $request)
     {
         if($request->id) {
-            $m = $request->user()->locations()->allowed()->where('id', $request->id)->first();
+            $m = $request->user()->locations()->allowed()->find($request->id)->firstOrFail();
             $m->name = $request->name;
             $m->save();
         }
