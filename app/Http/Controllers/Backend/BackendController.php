@@ -252,6 +252,7 @@ class BackendController extends Controller
             
             // Delete
             array_push($deletedIds, $user->id);
+            $user->pan->delete();
             $user->delete();
         }
 
