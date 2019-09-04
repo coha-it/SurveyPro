@@ -10,10 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class UserPan extends Model
 {
 
-    use SoftDeletes;
-
-    protected $dates = ['deleted_at'];
-
     /**
      * The table associated with the model.
      *
