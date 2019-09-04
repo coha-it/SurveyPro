@@ -15,9 +15,87 @@
                 <v-card-text> 
                     <v-row no-gutters align-content="end" align="end" justify="end"> 
                         <v-col cols="12" md="6">
-                            <v-btn small color="primary" text outlined @click="createCompany(header)">Firma erstellen</v-btn>
-                            <v-btn small color="primary" text outlined @click="createCompany(header)">Abteilung erstellen</v-btn>
-                            <v-btn small color="primary" text outlined @click="createCompany(header)">Ort erstellen</v-btn>
+                            
+                            
+                            <v-dialog v-model="dialogEditCompanies" max-width="900px" persistent scrollable>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn small color="primary" depressed v-on="on">Firma bearbeiten</v-btn>
+                                </template>
+                                <v-card>
+                                    <v-card-title class="headline grey lighten-2" primary-title>Firma Bearbeiten</v-card-title>
+                                    <v-card-text>
+                                        <br>
+                                        <v-card>
+                                            <v-card-title>
+                                                <!-- New Company -->
+                                                <v-dialog v-model="dialogCreateCompany" persistent max-width="290">
+                                                    <template v-slot:activator="{ on }">
+                                                        <v-btn color="primary" dark v-on="on">Create Company</v-btn>
+                                                    </template>
+                                                    <v-card>
+                                                        <v-card-title class="headline">Create Company</v-card-title>
+                                                        <v-card-text>
+                                                            <v-text-field label="Company" required v-model="company_name"></v-text-field>
+                                                        </v-card-text>
+                                                        <v-card-actions>
+                                                            <div class="flex-grow-1"></div>
+                                                            <v-btn color="green darken-1" text @click="dialogCreateCompany = false">cancel</v-btn>
+                                                            <v-btn color="green darken-1" text @click="createCompany(company_name)">save</v-btn>
+                                                        </v-card-actions>
+                                                    </v-card>
+                                                </v-dialog>
+
+
+                                                <div class="flex-grow-1"></div>
+                                                <v-text-field
+                                                    v-model="search"
+                                                    append-icon="search"
+                                                    label="Search"
+                                                    single-line
+                                                    hide-details
+                                                ></v-text-field>
+                                            </v-card-title>
+                                            <v-data-table
+                                                :headers="company_headers"
+                                                :items="user.companies"
+                                                :items-per-page="20"
+                                                class="elevation-1"
+                                                multi-sort>
+                                                <template v-slot:item.name="props">
+                                                    <v-edit-dialog
+                                                        :return-value.sync="props.item.name"
+                                                        @save="saveCompany(props.item)"
+                                                        @cancel="cancel"
+                                                        @open="open"
+                                                        @close="close" 
+                                                        lazy 
+                                                    > {{ props.item.name }}
+                                                        <template v-slot:input>
+                                                            <v-text-field
+                                                                v-model="props.item.name"
+                                                                label="Edit"
+                                                                single-line
+                                                                counter
+                                                            ></v-text-field>
+                                                        </template>
+                                                    </v-edit-dialog>
+                                                </template>
+                                            </v-data-table>
+                                        </v-card>
+
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <div class="flex-grow-1"></div>
+                                        <v-btn color="primary" text @click="dialogEditCompanies = false">
+                                            close
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+
+
+                            <v-btn small color="primary" depressed>Abteilung bearbeiten</v-btn>
+                            <v-btn small color="primary" depressed>Ort bearbeiten</v-btn>
                         </v-col>
                         <v-col cols="12" md="6">
                             <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
@@ -119,7 +197,7 @@
                             <v-chip 
                                 v-for="(group, i) in item.groups" 
                                 v-bind:key="i" 
-                                outlined small 
+                                outlined small  
                                 class="mr-1"
                             >{{ group.name }}</v-chip>
                             <!-- <v-chip>
@@ -137,7 +215,7 @@
                             <template>
                                 <v-dialog v-model="item.groupDialog" scrollable max-width="500px">
                                     <template v-slot:activator="{ on }">
-                                        <v-chip color="primary" dark v-on="on" small :disabled="item.groupDialog">{{ $t('edit') }}</v-chip>
+                                        <v-chip v-on="on" small :disabled="item.groupDialog">{{ $t('edit') }}</v-chip>
                                     </template>
                                     <v-card>
                                         <v-card-title>Gruppen hinzufügen / entfernen</v-card-title>
@@ -344,6 +422,10 @@ export default {
     data () {
       return {
 
+          dialogEditCompanies: false,
+          dialogCreateCompany: false,
+          company_name: '',
+
         panTokens: {
             P: {
                 pattern: /[0-9A-Za-z]/,
@@ -370,6 +452,16 @@ export default {
           { text: this.$t('created_at'), value: 'created_at'},
         //   { text: 'Locked', value: 'pan.locked_until'},
           { text: 'Actions', value: 'action', sortable: false },
+        ],
+
+        // Company Headers
+        company_headers: [
+          { text: this.$t('id'), value: 'id' },
+          { text: this.$t('name'), value: 'name' },
+          { text: this.$t('public'), value: 'public' },
+          { text: this.$t('created_by'), value: 'created_by' },
+          { text: this.$t('updated_at'), value: 'updated_at'},
+          { text: this.$t('created_at'), value: 'created_at'},
         ],
 
         all_groups: [],
@@ -401,11 +493,6 @@ export default {
 
     methods: {
 
-        createCompany(header) {
-            // header.sort = false;
-            // header.sortDesc = 0;
-        },
-
         validUser(item) {
             if(
                 this.pinIsOk(item) && 
@@ -430,10 +517,17 @@ export default {
             }).indexOf(item.id);
         },
 
+        copyObject(obj) {
+            return JSON.parse(JSON.stringify(obj));
+        },
+
         unsafed(item) {
             var key = this.getOldUsersKey(item);
-            var itemLeft = item;
-            var itemRight = this.usersCreatedOld[key];
+            var itemLeft = this.copyObject(item);
+            var itemRight = this.copyObject(this.usersCreatedOld[key]);
+
+            delete itemLeft.groupDialog;
+            delete itemRight.groupDialog;
 
             return JSON.stringify(itemLeft) != JSON.stringify(itemRight);
         },
@@ -488,6 +582,27 @@ export default {
             this.snackColor = 'primary'
             this.snackText = this.$t('attribute_changed')
         },
+        saveCompany(item) {
+            this.snackTimeout = 5000;
+            this.snack = true
+            this.snackColor = 'success'
+            this.snackText = this.$t('data_saved')
+
+            axios.patch('/api/company/update', {
+                id: item.id,
+                name: item.name
+            });
+        },
+
+        createCompany(name) {
+            var _this = this;
+            axios.post('/api/company/create', {
+                name: name
+            }).then(function (response) {
+                _this.user.companies.push(response.data);
+            });
+        },
+
         cancel () {
             this.snackTimeout = 3000;
             this.snack = true
