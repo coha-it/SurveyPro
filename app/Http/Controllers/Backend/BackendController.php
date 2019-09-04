@@ -112,7 +112,7 @@ class BackendController extends Controller
      * 
      * @return String $token
      */
-    public function createRandom($pattern, $max) {
+    public function getRandom($pattern, $max) {
         return substr(str_shuffle(str_repeat($pattern, $max)), 0, $max);
     }
 
@@ -122,9 +122,9 @@ class BackendController extends Controller
      *
      * @return String $token
      */
-    public function createRandomPan() {
+    public function getRandomPan() {
         do {
-            $token = $this->createRandom("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6);
+            $token = $this->getRandom("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6);
             $user = Pan::where('pan', $token)->get();
         }
         while(!$user->isEmpty());
@@ -137,8 +137,8 @@ class BackendController extends Controller
      * 
      * @return String $token
      */
-    public function createRandomPin() {
-        return $this->createRandom("0123456789", 4);
+    public function getRandomPin() {
+        return $this->getRandom("0123456789", 4);
     }
 
     /**
@@ -160,8 +160,8 @@ class BackendController extends Controller
 
         // Go Through Number
         for ($i=0; $i < $number; $i++) { 
-            $sRandPan = $this->createRandomPan();
-            $sRandPin = $this->createRandomPin();
+            $sRandPan = $this->getRandomPan();
+            $sRandPin = $this->getRandomPin();
 
             $user = User::create(['created_by' => $self->id]);
             $user->pan()->updateOrCreate([

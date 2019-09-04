@@ -61,8 +61,11 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('group/create', 'Backend\BackendController@createGroup');
         Route::patch('group/update', 'Backend\BackendController@updateGroup');
 
-
+        // Get Users
         Route::get('users-created', 'Backend\BackendController@getCreatedUsers'); // Created Users
+
+        // Get a Generated PAN
+        Route::get('get-random-pan', 'Backend\BackendController@getRandomPan');
 
         // Update Users Groups
         Route::post('add-user-to-group', 'Backend\BackendController@addUserToGroup');

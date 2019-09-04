@@ -60,7 +60,7 @@
                     <!-- No Select Toolbar -->
                     <v-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="search == ''" floating min-height="85px" height="auto">
                         <!-- Create User -->
-                            <v-dialog v-model="bCreateUsersDialog" transition="dialog-bottom-transition" max-width="700" :content-class="bCreateUsersLoading ? 'naked dark centered': '' ">
+                            <v-dialog v-model="bCreateUsersDialog" transition="dialog-bottom-transition" max-width="700" :content-class="bCreateUsersLoading ? 'naked dark centered': '' " persistent>
                               <template v-slot:activator="{ on }">
                                   <!-- Create User: Button -->
                                 <v-btn rounded text class="primary--text" v-on="on">
@@ -138,6 +138,9 @@
                         <v-btn text rounded>
                             <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
                         </v-btn>
+
+                        <Print :p_users="selected" />
+                        
                         <v-btn text rounded error warning>
                             <v-icon left>delete</v-icon> {{ selected.length + ' ' + $t('delete') }}
                         </v-btn>
@@ -189,6 +192,8 @@
                                                 single-line
                                                 v-on:change="changePan(item)" 
                                                 :error="!panIsOk(item)" 
+                                                :disabled="panIsLoading"
+                                                :loading="panIsLoading"
                                                 counter>
                                                 <v-tooltip slot="append" top>
                                                     <template #activator="{ on }">
@@ -449,10 +454,6 @@
             </v-card>
         </template>
 
-        <!-- <v-btn v-on:click="getUsers">Get Users</v-btn> -->
-
-
-
     </div>
 </template>
 
@@ -462,6 +463,7 @@ import { mapGetters } from 'vuex'
 import { mask, TheMask } from 'vue-the-mask'
 import { setTimeout } from 'timers';
 import UserDataModal from '~/components/BackendUserDataModal'
+import Print from '~/components/BackendUsersPrint'
 
 export default {
     middleware: 'canCreateUsers',
@@ -475,7 +477,8 @@ export default {
 
     components: {
         TheMask,
-        UserDataModal
+        UserDataModal,
+        Print
     },
 
     directives: {
@@ -495,6 +498,7 @@ export default {
                   pattern: /[0-9A-Za-z]/,
               }
           },
+          panIsLoading: false,
   
           usersCreatedOld: [],
           selected: [],
@@ -557,7 +561,16 @@ export default {
     methods: {
 
         getRandomPan(user) {
-            console.log('generate');
+            var _this = this;
+            _this.panIsLoading = true;
+
+            axios.get('/api/get-random-pan')
+            .then(function(response) {
+                _this.panIsLoading = false;
+                user.pan.pan = response.data;
+            }).catch(function(response) {
+                _this.panIsLoading = false;
+            });
         },
 
         generateRandomPin(item) {
