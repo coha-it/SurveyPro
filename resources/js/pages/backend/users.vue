@@ -675,7 +675,9 @@ export default {
             var itemRight = this.copyObject(this.usersCreatedOld[key]);
 
             delete itemLeft.groupDialog;
+            delete itemLeft.deleteUserDialog;
             delete itemRight.groupDialog;
+            delete itemRight.deleteUserDialog;
 
             return JSON.stringify(itemLeft) != JSON.stringify(itemRight);
         },
