@@ -3,6 +3,75 @@
         <h1>Users</h1>
         <p>Create Users with PAN & PIN</p>
         <p>
+
+                <!-- Create User -->
+                <v-dialog v-model="bCreateUsersDialog" transition="dialog-bottom-transition" max-width="700" :content-class="bCreateUsersLoading ? 'naked dark centered': '' " persistent>
+                  <template v-slot:activator="{ on }">
+                    <!-- Create User: Button -->
+                    <template>
+                        <v-btn size="large" tile depressed color="primary" v-on="on" class="mt-2 mr-2">
+                            Benutzer erstellen&nbsp;<v-icon right class="pr-2">mdi-account-plus</v-icon>
+                        </v-btn>
+                    </template>
+                  </template>
+
+                  <!-- Create User: Modal -->
+                  <v-card v-if="!bCreateUsersLoading">
+                    <v-toolbar dark color="primary">
+                      <v-btn icon dark @click="bCreateUsersDialog = false">
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                      <v-toolbar-title>Erstelle neue Zugänge</v-toolbar-title>
+                      <div class="flex-grow-1"></div>
+                      <v-toolbar-items>
+                        <v-btn dark text @click="createUsers()" v-if="iCreateUsersNumber > 0">{{ iCreateUsersNumber }} Zugänge Generieren</v-btn>
+                      </v-toolbar-items>
+                    </v-toolbar>
+                    <v-list three-line subheader>
+                      <v-subheader>Zugänge Konfigurieren</v-subheader>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>Benutzer / Zugänge erstellen</v-list-item-title>
+                          <v-list-item-subtitle>Wählen Sie eine Anzahl der zu erstellenden Benutzer aus</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+
+                      <v-list-item>
+                        <v-list-item-content style="max-width:400px;">
+                            <v-text-field outlined clearable label="Benutzeranzahl" v-model="iCreateUsersNumber" required hide-details type="number"></v-text-field>
+                        </v-list-item-content>
+                      </v-list-item>
+
+                      <v-list-item>
+                        <v-list-item-action>
+                          <v-checkbox v-model="bCreateUsersRandomPin" color="primary"></v-checkbox>
+                        </v-list-item-action>
+                        <v-list-item-content>
+                          <v-list-item-title>Zufällige PIN</v-list-item-title>
+                          <v-list-item-subtitle>Generiert eine Zufällige PIN. z.B. 1534 oder 5664. Die PIN kann im Anschluss angepasst werden</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+
+                      <v-list-item>
+                        <v-list-item-action>
+                          <v-checkbox v-model="bCreateUsersRandomPan" disabled color="primary"></v-checkbox>
+                        </v-list-item-action>
+                        <v-list-item-content>
+                          <v-list-item-title>Zufällige PAN</v-list-item-title>
+                          <v-list-item-subtitle>Generiert eine Zufällige und individuelle / einmalige PAN. z.B.: G4D 4Y6. Die PAN kann im Anschluss angepasst werden</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+
+                    </v-list>
+                    <v-divider></v-divider>
+                  </v-card>
+                  <!-- Loading -->
+                  <template v-else>
+                    <p>{{ $t('loading.text') }}</p>
+                    <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+                  </template>
+                </v-dialog>
+
             <UserDataModal 
                 sEditText="Firmen bearbeiten"
                 sCreateText="Neue Firma erstellen" 
@@ -37,6 +106,7 @@
                     { text: this.$t('updated_at'), value: 'updated_at'},
                     { text: this.$t('created_at'), value: 'created_at'}
                 ]" />
+
         </p>
 
         <br>
@@ -59,73 +129,8 @@
                 </v-card-text>
                     <!-- No Select Toolbar -->
                     <v-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="search == ''" floating min-height="85px" height="auto">
-                        <!-- Create User -->
-                            <v-dialog v-model="bCreateUsersDialog" transition="dialog-bottom-transition" max-width="700" :content-class="bCreateUsersLoading ? 'naked dark centered': '' " persistent>
-                              <template v-slot:activator="{ on }">
-                                  <!-- Create User: Button -->
-                                <v-btn rounded text class="primary--text" v-on="on">
-                                    <v-icon left class="pr-2">mdi-account-plus</v-icon> Benutzer erstellen
-                                </v-btn>
-                              </template>
-
-                              <!-- Create User: Modal -->
-                              <v-card v-if="!bCreateUsersLoading">
-                                <v-toolbar dark color="primary">
-                                  <v-btn icon dark @click="bCreateUsersDialog = false">
-                                    <v-icon>mdi-close</v-icon>
-                                  </v-btn>
-                                  <v-toolbar-title>Erstelle neue Zugänge</v-toolbar-title>
-                                  <div class="flex-grow-1"></div>
-                                  <v-toolbar-items>
-                                    <v-btn dark text @click="createUsers()" v-if="iCreateUsersNumber > 0">{{ iCreateUsersNumber }} Zugänge Generieren</v-btn>
-                                  </v-toolbar-items>
-                                </v-toolbar>
-                                <v-list three-line subheader>
-                                  <v-subheader>Zugänge Konfigurieren</v-subheader>
-                                  <v-list-item>
-                                    <v-list-item-content>
-                                      <v-list-item-title>Benutzer / Zugänge erstellen</v-list-item-title>
-                                      <v-list-item-subtitle>Wählen Sie eine Anzahl der zu erstellenden Benutzer aus</v-list-item-subtitle>
-                                    </v-list-item-content>
-                                  </v-list-item>
-
-                                  <v-list-item>
-                                    <v-list-item-content style="max-width:400px;">
-                                        <v-text-field outlined clearable label="Benutzeranzahl" v-model="iCreateUsersNumber" required hide-details type="number"></v-text-field>
-                                    </v-list-item-content>
-                                  </v-list-item>
-
-                                  <v-list-item>
-                                    <v-list-item-action>
-                                      <v-checkbox v-model="bCreateUsersRandomPin" color="primary"></v-checkbox>
-                                    </v-list-item-action>
-                                    <v-list-item-content>
-                                      <v-list-item-title>Zufällige PIN</v-list-item-title>
-                                      <v-list-item-subtitle>Generiert eine Zufällige PIN. z.B. 1534 oder 5664. Die PIN kann im Anschluss angepasst werden</v-list-item-subtitle>
-                                    </v-list-item-content>
-                                  </v-list-item>
-
-                                  <v-list-item>
-                                    <v-list-item-action>
-                                      <v-checkbox v-model="bCreateUsersRandomPan" disabled color="primary"></v-checkbox>
-                                    </v-list-item-action>
-                                    <v-list-item-content>
-                                      <v-list-item-title>Zufällige PAN</v-list-item-title>
-                                      <v-list-item-subtitle>Generiert eine Zufällige und individuelle / einmalige PAN. z.B.: G4D 4Y6. Die PAN kann im Anschluss angepasst werden</v-list-item-subtitle>
-                                    </v-list-item-content>
-                                  </v-list-item>
-
-                                </v-list>
-                                <v-divider></v-divider>
-                              </v-card>
-                              <!-- Loading -->
-                              <template v-else>
-                                <p>{{ $t('loading.text') }}</p>
-                                <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-                              </template>
-                            </v-dialog>
-
-                            <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="primary"></v-switch>
+ 
+                            <v-switch class="mt-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="primary"></v-switch>
 
                         <div class="flex-grow-1"></div>
                         <v-text-field style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" single-line hide-details></v-text-field>

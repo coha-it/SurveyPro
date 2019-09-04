@@ -124,7 +124,8 @@ class BackendController extends Controller
      */
     public function getRandomPan() {
         do {
-            $token = $this->getRandom("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6);
+            // $token = $this->getRandom("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6);
+               $token = $this->getRandom("123456789ABCDEFGHIJKLMNPQRSTUVWXYZ", 6);
             $user = Pan::where('pan', $token)->get();
         }
         while(!$user->isEmpty());

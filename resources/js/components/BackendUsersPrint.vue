@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="dialog" transition="disabled" overflowed content-class="naked dark" no-click-animation>
         <template v-slot:activator="{ on }">
-            <v-btn text rounded error warning @click="printUsers()">
+            <v-btn text rounded error warning @click="printView()">
                 <v-icon left>print</v-icon> {{ users.length + ' ' + $t('print') }}
             </v-btn>
 
@@ -27,15 +27,21 @@
                         max-height: 100% !important;
                     }
 
+
+
             </component>
 
         </template>
 
-        <v-toolbar dark color="primary" fixed absolute top>
-          <v-btn icon dark @click="dialog = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <v-switch class="mt-6 ml-6" v-model="colorfull" :label="colorfull ? 'Farbenfroh' : 'Schwarz & Weiß' " color="accent"></v-switch>
+        <v-toolbar dark color="primary" fixed absolute top >
+                <v-btn icon dark @click="dialog = false">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+                <v-btn text rounded dark @click="printUsers()" class="ml-3 mr-3">
+                    <v-icon left>print</v-icon> Drucken
+                </v-btn>
+                <v-switch class="mt-7 ml-1 mr-3" v-model="colorfull" :label="colorfull ? 'Farbenfroh' : 'Schwarz & Weiß' " color="accent"></v-switch>
+                <div class="flex-grow-1"></div>
         </v-toolbar>
 
         <div class="coha--print">
@@ -102,15 +108,12 @@ export default {
 
 
     methods: {
-        printUsers() {
+        printView() {
             var _this = this;
-
             _this.dialog = true;
-            console.log('jo');
-            setTimeout(function() {
-                // window.print();
-                // _this.dialog = false;
-            }, 100);
+        },
+        printUsers() {
+            window.print();
         },
         url(user) {
             return "https://surveypro.tk/p/"+user.pan.pan;
@@ -141,6 +144,7 @@ export default {
         align-self: center;
 
         .inner {
+            page-break-inside: avoid;
             position: relative;
             display: block;
             width: 90mm;
@@ -174,12 +178,12 @@ export default {
         }
 
         p {
-margin-bottom: 12px;
-    font-size: 4mm;
+            margin-bottom: 12px;
+            font-size: 4mm;
 
             &.subtext {
-font-size: 3.5mm;
-    line-height: 1.15;
+                font-size: 3.5mm;
+                line-height: 1.15;
             }
         }
 

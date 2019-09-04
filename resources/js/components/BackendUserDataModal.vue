@@ -8,7 +8,7 @@
 
         <v-dialog v-model="editDialog" max-width="900px" max-height="1000px" min-height="500px" height="90%" persistent scrollable transition="dialog-bottom-transition">
             <template v-slot:activator="{ on }">
-                <v-btn color="primary" depressed v-on="on">{{ sEditText }}</v-btn>
+                <v-btn color="primary" depressed tile outlined class="mt-2 mr-2" v-on="on">{{ sEditText }}</v-btn>
             </template>
             <v-card>
                 <v-toolbar dark color="primary">
