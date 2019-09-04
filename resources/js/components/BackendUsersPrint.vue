@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" lazy transition="disabled" overflowed content-class="naked dark" no-click-animation>
+    <v-dialog v-model="dialog" transition="disabled" overflowed content-class="naked dark" no-click-animation>
         <template v-slot:activator="{ on }">
             <v-btn text rounded error warning @click="printUsers()">
                 <v-icon left>print</v-icon> {{ users.length + ' ' + $t('print') }}
@@ -86,7 +86,7 @@ import QrcodeVue from 'qrcode.vue'
 
 export default {
     props: [
-        'p_users'
+        'users'
     ],
 
     components: {
@@ -97,9 +97,6 @@ export default {
         return {
             dialog: false,
             colorfull: true,
-
-            // From Parent
-            users: this.p_users
         }
     },
 

@@ -139,7 +139,7 @@
                             <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
                         </v-btn>
 
-                        <Print :p_users="selected" />
+                        <Print :users="selected" />
                         
                         <v-btn text rounded error warning>
                             <v-icon left>delete</v-icon> {{ selected.length + ' ' + $t('delete') }}
