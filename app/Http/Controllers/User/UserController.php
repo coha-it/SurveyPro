@@ -76,7 +76,7 @@ class UserController extends Controller
     public function createCompany(Request $request) 
     {
         $m = Company::create([
-            'name' => $request->name,
+            'name' => $request->item['name'],
             'created_by' => $request->user()->id,
         ]);
         return $m->toJson();
@@ -85,7 +85,7 @@ class UserController extends Controller
     public function createDepartment(Request $request) 
     {
         $m = Department::create([
-            'name' => $request->name,
+            'name' => $request->item['name'],
             'created_by' => $request->user()->id,
         ]);
         return $m->toJson();
@@ -94,7 +94,7 @@ class UserController extends Controller
     public function createLocation(Request $request) 
     {
         $m = Location::create([
-            'name' => $request->name,
+            'name' => $request->item['name'],
             'created_by' => $request->user()->id,
         ]);
         return $m->toJson();
@@ -103,28 +103,40 @@ class UserController extends Controller
     // Update Compnay Location Department
     public function updateCompany(Request $request)
     {
-        if($request->id) {
-            $m = $request->user()->companies()->allowed()->find($request->id)->firstOrFail();
-            $m->name = $request->name;
-            $m->save();
-        }
+        $request->validate([
+            'item' => 'required',
+            'item.id' => 'required',
+            'item.name' => 'required'
+        ]);
+        $item = $request->item;
+        $m = $request->user()->companies()->allowed()->find($item['id']);
+        $m->name = $item['name'];
+        $m->save();
     }
 
     public function updateDepartment(Request $request)
     {
-        if($request->id) {
-            $m = $request->user()->departments()->allowed()->find($request->id)->firstOrFail();
-            $m->name = $request->name;
-            $m->save();
-        }
+        $request->validate([
+            'item' => 'required',
+            'item.id' => 'required',
+            'item.name' => 'required'
+        ]);
+        $item = $request->item;
+        $m = $request->user()->departments()->allowed()->find($item['id']);
+        $m->name = $item['name'];
+        $m->save();
     }
 
     public function updateLocation(Request $request)
     {
-        if($request->id) {
-            $m = $request->user()->locations()->allowed()->find($request->id)->firstOrFail();
-            $m->name = $request->name;
-            $m->save();
-        }
+        $request->validate([
+            'item' => 'required',
+            'item.id' => 'required',
+            'item.name' => 'required'
+        ]);
+        $item = $request->item;
+        $m = $request->user()->locations()->allowed()->find($item['id']);
+        $m->name = $item['name'];
+        $m->save();
     }
 }

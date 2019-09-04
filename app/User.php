@@ -219,7 +219,15 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function getSelfWithRelations()
     {
-        return $this->with(['pan', 'right', 'company', 'companies', 'department', 'departments', 'location', 'locations', 'newsletter'])->find($this->id);
+        return $this->with(['pan', 'right', 'groupsModerating', 'company', 'companies', 'department', 'departments', 'location', 'locations', 'newsletter'])->find($this->id);
+    }
+
+    /**
+     * Get the info record associated with the user.
+     */
+    public function getSelfWithPanUserRelations()
+    {
+        return $this->with(['pan', 'company', 'companies', 'department', 'departments', 'location', 'locations', 'groups'])->find($this->id);
     }
 
     /**

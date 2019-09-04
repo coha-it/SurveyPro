@@ -29,12 +29,16 @@
                                 <v-card>
                                     <v-card-title class="headline">{{ sCreateText }}</v-card-title>
                                     <v-card-text>
-                                        <v-text-field :label="sInputLabel" required v-model="field_name"></v-text-field>
+                                        <v-text-field :label="sInputLabel" required v-model="item.name"></v-text-field>
+                                        <template v-if="sModel == 'group'">
+                                            <v-text-field :label="sInputLabel2" required v-model="item.description_public"></v-text-field>
+                                            <v-text-field :label="sInputLabel3" required v-model="item.description_mods"></v-text-field>
+                                        </template>
                                     </v-card-text>
                                     <v-card-actions>
                                         <div class="flex-grow-1"></div>
                                         <v-btn color="green darken-1" text @click="createDialog = false">{{ $t('cancel') }}</v-btn>
-                                        <v-btn color="green darken-1" text @click="createModel(field_name)">{{ $t('save') }}</v-btn>
+                                        <v-btn color="green darken-1" text @click="createModel(item)">{{ $t('save') }}</v-btn>
                                     </v-card-actions>
                                 </v-card>
                             </v-dialog>     
@@ -42,12 +46,11 @@
                             <!-- <v-text-field v-model="sSearch" append-icon="search" label="Search" single-line hide-details></v-text-field> -->
                         </v-card-title>
                         <v-data-table
-                            :headers="headers"
+                            :headers="aHeaders"
                             :items="oModels"
                             :items-per-page="20"
                             class="elevation-1"
-                            :search="sSearch"
-                            multi-sort>
+                            v-if="aHeaders">
                             <template v-slot:item.name="props">
                                 <v-edit-dialog
                                     :return-value.sync="props.item.name"
@@ -57,7 +60,7 @@
                                     @close="close" 
                                     lazy 
                                 >
-                                <span v-if="props.item.name.length > 0">{{ props.item.name }}</span>
+                                <span v-if="props && props.item && props.item.name && props.item.name.length > 0">{{ props.item.name }}</span>
                                 <span v-else class="red--text c-code-text">{{ $t('empty') }}</span>
                                     <template v-slot:input>
                                         <v-text-field
@@ -71,6 +74,57 @@
                                     </template>
                                 </v-edit-dialog>
                             </template>
+
+                            <!-- Description Public -->
+                            <template v-slot:item.description_public="props">
+                                <v-edit-dialog
+                                    :return-value.sync="props.item.description_public"
+                                    @save="save(props.item)"
+                                    @cancel="cancel"
+                                    @open="open"
+                                    @close="close" 
+                                    lazy 
+                                >
+                                    <span v-if="props && props.item && props.item.description_public && props.item.description_public.length > 0">{{ props.item.description_public }}</span>
+                                    <span v-else class="red--text c-code-text">{{ $t('empty') }}</span>
+                                    <template v-slot:input>
+                                        <v-text-field
+                                            v-model="props.item.description_public"
+                                            label="Edit"
+                                            single-line
+                                            :rules="[minChars]"
+                                            counter 
+                                            required 
+                                        ></v-text-field>
+                                    </template>
+                                </v-edit-dialog>
+                            </template>
+                            
+                            <!-- Description Mods -->
+                            <template v-slot:item.description_mods="props">
+                                <v-edit-dialog
+                                    :return-value.sync="props.item.description_mods"
+                                    @save="save(props.item)"
+                                    @cancel="cancel"
+                                    @open="open"
+                                    @close="close" 
+                                    lazy 
+                                >
+                                <span v-if="props && props.item && props.item.description_mods && props.item.description_mods.length > 0">{{ props.item.description_mods }}</span>
+                                <span v-else class="red--text c-code-text">{{ $t('empty') }}</span>
+                                    <template v-slot:input>
+                                        <v-text-field
+                                            v-model="props.item.description_mods"
+                                            label="Edit"
+                                            single-line
+                                            :rules="[minChars]"
+                                            counter 
+                                            required 
+                                        ></v-text-field>
+                                    </template>
+                                </v-edit-dialog>
+                            </template>
+
                         </v-data-table>
                     </v-card>       
                 </v-card-text>
@@ -101,26 +155,22 @@ export default {
         'sCreateText',
         'sEditText',
         'sInputLabel',
+        'sInputLabel2',
+        'sInputLabel3',
         'p_sModel',
         'p_oModels',
+        'p_aHeaders',
     ],
 
     data() {
         return {
             editDialog: false,
             createDialog: false,
-            field_name: '',
+            item: {
+                name: '',
+                description_public: ''
+            },
             sSearch: '',
-
-            // Company Headers
-            headers: [
-                { text: this.$t('id'), value: 'id' },
-                { text: this.$t('name'), value: 'name' },
-                { text: this.$t('public'), value: 'public' },
-                { text: this.$t('created_by'), value: 'created_by' },
-                { text: this.$t('updated_at'), value: 'updated_at'},
-                { text: this.$t('created_at'), value: 'created_at'},
-            ],
 
             // Snackbar
             snack: false,
@@ -131,6 +181,16 @@ export default {
             // From Parent
             sModel:  this.p_sModel,
             oModels: this.p_oModels,
+
+            // Company Headers
+            aHeaders: this.p_aHeaders || [
+                { text: this.$t('id'), value: 'id' },
+                { text: this.$t('name'), value: 'name' },
+                { text: this.$t('public'), value: 'public' },
+                { text: this.$t('created_by'), value: 'created_by' },
+                { text: this.$t('updated_at'), value: 'updated_at'},
+                { text: this.$t('created_at'), value: 'created_at'},
+            ],
 
             // Rules
             minChars: v => v.length >= 1 || this.$t('validation.length.short'),
@@ -146,17 +206,16 @@ export default {
             this.snackColor = 'success'
             this.snackText = this.$t('data_saved')
             axios.patch('/api/'+ this.sModel +'/update', {
-                id: item.id,
-                name: item.name
+                item: item
             });
         },
 
-        createModel(name) {
+        createModel(item) {
             var _this = this;
             _this.createDialog = false;
 
             axios.post('/api/'+ this.sModel +'/create', {
-                name: name
+                item: item
             }).then(function (response) {
                 _this.oModels.push(response.data);
             });

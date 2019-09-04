@@ -29,7 +29,7 @@ class Group extends Model
      * @var array
      */
     protected $visible = [
-        'id', 'name', 'description_public'
+        'id', 'name', 'description_public', 'description_mods', 'created_by', 'updated_at', 'created_at'
     ];
 
     /**

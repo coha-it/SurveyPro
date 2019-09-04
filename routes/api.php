@@ -56,8 +56,13 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('location/create', 'User\UserController@createLocation');
         Route::patch('location/update', 'User\UserController@updateLocation');
 
-        Route::get('users-created', 'Backend\BackendController@getCreatedUsers'); // Created Users
+        // Groups
         Route::get('groups-moderating', 'Backend\BackendController@getGroupsModerating'); // Moderating Groups
+        Route::post('group/create', 'Backend\BackendController@createGroup');
+        Route::patch('group/update', 'Backend\BackendController@updateGroup');
+
+
+        Route::get('users-created', 'Backend\BackendController@getCreatedUsers'); // Created Users
 
         // Update Users Groups
         Route::post('add-user-to-group', 'Backend\BackendController@addUserToGroup');

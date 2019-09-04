@@ -240,13 +240,14 @@ select {
     }
 
     &.pan {
+        white-space: nowrap;
         .pan--part:first-child {
             margin-right: .275em;
         }
     }
 
     &.pin {
-
+        white-space: nowrap;
     }
 
 }

@@ -21,6 +21,22 @@
                 sInputLabel="Ortsname"
                 p_sModel="location"
                 :p_oModels="user.locations" />
+            <UserDataModal 
+                sEditText="Gruppen Bearbeiten"
+                sCreateText="Neue Gruppe erstellen" 
+                sInputLabel="Gruppenname"
+                sInputLabel2="Gruppenbeschreibung Öffentlich"
+                sInputLabel3="Gruppenbeschreibung für Moderatoren"
+                p_sModel="group"
+                :p_oModels="user.groups_moderating"
+                :p_aHeaders="[
+                    { text: this.$t('id'), value: 'id' },
+                    { text: this.$t('name'), value: 'name' },
+                    { text: this.$t('description_public'), value: 'description_public' },
+                    { text: this.$t('description_mods'), value: 'description_mods' },
+                    { text: this.$t('updated_at'), value: 'updated_at'},
+                    { text: this.$t('created_at'), value: 'created_at'}
+                ]" />
         </p>
 
         <br>
@@ -81,22 +97,24 @@
 
                                   <v-list-item>
                                     <v-list-item-action>
-                                      <v-checkbox v-model="bCreateUsersRandomPan"></v-checkbox>
-                                    </v-list-item-action>
-                                    <v-list-item-content>
-                                      <v-list-item-title>Zufällige PAN</v-list-item-title>
-                                      <v-list-item-subtitle>Generiert eine Zufällige und individuelle / einmalige PAN. z.B.: G4D 4Y6</v-list-item-subtitle>
-                                    </v-list-item-content>
-                                  </v-list-item>
-                                 <v-list-item>
-                                    <v-list-item-action>
-                                      <v-checkbox v-model="bCreateUsersRandomPin"></v-checkbox>
+                                      <v-checkbox v-model="bCreateUsersRandomPin" color="primary"></v-checkbox>
                                     </v-list-item-action>
                                     <v-list-item-content>
                                       <v-list-item-title>Zufällige PIN</v-list-item-title>
-                                      <v-list-item-subtitle>Generiert eine Zufällige PIN. z.B. 1534 oder 5664</v-list-item-subtitle>
+                                      <v-list-item-subtitle>Generiert eine Zufällige PIN. z.B. 1534 oder 5664. Die PIN kann im Anschluss angepasst werden</v-list-item-subtitle>
                                     </v-list-item-content>
                                   </v-list-item>
+
+                                  <v-list-item>
+                                    <v-list-item-action>
+                                      <v-checkbox v-model="bCreateUsersRandomPan" disabled color="primary"></v-checkbox>
+                                    </v-list-item-action>
+                                    <v-list-item-content>
+                                      <v-list-item-title>Zufällige PAN</v-list-item-title>
+                                      <v-list-item-subtitle>Generiert eine Zufällige und individuelle / einmalige PAN. z.B.: G4D 4Y6. Die PAN kann im Anschluss angepasst werden</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                  </v-list-item>
+
                                 </v-list>
                                 <v-divider></v-divider>
                               </v-card>
@@ -107,15 +125,14 @@
                               </template>
                             </v-dialog>
 
-
                             <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="primary"></v-switch>
 
                         <div class="flex-grow-1"></div>
                         <v-text-field style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" single-line hide-details></v-text-field>
                     </v-toolbar>
-                    <!-- Selection Toolbar -->
+                    <!-- Toolbar for Selections -->
                     <v-toolbar class="coha--toolbar" v-else :flat="search == ''" color="primary"  dark floating min-height="85px" height="auto">
-                        <v-btn color="success" rounded>
+                        <v-btn color="success" rounded @click="updateUsers()">
                             <v-icon left>mdi-content-save</v-icon> {{ selected.length + ' ' + $t('save') }}
                         </v-btn>
                         <v-btn text rounded>
@@ -124,6 +141,7 @@
                         <v-btn text rounded error warning>
                             <v-icon left>delete</v-icon> {{ selected.length + ' ' + $t('delete') }}
                         </v-btn>
+                        <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></v-switch>
                         <div class="flex-grow-1"></div>
                     </v-toolbar>
 
@@ -132,7 +150,6 @@
                     :headers="headers"
                     :items="usersCreated"
                     v-model="selected"
-                    item-key="key"
                     :search="search"
                     show-select 
                     multi-sort 
@@ -142,150 +159,162 @@
 
                     <!-- PAN -->
                     <template v-slot:item.pan.pan="{ item }">
-                        <!-- <v-btn @click="item.pan.pan='gusman'">Los</v-btn> -->
-                        <span class="coha--list-item pan c-code-text">
-                            <v-edit-dialog
-                                @cancel="cancel"
-                                @open="open"
-                                @close="close" 
-                                @save="save"
-                                :return-value.sync="item.pan.pan"
-                                lazy 
-                                persistent
-                                ref="dialog"
-                            >
-                                <template v-if="item.pan.pan">
-                                    <span :class="!panIsOk(item) ? 'red--text' : ''">
-                                        <span class="pan--part">{{ item.pan.pan.substring(0,3) }}</span><span class="pan--part">{{ item.pan.pan.substring(3,6) }}</span>
-                                    </span>
-                                </template>
-                                <template v-else>
-                                    <span style="text-transform: uppercase;" class="red--text">{{ $t('empty') }}</span>
-                                </template>
-                                <template v-slot:input>
-                                    <div class="pan--dialog-input c-code-text">
-                                        <v-text-field 
-                                            v-model="item.pan.pan"
-                                            :rules="[maxPanChars]"
-                                            :label="$t('edit')"
-                                            single-line
-                                            v-on:change="changePan(item)" 
-                                            :error="!panIsOk(item)" 
-                                            counter
-                                        ></v-text-field>
-                                    </div>
-                                </template>
-                            </v-edit-dialog>
-                        </span>                       
+                        <template v-if="item.pan && item.pan.pan">
+                            <!-- <v-btn @click="item.pan.pan='gusman'">Los</v-btn> -->
+                            <span class="coha--list-item pan c-code-text">
+                                <v-edit-dialog
+                                    @cancel="cancel"
+                                    @open="open"
+                                    @close="close" 
+                                    @save="save"
+                                    :return-value.sync="item.pan.pan"
+                                    lazy 
+                                    persistent
+                                    ref="dialog"
+                                >
+                                    <template v-if="item.pan.pan">
+                                        <span :class="!panIsOk(item) ? 'red--text' : ''">
+                                            <span class="pan--part">{{ item.pan.pan.substring(0,3) }}</span><span class="pan--part">{{ item.pan.pan.substring(3,6) }}</span>
+                                        </span>
+                                    </template>
+                                    <template v-else>
+                                        <span style="text-transform: uppercase;" class="red--text">{{ $t('empty') }}</span>
+                                    </template>
+                                    <template v-slot:input>
+                                        <div class="pan--dialog-input c-code-text">
+                                            <v-text-field 
+                                                v-model="item.pan.pan"
+                                                :rules="[maxPanChars]"
+                                                :label="$t('edit')"
+                                                single-line
+                                                v-on:change="changePan(item)" 
+                                                :error="!panIsOk(item)" 
+                                                counter>
+                                                <v-tooltip slot="append" top>
+                                                    <template #activator="{ on }">
+                                                        <v-icon class="mr-1" v-on="on" @click="getRandomPan(item)">mdi-repeat</v-icon>
+                                                    </template>
+                                                    <span>Zufällige PAN generieren</span>
+                                                </v-tooltip>
+                                            </v-text-field>
+                                        </div>
+                                    </template>
+                                </v-edit-dialog>
+                            </span>   
+                        </template>                    
                     </template>
 
 
                     <!-- PIN -->
                     <template v-slot:item.pan.pin="{ item }">
-                        <span class="coha--list-item pin c-code-text">
-                            <v-edit-dialog
-                                @cancel="cancel"
-                                @open="open"
-                                @close="close" 
-                                @save="save"
-                                lazy 
-                                persistent
-                            >
-                                <span class="coha--list-item pin">
-                                    <template v-if="item.pan.pin">
-                                        <span :class="!pinIsOk(item) ? 'red--text' : ''">{{ showPin ? item.pan.pin : '****' }}</span>
+                        <template v-if="item.pan && item.pan.pin">
+                            <span class="coha--list-item pin c-code-text">
+                                <v-edit-dialog
+                                    @cancel="cancel"
+                                    @open="open"
+                                    @close="close" 
+                                    @save="save"
+                                    lazy 
+                                    persistent
+                                >
+                                    <span class="coha--list-item pin">
+                                        <template v-if="item.pan.pin">
+                                            <span :class="!pinIsOk(item) ? 'red--text' : ''">{{ showPin ? item.pan.pin : '****' }}</span>
+                                        </template>
+                                        <template v-else>
+                                            <span style="text-transform: uppercase;" class="red--text">{{ $t('empty') }}</span>
+                                        </template>
+                                    </span>
+                                    <template v-slot:input>
+                                        <div class="pin--dialog-input c-code-text">
+                                            <v-text-field 
+                                                v-model="item.pan.pin"
+                                                :label="$t('edit')"
+                                                single-line
+                                                v-on:change="changePin(item)" 
+                                                counter
+                                                type="text" 
+                                                pattern="[0-9]*"
+                                                name="pin" 
+                                                v-mask="'####'" 
+                                                maxlength="4"
+                                                :rules="[maxPinChars]"
+                                                required
+                                                autocomplete="off">
+                                                <v-tooltip slot="append" top>
+                                                    <template #activator="{ on }">
+                                                        <v-icon class="mr-1" v-on="on" @click="generateRandomPin(item)">mdi-repeat</v-icon>
+                                                    </template>
+                                                    <span>Zufällige PIN generieren</span>
+                                                </v-tooltip>    
+                                            </v-text-field>
+                                        </div>
                                     </template>
-                                    <template v-else>
-                                        <span style="text-transform: uppercase;" class="red--text">{{ $t('empty') }}</span>
-                                    </template>
-                                </span>
-                                <template v-slot:input>
-                                    <div class="pin--dialog-input c-code-text">
-                                        <v-text-field 
-                                            v-model="item.pan.pin"
-                                            :label="$t('edit')"
-                                            single-line
-                                            v-on:change="changePin(item)" 
-                                            counter
-                                            type="text" 
-                                            pattern="[0-9]*"
-                                            name="pin" 
-                                            v-mask="'####'" 
-                                            maxlength="4"
-                                            :rules="[maxPinChars]"
-                                            required
-                                            autocomplete="off" 
-                                        ></v-text-field>
-                                    </div>
-                                </template>
-                            </v-edit-dialog>
-                        </span>
+                                </v-edit-dialog>
+                            </span>
+                        </template>
                     </template>
 
                     <!-- Groups -->
                     <template v-slot:item.groups="{ item }">
-                        <template v-if="groupsModerating && groupsModerating.length >= 1">
-                            <v-chip 
-                                v-for="(group, i) in item.groups" 
-                                v-bind:key="i" 
-                                outlined small  
-                                class="mr-1"
-                            >{{ group.name }}</v-chip>
-                            <!-- <v-chip>
-                                <select>
-                                    <option selected>{{ '+ Add' }}</option>
-                                    <option 
-                                        v-for="group in groupsModerating" 
-                                        v-bind:key="group.id" 
-                                        v-if="!alreadyInGroups(group, item.groups)"
-                                        >{{ group.name }}</option>
-                                </select>
-                            </v-chip> -->
+                        <template v-if="user.groups_moderating && user.groups_moderating.length >= 1">
+                            <template v-for="(group, i) in item.groups">
+                                <span v-bind:key="i">
+                                    <v-chip small outlined v-if="user.groups_moderating.find(x => x.id === group.id)" class="mr-1 mt-1 mb-1">
+                                        {{ user.groups_moderating.find(x => x.id === group.id).name }}
+                                    </v-chip>
+                                    <v-chip small outlined disabled v-else class="mr-1 mt-1 mb-1">
+                                        {{ group.name }}
+                                    </v-chip>
+                                </span>
+                            </template>
 
                             <!-- Gruppen hinzufügen / entfernen -->
                             <template>
                                 <v-dialog v-model="item.groupDialog" scrollable max-width="500px">
                                     <template v-slot:activator="{ on }">
-                                        <v-chip v-on="on" small :disabled="item.groupDialog">{{ $t('edit') }}</v-chip>
+                                        <v-chip v-on="on" small :disabled="item.groupDialog" class="mt-1 mb-1">{{ $t('edit') }}</v-chip>
                                     </template>
                                     <v-card>
                                         <v-card-title>Gruppen hinzufügen / entfernen</v-card-title>
                                         <v-divider></v-divider>
 
                                         <v-card-text style="height: 500px;">
-                                            <p>Der Gewählte Nutzer mit der ID "{{ item.id }}" und mit der PAN "{{ item.pan.pan }}"</p>
+                                            <p>Der Gewählte Nutzer mit der ID "{{ item.id }}" und mit der PAN "{{ item.pan && item.pan.pan ? item.pan.pan : '' }}"</p>
                                             <v-card outlined>
                                                 <v-list subheader two-line flat>
                                                     <v-subheader>Nutzer ist in Gruppen:</v-subheader>
-                                                    <template v-for="(group, i) in item.groups">
-                                                        <div v-bind:key="group.id">
+                                                    <template v-if="item.groups">
+                                                        <template  v-for="(group, i) in item.groups">
+                                                            <div v-bind:key="group.id">
 
-                                                            <v-list-item>
-                                                                <v-list-item-avatar>
-                                                                    <v-icon class="white--text primary">mdi-account-multiple</v-icon>
-                                                                </v-list-item-avatar>
+                                                                <v-list-item>
+                                                                    <v-list-item-avatar>
+                                                                        <v-icon class="white--text primary">mdi-account-multiple</v-icon>
+                                                                    </v-list-item-avatar>
 
-                                                                <v-list-item-content>
-                                                                    <v-list-item-title>{{ group.name }}</v-list-item-title>
-                                                                    <v-list-item-subtitle>{{ group.description_public || 'Ohne Gruppenbeschreibung'}}</v-list-item-subtitle>
-                                                                </v-list-item-content>
+                                                                    <v-list-item-content>
+                                                                        <v-list-item-title>{{ group.name }}</v-list-item-title>
+                                                                        <v-list-item-subtitle>{{ group.description_public || 'Ohne Gruppenbeschreibung'}}</v-list-item-subtitle>
+                                                                    </v-list-item-content>
 
-                                                                <v-list-item-action>
-                                                                    <v-list-item-action-text>ID #{{ group.id }}</v-list-item-action-text>
-                                                                    <v-btn 
-                                                                        depressed 
-                                                                        rounded 
-                                                                        outlined 
-                                                                        text 
-                                                                        small 
-                                                                        color="error"
-                                                                        @click="removeCreatedUserFromGroup(item, i)"
-                                                                        >- {{ $t('remove') }}</v-btn>
-                                                                </v-list-item-action>
-                                                            </v-list-item>
+                                                                    <v-list-item-action>
+                                                                        <v-list-item-action-text>ID #{{ group.id }}</v-list-item-action-text>
+                                                                        <v-btn 
+                                                                            depressed 
+                                                                            rounded 
+                                                                            outlined 
+                                                                            text 
+                                                                            small 
+                                                                            color="error"
+                                                                            @click="removeCreatedUserFromGroup(item, i)"
+                                                                            >- {{ $t('remove') }}</v-btn>
+                                                                    </v-list-item-action>
+                                                                </v-list-item>
 
-                                                            <v-divider v-if="i+1 < item.groups.length" inset></v-divider>
-                                                        </div>
+                                                                <v-divider v-if="i+1 < item.groups.length" inset></v-divider>
+                                                            </div>
+                                                        </template>
                                                     </template>
                                                 </v-list>
                                             </v-card>
@@ -295,42 +324,43 @@
                                             <v-card outlined>
                                                 <v-list subheader two-line flat>
                                                     <v-subheader>Nutzer für diese Gruppen hinzufügen</v-subheader>
-                                                    <template v-for="(group, i) in groupsModerating">
-                                                        <div v-bind:key="group.id">
+                                                    <template v-if="user.groups_moderating">
+                                                        <template v-for="(group, i) in user.groups_moderating">
+                                                            <div v-bind:key="group.id">
+                                                                <v-list-item :disabled="alreadyInGroups(group, item.groups)">
+                                                                    <v-list-item-avatar>
+                                                                        <v-icon>mdi-account-multiple-plus</v-icon>
+                                                                    </v-list-item-avatar>
 
-                                                            <v-list-item :disabled="alreadyInGroups(group, item.groups)">
-                                                                <v-list-item-avatar>
-                                                                    <v-icon>mdi-account-multiple-plus</v-icon>
-                                                                </v-list-item-avatar>
+                                                                    <v-list-item-content>
+                                                                        <v-list-item-title>{{ group.name }}</v-list-item-title>
+                                                                        <v-list-item-subtitle>{{ group.description_public || 'Ohne Gruppenbeschreibung' }}</v-list-item-subtitle>
+                                                                    </v-list-item-content>
 
-                                                                <v-list-item-content>
-                                                                    <v-list-item-title>{{ group.name }}</v-list-item-title>
-                                                                    <v-list-item-subtitle>{{ group.description_public || 'Ohne Gruppenbeschreibung' }}</v-list-item-subtitle>
-                                                                </v-list-item-content>
+                                                                    <v-list-item-action>
+                                                                        <v-list-item-action-text>ID #{{ group.id }}</v-list-item-action-text>
+                                                                        <v-btn 
+                                                                            v-if="alreadyInGroups(group, item.groups)" 
+                                                                            depressed 
+                                                                            rounded 
+                                                                            outlined 
+                                                                            text 
+                                                                            small>{{ $t('added')}}</v-btn>
+                                                                        <v-btn 
+                                                                            v-else 
+                                                                            depressed 
+                                                                            rounded 
+                                                                            outlined 
+                                                                            text 
+                                                                            small 
+                                                                            color="success"
+                                                                            @click="addCreatedUserToGroup(item, group)">+ {{ $t('add_to') }}</v-btn>
+                                                                    </v-list-item-action>
+                                                                </v-list-item>
 
-                                                                <v-list-item-action>
-                                                                    <v-list-item-action-text>ID #{{ group.id }}</v-list-item-action-text>
-                                                                    <v-btn 
-                                                                        v-if="alreadyInGroups(group, item.groups)" 
-                                                                        depressed 
-                                                                        rounded 
-                                                                        outlined 
-                                                                        text 
-                                                                        small>{{ $t('added')}}</v-btn>
-                                                                    <v-btn 
-                                                                        v-else 
-                                                                        depressed 
-                                                                        rounded 
-                                                                        outlined 
-                                                                        text 
-                                                                        small 
-                                                                        color="success"
-                                                                        @click="addCreatedUserToGroup(item, group)">+ {{ $t('add_to') }}</v-btn>
-                                                                </v-list-item-action>
-                                                            </v-list-item>
-
-                                                            <v-divider v-if="i+1 < item.groups.length" inset></v-divider>
-                                                        </div>
+                                                                <v-divider v-if="i+1 < user.groups_moderating.length" inset></v-divider>
+                                                            </div>
+                                                        </template>
                                                     </template>
                                                 </v-list>
                                             </v-card>
@@ -349,9 +379,10 @@
                     <!-- Company -->
                     <template v-slot:item.company="{ item }">
                         <select v-model="item.company_id">
+                            <option disabled>Bitte auswählen</option>
                             <option 
                                 :value="company.id" 
-                                :selected="item.company.id == company.id"
+                                :selected="(item.company && item.company.id == company.id)"
                                 v-for="company in user.companies" 
                                 v-bind:key="company.id"
                                 >{{ company.name }}</option>
@@ -361,9 +392,10 @@
                     <!-- Department -->
                     <template v-slot:item.department="{ item }">
                         <select v-model="item.department_id">
+                            <option disabled>Bitte auswählen</option>
                             <option 
                                 :value="department.id" 
-                                :selected="item.department.id == department.id"
+                                :selected="(item.department && item.department.id == department.id)"
                                 v-for="department in user.departments" 
                                 v-bind:key="department.id"
                                 >{{ department.name }}</option>
@@ -373,9 +405,10 @@
                     <!-- Location -->
                     <template v-slot:item.location="{ item }">
                         <select v-model="item.location_id">
+                            <option disabled>Bitte auswählen</option>
                             <option 
                                 :value="location.id" 
-                                :selected="item.location.id == location.id"
+                                :selected="(item.location && item.location.id == location.id)"
                                 v-for="location in user.locations" 
                                 v-bind:key="location.id"
                                 >{{ location.name }}</option>
@@ -384,24 +417,26 @@
 
                     <!-- Action Buttons -->
                     <template v-slot:item.action="{ item }">
-                        <v-btn
-                            small
-                            color="success"
-                            rounded
-                            depressed 
-                            class="mr-2"
-                            @click="updateUser(item)"
-                            :disabled="!unsafed(item) || !validUser(item)"
-                        >{{ $t('save') }}</v-btn>
-                        
-                        <v-tooltip top>
-                            <template v-slot:activator="{ on }">
-                                <v-icon :disabled="!unsafed(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
-                            </template>
-                            <span>{{ $t('reset') }}</span>
-                        </v-tooltip>
-                        <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
-                        <v-icon small @click="deleteItem(item)">delete</v-icon>
+                        <div style="white-space: nowrap;">
+                            <v-btn
+                                small
+                                color="success"
+                                rounded
+                                depressed 
+                                class="mr-2"
+                                @click="updateUser(item)"
+                                :disabled="!unsafed(item) || !validUser(item)"
+                            >{{ $t('save') }}</v-btn>
+                            
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon :disabled="!unsafed(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
+                                </template>
+                                <span>{{ $t('reset') }}</span>
+                            </v-tooltip>
+                            <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
+                            <v-icon small @click="deleteItem(item)">delete</v-icon>
+                        </div>
                     </template>
 
                 </v-data-table>
@@ -435,7 +470,6 @@ export default {
         ...mapGetters({
             user: 'auth/user',
             usersCreated: 'users/usersCreated',
-            groupsModerating: 'users/groupsModerating'
         }),
     },
 
@@ -454,54 +488,56 @@ export default {
     data () {
       return {
 
-        panTokens: {
-            P: {
-                pattern: /[0-9A-Za-z]/,
-            }
-        },
-
-        usersCreatedOld: [],
-        selected: [],
-
-        loading: false,
-        showPin: false,
-        search: '',
-        headers: [
-          {
-            text: 'ID',
-            align: 'left',
-            value: 'id',
+          pinLength: 4,
+          panLength: 6,
+          panTokens: {
+              P: {
+                  pattern: /[0-9A-Za-z]/,
+              }
           },
-          { text: this.$t('PAN'), value: 'pan.pan' },
-          { text: this.$t('PIN'), value: 'pan.pin' },
-          { text: this.$t('groups'), value: 'groups'},
-          { text: this.$t('company'), value: 'company'},
-          { text: this.$t('department'), value: 'department'},
-          { text: this.$t('location'), value: 'location'},
-          { text: this.$t('updated_at'), value: 'updated_at'},
-          { text: this.$t('created_at'), value: 'created_at'},
-        //   { text: 'Locked', value: 'pan.locked_until'},
-          { text: 'Actions', value: 'action', sortable: false },
-        ],
-
-        all_groups: [],
-
-        maxPanChars: v => v && v.length <= 6 || 'Input too long!',
-        maxPinChars: v => v && v.length == 4 || 'Pin Wrong!',
-
-        // Snackbar
-        snack: false,
-        snackColor: '',
-        snackText: '',
-        snackTimeout: 3000,
-
-        
-        // Create Users
-        iCreateUsersNumber: 5,
-        bCreateUsersDialog: false,
-        bCreateUsersLoading: false,
-        bCreateUsersRandomPan: true,
-        bCreateUsersRandomPin: true,
+  
+          usersCreatedOld: [],
+          selected: [],
+  
+          loading: false,
+          showPin: false,
+          search: '',
+          headers: [
+            {
+              text: 'ID',
+              align: 'left',
+              value: 'id',
+            },
+            { text: this.$t('PAN'), value: 'pan.pan' },
+            { text: this.$t('PIN'), value: 'pan.pin' },
+            { text: this.$t('groups'), value: 'groups'},
+            { text: this.$t('company'), value: 'company'},
+            { text: this.$t('department'), value: 'department'},
+            { text: this.$t('location'), value: 'location'},
+            { text: this.$t('updated_at'), value: 'updated_at'},
+            { text: this.$t('created_at'), value: 'created_at'},
+          //   { text: 'Locked', value: 'pan.locked_until'},
+            { text: 'Actions', value: 'action', sortable: false },
+          ],
+  
+          all_groups: [],
+  
+          maxPanChars: v => v && v.length <= 6 || 'Input too long!',
+          maxPinChars: v => v && v.length == 4 || 'Pin Wrong!',
+  
+          // Snackbar
+          snack: false,
+          snackColor: '',
+          snackText: '',
+          snackTimeout: 3000,
+  
+          
+          // Create Users
+          iCreateUsersNumber: 5,
+          bCreateUsersDialog: false,
+          bCreateUsersLoading: false,
+          bCreateUsersRandomPan: true,
+          bCreateUsersRandomPin: true,
 
       }
     },
@@ -516,10 +552,19 @@ export default {
     created: function() {        
         this.$store.dispatch('users/fetchUsersCreated')
         this.$store.dispatch('users/fetchGroupsModerating')
-
     },
 
     methods: {
+
+        getRandomPan(user) {
+            console.log('generate');
+        },
+
+        generateRandomPin(item) {
+            if(item && item.pan && item.pan.pin) {
+                item.pan.pin = Math.random().toString().substr(2, this.pinLength);
+            }
+        },
 
         createUsers() {
             var _this = this;
@@ -533,11 +578,16 @@ export default {
             }).then(function(response) {
                 _this.bCreateUsersLoading = false;
                 _this.bCreateUsersDialog = false;
-                
+
                 // Success
-                if(!e || !e.reponse || !e.reponse.data || !e.response.data.error) {
-                    // SUCCESS
-                    console.log(response);
+                var users = response.data;
+                for (var i in users) {
+                    var oUser = users[i];
+                    oUser.isSelected = true;
+
+                    // Add to Array
+                    _this.usersCreated.unshift(oUser);
+                    _this.selected.unshift(oUser);
                 }
             }).catch(function(response) {
                 // ERROR
@@ -558,11 +608,11 @@ export default {
         },
 
         pinIsOk(item) {
-            return item.pan && item.pan.pin && item.pan.pin.length == 4;
+            return item.pan && item.pan.pin && item.pan.pin.length == this.pinLength;
         },
 
         panIsOk(item) {
-            return item.pan && item.pan.pan && item.pan.pan.length == 6;
+            return item.pan && item.pan.pan && item.pan.pan.length == this.panLength;
         },
 
         getOldUsersKey(item) {
@@ -591,6 +641,14 @@ export default {
             Object.assign(item, JSON.parse(JSON.stringify(this.usersCreatedOld[key])))
         },
 
+        updateUsers() {
+            var users = this.selected;
+            for (var i in users) {
+                var user = users[i];
+                this.updateUser(user);
+            }
+        },
+
         updateUser(user) {
             // Variables
             var _this = this;
@@ -601,7 +659,7 @@ export default {
                 user: user
             }).then(function(e) {
                 // Success
-                if(!e || !e.reponse || !e.reponse.data || !e.response.data.error) {
+                if(!e || !e.response || !e.response.data || !e.response.data.error) {
                     _this.snackTimeout = 3000;
                     _this.snack = true;
                     _this.snackColor = 'success'
@@ -652,8 +710,10 @@ export default {
 
 
         changePan(item) {
-            item.pan.pan = item.pan.pan.toUpperCase();
-            item.pan.pan = item.pan.pan.replace(' ', '');
+            if(item.pan && item.pan.pan) {
+                item.pan.pan = item.pan.pan.toUpperCase();
+                item.pan.pan = item.pan.pan.replace(' ', '');
+            }
         },
 
         changePin(item) {

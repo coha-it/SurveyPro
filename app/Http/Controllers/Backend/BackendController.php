@@ -62,6 +62,51 @@ class BackendController extends Controller
     //     $group->users()->detach($user);
     // }
 
+    public function createGroup(Request $request) 
+    {
+        $request->validate([
+            'item' => 'required',
+            'item.name' => 'required'
+        ]);
+        $item = $request->item;
+        $self = $request->user();
+
+        $g = Group::create([
+            'name' => $item['name'],
+            'description_public' => $item['description_public'],
+            'description_mods' => $item['description_mods'],
+            'created_by' => $self->id,
+        ]);
+
+        $g->moderators()->sync([
+            $self->id => [    
+                'is_mod' => 1,
+                'is_member' => 0
+            ],
+        ]);
+
+        return $g->toJson();
+    }
+
+    // Update Compnay Location Department
+    public function updateGroup(Request $request)
+    {
+        $request->validate([
+            'item' => 'required',
+            'item.id' => 'required',
+            'item.name' => 'required'
+        ]);
+        $item = $request->item;
+
+        $m = $request->user()->groupsModerating()->find($item['id']);
+        $m->name = $item['name'];
+        $m->description_public = $item['description_public'];
+        $m->description_mods = $item['description_mods'];
+        $m->save();
+
+        return $m->toJson();
+    }
+
     /**
      * Just Create a Random PIN with 0-9 and 4 Characters
      * 
@@ -111,6 +156,7 @@ class BackendController extends Controller
         // Variables
         $number = $request->number;
         $self = $request->user();
+        $arr = [];
 
         // Go Through Number
         for ($i=0; $i < $number; $i++) { 
@@ -118,14 +164,20 @@ class BackendController extends Controller
             $sRandPin = $this->createRandomPin();
 
             $user = User::create(['created_by' => $self->id]);
-            $pan = $user->pan()->updateOrCreate([
+            $user->pan()->updateOrCreate([
                 'pan' => $sRandPan,
                 'pin' => $sRandPin
             ]);
+            $user->pan->save();
+            $user->save();
+
+            array_push(
+                $arr,
+                $user->getSelfWithPanUserRelations()
+            );
         }
 
-        return "jo";
-        return $request->user()->groupsModerating->toJson();
+        return $arr;
     }
 
     /**
