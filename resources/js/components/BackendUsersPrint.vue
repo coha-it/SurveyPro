@@ -35,16 +35,28 @@
           <v-btn icon dark @click="dialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
+          <v-switch class="mt-6 ml-6" v-model="colorfull" :label="colorfull ? 'Farbenfroh' : 'Schwarz & Weiß' " color="accent"></v-switch>
         </v-toolbar>
 
         <div class="coha--print">
-            <div v-for="user in users" v-bind:key="user.id" class="element page-break">
+            <div v-for="user in users" v-bind:key="user.id" class="element page-break" :class="colorfull ? '' : 'blackAndWhite'">
                 <div class="inner">
 
-                    <img class="logo" src="/storage/corporate-happiness-gmbh-logo-full-white.svg">
+                    <img class="logo" :src="'/storage/corporate-happiness-gmbh-logo-full' + ( (colorfull) ? '-white' : '') + '.svg' ">
 
                     <h3>Mitarbeiter-Befragung</h3>
-                    <p>Dies ist ihr individueller Zugang für die Mitarbeiter-Befragung</p>
+                    <p>
+                        Dies ist ihr individueller Zugang für die Mitarbeiter-Befragung.<br>
+                        <template v-if="user.company && user.company.name">
+                            {{ $t('company') }}: {{ user.company.name }}<br>
+                        </template>
+                        <template v-if="user.department && user.department.name">
+                            {{ $t('department') }}: {{ user.department.name }}<br>
+                        </template>
+                        <template v-if="user.location && user.location.name">
+                            {{ $t('location') }}: {{ user.location.name }}<br>
+                        </template>
+                    </p>
 
                     <div class="label pan-label">PAN</div>
                     <div class="c-code-text pan">{{ user.pan.pan }}</div>
@@ -52,7 +64,7 @@
                     <div class="c-code-text pin">{{ user.pan.pin }}</div>
 
                     <p>
-                        <qrcode-vue :value="url(user)" :size="size" level="H"></qrcode-vue>
+                        <qrcode-vue :value="url(user)" level="H"></qrcode-vue>
                     </p>
 
                     <p class="subtext">Jetzt anmelden auf: <br>www.surveypro.tk/pan </p>
@@ -84,6 +96,7 @@ export default {
     data() {
         return {
             dialog: false,
+            colorfull: true,
 
             // From Parent
             users: this.p_users
@@ -115,7 +128,7 @@ export default {
     font-size: .5cm;
     .element {
         margin: auto;
-        min-width: 200px;
+        min-width: 500px;
         width: 100vw;
         max-width: 2000px;
         min-height: 500px;
@@ -133,9 +146,9 @@ export default {
         .inner {
             position: relative;
             display: block;
-            width: 8cm;
-            height: 13cm;
-            padding: 2mm 0.5cm;
+            width: 90mm;
+            height: 150mm;
+            padding: 2mm 10mm;
             text-align: center;
             margin: auto;
             .bg {
@@ -149,6 +162,17 @@ export default {
                 top: 0;
                 pointer-events: none;
 
+            }
+        }
+
+        // Black and White
+        &.blackAndWhite {
+            .inner {
+                background-color: #fff;
+                border: 2px solid grey;
+                .bg {
+                    display: none;
+                }
             }
         }
 
