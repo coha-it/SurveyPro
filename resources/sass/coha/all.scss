@@ -44,6 +44,9 @@ html body {
     }
 }
 
+select {
+    min-width: 15px;
+}
 
 // SELECT IN CHIP
 .v-chip__content > select {
