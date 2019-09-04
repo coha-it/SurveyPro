@@ -79,7 +79,7 @@ class UserController extends Controller
             'name' => $request->name,
             'created_by' => $request->user()->id,
         ]);
-        return $m->id;
+        return $m->toJson();
     }
 
     public function createDepartment(Request $request) 
@@ -88,7 +88,7 @@ class UserController extends Controller
             'name' => $request->name,
             'created_by' => $request->user()->id,
         ]);
-        return $m->id;
+        return $m->toJson();
     }
 
     public function createLocation(Request $request) 
@@ -97,7 +97,7 @@ class UserController extends Controller
             'name' => $request->name,
             'created_by' => $request->user()->id,
         ]);
-        return $m->id;
+        return $m->toJson();
     }
 
     // Update Compnay Location Department

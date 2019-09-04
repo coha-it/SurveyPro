@@ -188,8 +188,9 @@ export default {
                     axios.post('/api/' + this.sModel + '/create', {
                         name:comp
                     }).then(function (response) {
-                        _this.setModelForUser(response.data, comp);
-                        _this.list[_this.list.length-1].id = response.data;
+                        var res = response.data;
+                        _this.setModelForUser(res.id, comp);
+                        _this.list[_this.list.length-1].id = res.id;
                     });
                 } else if (typeof comp === 'object') {
                     // Use Existing Company!
