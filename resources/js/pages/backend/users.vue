@@ -141,9 +141,22 @@
 
                         <Print :users="selected" />
                         
-                        <v-btn text rounded error warning>
+                        <v-btn text rounded error warning @click.stop="deleteUsersDialog = true">
                             <v-icon left>delete</v-icon> {{ selected.length + ' ' + $t('delete') }}
                         </v-btn>
+                        <v-dialog v-model="deleteUsersDialog" max-width="290" dark content-class="naked dark centered">
+                            <h2 class="display-2">Delete?</h2>
+                            <p>Delete?</p>
+                            <v-container fluid>
+                                <v-row align="center">
+                                    <v-col class="text-center" cols="12" sm="12">
+                                        <v-btn depressed @click.stop="deleteUsersDialog = false" outlined>Abbruch</v-btn>
+                                        <v-btn depressed @click="deleteUsers(selected)" color="error">Zugänge Löschen!</v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-dialog>
+                        
                         <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></v-switch>
                         <div class="flex-grow-1"></div>
                     </v-toolbar>
@@ -440,7 +453,24 @@
                                 <span>{{ $t('reset') }}</span>
                             </v-tooltip>
                             <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
-                            <v-icon small @click="deleteUser(item)">delete</v-icon>
+
+                            <v-dialog v-model="item.deleteUserDialog" max-width="290" dark content-class="naked dark centered" transition="dialog-bottom-transition">
+                                    <template v-slot:activator="{ on }">
+                                        <v-icon small v-on="on">delete</v-icon>
+                                    </template>
+                                    <h2 class="display-2">Delete?</h2>
+                                    <p>Delete?</p>
+                                    <v-container fluid>
+                                        <v-row align="center">
+                                            <v-col class="text-center" cols="12" sm="12">
+                                                <v-btn depressed @click.stop="item.deleteUserDialog = false" outlined>Abbruch</v-btn>
+                                                <v-btn depressed @click="deleteUsers([item])" color="error">Zugang Löschen!</v-btn>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                            </v-dialog>
+
+
                         </div>
                     </template>
 
@@ -535,13 +565,14 @@ export default {
           snackText: '',
           snackTimeout: 3000,
   
-          
           // Create Users
           iCreateUsersNumber: 5,
           bCreateUsersDialog: false,
           bCreateUsersLoading: false,
           bCreateUsersRandomPan: true,
           bCreateUsersRandomPin: true,
+
+          deleteUsersDialog: false,
 
       }
     },
@@ -705,14 +736,15 @@ export default {
             return arr.findIndex(x => x.id === item.id);
         },
 
-        deleteUser(user) {
+        deleteUsers(users) {
             // Variables
             var _this = this;
             this.loading = true;
+            this.deleteUsersDialog = false;
 
             // Delete User
-            this.$store.dispatch('users/deleteUser', {
-                id: user.id
+            this.$store.dispatch('users/deleteUsers', {
+                ids: users.map(user => user.id)
             }).then(function(e) {
                 // Success
                 _this.loading = false;
@@ -721,14 +753,19 @@ export default {
                 _this.snackColor = 'success'
                 _this.snackText = _this.$t('data_saved')
 
-                // Find Indexes
-                var id = _this.getOldUsersId(user);
-                var index1 = _this.findKeyById(_this.usersCreated, user);
-                var index2 = _this.findKeyById(_this.usersCreatedOld, user);
+                for (var i in users) {
+                    // Get ID 
+                    var user = users[i];
 
-                // Delete Frontend with Old
-                _this.usersCreated.splice(index1, 1);
-                _this.usersCreatedOld.splice(index2, 1);
+                    // Find Indexes
+                    var index1 = _this.findKeyById(_this.usersCreated, user);
+                    var index2 = _this.findKeyById(_this.usersCreatedOld, user);
+
+                    // Delete Frontend with Old
+                    _this.usersCreated.splice(index1, 1);
+                    _this.usersCreatedOld.splice(index2, 1);
+                }
+
             });
         },
 

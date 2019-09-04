@@ -234,19 +234,28 @@ class BackendController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function deleteUser(Request $request) {
+
         // Validate Data
         $request->validate([
-            'id' => 'required',
+            'ids' => 'required',
         ]);
 
-        $userId = $request->id;
-      
         // Get Data
+        $userIds = $request->ids;
+        $deletedIds = [];
         $self = $request->user();
-        $user = $self->users->find($userId);
-        $user->delete();
 
-        return $user->id;
+        for ($i=0; $i < count($userIds); $i++) { 
+            // Find
+            $id = $userIds[$i];
+            $user = $self->users->find($id);
+            
+            // Delete
+            array_push($deletedIds, $user->id);
+            $user->delete();
+        }
+
+        return "";
     }
 
 }
