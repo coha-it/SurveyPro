@@ -227,4 +227,26 @@ class BackendController extends Controller
         return $user->toJson();
     }
 
+    /**
+     * Delete User which was created by the User
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteUser(Request $request) {
+        // Validate Data
+        $request->validate([
+            'id' => 'required',
+        ]);
+
+        $userId = $request->id;
+      
+        // Get Data
+        $self = $request->user();
+        $user = $self->users->find($userId);
+        $user->delete();
+
+        return $user->id;
+    }
+
 }

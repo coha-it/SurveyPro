@@ -65,6 +65,14 @@ export const actions = {
     } catch (e) {
       return e
     }
+  },
+
+  deleteUser ( { commit }, payload ) {
+    try {
+      return axios.patch('/api/delete-created-user', payload )
+    } catch (e) {
+      return e
+    }
   }
 
 }

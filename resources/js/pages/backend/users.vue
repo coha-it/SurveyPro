@@ -440,7 +440,7 @@
                                 <span>{{ $t('reset') }}</span>
                             </v-tooltip>
                             <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
-                            <v-icon small @click="deleteItem(item)">delete</v-icon>
+                            <v-icon small @click="deleteUser(item)">delete</v-icon>
                         </div>
                     </template>
 
@@ -628,7 +628,7 @@ export default {
             return item.pan && item.pan.pan && item.pan.pan.length == this.panLength;
         },
 
-        getOldUsersKey(item) {
+        getOldUsersId(item) {
             return this.usersCreated.map(function(x) {
                 return x.id;
             }).indexOf(item.id);
@@ -639,7 +639,7 @@ export default {
         },
 
         unsafed(item) {
-            var key = this.getOldUsersKey(item);
+            var key = this.getOldUsersId(item);
             var itemLeft = this.copyObject(item);
             var itemRight = this.copyObject(this.usersCreatedOld[key]);
 
@@ -650,7 +650,7 @@ export default {
         },
 
         resetUser(item) {
-            var key = this.getOldUsersKey(item);
+            var key = this.getOldUsersId(item);
             Object.assign(item, JSON.parse(JSON.stringify(this.usersCreatedOld[key])))
         },
 
@@ -679,7 +679,7 @@ export default {
                     _this.snackText = _this.$t('data_saved')
 
                     // Save Old
-                    var key = _this.getOldUsersKey(user);
+                    var key = _this.getOldUsersId(user);
                     Object.assign(_this.usersCreatedOld[key], JSON.parse(JSON.stringify(user)))
                 }
                 _this.loading = false;
@@ -698,6 +698,37 @@ export default {
                 _this.snackText = _this.$t('attribute_unsaved') + "<br />" + errText;
 
                 _this.loading = false;
+            });
+        },
+
+        findKeyById(arr, item) {
+            return arr.findIndex(x => x.id === item.id);
+        },
+
+        deleteUser(user) {
+            // Variables
+            var _this = this;
+            this.loading = true;
+
+            // Delete User
+            this.$store.dispatch('users/deleteUser', {
+                id: user.id
+            }).then(function(e) {
+                // Success
+                _this.loading = false;
+                _this.snackTimeout = 3000;
+                _this.snack = true;
+                _this.snackColor = 'success'
+                _this.snackText = _this.$t('data_saved')
+
+                // Find Indexes
+                var id = _this.getOldUsersId(user);
+                var index1 = _this.findKeyById(_this.usersCreated, user);
+                var index2 = _this.findKeyById(_this.usersCreatedOld, user);
+
+                // Delete Frontend with Old
+                _this.usersCreated.splice(index1, 1);
+                _this.usersCreatedOld.splice(index2, 1);
             });
         },
 
