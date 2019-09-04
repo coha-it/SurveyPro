@@ -68,8 +68,8 @@
                 create_text="profile.company.create"
                 p_sInputLabel="profile.company.choose"
                 :p_oModel="company"
-                :p_sModel="'company'"
-                :p_sModels="'companies'"
+                 p_sModel="company"
+                 p_sModels="companies"
                 :p_oUser="user"
                 />
 
