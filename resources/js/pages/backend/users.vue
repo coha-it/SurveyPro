@@ -755,17 +755,12 @@ export default {
                 _this.snackColor = 'success'
                 _this.snackText = _this.$t('data_saved')
 
-                for (var i in users) {
-                    // Get ID 
-                    var user = users[i];
-
-                    // Find Indexes
-                    var index1 = _this.findKeyById(_this.usersCreated, user);
-                    var index2 = _this.findKeyById(_this.usersCreatedOld, user);
-
-                    // Delete Frontend with Old
-                    _this.usersCreated.splice(index1, 1);
-                    _this.usersCreatedOld.splice(index2, 1);
+                var tmpUsers = _this.copyObject(users);
+                for (var i in tmpUsers) {
+                    var tmpUser = tmpUsers[i];
+                    _this.selected.splice( _this.findKeyById(_this.selected, tmpUser), 1);
+                    _this.usersCreatedOld.splice( _this.findKeyById(_this.usersCreatedOld, tmpUser), 1);
+                    _this.usersCreated.splice(_this.findKeyById(_this.usersCreated, tmpUser), 1);
                 }
 
             });
