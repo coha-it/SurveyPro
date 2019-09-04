@@ -17,9 +17,9 @@ class CreateULocations extends Migration
     {
         Schema::create($this->tbl, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('created_by')->unsigned()->nullable();
             $table->string('name');
             $table->boolean('public')->default(false);
+            $table->bigInteger('created_by')->unsigned()->nullable();
             $table->timestamps();
         });
 
