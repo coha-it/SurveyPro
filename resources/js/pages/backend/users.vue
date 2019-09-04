@@ -2,9 +2,28 @@
     <div>
         <h1>Users</h1>
         <p>Create Users with PAN & PIN</p>
+        <p>
+            <UserDataModal 
+                sEditText="Firmen bearbeiten"
+                sCreateText="Neue Firma erstellen" 
+                sInputLabel="Firmenname"
+                p_sModel="company"
+                :p_oModels="user.companies" />
+            <UserDataModal 
+                sEditText="Abteilungen bearbeiten"
+                sCreateText="Neue Abteilung Erstellen" 
+                sInputLabel="Abteilungsname"
+                p_sModel="department"
+                :p_oModels="user.departments" />
+            <UserDataModal 
+                sEditText="Orte Bearbeiten"
+                sCreateText="Neuen Ort erstellen" 
+                sInputLabel="Ortsname"
+                p_sModel="location"
+                :p_oModels="user.locations" />
+        </p>
+
         <br>
-
-
 
         <template>
             <v-card>
@@ -15,87 +34,7 @@
                 <v-card-text> 
                     <v-row no-gutters align-content="end" align="end" justify="end"> 
                         <v-col cols="12" md="6">
-                            
-                            
-                            <v-dialog v-model="dialogEditCompanies" max-width="900px" persistent scrollable>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn small color="primary" depressed v-on="on">Firma bearbeiten</v-btn>
-                                </template>
-                                <v-card>
-                                    <v-card-title class="headline grey lighten-2" primary-title>Firma Bearbeiten</v-card-title>
-                                    <v-card-text>
-                                        <br>
-                                        <v-card>
-                                            <v-card-title>
-                                                <!-- New Company -->
-                                                <v-dialog v-model="dialogCreateCompany" persistent max-width="290">
-                                                    <template v-slot:activator="{ on }">
-                                                        <v-btn color="primary" dark v-on="on">Create Company</v-btn>
-                                                    </template>
-                                                    <v-card>
-                                                        <v-card-title class="headline">Create Company</v-card-title>
-                                                        <v-card-text>
-                                                            <v-text-field label="Company" required v-model="company_name"></v-text-field>
-                                                        </v-card-text>
-                                                        <v-card-actions>
-                                                            <div class="flex-grow-1"></div>
-                                                            <v-btn color="green darken-1" text @click="dialogCreateCompany = false">cancel</v-btn>
-                                                            <v-btn color="green darken-1" text @click="createCompany(company_name)">save</v-btn>
-                                                        </v-card-actions>
-                                                    </v-card>
-                                                </v-dialog>
-
-
-                                                <div class="flex-grow-1"></div>
-                                                <v-text-field
-                                                    v-model="search"
-                                                    append-icon="search"
-                                                    label="Search"
-                                                    single-line
-                                                    hide-details
-                                                ></v-text-field>
-                                            </v-card-title>
-                                            <v-data-table
-                                                :headers="company_headers"
-                                                :items="user.companies"
-                                                :items-per-page="20"
-                                                class="elevation-1"
-                                                multi-sort>
-                                                <template v-slot:item.name="props">
-                                                    <v-edit-dialog
-                                                        :return-value.sync="props.item.name"
-                                                        @save="saveCompany(props.item)"
-                                                        @cancel="cancel"
-                                                        @open="open"
-                                                        @close="close" 
-                                                        lazy 
-                                                    > {{ props.item.name }}
-                                                        <template v-slot:input>
-                                                            <v-text-field
-                                                                v-model="props.item.name"
-                                                                label="Edit"
-                                                                single-line
-                                                                counter
-                                                            ></v-text-field>
-                                                        </template>
-                                                    </v-edit-dialog>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-
-                                    </v-card-text>
-                                    <v-card-actions>
-                                        <div class="flex-grow-1"></div>
-                                        <v-btn color="primary" text @click="dialogEditCompanies = false">
-                                            close
-                                        </v-btn>
-                                    </v-card-actions>
-                                </v-card>
-                            </v-dialog>
-
-
-                            <v-btn small color="primary" depressed>Abteilung bearbeiten</v-btn>
-                            <v-btn small color="primary" depressed>Ort bearbeiten</v-btn>
+                            <v-btn depressed>Benutzer erstellen</v-btn>
                         </v-col>
                         <v-col cols="12" md="6">
                             <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
@@ -395,7 +334,7 @@ import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { mask, TheMask } from 'vue-the-mask'
 import { setTimeout } from 'timers';
-
+import UserDataModal from '~/components/BackendUserDataModal'
 
 export default {
     middleware: 'canCreateUsers',
@@ -409,7 +348,8 @@ export default {
     },
 
     components: {
-        TheMask
+        TheMask,
+        UserDataModal
     },
 
     directives: {
@@ -421,10 +361,6 @@ export default {
 
     data () {
       return {
-
-          dialogEditCompanies: false,
-          dialogCreateCompany: false,
-          company_name: '',
 
         panTokens: {
             P: {
@@ -452,16 +388,6 @@ export default {
           { text: this.$t('created_at'), value: 'created_at'},
         //   { text: 'Locked', value: 'pan.locked_until'},
           { text: 'Actions', value: 'action', sortable: false },
-        ],
-
-        // Company Headers
-        company_headers: [
-          { text: this.$t('id'), value: 'id' },
-          { text: this.$t('name'), value: 'name' },
-          { text: this.$t('public'), value: 'public' },
-          { text: this.$t('created_by'), value: 'created_by' },
-          { text: this.$t('updated_at'), value: 'updated_at'},
-          { text: this.$t('created_at'), value: 'created_at'},
         ],
 
         all_groups: [],
@@ -582,26 +508,6 @@ export default {
             this.snackColor = 'primary'
             this.snackText = this.$t('attribute_changed')
         },
-        saveCompany(item) {
-            this.snackTimeout = 5000;
-            this.snack = true
-            this.snackColor = 'success'
-            this.snackText = this.$t('data_saved')
-
-            axios.patch('/api/company/update', {
-                id: item.id,
-                name: item.name
-            });
-        },
-
-        createCompany(name) {
-            var _this = this;
-            axios.post('/api/company/create', {
-                name: name
-            }).then(function (response) {
-                _this.user.companies.push(response.data);
-            });
-        },
 
         cancel () {
             this.snackTimeout = 3000;
@@ -610,9 +516,10 @@ export default {
             this.snackText = this.$t('canceled')
         },
         open () {
+            // When Edit Dialog Open
         },
         close () {
-          // When Edit Dialog Closed
+            // When Edit Dialog Closed
         },
 
 
