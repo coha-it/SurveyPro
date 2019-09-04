@@ -84,6 +84,9 @@
     "PAN": "PAN",
     "PIN": "PIN",
     "Welcome": "Willkommen",
+    "id": "ID",
+    "public": "Öffentlich",
+    "created_by": "Erstellt von",
     "password_label": "PASSWORT",
     "email_label": "E-MAIL",
 
@@ -105,6 +108,7 @@
       "backend": {
         "title": "Administration",
         "users": "Benutzer",
+        "pan": "Zugänge",
         "groups": "Gruppen",
         "surveys": "Umfragen",
         "statistics": "Statistiken"
