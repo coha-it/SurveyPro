@@ -32,20 +32,107 @@
                     <div class="flex-grow-1"></div>
                 </v-card-title>
                 <v-card-text> 
-                    <v-row no-gutters align-content="end" align="end" justify="end"> 
+                    <!-- <v-row no-gutters align-content="end" align="end" justify="end"> 
                         <v-col cols="12" md="6">
-                            <v-btn depressed>Benutzer erstellen</v-btn>
+                            <v-btn depressed color="primary">Benutzer erstellen</v-btn>
                         </v-col>
                         <v-col cols="12" md="6">
                             <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
                         </v-col>
-                    </v-row>
+                    </v-row> -->
                 </v-card-text>
+                    <!-- No Select Toolbar -->
+                    <v-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="search == ''" floating min-height="85px" height="auto">
+                        <!-- Create User -->
+                            <v-dialog v-model="bCreateUsersDialog" transition="dialog-bottom-transition" max-width="700" :content-class="bCreateUsersLoading ? 'naked dark centered': '' ">
+                              <template v-slot:activator="{ on }">
+                                  <!-- Create User: Button -->
+                                <v-btn rounded text class="primary--text" v-on="on">
+                                    <v-icon left class="pr-2">mdi-account-plus</v-icon> Benutzer erstellen
+                                </v-btn>
+                              </template>
+
+                              <!-- Create User: Modal -->
+                              <v-card v-if="!bCreateUsersLoading">
+                                <v-toolbar dark color="primary">
+                                  <v-btn icon dark @click="bCreateUsersDialog = false">
+                                    <v-icon>mdi-close</v-icon>
+                                  </v-btn>
+                                  <v-toolbar-title>Erstelle neue Zugänge</v-toolbar-title>
+                                  <div class="flex-grow-1"></div>
+                                  <v-toolbar-items>
+                                    <v-btn dark text @click="createUsers()" v-if="iCreateUsersNumber > 0">{{ iCreateUsersNumber }} Zugänge Generieren</v-btn>
+                                  </v-toolbar-items>
+                                </v-toolbar>
+                                <v-list three-line subheader>
+                                  <v-subheader>Zugänge Konfigurieren</v-subheader>
+                                  <v-list-item>
+                                    <v-list-item-content>
+                                      <v-list-item-title>Benutzer / Zugänge erstellen</v-list-item-title>
+                                      <v-list-item-subtitle>Wählen Sie eine Anzahl der zu erstellenden Benutzer aus</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                  </v-list-item>
+
+                                  <v-list-item>
+                                    <v-list-item-content style="max-width:400px;">
+                                        <v-text-field outlined clearable label="Benutzeranzahl" v-model="iCreateUsersNumber" required hide-details type="number"></v-text-field>
+                                    </v-list-item-content>
+                                  </v-list-item>
+
+                                  <v-list-item>
+                                    <v-list-item-action>
+                                      <v-checkbox v-model="bCreateUsersRandomPan"></v-checkbox>
+                                    </v-list-item-action>
+                                    <v-list-item-content>
+                                      <v-list-item-title>Zufällige PAN</v-list-item-title>
+                                      <v-list-item-subtitle>Generiert eine Zufällige und individuelle / einmalige PAN. z.B.: G4D 4Y6</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                 <v-list-item>
+                                    <v-list-item-action>
+                                      <v-checkbox v-model="bCreateUsersRandomPin"></v-checkbox>
+                                    </v-list-item-action>
+                                    <v-list-item-content>
+                                      <v-list-item-title>Zufällige PIN</v-list-item-title>
+                                      <v-list-item-subtitle>Generiert eine Zufällige PIN. z.B. 1534 oder 5664</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                </v-list>
+                                <v-divider></v-divider>
+                              </v-card>
+                              <!-- Loading -->
+                              <template v-else>
+                                <p>{{ $t('loading.text') }}</p>
+                                <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+                              </template>
+                            </v-dialog>
+
+
+                            <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="primary"></v-switch>
+
+                        <div class="flex-grow-1"></div>
+                        <v-text-field style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" single-line hide-details></v-text-field>
+                    </v-toolbar>
+                    <!-- Selection Toolbar -->
+                    <v-toolbar class="coha--toolbar" v-else :flat="search == ''" color="primary"  dark floating min-height="85px" height="auto">
+                        <v-btn color="success" rounded>
+                            <v-icon left>mdi-content-save</v-icon> {{ selected.length + ' ' + $t('save') }}
+                        </v-btn>
+                        <v-btn text rounded>
+                            <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
+                        </v-btn>
+                        <v-btn text rounded error warning>
+                            <v-icon left>delete</v-icon> {{ selected.length + ' ' + $t('delete') }}
+                        </v-btn>
+                        <div class="flex-grow-1"></div>
+                    </v-toolbar>
+
                 <v-data-table
                     v-if="usersCreated && usersCreated.length >= 1"
                     :headers="headers"
                     :items="usersCreated"
-                    item-key="id"
+                    v-model="selected"
+                    item-key="key"
                     :search="search"
                     show-select 
                     multi-sort 
@@ -67,9 +154,14 @@
                                 persistent
                                 ref="dialog"
                             >
-                                <span :class="!panIsOk(item) ? 'red--text' : ''">
-                                    <span class="pan--part">{{ item.pan.pan.substring(0,3) }}</span><span class="pan--part">{{ item.pan.pan.substring(3,6) }}</span>
-                                </span>
+                                <template v-if="item.pan.pan">
+                                    <span :class="!panIsOk(item) ? 'red--text' : ''">
+                                        <span class="pan--part">{{ item.pan.pan.substring(0,3) }}</span><span class="pan--part">{{ item.pan.pan.substring(3,6) }}</span>
+                                    </span>
+                                </template>
+                                <template v-else>
+                                    <span style="text-transform: uppercase;" class="red--text">{{ $t('empty') }}</span>
+                                </template>
                                 <template v-slot:input>
                                     <div class="pan--dialog-input c-code-text">
                                         <v-text-field 
@@ -101,7 +193,7 @@
                             >
                                 <span class="coha--list-item pin">
                                     <template v-if="item.pan.pin">
-                                        <span :class="!pinIsOk(item) ? 'red--text' : ''">{{ item.pan.pin }}</span>
+                                        <span :class="!pinIsOk(item) ? 'red--text' : ''">{{ showPin ? item.pan.pin : '****' }}</span>
                                     </template>
                                     <template v-else>
                                         <span style="text-transform: uppercase;" class="red--text">{{ $t('empty') }}</span>
@@ -369,8 +461,10 @@ export default {
         },
 
         usersCreatedOld: [],
+        selected: [],
 
         loading: false,
+        showPin: false,
         search: '',
         headers: [
           {
@@ -392,14 +486,22 @@ export default {
 
         all_groups: [],
 
-        maxPanChars: v => v.length <= 6 || 'Input too long!',
-        maxPinChars: v => v.length == 4 || 'Pin Wrong!',
+        maxPanChars: v => v && v.length <= 6 || 'Input too long!',
+        maxPinChars: v => v && v.length == 4 || 'Pin Wrong!',
 
         // Snackbar
         snack: false,
         snackColor: '',
         snackText: '',
         snackTimeout: 3000,
+
+        
+        // Create Users
+        iCreateUsersNumber: 5,
+        bCreateUsersDialog: false,
+        bCreateUsersLoading: false,
+        bCreateUsersRandomPan: true,
+        bCreateUsersRandomPin: true,
 
       }
     },
@@ -419,6 +521,32 @@ export default {
 
     methods: {
 
+        createUsers() {
+            var _this = this;
+
+            // Close Dialog and Load
+            this.bCreateUsersLoading = true;
+
+            // Create Users
+            this.$store.dispatch('users/createUsers', {
+                number: this.iCreateUsersNumber
+            }).then(function(response) {
+                _this.bCreateUsersLoading = false;
+                _this.bCreateUsersDialog = false;
+                
+                // Success
+                if(!e || !e.reponse || !e.reponse.data || !e.response.data.error) {
+                    // SUCCESS
+                    console.log(response);
+                }
+            }).catch(function(response) {
+                // ERROR
+                _this.bCreateUsersLoading = false;
+                _this.bCreateUsersDialog = false;
+            });
+            
+        },
+
         validUser(item) {
             if(
                 this.pinIsOk(item) && 
@@ -430,11 +558,11 @@ export default {
         },
 
         pinIsOk(item) {
-            return item.pan.pin.length == 4;
+            return item.pan && item.pan.pin && item.pan.pin.length == 4;
         },
 
         panIsOk(item) {
-            return item.pan.pan.length == 6;
+            return item.pan && item.pan.pan && item.pan.pan.length == 6;
         },
 
         getOldUsersKey(item) {
@@ -533,6 +661,7 @@ export default {
         },
 
         alreadyInGroups(group, groups) {
+            if(!group || !groups || !groups.filter) return;
             // item.groupsModerating && item.groupsModerating.includes(group)
             if (groups.filter(function(e) { return e.id === group.id; }).length > 0) {
                 return true;

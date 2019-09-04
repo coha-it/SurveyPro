@@ -25,6 +25,15 @@ class UserPan extends Model
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'pan', 'pin'
+    ];
+
+    /**
      * Get the user record associated with the info.
      */
     public function user()

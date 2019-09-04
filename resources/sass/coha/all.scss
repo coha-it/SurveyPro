@@ -57,6 +57,22 @@ select {
 }
 
 
+// Toolbar
+.coha--toolbar {
+    &.v-toolbar {
+        display: flex;
+        align-items: center;
+        .v-toolbar__content {
+            height: 100%;
+            width: 100%;
+
+            @media screen and (max-width: 770px) {
+                padding: 16px 16px;
+                flex-direction: column;
+            }
+        }
+    }
+}
 
 // Button 
 .v-btn__content {

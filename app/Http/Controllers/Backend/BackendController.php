@@ -62,6 +62,78 @@ class BackendController extends Controller
     //     $group->users()->detach($user);
     // }
 
+    /**
+     * Just Create a Random PIN with 0-9 and 4 Characters
+     * 
+     * @return String $token
+     */
+    public function createRandom($pattern, $max) {
+        return substr(str_shuffle(str_repeat($pattern, $max)), 0, $max);
+    }
+
+    /**
+     * Just Create a Random String with A-Z and 0-9 and 6 Characters
+     * 
+     *
+     * @return String $token
+     */
+    public function createRandomPan() {
+        do {
+            $token = $this->createRandom("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6);
+            $user = Pan::where('pan', $token)->get();
+        }
+        while(!$user->isEmpty());
+
+        return $token;
+    }
+
+    /**
+     * Just Create a Random PIN with 0-9 and 4 Characters
+     * 
+     * @return String $token
+     */
+    public function createRandomPin() {
+        return $this->createRandom("0123456789", 4);
+    }
+
+    /**
+     * Create Many Users by number
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function createUsers(Request $request) {
+        // Validate Data
+        $request->validate([
+            'number' => 'required|min:1|max:100',
+        ]);
+
+        // Variables
+        $number = $request->number;
+        $self = $request->user();
+
+        // Go Through Number
+        for ($i=0; $i < $number; $i++) { 
+            $sRandPan = $this->createRandomPan();
+            $sRandPin = $this->createRandomPin();
+
+            $user = User::create(['created_by' => $self->id]);
+            $pan = $user->pan()->updateOrCreate([
+                'pan' => $sRandPan,
+                'pin' => $sRandPin
+            ]);
+        }
+
+        return "jo";
+        return $request->user()->groupsModerating->toJson();
+    }
+
+    /**
+     * Upda a User which was created by the User
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function updateCreatedUser(Request $request) {
         // Validate Data
         $validator = \Validator::make($request->all(), [
@@ -101,8 +173,6 @@ class BackendController extends Controller
 
         // Send User as Response
         return $user->toJson();
-
-
     }
 
 }

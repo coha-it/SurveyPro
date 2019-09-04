@@ -6,12 +6,17 @@
             <v-btn text @click="snack = false">{{ $t('closer_button') }}</v-btn>
         </v-snackbar>
 
-        <v-dialog v-model="editDialog" max-width="900px" persistent scrollable>
+        <v-dialog v-model="editDialog" max-width="900px" max-height="1000px" min-height="500px" height="90%" persistent scrollable transition="dialog-bottom-transition">
             <template v-slot:activator="{ on }">
                 <v-btn color="primary" depressed v-on="on">{{ sEditText }}</v-btn>
             </template>
             <v-card>
-                <v-card-title class="headline grey lighten-2" primary-title>{{ sEditText }}</v-card-title>
+                <v-toolbar dark color="primary">
+                    <v-btn icon dark @click="editDialog = false">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>{{ sEditText }}</v-toolbar-title>
+                </v-toolbar>
                 <v-card-text>
                     <br>
                     <v-card>
@@ -34,19 +39,14 @@
                                 </v-card>
                             </v-dialog>     
                             <div class="flex-grow-1"></div>
-                            <v-text-field
-                                v-model="search"
-                                append-icon="search"
-                                label="Search"
-                                single-line
-                                hide-details
-                            ></v-text-field>
+                            <!-- <v-text-field v-model="sSearch" append-icon="search" label="Search" single-line hide-details></v-text-field> -->
                         </v-card-title>
                         <v-data-table
                             :headers="headers"
                             :items="oModels"
                             :items-per-page="20"
                             class="elevation-1"
+                            :search="sSearch"
                             multi-sort>
                             <template v-slot:item.name="props">
                                 <v-edit-dialog
@@ -56,13 +56,17 @@
                                     @open="open"
                                     @close="close" 
                                     lazy 
-                                > {{ props.item.name }}
+                                >
+                                <span v-if="props.item.name.length > 0">{{ props.item.name }}</span>
+                                <span v-else class="red--text c-code-text">{{ $t('empty') }}</span>
                                     <template v-slot:input>
                                         <v-text-field
                                             v-model="props.item.name"
                                             label="Edit"
                                             single-line
-                                            counter
+                                            :rules="[minChars]"
+                                            counter 
+                                            required 
                                         ></v-text-field>
                                     </template>
                                 </v-edit-dialog>
@@ -106,7 +110,7 @@ export default {
             editDialog: false,
             createDialog: false,
             field_name: '',
-            search: '',
+            sSearch: '',
 
             // Company Headers
             headers: [
@@ -127,16 +131,20 @@ export default {
             // From Parent
             sModel:  this.p_sModel,
             oModels: this.p_oModels,
+
+            // Rules
+            minChars: v => v.length >= 1 || this.$t('validation.length.short'),
         }
     },
 
     methods: {
         save(item) {
+            if(!item.name) return;
+
             this.snackTimeout = 5000;
             this.snack = true
             this.snackColor = 'success'
             this.snackText = this.$t('data_saved')
-
             axios.patch('/api/'+ this.sModel +'/update', {
                 id: item.id,
                 name: item.name

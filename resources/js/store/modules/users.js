@@ -57,6 +57,14 @@ export const actions = {
     } catch (e) {
       return e
     }
+  },
+
+  createUsers( { commit }, payload ) {
+    try {
+      return axios.post('/api/create-users', payload )
+    } catch (e) {
+      return e
+    }
   }
 
 }

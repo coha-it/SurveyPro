@@ -49,6 +49,11 @@
         "choose": "Wähle einen Ort"
       }
     },
+    "validation": {
+      "length": {
+        "short": "Diese Eingabe ist zu kurz"
+      }
+    },
     "your_info": "Ihre Infos",
     "info_updated": "Ihre Infos wurden aktualisiert!",
     "update": "Speichern",
@@ -89,6 +94,7 @@
     "created_by": "Erstellt von",
     "password_label": "PASSWORT",
     "email_label": "E-MAIL",
+    "Search": "Suchen...",
 
     "bottombar": {
       "menu": "Menü",
