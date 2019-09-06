@@ -137,12 +137,121 @@
                     </v-toolbar>
                     <!-- Toolbar for Selections -->
                     <v-toolbar class="coha--toolbar" v-else :flat="search == ''" color="primary"  dark floating min-height="85px" height="auto">
+
                         <v-btn color="success" rounded @click="updateUsers(getUnsaved(selected))" :disabled="!getUnsaved(selected).length">
                             <v-icon left>mdi-content-save</v-icon> {{ getUnsaved(selected).length + ' ' + $t('save') }}
                         </v-btn>
-                        <v-btn text rounded>
-                            <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
-                        </v-btn>
+
+                        <v-menu offset-y>
+                            <template v-slot:activator="{ on:menuedit }">
+                                <v-btn text rounded v-on="{ ...menuedit }">
+                                    <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
+                                </v-btn>
+                            </template>
+                            <v-list>
+                                <v-menu offset-x open-on-hover>
+                                    <template v-slot:activator="{ on: menugroup }">
+                                        <v-list-item v-on="{ ...menugroup }">
+                                            <v-list-item-title>Gruppe</v-list-item-title>
+                                            <v-list-item-action>
+                                                <v-icon>mdi-chevron-right</v-icon>
+                                            </v-list-item-action>
+                                        </v-list-item>
+                                    </template>
+                                    <v-list>
+                                        <v-list-item>
+                                            <v-list-item-title>Hinzufügen</v-list-item-title>
+                                        </v-list-item>
+
+                                        <v-list-item>
+                                            <v-list-item-title>Löschen</v-list-item-title>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-menu>
+
+                                <!-- Menu: Company -->
+                                <template>
+                                    <v-menu offset-x open-on-hover>
+                                        <template v-slot:activator="{ on: menucompany }">
+                                            <v-list-item v-on="{ ...menucompany }">
+                                                <v-list-item-title>Firma</v-list-item-title>
+                                                <v-list-item-action>
+                                                    <v-icon>mdi-chevron-right</v-icon>
+                                                </v-list-item-action>
+                                            </v-list-item>
+                                        </template>
+                                        <v-list>
+                                            <v-list-item @click="bChangeUsersCompanyDialog = !bChangeUsersCompanyDialog">
+                                                <v-list-item-title>Ändern</v-list-item-title>
+                                            </v-list-item>
+                                        </v-list>
+                                    </v-menu>
+                                    <v-dialog v-model="bChangeUsersCompanyDialog" transition="dialog-bottom-transition" max-width="700" persistent>
+                                        <v-toolbar dark color="primary">
+                                            <v-btn icon dark @click="bChangeUsersCompanyDialog = false">
+                                                <v-icon>mdi-close</v-icon>
+                                            </v-btn>
+                                            <v-toolbar-title>Ändere Firma</v-toolbar-title>
+                                            <div class="flex-grow-1"></div>
+                                            <v-toolbar-items>
+                                                <v-btn dark text @click="changeUsersCompany(selected, oUsersNewCompany)">Firma Ändern</v-btn>
+                                            </v-toolbar-items>
+                                        </v-toolbar>
+                                        <v-list three-line subheader>
+                                            <v-subheader>Firma wählen</v-subheader>
+                                            <v-list-item>
+                                                <v-list-item-content style="max-width:400px;">
+                                                    <v-select 
+                                                        outlined 
+                                                        clearable 
+                                                        label="Firma wählen" 
+                                                        required 
+                                                        :items="user.companies"
+                                                        v-model="oUsersNewCompany"
+                                                        item-text="name"
+                                                        return-object></v-select>
+                                                </v-list-item-content>
+                                            </v-list-item>
+                                        </v-list>
+                                    </v-dialog>
+                                </template>
+
+                                <v-menu offset-x open-on-hover>
+                                    <template v-slot:activator="{ on: menudepartment }">
+                                        <v-list-item v-on="{ ...menudepartment }">
+                                            <v-list-item-title>Abteilung</v-list-item-title>
+                                            <v-list-item-action>
+                                                <v-icon>mdi-chevron-right</v-icon>
+                                            </v-list-item-action>
+                                        </v-list-item>
+                                    </template>
+                                    <v-list>
+                                        <v-list-item>
+                                            <v-list-item-title>Ändern</v-list-item-title>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-menu>
+
+                                <v-menu offset-x open-on-hover>
+                                    <template v-slot:activator="{ on: menulocation }">
+                                        <v-list-item v-on="{ ...menulocation }">
+                                            <v-list-item-title>Ort</v-list-item-title>
+                                            <v-list-item-action>
+                                                <v-icon>mdi-chevron-right</v-icon>
+                                            </v-list-item-action>
+                                        </v-list-item>
+                                    </template>
+                                    <v-list>
+                                        <v-list-item>
+                                            <v-list-item-title>Ändern</v-list-item-title>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-menu>
+
+
+                            </v-list>
+                        </v-menu>
+
 
                         <Print :users="selected" :disabled="getUnsaved(selected).length > 0 ? true : false" />
                         
@@ -537,20 +646,20 @@ export default {
                     text: 'ID',
                     align: 'left',
                     value: 'id',
-                    filter: value => {
-                        return this.filterId(value, this.oFilters.iId)
+                    filter: sWhere => {
+                        return this.filterId(this.oFilters.iId, sWhere)
                     },
                 },
                 { 
                     text: this.$t('PAN'), 
                     value: 'pan.pan', 
-                    filter: value => {
-                        return this.filterBasic(value, this.oFilters.sPan)
+                    filter: sWhere => {
+                        return this.filterPan(this.oFilters.sPan, sWhere)
                     },
                 },
                 { text: this.$t('PIN'), value: 'pan.pin',
-                    filter: value => {
-                        return this.filterBasic(value, this.oFilters.sPin)
+                    filter: sWhere => {
+                        return this.filterBasic(this.oFilters.sPin, sWhere)
                     },
                 },
                 { text: this.$t('groups'), value: 'groups'},
@@ -581,6 +690,9 @@ export default {
 
     data () {
       return {
+
+          bChangeUsersCompanyDialog: false,
+          oUsersNewCompany: {},
 
           pinLength: 4,
           panLength: 6,
@@ -642,16 +754,31 @@ export default {
 
     methods: {
 
-        filterBasic(value, where) {
-            if (!where) return true
-            if( !this.bFilter ) return true;
-            return value.toLowerCase().includes(where.toLowerCase())
+        changeUsersCompany(aSelectedUsers, oCompany) {
+            for (var i in aSelectedUsers) {
+                var oUser = aSelectedUsers[i];
+                oUser.company_id = oCompany.id;
+                oUser.company = oCompany;
+            }
+            this.bChangeUsersCompanyDialog = false;
         },
 
-        filterId(value, where) {
-            if (!where) return true
+        filterBasic(sSearch, sWhere) {
+            if (!sSearch) return true
             if( !this.bFilter ) return true;
-            return value == where;
+            return sWhere.toLowerCase().includes(sSearch.toLowerCase())
+        },
+
+        filterPan(sSearch, sWhere) {
+            if (!sSearch) return true
+            if( !this.bFilter ) return true;
+            return sWhere.toLowerCase().includes(sSearch.replace(' ', '').toLowerCase())
+        },
+
+        filterId(sSearch, sWhere) {
+            if (!sSearch) return true
+            if( !this.bFilter ) return true;
+            return sWhere == sSearch;
         },
 
         companyChanged(item) {

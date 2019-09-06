@@ -48,6 +48,13 @@ select {
     min-width: 15px;
 }
 
+.v-menu {
+
+    &.v-menu--inline {
+        display: inline;
+    }
+}
+
 // SELECT IN CHIP
 .v-chip__content > select {
     height: 100%;
@@ -223,6 +230,8 @@ select {
 .coha--filter-input {
     &.v-text-field.v-text-field--enclosed {
         margin-left: -12px;
+        width: auto;
+        display: inline-block;
     }
 }
 
