@@ -170,84 +170,37 @@
                                 </v-menu>
 
                                 <!-- Menu: Company -->
-                                <template>
-                                    <v-menu offset-x open-on-hover>
-                                        <template v-slot:activator="{ on: menucompany }">
-                                            <v-list-item v-on="{ ...menucompany }">
-                                                <v-list-item-title>Firma</v-list-item-title>
-                                                <v-list-item-action>
-                                                    <v-icon>mdi-chevron-right</v-icon>
-                                                </v-list-item-action>
-                                            </v-list-item>
-                                        </template>
-                                        <v-list>
-                                            <v-list-item @click="bChangeUsersCompanyDialog = !bChangeUsersCompanyDialog">
-                                                <v-list-item-title>Ändern</v-list-item-title>
-                                            </v-list-item>
-                                        </v-list>
-                                    </v-menu>
-                                    <v-dialog v-model="bChangeUsersCompanyDialog" transition="dialog-bottom-transition" max-width="700" persistent>
-                                        <v-toolbar dark color="primary">
-                                            <v-btn icon dark @click="bChangeUsersCompanyDialog = false">
-                                                <v-icon>mdi-close</v-icon>
-                                            </v-btn>
-                                            <v-toolbar-title>Ändere Firma</v-toolbar-title>
-                                            <div class="flex-grow-1"></div>
-                                            <v-toolbar-items>
-                                                <v-btn dark text @click="changeUsersCompany(selected, oUsersNewCompany)">Firma Ändern</v-btn>
-                                            </v-toolbar-items>
-                                        </v-toolbar>
-                                        <v-list three-line subheader>
-                                            <v-subheader>Firma wählen</v-subheader>
-                                            <v-list-item>
-                                                <v-list-item-content style="max-width:400px;">
-                                                    <v-select 
-                                                        outlined 
-                                                        clearable 
-                                                        label="Firma wählen" 
-                                                        required 
-                                                        :items="user.companies"
-                                                        v-model="oUsersNewCompany"
-                                                        item-text="name"
-                                                        return-object></v-select>
-                                                </v-list-item-content>
-                                            </v-list-item>
-                                        </v-list>
-                                    </v-dialog>
-                                </template>
+                                <BulkProfileChanges 
+                                    :aItems="user.companies"
+                                    :selected="selected" 
+                                    sId="company_id" 
+                                    sModel="company" 
+                                    title="Ändere Firma" 
+                                    label="Firma wählen"
+                                    menuText="Firma"
+                                     />
 
-                                <v-menu offset-x open-on-hover>
-                                    <template v-slot:activator="{ on: menudepartment }">
-                                        <v-list-item v-on="{ ...menudepartment }">
-                                            <v-list-item-title>Abteilung</v-list-item-title>
-                                            <v-list-item-action>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                    </template>
-                                    <v-list>
-                                        <v-list-item>
-                                            <v-list-item-title>Ändern</v-list-item-title>
-                                        </v-list-item>
-                                    </v-list>
-                                </v-menu>
+                                <!-- Menu: Department -->
+                                <BulkProfileChanges 
+                                    :aItems="user.departments"
+                                    :selected="selected" 
+                                    sId="department_id" 
+                                    sModel="department" 
+                                    title="Ändere Abteilung" 
+                                    label="Abteilung wählen" 
+                                    menuText="Abteilung"
+                                    />
 
-                                <v-menu offset-x open-on-hover>
-                                    <template v-slot:activator="{ on: menulocation }">
-                                        <v-list-item v-on="{ ...menulocation }">
-                                            <v-list-item-title>Ort</v-list-item-title>
-                                            <v-list-item-action>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                    </template>
-                                    <v-list>
-                                        <v-list-item>
-                                            <v-list-item-title>Ändern</v-list-item-title>
-                                        </v-list-item>
-                                    </v-list>
-                                </v-menu>
-
+                                <!-- Menu: Location -->
+                                <BulkProfileChanges 
+                                    :aItems="user.locations"
+                                    :selected="selected" 
+                                    sId="location_id" 
+                                    sModel="location" 
+                                    title="Ändere Ort" 
+                                    label="Ort wählen" 
+                                    menuText="Ort"
+                                    />
 
                             </v-list>
                         </v-menu>
@@ -271,6 +224,7 @@
                             </v-container>
                         </v-dialog>
                         
+                        <!-- <v-switch class="mt-6 ml-6" v-model="bFilter" :label="'Erweitert Filtern'" color="accent"></v-switch> -->
                         <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></v-switch>
                         <div class="flex-grow-1"></div>
                         <v-text-field v-model="itemsPerPage" type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
@@ -630,6 +584,7 @@ import { mask, TheMask } from 'vue-the-mask'
 import { setTimeout } from 'timers';
 import UserDataModal from '~/components/BackendUserDataModal'
 import Print from '~/components/BackendUsersPrint'
+import BulkProfileChanges from '~/components/BackendUserBulkProfileChanges'
 
 export default {
     middleware: 'canCreateUsers',
@@ -678,7 +633,8 @@ export default {
     components: {
         TheMask,
         UserDataModal,
-        Print
+        Print,
+        BulkProfileChanges
     },
 
     directives: {
@@ -690,10 +646,6 @@ export default {
 
     data () {
       return {
-
-          bChangeUsersCompanyDialog: false,
-          oUsersNewCompany: {},
-
           pinLength: 4,
           panLength: 6,
           panTokens: {
@@ -753,15 +705,6 @@ export default {
     },
 
     methods: {
-
-        changeUsersCompany(aSelectedUsers, oCompany) {
-            for (var i in aSelectedUsers) {
-                var oUser = aSelectedUsers[i];
-                oUser.company_id = oCompany.id;
-                oUser.company = oCompany;
-            }
-            this.bChangeUsersCompanyDialog = false;
-        },
 
         filterBasic(sSearch, sWhere) {
             if (!sSearch) return true
