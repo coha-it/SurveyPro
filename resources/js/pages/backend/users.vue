@@ -401,7 +401,7 @@
 
                     <!-- Company -->
                     <template v-slot:item.company="{ item }">
-                        <select v-model="item.company_id">
+                        <select v-model="item.company_id" @change="companyChanged(item)">
                             <option disabled>Bitte auswählen</option>
                             <option 
                                 :value="company.id" 
@@ -414,7 +414,7 @@
 
                     <!-- Department -->
                     <template v-slot:item.department="{ item }">
-                        <select v-model="item.department_id">
+                        <select v-model="item.department_id" @change="departmentChanged(item)">
                             <option disabled>Bitte auswählen</option>
                             <option 
                                 :value="department.id" 
@@ -427,7 +427,7 @@
 
                     <!-- Location -->
                     <template v-slot:item.location="{ item }">
-                        <select v-model="item.location_id">
+                        <select v-model="item.location_id" @change="locationChanged(item)">
                             <option disabled>Bitte auswählen</option>
                             <option 
                                 :value="location.id" 
@@ -448,12 +448,12 @@
                                 depressed 
                                 class="mr-2"
                                 @click="updateUser(item)"
-                                :disabled="!unsafed(item) || !validUser(item)"
+                                :disabled="!unsaved(item) || !validUser(item)"
                             >{{ $t('save') }}</v-btn>
                             
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
-                                    <v-icon :disabled="!unsafed(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
+                                    <v-icon :disabled="!unsaved(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
                                 </template>
                                 <span>{{ $t('reset') }}</span>
                             </v-tooltip>
@@ -596,6 +596,18 @@ export default {
 
     methods: {
 
+        companyChanged(item) {
+            item.company = this.findById(this.user.companies, item.company_id);
+        },
+
+        departmentChanged(item) {
+            item.department = this.findById(this.user.departments, item.department_id);
+        },
+
+        locationChanged(item) {
+            item.location = this.findById(this.user.locations, item.location_id);
+        },
+
         getRandomPan(user) {
             var _this = this;
             _this.panIsLoading = true;
@@ -674,7 +686,7 @@ export default {
             return JSON.parse(JSON.stringify(obj));
         },
 
-        unsafed(item) {
+        unsaved(item) {
             var key = this.getOldUsersId(item);
             var itemLeft = this.copyObject(item);
             var itemRight = this.copyObject(this.usersCreatedOld[key]);
@@ -741,6 +753,10 @@ export default {
 
         findKeyById(arr, item) {
             return arr.findIndex(x => x.id === item.id);
+        },
+
+        findById(arr, id) {
+            return arr.find(x => x.id === id);
         },
 
         deleteUsers(users) {
