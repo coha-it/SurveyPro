@@ -144,7 +144,7 @@
                             <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
                         </v-btn>
 
-                        <Print :users="selected" />
+                        <Print :users="selected" :disabled="getUnsaved(selected).length > 0 ? true : false" />
                         
                         <v-btn text rounded error warning @click.stop="deleteUsersDialog = true">
                             <v-icon left>delete</v-icon> {{ selected.length + ' ' + $t('delete') }}
