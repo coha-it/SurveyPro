@@ -220,6 +220,11 @@ select {
     }
 }
 
+.coha--filter-input {
+    &.v-text-field.v-text-field--enclosed {
+        margin-left: -12px;
+    }
+}
 
 .pan--dialog-input {
     .v-text-field__slot > *,

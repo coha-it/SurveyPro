@@ -129,11 +129,11 @@
                 </v-card-text>
                     <!-- No Select Toolbar -->
                     <v-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="search == ''" floating min-height="85px" height="auto">
- 
-                            <v-switch class="mt-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="primary"></v-switch>
-
+                        <v-switch class="mt-6 mr-6" v-model="bFilter" :label="'Erweitert Filtern'" color="primary"></v-switch>
+                        <v-switch class="mt-6 mr-6" v-model="showPin" :label="'PIN Zeigen'" color="primary"></v-switch>
                         <div class="flex-grow-1"></div>
-                        <v-text-field style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" single-line hide-details></v-text-field>
+                        <v-text-field style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined></v-text-field>
+                        <v-text-field v-model="itemsPerPage" type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
                     </v-toolbar>
                     <!-- Toolbar for Selections -->
                     <v-toolbar class="coha--toolbar" v-else :flat="search == ''" color="primary"  dark floating min-height="85px" height="auto">
@@ -164,6 +164,7 @@
                         
                         <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></v-switch>
                         <div class="flex-grow-1"></div>
+                        <v-text-field v-model="itemsPerPage" type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
                     </v-toolbar>
 
                 <v-data-table
@@ -175,8 +176,11 @@
                     show-select 
                     multi-sort 
                     :loading="loading"
-                    :loading-text="$t('loading.text')"
-                    >
+                    :loading-text="$t('loading.text')" 
+                    :items-per-page="itemsPerPage"
+                    :footer-props="{
+                        showFirstLastPage: true,
+                    }">
 
                     <!-- PAN -->
                     <template v-slot:item.pan.pan="{ item }">
@@ -479,6 +483,24 @@
                         </div>
                     </template>
 
+
+                    <!-- Footer Bottom Filter -->
+                    <template v-slot:body.prepend>
+                        <tr v-if="bFilter">
+                            <td></td>
+                            <td>
+                                <v-text-field class="mt-2 mb-2 coha--filter-input" v-model="oFilters.iId" type="number" label="ID" single-line solo :flat="!oFilters.iId" clearable hide-details></v-text-field>
+                            </td>
+                            <td>
+                                <v-text-field class="mt-2 mb-2 coha--filter-input" v-model="oFilters.sPan" type="text" label="PAN" single-line solo :flat="!oFilters.sPan" clearable hide-details></v-text-field>
+                            </td>
+                            <td>
+                                <v-text-field class="mt-2 mb-2 coha--filter-input" v-model="oFilters.sPin" type="text" label="PIN" single-line solo :flat="!oFilters.sPin" clearable hide-details></v-text-field>
+                            </td>
+                            <td colspan="4"></td>
+                        </tr>
+                    </template>
+
                 </v-data-table>
 
                 <v-snackbar v-model="snack" :timeout="snackTimeout" :color="snackColor" top>
@@ -508,6 +530,40 @@ export default {
             user: 'auth/user',
             usersCreated: 'users/usersCreated',
         }),
+
+        headers() {
+            return [
+                {
+                    text: 'ID',
+                    align: 'left',
+                    value: 'id',
+                    filter: value => {
+                        return this.filterId(value, this.oFilters.iId)
+                    },
+                },
+                { 
+                    text: this.$t('PAN'), 
+                    value: 'pan.pan', 
+                    filter: value => {
+                        return this.filterBasic(value, this.oFilters.sPan)
+                    },
+                },
+                { text: this.$t('PIN'), value: 'pan.pin',
+                    filter: value => {
+                        return this.filterBasic(value, this.oFilters.sPin)
+                    },
+                },
+                { text: this.$t('groups'), value: 'groups'},
+                { text: this.$t('company'), value: 'company'},
+                { text: this.$t('department'), value: 'department'},
+                { text: this.$t('location'), value: 'location'},
+                { text: this.$t('updated_at'), value: 'updated_at'},
+                { text: this.$t('created_at'), value: 'created_at'},
+                { text: 'Actions', value: 'action', sortable: false },
+            ]; 
+        }
+
+
     },
 
     components: {
@@ -540,24 +596,14 @@ export default {
   
           loading: false,
           showPin: false,
+          itemsPerPage: 10,
           search: '',
-          headers: [
-            {
-              text: 'ID',
-              align: 'left',
-              value: 'id',
-            },
-            { text: this.$t('PAN'), value: 'pan.pan' },
-            { text: this.$t('PIN'), value: 'pan.pin' },
-            { text: this.$t('groups'), value: 'groups'},
-            { text: this.$t('company'), value: 'company'},
-            { text: this.$t('department'), value: 'department'},
-            { text: this.$t('location'), value: 'location'},
-            { text: this.$t('updated_at'), value: 'updated_at'},
-            { text: this.$t('created_at'), value: 'created_at'},
-          //   { text: 'Locked', value: 'pan.locked_until'},
-            { text: 'Actions', value: 'action', sortable: false },
-          ],
+          bFilter: false,
+          oFilters: {
+              sId: '',
+              sPan: '',
+              sPin: '',
+          },
   
           all_groups: [],
   
@@ -595,6 +641,18 @@ export default {
     },
 
     methods: {
+
+        filterBasic(value, where) {
+            if (!where) return true
+            if( !this.bFilter ) return true;
+            return value.toLowerCase().includes(where.toLowerCase())
+        },
+
+        filterId(value, where) {
+            if (!where) return true
+            if( !this.bFilter ) return true;
+            return value == where;
+        },
 
         companyChanged(item) {
             item.company = this.findById(this.user.companies, item.company_id);
