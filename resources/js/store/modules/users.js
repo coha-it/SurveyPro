@@ -51,9 +51,9 @@ export const actions = {
     axios.post('/api/remove-user-from-group', payload)
   },
 
-  updateUser ( { commit }, payload ) {
+  updateUsers ( { commit }, payload ) {
     try {
-      return axios.patch('/api/update-created-user', payload )
+      return axios.patch('/api/update-created-users', payload )
     } catch (e) {
       return e
     }

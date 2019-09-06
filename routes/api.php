@@ -72,7 +72,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('remove-user-from-group', 'Backend\BackendController@removeUserFromGroup');
 
         // Change User(s)
-        Route::patch('update-created-user', 'Backend\BackendController@updateCreatedUser');
+        Route::patch('update-created-users', 'Backend\BackendController@updateCreatedUsers');
         Route::patch('delete-created-user', 'Backend\BackendController@deleteUser');
         Route::post('create-users', 'Backend\BackendController@createUsers')->middleware('auth.user.can_create_users');
     });

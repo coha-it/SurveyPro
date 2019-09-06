@@ -137,8 +137,8 @@
                     </v-toolbar>
                     <!-- Toolbar for Selections -->
                     <v-toolbar class="coha--toolbar" v-else :flat="search == ''" color="primary"  dark floating min-height="85px" height="auto">
-                        <v-btn color="success" rounded @click="updateUsers()">
-                            <v-icon left>mdi-content-save</v-icon> {{ selected.length + ' ' + $t('save') }}
+                        <v-btn color="success" rounded @click="updateUsers(getUnsaved(selected))" :disabled="!getUnsaved(selected).length">
+                            <v-icon left>mdi-content-save</v-icon> {{ getUnsaved(selected).length + ' ' + $t('save') }}
                         </v-btn>
                         <v-btn text rounded>
                             <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
@@ -448,12 +448,12 @@
                                 depressed 
                                 class="mr-2"
                                 @click="updateUser(item)"
-                                :disabled="!unsaved(item) || !validUser(item)"
+                                :disabled="!isUnsaved(item) || !validUser(item)"
                             >{{ $t('save') }}</v-btn>
                             
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
-                                    <v-icon :disabled="!unsaved(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
+                                    <v-icon :disabled="!isUnsaved(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
                                 </template>
                                 <span>{{ $t('reset') }}</span>
                             </v-tooltip>
@@ -686,7 +686,7 @@ export default {
             return JSON.parse(JSON.stringify(obj));
         },
 
-        unsaved(item) {
+        isUnsaved(item) {
             var key = this.getOldUsersId(item);
             var itemLeft = this.copyObject(item);
             var itemRight = this.copyObject(this.usersCreatedOld[key]);
@@ -699,27 +699,36 @@ export default {
             return JSON.stringify(itemLeft) != JSON.stringify(itemRight);
         },
 
+        getUnsaved(arr) {
+            var unsaved = [];
+            for (var i in arr) {
+                var item = arr[i];
+
+                if(this.isUnsaved(item)) {
+                    unsaved.push(item);
+                }
+            }
+            return unsaved;
+        },
+
+
         resetUser(item) {
             var key = this.getOldUsersId(item);
             Object.assign(item, JSON.parse(JSON.stringify(this.usersCreatedOld[key])))
         },
 
-        updateUsers() {
-            var users = this.selected;
-            for (var i in users) {
-                var user = users[i];
-                this.updateUser(user);
-            }
+        updateUser(user) {
+            this.updateUsers([user]);
         },
 
-        updateUser(user) {
+        updateUsers(users) {
             // Variables
             var _this = this;
             this.loading = true;
 
-            // Update User
-            this.$store.dispatch('users/updateUser', {
-                user: user
+            // Update Users
+            this.$store.dispatch('users/updateUsers', {
+                users: users
             }).then(function(e) {
                 // Success
                 if(!e || !e.response || !e.response.data || !e.response.data.error) {
@@ -729,8 +738,11 @@ export default {
                     _this.snackText = _this.$t('data_saved')
 
                     // Save Old
-                    var key = _this.getOldUsersId(user);
-                    Object.assign(_this.usersCreatedOld[key], JSON.parse(JSON.stringify(user)))
+                    for (var i in users) {
+                        var user = users[i];
+                        var key = _this.getOldUsersId(user);
+                        Object.assign(_this.usersCreatedOld[key], JSON.parse(JSON.stringify(user)))
+                    }
                 }
                 _this.loading = false;
             }).catch(function(e) {
@@ -835,8 +847,6 @@ export default {
         async removeCreatedUserFromGroup(user, index) {
             user.groups.splice(index, 1);
         },
-
-
 
     }
 

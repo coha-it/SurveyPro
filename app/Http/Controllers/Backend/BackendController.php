@@ -187,19 +187,17 @@ class BackendController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function updateCreatedUser(Request $request) {
-        // Validate Data
-        $validator = \Validator::make($request->all(), [
-            'user' => 'required',
-            'user.pan.pan' => 'required|unique:u_pans,pan,'. $request->user['id'] .',user_id',
-            'user.pan.pin' => 'required|min:4|max:4'
-        ]);
-      
+    public function updateCreatedUsers(Request $request) {
+        
         // Get Data
         $self = $request->user();
-        $user = $self->users->find($request->user['id']);
+        
 
-        // Execute Validation
+        // Validate Data
+        $validator = \Validator::make($request->all(), [
+            'users' => 'required',
+        ]);
+
         if ($validator->fails()) {
             return response()->json(
                 [
@@ -210,22 +208,34 @@ class BackendController extends Controller
             );
         }
 
-        // If Group is in Request
-        if($user->groups) {
-            // Get
-            $groups = $self->groupsModerating->find(
-                array_column($request->user['groups'], 'id')
-            );
+        $users = $request->users;
+        $response = [];
+        foreach ($users as $key => $reqUser) {
+            // Validate Data
+            $validator = \Validator::make($reqUser, [
+                'pan.pan' => 'required|unique:u_pans,pan,'. $request->user['id'] .',user_id',
+                'pan.pin' => 'required|min:4|max:4'
+            ]);
 
-            $user->groups()->sync($groups);
+            $user = $self->users->find($reqUser['id']);
+
+            // If Group is in Request
+            if($user->groups) {
+                // Get
+                $groups = $self->groupsModerating->find(
+                    array_column($reqUser['groups'], 'id')
+                );
+
+                $user->groups()->sync($groups);
+            }
+
+            // Update Data
+            $user->update($reqUser);
+            $user->pan()->update($reqUser['pan']);
+            array_push($response, $user->toJson());
         }
 
-        // Update Data
-        $user->update($request->user);
-        $user->pan()->update($request->user['pan']);
-
-        // Send User as Response
-        return $user->toJson();
+        return $response;
     }
 
     /**
