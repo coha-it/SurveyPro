@@ -29,7 +29,7 @@
                                 <v-card>
                                     <v-card-title class="headline">{{ sCreateText }}</v-card-title>
                                     <v-card-text>
-                                        <v-text-field :label="sInputLabel" required v-model="item.name"></v-text-field>
+                                        <v-text-field :label="sInputLabel" required v-model="item.name" autofocus></v-text-field>
                                         <template v-if="sModel == 'group'">
                                             <v-text-field :label="sInputLabel2" required v-model="item.description_public"></v-text-field>
                                             <v-text-field :label="sInputLabel3" required v-model="item.description_mods"></v-text-field>
@@ -218,6 +218,9 @@ export default {
                 item: item
             }).then(function (response) {
                 _this.oModels.push(response.data);
+                if(item.name) item.name = '';
+                if(item.description_public) item.description_public  = '';
+                if(item.description_mods) item.description_mods = '';
             });
         },
 

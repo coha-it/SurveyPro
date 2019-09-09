@@ -20,7 +20,7 @@ class Group extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description_public',
+        'name', 'description_public', 'description_mods'
     ];
 
     /**
