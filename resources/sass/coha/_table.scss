@@ -1,0 +1,15 @@
+.v-data-table {
+
+    &.v-data-table--dense {
+        .v-data-table-header th.sortable .v-data-table-header__icon {
+            position: absolute;
+        }
+        
+    
+        td,
+        th {
+            font-size: 12px;
+            min-width: 44px;
+        }
+    }
+}
