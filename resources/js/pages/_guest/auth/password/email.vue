@@ -21,6 +21,15 @@
                 <div v-html="$t(status)"></div>
               </v-alert>
 
+              <!-- Error Alert -->
+              <v-alert dark icon="mdi-alert" prominent v-if="form.errors.has('email')" dismissible>
+                <template v-for="errors in form.errors">
+                  <template v-for="(error, i) in errors">
+                    <div v-html="$t(error)" v-bind:key="i"></div>
+                  </template>
+                </template>
+              </v-alert>
+
             <!-- Back -->
             <Back :to="{name: 'login'}" />
 
@@ -59,7 +68,7 @@
           <v-row>
             <v-col cols="12" sm="12" md="12" align="right">
               <!-- Submit Button -->
-              <v-btn color="accent" large block :loading="form.busy" type="submit">{{ $t('send_password_reset_link') }}</v-btn>
+              <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('send_password_reset_link') }}</v-btn>
             </v-col>
           </v-row>
 
