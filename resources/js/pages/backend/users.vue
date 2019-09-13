@@ -149,25 +149,10 @@
                                 </v-btn>
                             </template>
                             <v-list>
-                                <v-menu offset-x open-on-hover>
-                                    <template v-slot:activator="{ on: menugroup }">
-                                        <v-list-item v-on="{ ...menugroup }">
-                                            <v-list-item-title>Gruppe</v-list-item-title>
-                                            <v-list-item-action>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                    </template>
-                                    <v-list>
-                                        <v-list-item>
-                                            <v-list-item-title>Hinzufügen</v-list-item-title>
-                                        </v-list-item>
-
-                                        <v-list-item>
-                                            <v-list-item-title>Löschen</v-list-item-title>
-                                        </v-list-item>
-                                    </v-list>
-                                </v-menu>
+                                <BulkGroupChanges
+                                    :aItems="user.groups_moderating" 
+                                    :selected="selected" 
+                                    />
 
                                 <!-- Menu: Company -->
                                 <BulkProfileChanges 
@@ -585,6 +570,7 @@ import { setTimeout } from 'timers';
 import UserDataModal from '~/components/BackendUserDataModal'
 import Print from '~/components/BackendUsersPrint'
 import BulkProfileChanges from '~/components/BackendUserBulkProfileChanges'
+import BulkGroupChanges from '~/components/BackendUserBulkGroupChanges'
 
 export default {
     middleware: 'canCreateUsers',
@@ -634,7 +620,8 @@ export default {
         TheMask,
         UserDataModal,
         Print,
-        BulkProfileChanges
+        BulkProfileChanges,
+        BulkGroupChanges
     },
 
     directives: {
@@ -816,15 +803,24 @@ export default {
 
         isUnsaved(item) {
             var key = this.getOldUsersId(item);
-            var itemLeft = this.copyObject(item);
-            var itemRight = this.copyObject(this.usersCreatedOld[key]);
+            var itemL = this.copyObject(item);
+            var itemR = this.copyObject(this.usersCreatedOld[key]);
 
-            delete itemLeft.groupDialog;
-            delete itemLeft.deleteUserDialog;
-            delete itemRight.groupDialog;
-            delete itemRight.deleteUserDialog;
+            delete itemL.undefined;
+            delete itemR.undefined;
+            delete itemL.isSelected;
+            delete itemR.isSelected;
+            delete itemL.groupDialog;
+            delete itemR.groupDialog;
+            delete itemL.deleteUserDialog;
+            delete itemR.deleteUserDialog;
 
-            return JSON.stringify(itemLeft) != JSON.stringify(itemRight);
+            if(JSON.stringify(itemL) != JSON.stringify(itemR)) {
+                console.log(JSON.stringify(itemL), JSON.stringify(itemR));
+                return true;
+            } else {
+                return false;
+            }
         },
 
         getUnsaved(arr) {
