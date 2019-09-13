@@ -146,9 +146,9 @@ export default {
             }
         },
 
-        setModelForUser(id, name) {
+        setModelForUser(item) {
             axios.patch('/api/user/' + this.sModel + '/set', { 
-                id: id
+                id: item.id
             });
             this.oUser[this.sModel].id = id;
             this.oUser[this.sModel].name = name;
@@ -156,8 +156,7 @@ export default {
 
         updateModel(item) {
             axios.patch('/api/' + this.sModel + '/update', {
-                id: item.id,
-                name: item.name
+                item: item
             });
         },
 
@@ -185,16 +184,19 @@ export default {
 
                 if(typeof comp === 'string') {
                     // Make a request for a new one
+                    var item = {}
+                    item.name = comp;
                     axios.post('/api/' + this.sModel + '/create', {
-                        name:comp
+                        item: item
                     }).then(function (response) {
                         var res = response.data;
-                        _this.setModelForUser(res.id, comp);
+                        item.id = res.id;
+                        _this.setModelForUser(item);
                         _this.list[_this.list.length-1].id = res.id;
                     });
                 } else if (typeof comp === 'object') {
                     // Use Existing Company!
-                    _this.setModelForUser(comp.id, comp.name);
+                    _this.setModelForUser(comp);
                 }
             } else {
                 // Empty Company ID from User

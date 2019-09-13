@@ -3,7 +3,6 @@
         <h1>Users</h1>
         <p>Create Users with PAN & PIN</p>
         <p>
-
                 <!-- Create User -->
                 <v-dialog v-model="bCreateUsersDialog" transition="dialog-bottom-transition" max-width="700" :content-class="bCreateUsersLoading ? 'naked dark centered': '' " persistent>
                   <template v-slot:activator="{ on }">
@@ -228,7 +227,9 @@
                     :items-per-page="itemsPerPage"
                     :footer-props="{
                         showFirstLastPage: true,
-                    }">
+                    }"
+                    dense
+                    >
 
                     <!-- PAN -->
                     <template v-slot:item.pan.pan="{ item }">
@@ -545,7 +546,13 @@
                             <td>
                                 <v-text-field class="mt-2 mb-2 coha--filter-input" v-model="oFilters.sPin" type="text" label="PIN" single-line solo :flat="!oFilters.sPin" clearable hide-details></v-text-field>
                             </td>
-                            <td colspan="4"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </template>
 

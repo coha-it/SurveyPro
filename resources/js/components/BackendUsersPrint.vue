@@ -40,7 +40,10 @@
                 <v-btn text rounded dark @click="printUsers()" class="ml-3 mr-3">
                     <v-icon left>print</v-icon> Drucken
                 </v-btn>
-                <v-switch class="mt-7 ml-1 mr-3" v-model="colorfull" :label="colorfull ? 'Farbenfroh' : 'Schwarz & Weiß' " color="accent"></v-switch>
+                <v-switch class="mt-7 ml-1 mr-5" v-model="colorfull" :label="colorfull ? 'Farbenfroh' : 'Schwarz & Weiß' " color="accent"></v-switch>
+                <v-switch class="mt-7 ml-1 mr-5" v-model="oPrint.bShowCompany" label="Firma" color="secondary"></v-switch>
+                <v-switch class="mt-7 ml-1 mr-5" v-model="oPrint.bShowDepartment" label="Abteilung" color="secondary"></v-switch>
+                <v-switch class="mt-7 ml-1 mr-5" v-model="oPrint.bShowLocation" label="Ort" color="secondary"></v-switch>
                 <div class="flex-grow-1"></div>
         </v-toolbar>
 
@@ -53,13 +56,13 @@
                     <h3>Mitarbeiter-Befragung</h3>
                     <p>
                         Dies ist ihr individueller Zugang für die Mitarbeiter-Befragung.<br>
-                        <template v-if="user.company && user.company.name">
+                        <template v-if="user.company && user.company.name && oPrint.bShowCompany">
                             {{ $t('company') }}: {{ user.company.name }}<br>
                         </template>
-                        <template v-if="user.department && user.department.name">
+                        <template v-if="user.department && user.department.name && oPrint.bShowDepartment">
                             {{ $t('department') }}: {{ user.department.name }}<br>
                         </template>
-                        <template v-if="user.location && user.location.name">
+                        <template v-if="user.location && user.location.name && oPrint.bShowLocation">
                             {{ $t('location') }}: {{ user.location.name }}<br>
                         </template>
                     </p>
@@ -104,6 +107,11 @@ export default {
         return {
             dialog: false,
             colorfull: true,
+            oPrint: {
+                bShowCompany: true,
+                bShowDepartment: true,
+                bShowLocation: true
+            }
         }
     },
 
