@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\User;
+use App\Group;
 
 class Group extends Model
 {
@@ -20,7 +21,7 @@ class Group extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description_public', 'description_mods'
+        'name', 'description_public', 'description_mods', 'pivot', 'is_mod', 'is_member'
     ];
 
     /**
@@ -28,16 +29,14 @@ class Group extends Model
      *
      * @var array
      */
-    protected $visible = [
-        'id', 'name', 'description_public', 'description_mods', 'created_by', 'updated_at', 'created_at'
-    ];
+    // protected $hidden = ['description_mods'];
 
     /**
      * Get the user record associated with the info.
      */
     public function users()
     {
-        return $this->belongsToMany('App\User');
+        return $this->belongsToMany('App\User')->withPivot(['is_member', 'is_mod'])->with(['pan']);
     }
 
     /**

@@ -24,7 +24,7 @@ class UserPan extends Model
      * @var array
      */
     protected $visible = [
-        'is_pan_user', 'pan', 'pin', 'created_at', 'updated_at', 'deleted_at',
+        'is_pan_user', 'pan', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**

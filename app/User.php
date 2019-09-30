@@ -24,7 +24,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'company_id', 'department_id', 'location_id', 'created_by'
+        'email', 'password', 'company_id', 'department_id', 'location_id', 'created_by', 'pivot', 'is_member', 'is_mod'
     ];
 
     /**
@@ -50,7 +50,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      *
      * @var array
      */
-    protected $appends = [];
+    protected $appends = ['newsletter'];
 
     /**
      * Get the oauth providers.
@@ -131,6 +131,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasOne('App\UserNewsletter', 'user_id');
     }
 
+    public function getNewsletterAttribute() 
+    {
+        return $this->newsletter();
+    }
+
     /**
      * Get the company record associated with the user.
      */
@@ -184,7 +189,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function groups()
     {
-        return $this->belongsToMany('App\Group');
+        return $this->belongsToMany('App\Group')->withPivot(['is_mod', 'is_member']);
     }
 
     /**
@@ -192,7 +197,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function users()
     {
-        return $this->hasMany('App\User', 'created_by')->with(['pan', 'groups', 'company', 'department', 'location']);
+        return $this->hasMany('App\User', 'created_by')->with([
+            'pan', 'groups', 'company', 'department', 'location'
+        ]);
     }
 
     /**
