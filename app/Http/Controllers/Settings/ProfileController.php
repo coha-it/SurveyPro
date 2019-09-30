@@ -32,6 +32,10 @@ class ProfileController extends Controller
             ]);
         } 
 
-        return tap($user)->update($request->only('email', 'newsletter'));
+        // Update!
+        $user->update($request->only('email', 'newsletter'));
+
+        // Return User!
+        return $user->getSelfWithRelations();
     }
 }
