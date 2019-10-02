@@ -19,6 +19,9 @@ export default new Vuetify({
         error: '#dc6161', //#C9876E
         info: '#C6C6C6',
         success: '#6CAE75',
+        green: '#55a559',
+        red: '#cf6035',
+        orange: '#cfae35',
         warning: '#E6BE72',
         background: '#fafafa'
       }

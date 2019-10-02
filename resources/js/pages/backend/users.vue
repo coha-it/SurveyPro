@@ -128,7 +128,7 @@
                 </v-card-text>
                     <!-- No Select Toolbar -->
                     <v-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="search == ''" floating min-height="85px" height="auto">
-                        <v-switch class="mt-6 mr-6" v-model="bFilter" :label="'Erweitert Filtern'" color="primary"></v-switch>
+                        <v-switch class="mt-6 mr-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="primary"></v-switch>
                         <v-switch class="mt-6 mr-6" v-model="showPin" :label="'PIN Zeigen'" color="primary"></v-switch>
                         <div class="flex-grow-1"></div>
                         <v-text-field style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined></v-text-field>
@@ -148,25 +148,10 @@
                                 </v-btn>
                             </template>
                             <v-list>
-                                <v-menu offset-x open-on-hover>
-                                    <template v-slot:activator="{ on: menugroup }">
-                                        <v-list-item v-on="{ ...menugroup }">
-                                            <v-list-item-title>Gruppe</v-list-item-title>
-                                            <v-list-item-action>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                    </template>
-                                    <v-list>
-                                        <v-list-item>
-                                            <v-list-item-title>Hinzufügen</v-list-item-title>
-                                        </v-list-item>
-
-                                        <v-list-item>
-                                            <v-list-item-title>Löschen</v-list-item-title>
-                                        </v-list-item>
-                                    </v-list>
-                                </v-menu>
+                                <BulkGroupChanges
+                                    :aItems="user.groups_moderating" 
+                                    :selected="selected" 
+                                    />
 
                                 <!-- Menu: Company -->
                                 <BulkProfileChanges 
@@ -223,11 +208,20 @@
                             </v-container>
                         </v-dialog>
                         
-                        <!-- <v-switch class="mt-6 ml-6" v-model="bFilter" :label="'Erweitert Filtern'" color="accent"></v-switch> -->
+                        <!-- <v-switch class="mt-6 ml-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="accent"></v-switch> -->
                         <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></v-switch>
                         <div class="flex-grow-1"></div>
                         <v-text-field v-model="itemsPerPage" type="number" number hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
                     </v-toolbar>
+
+
+                    <v-container fluid v-if="bExtendedFilter && false">
+                        <v-row>
+                            <v-col>
+                                <v-checkbox v-model="bShowDeletedUsers" color="primary" label="Gelöschte Nutzer zeigen"></v-checkbox>
+                            </v-col>
+                        </v-row>
+                    </v-container>
 
                 <v-data-table
                     v-if="usersCreated && usersCreated.length >= 1"
@@ -351,11 +345,12 @@
                         <template v-if="user.groups_moderating && user.groups_moderating.length >= 1">
                             <template v-for="(group, i) in item.groups">
                                 <span v-bind:key="i">
-                                    <v-chip small outlined v-if="user.groups_moderating.find(x => x.id === group.id)" class="mr-1 mt-1 mb-1">
+                                    <v-chip small outlined v-if="user.groups_moderating.find(x => x.id === group.id)" class="mr-1 mt-1 mb-1" 
+                                        :color="getGroupPivotColor(group)">
                                         {{ user.groups_moderating.find(x => x.id === group.id).name }}
                                     </v-chip>
                                     <v-chip small outlined disabled v-else class="mr-1 mt-1 mb-1">
-                                        {{ group.name }}
+                                        {{ group.name }} 
                                     </v-chip>
                                 </span>
                             </template>
@@ -550,7 +545,7 @@
 
                     <!-- Footer Bottom Filter -->
                     <template v-slot:body.prepend>
-                        <tr v-if="bFilter">
+                        <tr v-if="bExtendedFilter">
                             <td></td>
                             <td>
                                 <v-text-field class="mt-2 mb-2 coha--filter-input" v-model="oFilters.iId" type="number" label="ID" single-line solo :flat="!oFilters.iId" clearable hide-details></v-text-field>
@@ -592,6 +587,7 @@ import { setTimeout } from 'timers';
 import UserDataModal from '~/components/BackendUserDataModal'
 import Print from '~/components/BackendUsersPrint'
 import BulkProfileChanges from '~/components/BackendUserBulkProfileChanges'
+import BulkGroupChanges from '~/components/BackendUserBulkGroupChanges'
 
 export default {
     middleware: 'canCreateUsers',
@@ -641,7 +637,8 @@ export default {
         TheMask,
         UserDataModal,
         Print,
-        BulkProfileChanges
+        BulkProfileChanges,
+        BulkGroupChanges
     },
 
     directives: {
@@ -669,7 +666,7 @@ export default {
           showPin: false,
           itemsPerPage: 10,
           search: '',
-          bFilter: false,
+          bExtendedFilter: false,
           oFilters: {
               sId: '',
               sPan: '',
@@ -713,21 +710,34 @@ export default {
 
     methods: {
 
+        getGroupPivotColor(group) {
+            var p = group.pivot;
+            if(p.is_mod && p.is_member) {
+                return 'orange';
+            }
+            if(p.is_mod) {
+                return 'red';
+            }
+            if(p.is_member) {
+                return 'green';
+            }
+        },
+
         filterBasic(sSearch, sWhere) {
             if (!sSearch) return true
-            if( !this.bFilter ) return true;
+            if( !this.bExtendedFilter ) return true;
             return sWhere.toLowerCase().includes(sSearch.toLowerCase())
         },
 
         filterPan(sSearch, sWhere) {
             if (!sSearch) return true
-            if( !this.bFilter ) return true;
+            if( !this.bExtendedFilter ) return true;
             return sWhere.toLowerCase().includes(sSearch.replace(' ', '').toLowerCase())
         },
 
         filterId(sSearch, sWhere) {
             if (!sSearch) return true
-            if( !this.bFilter ) return true;
+            if( !this.bExtendedFilter ) return true;
             return sWhere == sSearch;
         },
 
@@ -823,15 +833,24 @@ export default {
 
         isUnsaved(item) {
             var key = this.getOldUsersId(item);
-            var itemLeft = this.copyObject(item);
-            var itemRight = this.copyObject(this.usersCreatedOld[key]);
+            var itemL = this.copyObject(item);
+            var itemR = this.copyObject(this.usersCreatedOld[key]);
 
-            delete itemLeft.groupDialog;
-            delete itemLeft.deleteUserDialog;
-            delete itemRight.groupDialog;
-            delete itemRight.deleteUserDialog;
+            delete itemL.undefined;
+            delete itemR.undefined;
+            delete itemL.isSelected;
+            delete itemR.isSelected;
+            delete itemL.groupDialog;
+            delete itemR.groupDialog;
+            delete itemL.deleteUserDialog;
+            delete itemR.deleteUserDialog;
 
-            return JSON.stringify(itemLeft) != JSON.stringify(itemRight);
+            if(JSON.stringify(itemL) != JSON.stringify(itemR)) {
+                console.log(JSON.stringify(itemL), JSON.stringify(itemR));
+                return true;
+            } else {
+                return false;
+            }
         },
 
         getUnsaved(arr) {

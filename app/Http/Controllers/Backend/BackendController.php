@@ -38,73 +38,9 @@ class BackendController extends Controller
     }
 
     public function getCreatedUsers(Request $request) {
-        return $request->user()->users->toJson();
-    }
-
-    public function getGroupsModerating(Request $request) {
-        return $request->user()->groupsModerating->toJson();
-    }
-
-    // public function addUserToGroup(Request $request) {
-    //     // Get
-    //     $group = $request->user()->groupsModerating->find($request->group_id);
-    //     $user = $request->user()->users->find($request->user_id);
-    //     // Sync!
-    //     $group->users()->attach($user);
-    // }
-
-    // public function removeUserFromGroup(Request $request) {
-    //     // Get
-    //     $self = $request->user();
-    //     $group = Group::find($request->group_id);
-    //     $user = $self->users->find($request->user_id);
-    //     // Sync!
-    //     $group->users()->detach($user);
-    // }
-
-    public function createGroup(Request $request) 
-    {
-        $request->validate([
-            'item' => 'required',
-            'item.name' => 'required'
-        ]);
-        $item = $request->item;
-        $self = $request->user();
-
-        $g = Group::create([
-            'name' => $item['name'],
-            'description_public' => $item['description_public'],
-            'description_mods' => $item['description_mods'],
-            'created_by' => $self->id,
-        ]);
-
-        $g->moderators()->sync([
-            $self->id => [    
-                'is_mod' => 1,
-                'is_member' => 0
-            ],
-        ]);
-
-        return $g->toJson();
-    }
-
-    // Update Compnay Location Department
-    public function updateGroup(Request $request)
-    {
-        $request->validate([
-            'item' => 'required',
-            'item.id' => 'required',
-            'item.name' => 'required'
-        ]);
-        $item = $request->item;
-
-        $m = $request->user()->groupsModerating()->find($item['id']);
-        $m->name = $item['name'];
-        $m->description_public = $item['description_public'];
-        $m->description_mods = $item['description_mods'];
-        $m->save();
-
-        return $m->toJson();
+        return $request->user()->users->each(function ($i, $k) {
+            $i->pan->makeVisible(['pin']);
+        })->toJson();
     }
 
     /**
@@ -124,8 +60,8 @@ class BackendController extends Controller
      */
     public function getRandomPan() {
         do {
-            // $token = $this->getRandom("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6);
-               $token = $this->getRandom("123456789ABCDEFGHIJKLMNPQRSTUVWXYZ", 6);
+         // $token = $this->getRandom("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6);
+            $token = $this->getRandom("123456789ABCDEFGHIJKLMNPQRSTUVWXYZ", 6);
             $user = Pan::where('pan', $token)->get();
         }
         while(!$user->isEmpty());

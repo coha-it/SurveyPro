@@ -57,9 +57,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::patch('location/update', 'User\UserController@updateLocation');
 
         // Groups
-        Route::get('groups-moderating', 'Backend\BackendController@getGroupsModerating'); // Moderating Groups
-        Route::post('group/create', 'Backend\BackendController@createGroup');
-        Route::patch('group/update', 'Backend\BackendController@updateGroup');
+        Route::get('groups-moderating', 'Backend\GroupController@getGroupsModerating'); // Moderating Groups
+        Route::get('get-group', 'Backend\GroupController@getGroup'); // Get Group Content
+        Route::post('group/create', 'Backend\GroupController@createGroup');
+        Route::patch('group/update', 'Backend\GroupController@updateGroup');
 
         // Get Users
         Route::get('users-created', 'Backend\BackendController@getCreatedUsers'); // Created Users
@@ -68,8 +69,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('get-random-pan', 'Backend\BackendController@getRandomPan');
 
         // Update Users Groups
-        Route::post('add-user-to-group', 'Backend\BackendController@addUserToGroup');
-        Route::post('remove-user-from-group', 'Backend\BackendController@removeUserFromGroup');
+        Route::post('add-user-to-group', 'Backend\GroupController@addUserToGroup');
+        Route::post('remove-user-from-group', 'Backend\GroupController@removeUserFromGroup');
 
         // Change User(s)
         Route::patch('update-created-users', 'Backend\BackendController@updateCreatedUsers');
