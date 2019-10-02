@@ -713,13 +713,13 @@ export default {
         getGroupPivotColor(group) {
             var p = group.pivot;
             if(p.is_mod && p.is_member) {
-                return 'orange';
-            }
-            if(p.is_mod) {
                 return 'red';
             }
+            if(p.is_mod) {
+                return 'orange';
+            }
             if(p.is_member) {
-                return 'green';
+                // return 'green';
             }
         },
 
