@@ -716,7 +716,7 @@ export default {
                 return 'red';
             }
             if(p.is_mod) {
-                return 'orange';
+                return 'blue';
             }
             if(p.is_member) {
                 // return 'green';
