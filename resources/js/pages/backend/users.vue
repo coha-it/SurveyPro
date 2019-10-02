@@ -132,7 +132,7 @@
                         <v-switch class="mt-6 mr-6" v-model="showPin" :label="'PIN Zeigen'" color="primary"></v-switch>
                         <div class="flex-grow-1"></div>
                         <v-text-field style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined></v-text-field>
-                        <v-text-field v-model="itemsPerPage" type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
+                        <v-text-field v-model="itemsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
                     </v-toolbar>
                     <!-- Toolbar for Selections -->
                     <v-toolbar class="coha--toolbar" v-else :flat="search == ''" color="primary"  dark floating min-height="85px" height="auto">
@@ -226,7 +226,7 @@
                         <!-- <v-switch class="mt-6 ml-6" v-model="bFilter" :label="'Erweitert Filtern'" color="accent"></v-switch> -->
                         <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></v-switch>
                         <div class="flex-grow-1"></div>
-                        <v-text-field v-model="itemsPerPage" type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
+                        <v-text-field v-model="itemsPerPage" type="number" number hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
                     </v-toolbar>
 
                 <v-data-table
