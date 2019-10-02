@@ -113,13 +113,24 @@ export default {
     },
 
     methods: {
+        copyObject(obj) {
+            return JSON.parse(JSON.stringify(obj));
+        },
+
         addGroupToUser(aSelectedUsers, aItems) {
             for (var i in aSelectedUsers) {
                 var oUser = aSelectedUsers[i];
 
                 for (var j in aItems)
                 {
-                    var oItem = aItems[j];
+                    var oItem = this.copyObject(aItems[j]);
+
+                    if( !oItem.pivot ) {
+                        oItem.pivot = {};
+                    }
+
+                    oItem.pivot.is_mod = 0;
+                    oItem.pivot.is_member = 1;
 
                     // If not found 
                     if(oUser.groups.findIndex(group => group.id === oItem.id) === -1) {

@@ -233,7 +233,7 @@
                     multi-sort 
                     :loading="loading"
                     :loading-text="$t('loading.text')" 
-                    :items-per-page="itemsPerPage"
+                    :items-per-page="parseInt(itemsPerPage)"
                     :footer-props="{
                         showFirstLastPage: true,
                     }"
@@ -242,7 +242,7 @@
 
                     <!-- PAN -->
                     <template v-slot:item.pan.pan="{ item }">
-                        <template v-if="item.pan && item.pan.pan">
+                        <template v-if="item.pan">
                             <!-- <v-btn @click="item.pan.pan='gusman'">Los</v-btn> -->
                             <span class="coha--list-item pan c-code-text">
                                 <v-edit-dialog
@@ -255,7 +255,7 @@
                                     persistent
                                     ref="dialog"
                                 >
-                                    <template v-if="item.pan.pan">
+                                    <template v-if="item.pan.pan && item.pan.pan != ''">
                                         <span :class="!panIsOk(item) ? 'red--text' : ''">
                                             <span class="pan--part">{{ item.pan.pan.substring(0,3) }}</span><span class="pan--part">{{ item.pan.pan.substring(3,6) }}</span>
                                         </span>
@@ -345,13 +345,33 @@
                         <template v-if="user.groups_moderating && user.groups_moderating.length >= 1">
                             <template v-for="(group, i) in item.groups">
                                 <span v-bind:key="i">
-                                    <v-chip small outlined v-if="user.groups_moderating.find(x => x.id === group.id)" class="mr-1 mt-1 mb-1" 
-                                        :color="getGroupPivotColor(group)">
-                                        {{ user.groups_moderating.find(x => x.id === group.id).name }}
-                                    </v-chip>
-                                    <v-chip small outlined disabled v-else class="mr-1 mt-1 mb-1">
-                                        {{ group.name }} 
-                                    </v-chip>
+                                    <v-tooltip bottom :open-delay="group.pivot ? group.pivot.is_member ? 1000 : 100 : 100">
+                                        <template v-slot:activator="{ on }">
+                                            <v-chip v-on="on" small outlined v-if="user.groups_moderating.find(x => x.id === group.id)" class="mr-1 mt-1 mb-1" 
+                                                :color="getGroupPivotColor(group)">
+                                                {{ user.groups_moderating.find(x => x.id === group.id).name }}
+                                            </v-chip>
+                                            <v-chip v-on="on" small outlined disabled v-else class="mr-1 mt-1 mb-1">
+                                                {{ group.name }} 
+                                            </v-chip>
+                                        </template>
+                                        <span v-if="group && group.pivot">
+                                            <template v-if="!group.pivot.is_member && !group.pivot.is_mod">
+                                                Keine Rolle!
+                                            </template>
+                                            <template v-else>
+                                                <template v-if="group.pivot.is_member">
+                                                    Teilnehmer
+                                                </template>
+                                                <template v-if="group.pivot.is_member && group.pivot.is_mod">
+                                                    & 
+                                                </template>
+                                                <template v-if="group.pivot.is_mod">
+                                                    Moderator
+                                                </template>
+                                            </template>
+                                        </span>
+                                    </v-tooltip>
                                 </span>
                             </template>
 
@@ -382,6 +402,12 @@
                                                                     <v-list-item-content>
                                                                         <v-list-item-title>{{ group.name }}</v-list-item-title>
                                                                         <v-list-item-subtitle>{{ group.description_public || 'Ohne Gruppenbeschreibung'}}</v-list-item-subtitle>
+                                                                        <p>
+                                                                            <template v-if="group.pivot">
+                                                                                <v-checkbox v-model="group.pivot.is_member" color="primary" dense hide-details label="Teilnehmer" :true-value="1" :false-value="0"></v-checkbox>
+                                                                                <v-checkbox v-model="group.pivot.is_mod" color="red" dense hide-details label="Moderator" :true-value="1" :false-value="0"></v-checkbox>
+                                                                            </template>
+                                                                        </p>
                                                                     </v-list-item-content>
 
                                                                     <v-list-item-action>
@@ -511,12 +537,12 @@
                                 depressed 
                                 class="mr-2"
                                 @click="updateUser(item)"
-                                :disabled="!isUnsaved(item) || !validUser(item)"
+                                :disabled="isSaved(item) || !validUser(item)"
                             >{{ $t('save') }}</v-btn>
                             
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
-                                    <v-icon :disabled="!isUnsaved(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
+                                    <v-icon :disabled="isSaved(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
                                 </template>
                                 <span>{{ $t('reset') }}</span>
                             </v-tooltip>
@@ -719,8 +745,9 @@ export default {
                 return 'blue';
             }
             if(p.is_member) {
-                // return 'green';
+                return '';
             }
+            return 'grey';
         },
 
         filterBasic(sSearch, sWhere) {
@@ -831,7 +858,7 @@ export default {
             return JSON.parse(JSON.stringify(obj));
         },
 
-        isUnsaved(item) {
+        isSaved(item) {
             var key = this.getOldUsersId(item);
             var itemL = this.copyObject(item);
             var itemR = this.copyObject(this.usersCreatedOld[key]);
@@ -845,12 +872,17 @@ export default {
             delete itemL.deleteUserDialog;
             delete itemR.deleteUserDialog;
 
-            if(JSON.stringify(itemL) != JSON.stringify(itemR)) {
-                console.log(JSON.stringify(itemL), JSON.stringify(itemR));
-                return true;
-            } else {
+            // Differenzes
+            if(JSON.stringify(itemR) != JSON.stringify(itemL)) {
+                console.log(JSON.stringify(itemR), JSON.stringify(itemL));
                 return false;
+            } else {
+                return true;
             }
+        },
+
+        isUnsaved(item) {
+            return !this.isSaved(item);
         },
 
         getUnsaved(arr) {
@@ -994,11 +1026,16 @@ export default {
             return false;
         },
 
-        async addCreatedUserToGroup(user, group) {
+        addCreatedUserToGroup(user, group) {
+            group.pivot = {
+                is_mod : 0,
+                is_member: 1,
+            };
+
             user.groups.push(group);
         },
 
-        async removeCreatedUserFromGroup(user, index) {
+        removeCreatedUserFromGroup(user, index) {
             user.groups.splice(index, 1);
         },
 

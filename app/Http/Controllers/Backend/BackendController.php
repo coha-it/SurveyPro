@@ -118,7 +118,7 @@ class BackendController extends Controller
     }
 
     /**
-     * Upda a User which was created by the User
+     * Update a User which was created by another User (self)
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
@@ -157,12 +157,22 @@ class BackendController extends Controller
 
             // If Group is in Request
             if($user->groups) {
-                // Get
-                $groups = $self->groupsModerating->find(
-                    array_column($reqUser['groups'], 'id')
-                );
+                
+                $aSync = [];
 
-                $user->groups()->sync($groups);
+                // Go through requestes User-Groups
+                foreach ($reqUser['groups'] as $group) {
+                    // If Self has Rights
+                    if ( $self->groupsModerating->find($group['id']) ) {
+                        $aSync[$group['id']] = [
+                            'is_mod' => $group['pivot']['is_mod'],
+                            'is_member' => $group['pivot']['is_member']
+                        ];
+                    }
+                }
+
+                $user->groups()->sync($aSync);
+
             }
 
             // Update Data
