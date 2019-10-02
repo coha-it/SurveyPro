@@ -8,6 +8,7 @@ export default [
   { path: '/', name: 'welcome', component: page('_guest/welcome.vue') },
   { path: '/auth', name: 'auth', component: page('_guest/auth/auth.vue') },
   { path: '/p/:pan', redirect: { path: '/pan/:pan' } },
+  { path: '/pan', name: 'pan', component: page('_guest/auth/pan.vue') },
   { path: '/pan*', name: 'pan', component: page('_guest/auth/pan.vue') },
   { path: '/login', name: 'login', component: page('_guest/auth/login.vue') },
   { path: '/register', name: 'register', component: page('_guest/auth/register.vue') },
