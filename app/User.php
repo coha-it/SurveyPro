@@ -227,6 +227,14 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
 
     /**
+     * Get the company record associated with the user.
+     */
+    public function surveys()
+    {
+        return $this->hasMany('App\Survey', 'created_by');
+    }
+
+    /**
      * Get the info record associated with the user.
      */
     public function getSelfWithRelations()

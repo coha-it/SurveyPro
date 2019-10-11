@@ -655,8 +655,6 @@ export default {
                 { text: 'Actions', value: 'action', sortable: false },
             ]; 
         }
-
-
     },
 
     components: {

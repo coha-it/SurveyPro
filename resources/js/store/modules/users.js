@@ -51,7 +51,7 @@ export const actions = {
     axios.post('/api/remove-user-from-group', payload)
   },
 
-  updateUsers ( { commit }, payload ) {
+  updateUsers ({ commit }, payload) {
     try {
       return axios.patch('/api/update-created-users', payload )
     } catch (e) {
@@ -59,7 +59,7 @@ export const actions = {
     }
   },
 
-  createUsers( { commit }, payload ) {
+  createUsers ({ commit }, payload) {
     try {
       return axios.post('/api/create-users', payload )
     } catch (e) {
@@ -67,7 +67,7 @@ export const actions = {
     }
   },
 
-  deleteUsers ( { commit }, payload ) {
+  deleteUsers ({ commit }, payload) {
     try {
       return axios.patch('/api/delete-created-user', payload )
     } catch (e) {

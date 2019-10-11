@@ -7,9 +7,9 @@ export default [
   // Unauthentificated
   { path: '/', name: 'welcome', component: page('_guest/welcome.vue') },
   { path: '/auth', name: 'auth', component: page('_guest/auth/auth.vue') },
-  { path: '/p/:pan', redirect: { path: '/pan/:pan' } },
   { path: '/pan', name: 'pan', component: page('_guest/auth/pan.vue') },
-  { path: '/pan*', name: 'pan', component: page('_guest/auth/pan.vue') },
+  { path: '/pan*', component: page('_guest/auth/pan.vue') },
+  { path: '/p/:pan', redirect: { path: '/pan/:pan' } },
   { path: '/login', name: 'login', component: page('_guest/auth/login.vue') },
   { path: '/register', name: 'register', component: page('_guest/auth/register.vue') },
   { path: '/password/reset', name: 'password.request', component: page('_guest/auth/password/email.vue') },
@@ -45,9 +45,12 @@ export default [
     ]
   },
 
-  // Managment
+  // Managment / Verwaltung
   { path: '/backend',
     component: page('backend/index.vue'),
+    meta: {
+      middleware: 'auth'
+    },
     children: [
       {
         path: 'users',
@@ -60,7 +63,11 @@ export default [
       }, {
         path: 'surveys',
         name: 'backend.surveys',
-        component: page('backend/surveys.vue')
+        component: page('backend/surveys/surveys.vue')
+      }, {
+        path: 'survey/:id',
+        name: 'backend.survey',
+        component: page('backend/surveys/survey.vue')
       }, {
         path: 'statistics',
         name: 'backend.statistics',

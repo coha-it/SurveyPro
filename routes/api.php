@@ -76,5 +76,18 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::patch('update-created-users', 'Backend\BackendController@updateCreatedUsers');
         Route::patch('delete-created-user', 'Backend\BackendController@deleteUser');
         Route::post('create-users', 'Backend\BackendController@createUsers')->middleware('auth.user.can_create_users');
+
+        // User who can Create Surveys
+        Route::group(['middleware' => ['auth.user.can_create_surveys'], 'prefix' => 'backend' ], function()
+        {
+            // Get Survey(s)
+            Route::get('surveys-created', 'Backend\SurveyController@getCreatedSurveys');
+            Route::get('survey-created',  'Backend\SurveyController@getCreatedSurvey');
+
+            // Change Surveys
+            Route::patch('update-created-survey', 'Backend\SurveyController@updateCreatedSurvey');
+            Route::patch('delete-created-survey', 'Backend\SurveyController@deleteSurvey');
+            Route::post('create-survey', 'Backend\SurveyController@createUsers');
+        });
     });
 });
