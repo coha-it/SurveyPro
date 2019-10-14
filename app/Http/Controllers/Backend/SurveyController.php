@@ -45,8 +45,8 @@ class SurveyController extends Controller
         // 1. Validate the Requests
         $request->validate([
             'survey' => 'required',
-            'survey.start_date' => 'required|date_format:Y-m-d H:i:s',
-            'survey.end_date' => 'required|date_format:Y-m-d H:i:s'
+            'survey.start_datetime' => 'required|date_format:Y-m-d H:i:s',
+            'survey.end_datetime' => 'required|date_format:Y-m-d H:i:s'
         ]);
 
         $reqSurvey = $request->survey;

@@ -27,8 +27,11 @@
             <v-form ref="form" lazy-validation>
                 <v-text-field v-model="oSurvey.title" label="Title" required></v-text-field>
                 <v-checkbox v-model="oSurvey.active" label="Active"></v-checkbox>
-                <v-text-field v-model="oSurvey.start_date"></v-text-field>
-                <v-text-field v-model="oSurvey.end_date"></v-text-field>
+
+                <v-text-field label="Prepend inner" prepend-inner-icon="place"></v-text-field>
+
+                <v-text-field v-model="oSurvey.start_datetime"></v-text-field>
+                <v-text-field v-model="oSurvey.end_datetime"></v-text-field>
 
                 <v-btn color="success" class="mr-4" @click="updateSurvey(oSurvey)">Speichern</v-btn>
                 <v-btn color="error" class="mr-4">Reset Form</v-btn>
@@ -91,8 +94,8 @@ export default {
         if (params.id == 'create') 
         {
             this.startCreateMode();
-            this.oSurvey.start_date = '2019-08-08 00:00:00';
-            this.oSurvey.end_date = '2019-08-08 00:00:00';
+            this.oSurvey.start_datetime = '2019-08-08 00:00:00';
+            this.oSurvey.end_datetime = '2019-08-08 00:00:00';
 
         } 
         else if (typeof id == "number") 
