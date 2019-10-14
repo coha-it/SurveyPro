@@ -853,7 +853,10 @@ export default {
         },
 
         copyObject(obj) {
-            return JSON.parse(JSON.stringify(obj));
+            if(typeof obj != 'undefined') {
+                var copy = JSON.parse(JSON.stringify(obj));
+                if(copy) return copy
+            }
         },
 
         isSaved(item) {
@@ -861,22 +864,26 @@ export default {
             var itemL = this.copyObject(item);
             var itemR = this.copyObject(this.usersCreatedOld[key]);
 
-            delete itemL.undefined;
-            delete itemR.undefined;
-            delete itemL.isSelected;
-            delete itemR.isSelected;
-            delete itemL.groupDialog;
-            delete itemR.groupDialog;
-            delete itemL.deleteUserDialog;
-            delete itemR.deleteUserDialog;
+            if(itemL && itemR) {
+                delete itemL.undefined;
+                delete itemR.undefined;
+                delete itemL.isSelected;
+                delete itemR.isSelected;
+                delete itemL.groupDialog;
+                delete itemR.groupDialog;
+                delete itemL.deleteUserDialog;
+                delete itemR.deleteUserDialog;
 
-            // Differenzes
-            if(JSON.stringify(itemR) != JSON.stringify(itemL)) {
-                console.log(JSON.stringify(itemR), JSON.stringify(itemL));
-                return false;
-            } else {
-                return true;
+                // Differences
+                if(JSON.stringify(itemR) != JSON.stringify(itemL)) {
+                    console.log(JSON.stringify(itemR), JSON.stringify(itemL));
+                    return false;
+                } else {
+                    return true;
+                }
             }
+
+            return true;
         },
 
         isUnsaved(item) {

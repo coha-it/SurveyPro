@@ -175,8 +175,8 @@ export default {
         surveyCreated(promise) 
         {
             // save Promise result in local state
-            this.oSurvey = this.duplicateObject(promise);
-            this.oSurveyOld = this.duplicateObject(promise);
+            this.oSurvey = this.copyObject(promise);
+            this.oSurveyOld = this.copyObject(promise);
         }
     },
 
@@ -256,8 +256,11 @@ export default {
             this.bEdit = false;
         },
 
-        duplicateObject: function(obj) {
-            return JSON.parse(JSON.stringify(obj));
+        copyObject(obj) {
+            if(typeof obj != 'undefined') {
+                var copy = JSON.parse(JSON.stringify(obj));
+                if(copy) return copy
+            }
         },
 
         updateSurvey: function() {
@@ -270,8 +273,8 @@ export default {
                 // Success
                 if(!e || !e.response || !e.response.data || !e.response.data.error) {
                     _t.showSnackbarSuccess(_t.$t('data_saved'));
-                    _t.oSurvey = _t.duplicateObject(e.data);
-                    _t.oSurveyOld = _t.duplicateObject(e.data);
+                    _t.oSurvey = _t.copyObject(e.data);
+                    _t.oSurveyOld = _t.copyObject(e.data);
                     _t.startEditMode();
 
                     _t.$router.push({
