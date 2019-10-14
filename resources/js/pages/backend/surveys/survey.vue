@@ -142,6 +142,7 @@ export default {
         duplicateObject: function(obj) {
             return JSON.parse(JSON.stringify(obj));
         },
+
         updateSurvey: function() {
             var _t = this;
 
@@ -155,13 +156,24 @@ export default {
                     _t.oSurvey = _t.duplicateObject(e.data);
                     _t.oSurveyOld = _t.duplicateObject(e.data);
                     _t.startEditMode();
+
+                    _t.$router.push({
+                        name: 'backend.survey', 
+                        params: {
+                            id: _t.oSurvey.id
+                        }
+                    });
                 }
                 _t.bLoading = false;
             }).catch(function(e) {
+                console.log(e);
                 // Error
-                var errText = '';
-                for (var e in e.response.data.error) {
-                    errText += ': ' + err[e];
+                if(e.reponse && e.reponse.data && e.response.data.error)
+                {
+                    var errText = '';
+                    for (var e in e.response.data.error) {
+                        errText += ': ' + err[e];
+                    }
                 }
 
                 _t.showSnackbarError(_t.$t('data_unsaved') + "<br />" + errText);

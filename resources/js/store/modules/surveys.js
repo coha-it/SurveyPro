@@ -18,6 +18,7 @@ export const mutations = {
   [types.FETCH_SURVEYS_CREATED_SUCCESS] (state, { surveysCreated }) {
     state.surveysCreated = surveysCreated
   },
+
   [types.FETCH_SURVEY_CREATED_SUCCESS] (state, { surveyCreated }) {
     state.surveyCreated = surveyCreated
   }

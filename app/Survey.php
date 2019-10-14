@@ -39,6 +39,20 @@ class Survey extends Model
     ];
 
     /**
+     * The appending attributes that are customized, but not a database-field
+     *
+     * @var array
+     */
+    protected $appends = [
+        'url_full',
+    ];
+
+    public function getUrlFullAttribute()
+    {
+        return route('backend.survey', ['id' => $this->id]);
+    }
+
+    /**
      * Get the user record associated with the info.
      */
     public function creator()

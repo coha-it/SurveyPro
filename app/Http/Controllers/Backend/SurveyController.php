@@ -63,7 +63,7 @@ class SurveyController extends Controller
         else {
             //  - then create a survey
             $survey = $self->surveys()->create($reqSurvey);
-            return $survey;
+            return $survey->toArray();
         }
     }
 
