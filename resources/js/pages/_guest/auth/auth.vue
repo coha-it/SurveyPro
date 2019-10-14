@@ -49,9 +49,10 @@ export default {
     AuthPanel
   },
 
-  metaInfo () {
-    return { title: this.$t('authentificate_title') }
-  },
+  // This was causing Theme-Problems
+  // metaInfo () {
+  //   return { title: this.$t('authentificate_title') }
+  // },
 
 }
 </script>

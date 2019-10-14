@@ -1,6 +1,5 @@
 <template>
     <div class="rightsided-content coha--pan-wrapper">
-
       <template>
         <div class="text-center">
           <v-snackbar v-model="snackbar" top :multi-line="true" right color="error">{{ $t(snackbarText) }}<v-btn color="black" text @click="snackbar = false">{{ $t('closer_button') }}</v-btn></v-snackbar>
@@ -35,7 +34,7 @@
                     name="pan" 
                     required 
                     ref="pan" 
-                    :hint="form.pan.replace(/\s/g, '').length + ' / ' + (pan_maxlength - 1)"
+                    :hint="getLengthHint(form.pan, pan_maxlength)"
                     :maxlength="pan_maxlength" 
                     autocomplete="off" 
                     v-mask="'XXX XXX'" 
@@ -62,6 +61,7 @@
                     persistent-hint 
                     ></v-text-field><br>
                     <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
+                    <v-btn color="secondary">secondary</v-btn>
                 </v-form>
               </v-col>
             </v-row>
@@ -77,9 +77,7 @@ import {mask} from 'vue-the-mask'
 
 export default {
   middleware: 'guest',
-
   layout: 'rightsided',
-
   components: {
       Back
   },
@@ -101,10 +99,14 @@ export default {
 
   created: function() {
     // Check if PAN is in URL
-    var urlPan = this.$router.history.current.params.pathMatch.replace("/", "");
-
-    if(urlPan) {
-      this.form.pan = urlPan;
+    var pathMatch = this.$router.history.current.params.pathMatch;
+    if(pathMatch)
+    {
+      var urlPan = pathMatch.replace("/", "");
+      if(urlPan)
+      {
+        this.form.pan = urlPan;
+      }
     }
   },
 
@@ -114,6 +116,13 @@ export default {
   },
 
   methods: {
+
+    getLengthHint(text, max) {
+      if(text && max) {
+        return text.replace(/\s/g, '').length + ' / ' + (max - 1);
+      }
+    },
+
     changePan() {
       this.form.pan = this.form.pan.toUpperCase();
       if(this.panIsFull()) {

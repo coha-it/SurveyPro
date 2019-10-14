@@ -9,9 +9,10 @@
 export default {
   middleware: 'auth',
 
-  metaInfo () {
-    return { title: this.$t('home') }
-  },
+  // This was causing Theme-Problems
+  // metaInfo () {
+  //   return { title: this.$t('home') }
+  // },
 
 }
 </script>

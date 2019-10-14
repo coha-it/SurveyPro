@@ -109,9 +109,10 @@ export default {
     Back
   },
 
-  metaInfo () {
-    return { title: this.$t('register') }
-  },
+  // This was causing Theme-Problems
+  // metaInfo () {
+  //   return { title: this.$t('register') }
+  // },
 
   data: () => ({
     form: new Form({

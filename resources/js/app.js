@@ -8,7 +8,7 @@ import vuetify from '~/plugins/vuetify'
 import '~/plugins'
 import '~/components'
 
-// Import Vuetify
+// Some Config Settings
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

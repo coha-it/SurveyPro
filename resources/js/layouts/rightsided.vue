@@ -1,5 +1,4 @@
 <template>
-  <v-app>
     <v-content>
         <v-container fluid style="padding: 0; height: 100vh;">
             <v-layout wrap class="v-application" fill-height>
@@ -16,7 +15,6 @@
             </v-layout>
         </v-container>
     </v-content>
-  </v-app>
 </template>
 
 <script>

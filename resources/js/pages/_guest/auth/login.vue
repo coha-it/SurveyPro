@@ -113,9 +113,11 @@ export default {
   mounted(){
     this.$refs.email.focus();
   },
-  metaInfo () {
-    return { title: this.$t('login') }
-  },
+
+  // This was causing Theme-Problems
+  // metaInfo () {
+  //   return { title: this.$t('login') }
+  // },
 
   data: () => ({
     form: new Form({

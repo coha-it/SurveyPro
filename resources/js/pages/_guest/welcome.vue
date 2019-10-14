@@ -30,12 +30,12 @@ import { mapGetters } from 'vuex'
 
 export default {
   layout: 'naked',
-
   middleware: 'guest',
 
-  metaInfo () {
-    return { title: this.$t('home') }
-  },
+  // This was causing Theme-Problems
+  // metaInfo () {
+  //   return { title: this.$t('home') }
+  // },
 
   data: () => ({
     title: window.config.appName

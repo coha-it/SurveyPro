@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <v-app class="coha-app--view">
+  <div class="coha-app--view">
       <Navigation />
       <v-content>
         <v-container fluid>
@@ -9,7 +8,6 @@
           </div>
         </v-container>
       </v-content>
-    </v-app>
   </div>
 </template>
 
