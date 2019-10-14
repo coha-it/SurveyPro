@@ -24,11 +24,90 @@
 
         <!-- Data Sheet -->
         <template>
-            <v-form ref="form" lazy-validation>
+            <v-form ref="form" lazy-validation style="max-width: 1280px;">
                 <v-text-field v-model="oSurvey.title" label="Title" required></v-text-field>
                 <v-checkbox v-model="oSurvey.active" label="Active"></v-checkbox>
 
                 <v-text-field label="Prepend inner" prepend-inner-icon="place"></v-text-field>
+
+
+                <!-- Start Datetime-->
+                <template>
+                    <v-card>
+                        <v-card-title class="headline">Start und Enddatum festlegen</v-card-title>
+                        <v-card-text>
+                            Sobald ihre Umfrage beginnt - können Sie diese nicht mehr anpassen
+                                <v-row>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-dialog ref="dialog1" v-model="bModalStartDate" :return-value.sync="sStartDate" persistent width="290px">
+                                            <template v-slot:activator="{ on }">
+                                                <v-text-field :value="formatDate(sStartDate, 'de')" label="Startdatum" prepend-icon="event" readonly v-on="on"></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="sStartDate" color="success" :min="sToday" :events="getEvents()" >
+                                                <v-spacer></v-spacer>
+                                                <v-btn text color="primary" @click="bModalStartDate = false">Cancel</v-btn>
+                                                <v-btn text color="primary" @click="$refs.dialog1.save(sStartDate)">OK</v-btn>
+                                            </v-date-picker>
+                                        </v-dialog>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-dialog ref="dialog2" v-model="bModalStartTime" :return-value.sync="sStartTime" persistent width="290px" >
+                                            <template v-slot:activator="{ on }">
+                                                <v-text-field v-model="sStartTime" label="Start-Uhrzeit" prepend-icon="access_time" readonly v-on="on" ></v-text-field>
+                                            </template>
+                                            <v-time-picker v-if="bModalStartTime" v-model="sStartTime" full-width format="24hr" color="success">
+                                                <v-spacer></v-spacer>
+                                                <v-btn text color="primary" @click="bModalStartTime = false">Cancel</v-btn>
+                                                <v-btn text color="primary" @click="$refs.dialog2.save(sStartTime)">OK</v-btn>
+                                            </v-time-picker>
+                                        </v-dialog>
+                                    </v-col>
+                                </v-row>
+                        
+                        </v-card-text>
+                    </v-card>
+                </template>
+
+                <br>
+
+                <!-- End Datetime-->
+                <template>
+                    <v-card>
+                        <v-card-title class="headline">End-Datum festlegen</v-card-title>
+                        <v-card-text>
+                            Wann soll ihre Umfrage nicht mehr ausfüllbar sein?
+                                <v-row>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-dialog ref="dialog3" v-model="bModalEndDate" :return-value.sync="sEndDate" persistent width="290px">
+                                            <template v-slot:activator="{ on }">
+                                                <v-text-field :value="formatDate(sEndDate, 'de')" label="End-Datum" prepend-icon="event" readonly v-on="on"></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="sEndDate" color="red" :min="sStartDate" :events="getEvents()" >
+                                                <v-spacer></v-spacer>
+                                                <v-btn text color="primary" @click="bModalEndDate = false">Cancel</v-btn>
+                                                <v-btn text color="primary" @click="$refs.dialog3.save(sEndDate)">OK</v-btn>
+                                            </v-date-picker>
+                                        </v-dialog>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-dialog ref="dialog4" v-model="bModalEndTime" :return-value.sync="sStartTime" persistent width="290px" >
+                                            <template v-slot:activator="{ on }">
+                                                <v-text-field v-model="sStartTime" label="Start-Uhrzeit" prepend-icon="access_time" readonly v-on="on" ></v-text-field>
+                                            </template>
+                                            <v-time-picker v-if="bModalEndTime" v-model="sStartTime" full-width format="24hr" color="red">
+                                                <v-spacer></v-spacer>
+                                                <v-btn text color="primary" @click="bModalEndTime = false">Cancel</v-btn>
+                                                <v-btn text color="primary" @click="$refs.dialog4.save(sStartTime)">OK</v-btn>
+                                            </v-time-picker>
+                                        </v-dialog>
+                                    </v-col>
+                                </v-row>
+                        
+                        </v-card-text>
+                    </v-card>
+                </template>
 
                 <v-text-field v-model="oSurvey.start_datetime"></v-text-field>
                 <v-text-field v-model="oSurvey.end_datetime"></v-text-field>
@@ -54,6 +133,21 @@ export default {
             oBackRoute: { name: 'backend.surveys' },
             bCreate: false,
             bEdit: false,
+
+            // Today
+            sToday: new Date().toISOString().substr(0, 10),
+
+            // Tmps Start
+            bModalStartDate: false,
+            bModalStartTime: false,
+            sStartDate: new Date().toISOString().substr(0, 10),
+            sStartTime: null,
+
+            // Tmps End
+            bModalEndDate: false,
+            bModalEndTime: false,
+            sEndDate: new Date(new Date() + 5).toISOString().substr(0, 10),
+            sEndTime: null,
 
             oSurvey : {},
             oSurveyOld: {},
@@ -111,6 +205,26 @@ export default {
     },
 
     methods: {
+
+        getEvents() {
+            return [this.sStartDate, this.sEndDate];
+        },
+
+        formatDate(date) {
+            var locale = '';
+
+            switch (this._i18n.locale) {
+                case 'de':
+                    locale = 'de-DE';
+                    break;
+            
+                default:
+                    locale = this._i18n.fallbackLocale;
+                    break;
+            }
+
+            return new Date(date).toLocaleDateString(locale);
+        },
 
         showSnackbar: function() {
             this.oSnackbar.bActive = true;
