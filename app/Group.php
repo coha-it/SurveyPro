@@ -54,4 +54,12 @@ class Group extends Model
     {
         return $this->belongsToMany('App\User')->wherePivot('is_mod', 1);
     }
+
+    /**
+     * Get the Survey records associated with the Group.
+     */
+    public function surveys()
+    {
+        return $this->belongsToMany('App\Survey');
+    }
 }

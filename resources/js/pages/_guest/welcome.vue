@@ -73,7 +73,9 @@ export default {
 }
 
 .title {
-  font-size: 85px;
+  font-size: 85px !important;
+  font-weight: 100;
+  line-height: 1.125em;
 }
 
 .text-center {
@@ -84,8 +86,9 @@ export default {
     bottom: 0;
     text-align: center;
     position: absolute;
-    display: inline-flex;
-    width: auto;
+    display: flex;
+    width: fit-content;
+    height: fit-content;
     align-items: center;
     justify-content: center;
     flex-flow: column;

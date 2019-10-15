@@ -32,16 +32,16 @@ class SurveyController extends Controller
     public function getCreatedSurvey(Request $request) {
         // Validate
         $request->validate(
-            ['id' => ['required', 'int', 'min:1']]
+            ['id' => 'required|int|min:1']
         );
 
         // Search Survey
         $survey = $request->user()->surveys->find($request->id);
-        return $survey->toJson();
+        return $survey->getSelfWithRelations()->toJson();
     }
 
     // Update the Created Survey
-    public function updateCreatedSurvey(Request $request) {
+    public function tryUpdateCreatedSurvey(Request $request) {
         // 1. Validate the Requests
         $request->validate([
             'survey' => 'required',
@@ -52,11 +52,32 @@ class SurveyController extends Controller
         $reqSurvey = $request->survey;
         $self = $request->user();
 
-        // 2. Check if Request has ID
-        if( array_key_exists('id', $reqSurvey) && $foundSurvey = $self->surveys->find( $reqSurvey['id'] ) ) {
-            // 3.1 If ID - then update all the created-by-surveys
-            $foundSurvey->update($reqSurvey);
-            return $foundSurvey;
+        // 3. Check if Request has ID
+        if( array_key_exists('id', $reqSurvey) && $survey = $self->surveys->find( $reqSurvey['id'] ) ) {
+            // 3.1 If ID exists and survey found - Check if Survey is editable
+            if($survey->isEditable())
+            {
+
+                // Go through requeste's User-Groups
+                $aSync = [];
+                foreach ($reqSurvey['groups'] as $group) {
+                    // If Self has Rights
+                    if ( $self->groupsModerating->find($group['id']) ) {
+                        array_push($aSync, $group['id']);
+                    }
+                }
+                $survey->groups()->sync($aSync);
+
+                // Update Survey
+                $survey->update($reqSurvey);
+
+                // Return the Survey
+                return $survey->getSelfWithRelations()->toJson();
+            }
+
+
+            // Return Error
+            return back()->withErrors('your error message');
         }
 
         // 3.2 If no ID is in Params

@@ -157,7 +157,11 @@
     "reset": "Zurücksetzen",
     "loading": {
       "text": "Bitte warten ..."
-    }
+    },
+    "required": "Dieses Feld ist erforderlich",
+    "days": "Tage",
+    "hours": "Stunden",
+    "minutes": "Minuten"
 
   }
   

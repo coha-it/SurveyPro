@@ -85,7 +85,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('survey-created',  'Backend\SurveyController@getCreatedSurvey')->name('backend.survey');
 
             // Change Surveys
-            Route::patch('update-created-survey', 'Backend\SurveyController@updateCreatedSurvey');
+            Route::patch('update-created-survey', 'Backend\SurveyController@tryUpdateCreatedSurvey');
             Route::patch('delete-created-survey', 'Backend\SurveyController@deleteSurvey');
             Route::post('create-survey', 'Backend\SurveyController@createUsers');
         });
