@@ -25,8 +25,8 @@ class CreateSurveysTable extends Migration
             $table->string('desc_long')->nullable();
 
             // Dates and Lockings
-            $table->timestamp('start_date');
-            $table->timestamp('end_date');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->boolean('is_finished')->default(false);
             $table->boolean('is_canceled')->default(false);
 
