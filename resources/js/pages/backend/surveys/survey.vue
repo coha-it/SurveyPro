@@ -1,10 +1,6 @@
 <template>
 	<div>
-		<div v-if="oSurvey">
-			<v-snackbar v-model="oSnackbar.bActive" :timeout="oSnackbar.iDuration" :color="oSnackbar.sColor" top>
-				<span v-html="oSnackbar.sText"></span>
-				<v-btn text @click="oSnackbar.bActive = false">{{ $t('closer_button') }}</v-btn>
-			</v-snackbar>
+
 
 			<template>
 				<v-btn small outlined depressed color="grey" rounded tag="router-link" :to="oBackRoute" class="small ml-auto my-auto">
@@ -15,6 +11,11 @@
 				<br>
 			</template>
 
+		<div v-if="oSurvey">
+			<v-snackbar v-model="oSnackbar.bActive" :timeout="oSnackbar.iDuration" :color="oSnackbar.sColor" top>
+				<span v-html="oSnackbar.sText"></span>
+				<v-btn text @click="oSnackbar.bActive = false">{{ $t('closer_button') }}</v-btn>
+			</v-snackbar>
 
 			<!-- Data Sheet -->
 			<template>
@@ -348,21 +349,34 @@
 									</v-list-item>
 							</v-list>
 						</v-tab-item>
-						<v-tab-item v-if="!bCreate">
+						<v-tab-item>
 							Fragen
 						</v-tab-item>
-						<v-tab-item v-if="!bCreate">
-							Teilnehmer<br>
 
-							<v-select
-								v-model="oSurvey.groups"
-								:items="user.groups_moderating"
-								label="Select Item"
-								multiple
-								return-object
-								item-text="name"
-							>
-							</v-select>
+						<!-- Gruppeneinstellungen -->
+						<v-tab-item>
+							<v-list subheader two-line flat >
+									<v-subheader>Gruppen</v-subheader>
+
+									<!-- Title -->
+									<v-list-item>
+										<v-list-item-content>
+											<v-select
+												v-model="oSurvey.groups"
+												:items="user.groups_moderating"
+												label="Gruppen Auswählen"
+												chips
+												multiple
+												return-object
+												item-text="name"
+												:disabled="surveyIsUneditable()"
+											>
+											</v-select>
+										</v-list-item-content>
+									</v-list-item>
+							</v-list>
+
+
 						</v-tab-item>
 					</v-tabs>
 
@@ -519,11 +533,11 @@ export default {
 	methods: {
 
 		surveyIsEditable() {
-			return this.oSurvey.is_editable;
+			return (this.oSurvey.is_editable && this.bEdit) || this.bCreate;
 		},
 
 		surveyIsUneditable() {
-			return !this.oSurvey.is_editable;
+			return !this.surveyIsEditable();
 		},
 
 		getMinDate() {
@@ -729,7 +743,6 @@ export default {
 					}
 
 					_t.startEditMode();
-
 
 				}
 				_t.bLoading = false;

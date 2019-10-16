@@ -37,7 +37,31 @@ class SurveyController extends Controller
 
         // Search Survey
         $survey = $request->user()->surveys->find($request->id);
-        return $survey->getSelfWithRelations()->toJson();
+        if($survey) {
+            return $survey->getSelfWithRelations()->toJson();
+        }
+    }
+
+    public function updateOrCreateSurvey($self, $reqSurvey) {
+        // Update or Create
+        $survey = $self->surveys()->updateOrCreate(
+            ['id' => $reqSurvey['id'] ?? 0],
+            $reqSurvey
+        );
+
+        // Go through requeste's User-Groups
+        $aSync = [];
+        $aGroups = $reqSurvey['groups'] ?? [];
+        foreach ($aGroups as $group) {
+            // If Self has Rights
+            if ( $self->groupsModerating->find($group['id']) ) {
+                array_push($aSync, $group['id']);
+            }
+        }
+        $survey->groups()->sync($aSync);
+
+        // Return Survey
+        return $survey;
     }
 
     // Update the Created Survey
@@ -53,25 +77,14 @@ class SurveyController extends Controller
         $self = $request->user();
 
         // 3. Check if Request has ID
-        if( array_key_exists('id', $reqSurvey) && $survey = $self->surveys->find( $reqSurvey['id'] ) ) {
+        if( 
+            array_key_exists('id', $reqSurvey) && 
+            $survey = $self->surveys->find( $reqSurvey['id'])    
+        ) {
             // 3.1 If ID exists and survey found - Check if Survey is editable
             if($survey->isEditable())
             {
-
-                // Go through requeste's User-Groups
-                $aSync = [];
-                foreach ($reqSurvey['groups'] as $group) {
-                    // If Self has Rights
-                    if ( $self->groupsModerating->find($group['id']) ) {
-                        array_push($aSync, $group['id']);
-                    }
-                }
-                $survey->groups()->sync($aSync);
-
-                // Update Survey
-                $survey->update($reqSurvey);
-
-                // Return the Survey
+                $survey = $this->updateOrCreateSurvey($self, $reqSurvey);
                 return $survey->getSelfWithRelations()->toJson();
             }
 
@@ -83,8 +96,8 @@ class SurveyController extends Controller
         // 3.2 If no ID is in Params
         else {
             //  - then create a survey
-            $survey = $self->surveys()->create($reqSurvey);
-            return $survey->toArray();
+            $survey = $this->updateOrCreateSurvey($self, $reqSurvey);
+            return $survey->getSelfWithRelations()->toJson();
         }
     }
 
