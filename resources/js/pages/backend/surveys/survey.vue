@@ -554,6 +554,7 @@
 <script>
 import axios from 'axios'
 import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
 
@@ -622,12 +623,12 @@ export default {
 			// Tmps Start
 			bDialogStartDate: false,
 			bDialogStartTime: false,
-			sStartDate: new Date().toISOString().substr(0, 10),
+			sStartDate: this.getStartDate(),
 
 			// Tmps End
 			bDialogEndDate: false,
 			bDialogEndTime: false,
-			sEndDate: new Date(new Date() + 5).toISOString().substr(0, 10),
+			sEndDate: this.getEndDate(),
 
 			// Surveys
 			oSurvey : null,
@@ -729,7 +730,13 @@ export default {
 
 	methods: {
 
+    getStartDate() {
+      return moment().toISOString().substr(0, 10);
+    },
 
+    getEndDate() {
+      return moment(moment() + 5).toISOString().substr(0, 10)
+    },
 
     // Question Methods
     move(oElement1, aList, iDir) {
