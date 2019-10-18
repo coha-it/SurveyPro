@@ -23,18 +23,18 @@ class Survey extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 
-        'created_by', 
-        'active', 
-        'author', 
-        'title', 
-        'desc_short', 
-        'desc_long', 
-        'start_datetime', 
-        'end_datetime', 
-        'is_finished', 
-        'is_canceled', 
-        'only_editable_by_creator', 
+        'id',
+        'created_by',
+        'active',
+        'author',
+        'title',
+        'desc_short',
+        'desc_long',
+        'start_datetime',
+        'end_datetime',
+        'is_finished',
+        'is_canceled',
+        'only_editable_by_creator',
         'is_public'
     ];
 
@@ -61,15 +61,15 @@ class Survey extends Model
 
     // Methods
     public function isEditable() {
-        return 
-            $this->isUnfinished() && 
-            $this->isUncanceled() && 
+        return
+            $this->isUnfinished() &&
+            $this->isUncanceled() &&
             $this->isNotInProcess();
     }
 
     public function isInProcess() {
-        return 
-            $this->active && 
+        return
+            $this->active &&
             now()->toDateTimeString('Y-m-d H:i:s') > $this->start_datetime;
     }
 
@@ -97,7 +97,7 @@ class Survey extends Model
     // With all Informations
     public function getSelfWithRelations()
     {
-        return $this->with(['groups', /*'questions' */])->find($this->id);
+        return $this->with(['groups', 'questions'])->find($this->id);
     }
 
     /**
@@ -114,6 +114,14 @@ class Survey extends Model
     public function groups()
     {
         return $this->belongsToMany('App\Group', 'survey_group');
+    }
+
+    /**
+     * Get the Creator record associated with the Survey.
+     */
+    public function questions()
+    {
+        return $this->hasMany('App\Question')->orderBy('order');
     }
 
 }

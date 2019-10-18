@@ -81,7 +81,7 @@ select {
     }
 }
 
-// Button 
+// Button
 .v-btn__content {
     flex: auto;
     white-space: normal;
@@ -91,6 +91,11 @@ select {
 //     background: rgba(0, 0, 0, 0.16) !important;
 //     color: #aaaaaa !important;
 // }
+
+// Expanded Content
+.v-data-table tbody tr.v-data-table__expanded__content {
+  box-shadow: inherit;
+}
 
 // Footer
 .v-application .v-footer a {
@@ -135,7 +140,7 @@ select {
 }
 
 // Login
-.coha--login-wrapper { 
+.coha--login-wrapper {
     color: rgba(0,0,0,.6);
     background-color: #b6b6b6;
 
@@ -223,7 +228,7 @@ select {
 }
 
 
-// 
+//
 .c-code-text {
     &,
     & input {
@@ -245,7 +250,7 @@ select {
     input {
         text-transform: uppercase;
     }
-} 
+}
 
 .coha--list-item {
 

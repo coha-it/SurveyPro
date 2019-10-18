@@ -20,7 +20,7 @@
 			<!-- Data Sheet -->
 			<template>
 				<v-form @submit.prevent="updateSurvey" @keydown="form.onKeydown($event)" v-model="valid" ref="form" style="max-width: 1280px;">
-					
+
 					<v-toolbar color="primary" dark >
 						<v-toolbar-title>
 								<template v-if="bCreate">{{ "Neue Umfrage erstellen" }}</template>
@@ -54,16 +54,16 @@
 									<!-- Title -->
 									<v-list-item>
 										<v-list-item-content>
-											<v-text-field 
+											<v-text-field
 												:disabled="surveyIsUneditable()"
-												dense 
-												persistent-hint 
-												outlined 
-												hint="Titel der Umfrage. Wird angezeigt" 
-												v-model="oSurvey.title" 
+												dense
+												persistent-hint
+												outlined
+												hint="Titel der Umfrage. Wird angezeigt"
+												v-model="oSurvey.title"
 												label="Title"
-												required 
-												:rules="required" 
+												required
+												:rules="required"
 												:placeholder="oSurveyOld.title ? oSurveyOld.title : 'z.B.: &quot;Umfrage Mitarbeiterzufriedenheit&quot; '"
 											></v-text-field>
 										</v-list-item-content>
@@ -72,15 +72,15 @@
 									<!-- Author -->
 									<v-list-item>
 										<v-list-item-content>
-											<v-text-field 
+											<v-text-field
 												:disabled="surveyIsUneditable()"
-												dense 
-												persistent-hint 
-												outlined 
-												hint="Author in Textform. Wird angezeigt" 
+												dense
+												persistent-hint
+												outlined
+												hint="Author in Textform. Wird angezeigt"
 												:placeholder="oSurveyOld.author ? oSurveyOld.author : 'z.B.: &quot;Dr. Johannes Müller&quot; '"
-												v-model="oSurvey.author" 
-												label="Autor" 
+												v-model="oSurvey.author"
+												label="Autor"
 												required
 											></v-text-field>
 										</v-list-item-content>
@@ -90,14 +90,14 @@
 									<!-- Description Short -->
 									<v-list-item>
 										<v-list-item-content>
-											<v-text-field 
+											<v-text-field
 												:disabled="surveyIsUneditable()"
-												dense 
-												persistent-hint 
-												outlined 
-												hint="Kurze Beschreibung der Umfrage" 
-												v-model="oSurvey.desc_short" 
-												label="Kurzbeschreibung" 
+												dense
+												persistent-hint
+												outlined
+												hint="Kurze Beschreibung der Umfrage"
+												v-model="oSurvey.desc_short"
+												label="Kurzbeschreibung"
 												required
 											></v-text-field>
 										</v-list-item-content>
@@ -106,14 +106,14 @@
 									<!-- Description Long -->
 									<v-list-item>
 										<v-list-item-content>
-											<v-textarea 
+											<v-textarea
 												:disabled="surveyIsUneditable()"
-												outlined 
+												outlined
 												dense
-												persistent-hint 
-												v-model="oSurvey.desc_long" 
-												hint="Lange Beschreibung der Umfrage" 
-												label="Langbeschreibung" 
+												persistent-hint
+												v-model="oSurvey.desc_long"
+												hint="Lange Beschreibung der Umfrage"
+												label="Langbeschreibung"
 												required
 											></v-textarea>
 										</v-list-item-content>
@@ -124,11 +124,11 @@
 
 									<v-list-item>
 										<v-list-item-action>
-											<v-checkbox 
+											<v-checkbox
 												:disabled="surveyIsUneditable()"
-											 	v-model="oSurvey.active" 
-												color="primary" 
-												:true-value="1" 
+											 	v-model="oSurvey.active"
+												color="primary"
+												:true-value="1"
 												:false-value="0"
 											></v-checkbox>
 										</v-list-item-action>
@@ -155,11 +155,11 @@
 
 									<v-list-item>
 										<v-list-item-action>
-											<v-checkbox 
+											<v-checkbox
 											:disabled="surveyIsUneditable()"
-											v-model="oSurvey.is_public" 
-											color="red" 
-											:true-value="1" 
+											v-model="oSurvey.is_public"
+											color="red"
+											:true-value="1"
 											:false-value="0"
 											></v-checkbox>
 										</v-list-item-action>
@@ -173,9 +173,9 @@
 									<template v-if="bEdit">
 										<v-list-item>
 											<v-list-item-action>
-												<v-checkbox 
-												v-model="bExtendedSettings" 
-												:disabled="oSurvey.is_finished == 1 || oSurvey.is_canceled == 1" 
+												<v-checkbox
+												v-model="bExtendedSettings"
+												:disabled="oSurvey.is_finished == 1 || oSurvey.is_canceled == 1"
 												color="primary" ></v-checkbox>
 											</v-list-item-action>
 											<v-list-item-content>
@@ -190,7 +190,7 @@
 													<v-checkbox
 													 color="error"
 													 v-model="oSurvey.is_finished"
-													 :true-value="1" :false-value="0" 
+													 :true-value="1" :false-value="0"
 													 :disabled="surveyIsUneditable()"
 													 ></v-checkbox>
 												</v-list-item-action>
@@ -202,11 +202,11 @@
 
 											<v-list-item>
 												<v-list-item-action>
-													<v-checkbox 
+													<v-checkbox
 													:disabled="surveyIsUneditable()"
-													color="error" 
-													v-model="oSurvey.is_canceled" 
-													:true-value="1" 
+													color="error"
+													v-model="oSurvey.is_canceled"
+													:true-value="1"
 													:false-value="0" ></v-checkbox>
 												</v-list-item-action>
 												<v-list-item-content>
@@ -223,12 +223,12 @@
 							<!-- DateRange-->
 							<div>
 								<span>
-									<v-date-picker 
+									<v-date-picker
 										:disabled="surveyIsUneditable()"
 										required
-										:min="getMinDate()" 
-										v-model="aDates" 
-										range 
+										:min="getMinDate()"
+										v-model="aDates"
+										range
 										:selected-items-text="getDatesDiffDays() + ' Tage Zeit'"
 										color="secondary"
 										header-color="primary"
@@ -246,37 +246,37 @@
 
 											<v-row>
 												<v-col cols="12" sm="6" md="6">
-													<v-text-field 
-													:value="formatDate(oSurvey.start_datetime)"  
-													label="Beginnt am"  
-													placeholder="Bitte am Kalender wählen" 
-													prepend-icon="event_available" 
-													readonly 
-													:rules="required" 
+													<v-text-field
+													:value="formatDate(oSurvey.start_datetime)"
+													label="Beginnt am"
+													placeholder="Bitte am Kalender wählen"
+													prepend-icon="event_available"
+													readonly
+													:rules="required"
 													disabled></v-text-field>
 												</v-col>
 												<v-col cols="12" sm="6" md="6">
 													<v-dialog ref="dialog2" v-model="bDialogStartTime" :return-value.sync="oTimes.sStartTime" persistent width="290px" >
 														<template v-slot:activator="{ on }">
-															<v-text-field 
+															<v-text-field
 																:disabled="surveyIsUneditable()"
-																v-model="oTimes.sStartTime" 
-																label="Start-Uhrzeit" 
-																prepend-icon="timer" 
-																readonly 
-																required 
-																:rules="required" 
+																v-model="oTimes.sStartTime"
+																label="Start-Uhrzeit"
+																prepend-icon="timer"
+																readonly
+																required
+																:rules="required"
 																v-on="on"
 															></v-text-field>
 														</template>
-														<v-time-picker 
+														<v-time-picker
 														:disabled="surveyIsUneditable()"
-														required 
-														v-if="bDialogStartTime" 
-														:max="getStartTimeMax()" 
-														v-model="oTimes.sStartTime" 
-														full-width 
-														format="24hr" 
+														required
+														v-if="bDialogStartTime"
+														:max="getStartTimeMax()"
+														v-model="oTimes.sStartTime"
+														full-width
+														format="24hr"
 														color="secondary">
 															<v-spacer></v-spacer>
 															<v-btn text color="primary" @click="bDialogStartTime = false">Cancel</v-btn>
@@ -286,39 +286,37 @@
 												</v-col>
 											</v-row>
 
-
 											<v-row>
 												<v-col cols="12" sm="6" md="6">
-													<v-text-field 
-														:value="formatDate(oSurvey.end_datetime)" 
-														label="Endet am" 
-														placeholder="Bitte am Kalender wählen" 
-														prepend-icon="event_busy" 
-														readonly 
-														:rules="required" 
+													<v-text-field
+														:value="formatDate(oSurvey.end_datetime)"
+														label="Endet am"
+														placeholder="Bitte am Kalender wählen"
+														prepend-icon="event_busy"
+														readonly
+														:rules="required"
 														disabled
 													></v-text-field>
 												</v-col>
-
 												<v-col cols="12" sm="6" md="6">
 													<v-dialog ref="dialog4" v-model="bDialogEndTime" :return-value.sync="oTimes.sEndTime" persistent width="290px" >
 														<template v-slot:activator="{ on }">
-															<v-text-field 
+															<v-text-field
 															:disabled="surveyIsUneditable()"
 															v-model="oTimes.sEndTime"
-															label="End-Uhrzeit" 
+															label="End-Uhrzeit"
 															prepend-icon="timer_off"
 															required
 															readonly
 															v-on="on"
-															:rules="required" 
+															:rules="required"
 															></v-text-field>
 														</template>
 														<v-time-picker :disabled="surveyIsUneditable()"
-														 required 
-														 v-if="bDialogEndTime" 
-														 :min="getEndTimeMin()" 
-														 v-model="oTimes.sEndTime" 
+														 required
+														 v-if="bDialogEndTime"
+														 :min="getEndTimeMin()"
+														 v-model="oTimes.sEndTime"
 														 full-width format="24hr" color="primary">
 															<v-spacer></v-spacer>
 															<v-btn text color="primary" @click="bDialogEndTime = false">Cancel</v-btn>
@@ -335,14 +333,13 @@
 													hide-details
 													:value="getDiffDatetimeLabel()"
 													style="max-width: 320px;"
-													dense 
+													dense
 													disabled
-													prepend-icon="event_note" 
+													prepend-icon="event_note"
 													readonly
 												></v-text-field>
 												</v-col>
 											</v-row>
-
 										</v-card-text>
 									</v-card>
 								</span>
@@ -350,8 +347,147 @@
 									</v-list-item>
 							</v-list>
 						</v-tab-item>
+
+            <!-- Questions -->
 						<v-tab-item>
-							Fragen
+							<v-list>
+                <v-list-item>
+
+                  <v-data-table
+                    :headers="headers"
+
+                    v-model="selected"
+                    :items="oSurvey.questions"
+
+                    dense
+                    multi-sort
+                    show-select
+
+                    show-expand
+                    :expanded.sync="expanded"
+
+                    :sort-by="['order']"
+                    :sort-desc="[false]"
+
+                    :items-per-page="parseInt(25)"
+                    :footer-props="{
+                        showFirstLastPage: true,
+                    }"
+                  >
+
+                    <template v-slot:item.description="props">
+                      <v-edit-dialog :return-value.sync="props.item.description">
+                        {{ props.item.description }}
+                        <template v-slot:input>
+                          <v-text-field
+                            v-model="props.item.description"
+                            label="Edit"
+                            counter
+                          ></v-text-field>
+                        </template>
+                      </v-edit-dialog>
+                    </template>
+
+                    <template v-slot:item.order="props">
+                      <div style="white-space: nowrap;">
+                        <v-icon @click="moveUp(props.item, oSurvey.questions)" x-small>mdi-arrow-up</v-icon>
+                          {{ props.item.order }}
+                        <v-icon @click="moveDown(props.item, oSurvey.questions)" x-small>mdi-arrow-down</v-icon>
+                      </div>
+                    </template>
+
+                    <!-- Expand Area -->
+                    <template v-slot:expanded-item="{ headers, item }">
+                      <td></td>
+                      <td :colspan="headers.length-1">
+                        <v-row>
+                          <v-col xl="6" sm="6" xs="12">
+                            <v-card style="margin: 10px 0;">
+                              <v-list-item three-line>
+                                <v-list-item-content>
+                                  <div class="overline mb-4">ID #{{ item.id }}</div>
+                                  <v-list-item-title class="headline">
+                                    <h6>Frage-Einstellungen</h6>
+                                  </v-list-item-title>
+                                  <v-list-item-subtitle>Einstellungen zu der Frage</v-list-item-subtitle>
+                                </v-list-item-content>
+                              </v-list-item>
+                                <v-list dense>
+                                  <v-divider></v-divider>
+
+
+                                  <v-list-item>
+                                    <v-list-item-content>Kommentierbar:</v-list-item-content>
+                                    <v-list-item-content class="align-end">
+                                      <v-switch v-model="item.is_commentable" :true-value="1" :false-value="0" color="accent" :label="item.is_commentable ? 'Ist Kommentierbar' : 'Nicht kommentierbar'"></v-switch>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider></v-divider>
+
+                                  <v-list-item>
+                                    <v-list-item-content>Kommentar ist erforderlich:</v-list-item-content>
+                                    <v-list-item-content class="align-end">{{ item.comment_is_required }}</v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider></v-divider>
+
+                                  <v-list-item>
+                                    <v-list-item-content>Kommentar ist eine Nummer:</v-list-item-content>
+                                    <v-list-item-content class="align-end">{{ item.comment_is_number }}</v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider></v-divider>
+
+                                  <v-list-item>
+                                    <v-list-item-content>Kommentar: Maximale Zeichen:</v-list-item-content>
+                                    <v-list-item-content class="align-end">{{ item.comment_max_signs }}</v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider></v-divider>
+
+
+                                  <v-list-item>
+                                    <v-list-item-content>Überspringbar:</v-list-item-content>
+                                    <v-list-item-content class="align-end">{{ item.is_skippable }}</v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider></v-divider>
+
+                                  <v-list-item>
+                                    <v-list-item-content>Minimale Optionen:</v-list-item-content>
+                                    <v-list-item-content class="align-end">
+                                      {{ item.min_options }}
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider></v-divider>
+                                  <v-list-item>
+                                    <v-list-item-content>Maximale Optionen:</v-list-item-content>
+                                    <v-list-item-content class="align-end">
+                                      {{ item.max_options }}
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider></v-divider>
+                                </v-list>
+                            </v-card>
+                          </v-col>
+                          <v-col xl="6" sm="6" xs="12">
+                              <div v-for="(option, i) in item.options" v-bind:key="i">
+                                <v-text-field v-model="option.title"></v-text-field>
+                                <v-text-field v-model="option.value"></v-text-field>
+                              </div>
+                          </v-col>
+                        </v-row>
+                      </td>
+                    </template>
+                  </v-data-table>
+                </v-list-item>
+
+                <v-list-item>
+                  <v-btn @click="oSurvey.questions.push({order: oSurvey.questions.length+1})">+ Frage hinzufügen</v-btn>
+                </v-list-item>
+
+                <v-list-item></v-list-item>
+
+
+                <v-divider></v-divider>
+
+              </v-list>
 						</v-tab-item>
 
 						<!-- Gruppeneinstellungen -->
@@ -382,19 +518,21 @@
 					</v-tabs>
 
 					<v-list>
-								<v-list-item>
-									<v-btn 
-										color="grey" 
-										dark 
+							<v-list-item>
+									<v-text-field v-model="oSurvey.title" required :rules="required" style="display: none;"></v-text-field>
+
+									<v-btn
+										color="grey"
+										dark
 										class="mr-4"
 									>Zurück</v-btn>
-									<v-btn  
-										:color="isUnsaved() ? 'success' : 'grey' "  
-										type="submit" 
-										class="mr-4 white--text" 
+									<v-btn
+										color="success"
+										type="submit"
+										class="mr-4 white--text"
 										v-if="surveyIsEditable()"
 										:disabled="surveyFormIsInvalid()"
-									>Speichern</v-btn>
+									>Speichern {{ isUnsaved() ? '*' : undefined }}</v-btn>
 								</v-list-item>
 					</v-list>
 
@@ -414,6 +552,40 @@ export default {
 
 	data() {
 		return {
+
+      // Questions
+      headers: [
+        { text: '', value: 'data-table-select' },
+        {
+            text: 'Reihenfolge',
+            align: 'left',
+            value: 'order',
+        },
+        {
+            text: 'Title',
+            align: 'left',
+            value: 'title',
+        },
+        {
+            text: 'Subtitle',
+            align: 'left',
+            value: 'subtitle',
+        },
+        {
+            text: 'Description',
+            align: 'left',
+            value: 'description',
+        },
+        { value: 'is_skippable', text: 'Überspringbar' },
+        { value: 'is_commentable', text: 'Kommentierbar' },
+        { value: 'min_options', text: 'Mind. Optionen' },
+        { value: 'max_options', text: 'Max Optionen' },
+
+        { text: '', value: 'data-table-expand' },
+
+      ],
+      selected: [],
+      expanded: [],
 
 			// Tabs
 			active_tab: null,
@@ -474,7 +646,7 @@ export default {
 
 
 	watch: {
-		surveyCreated(promise) 
+		surveyCreated(promise)
 		{
 			// save Promise result in local state
 			this.oSurvey = this.copyObject(promise);
@@ -489,13 +661,22 @@ export default {
 			// If Something inside bExtendedSettings is active
 			if(this.oSurvey.is_finished || this.oSurvey.is_canceled) {
 				this.bExtendedSettings = true;
-			}
+      }
+
+      // Go Through it and reorder it!
+      var oQuestions = this.oSurvey.questions;
+      for (var i in oQuestions) {
+        if (oQuestions.hasOwnProperty(i)) {
+          var oQuestion = oQuestions[i];
+          oQuestion.order = parseInt(i)+1;
+        }
+      }
 		},
 
 		'oSurvey': {
 			handler() {
 				// console.log('oSurvey Changed');
-				// this.$refs.form.validate();
+        // this.$refs.form.validate();
 			},
 			deep: true
 		},
@@ -520,17 +701,17 @@ export default {
 		var params = route.params;
 		var id = parseInt(params.id);
 
-		if (params.id == 'create') 
+		if (params.id == 'create')
 		{
 			this.startCreateMode();
-		} 
-		else if (typeof id == "number") 
+		}
+		else if (typeof id == "number")
 		{
 			this.$store.dispatch('surveys/fetchSurveyCreated', id)
 			this.startEditMode();
-		} 
-		else 
-		{   
+		}
+		else
+		{
 			this.$router.push(this.oBackRoute);
 		}
 
@@ -540,6 +721,42 @@ export default {
 	},
 
 	methods: {
+
+
+
+    // Question Methods
+    move(oElement1, aList, iDir) {
+      // var key1 = this.getPositionByOrder( ( parseInt(oElement1.order) + iDir) , aList);
+      var key1 = this.getPositionById( oElement1, aList);
+      var key2 = key1 + iDir;
+      var oElement1 = oElement1;
+      var oElement2 = aList[key2];
+
+      if(oElement2) {
+        var iTmp = parseInt(oElement1.order);
+
+        oElement1.order = parseInt(oElement2.order);
+        oElement2.order = parseInt(iTmp);
+      }
+
+      this.oSurvey.questions.sort((a, b) => (a.order > b.order) ? 1 : -1);
+    },
+
+    moveUp(oElement1, aList) {
+      this.move(oElement1, aList, -1);
+    },
+
+    moveDown(oElement1, aList) {
+      this.move(oElement1, aList, 1);
+    },
+
+    getPositionById(oItem, oObject) {
+      return oObject.map(function(x) {return x.id; }).indexOf(oItem.id)
+    },
+
+    getPositionByOrder(iOrder, oObject) {
+      return oObject.map(function(x) {return x.order; }).indexOf(iOrder)
+    },
 
 		changeTab(num) {
 			window.location.hash = num;
@@ -613,14 +830,19 @@ export default {
 
 		getStartTimeMax () {
 			var dates = this.aDates;
-			if(this.isSameDay(dates)) {
-				return this.oTimes.sEndTime+':00';
+      var sEndTime = this.oTimes.sEndTime;
+
+      if(this.isSameDay(dates) && sEndTime)
+      {
+          return sEndTime+':00';
 			}
 		},
 
 		getEndTimeMin () {
-			var dates = this.aDates;
-			if(this.isSameDay(dates)) {
+      var dates = this.aDates;
+
+      if(this.isSameDay(dates))
+      {
 				return this.oTimes.sStartTime+':00';
 			}
 		},
@@ -654,9 +876,9 @@ export default {
 		getDiffDays(d1, d2) {
 			var date1 = new Date(d1);
 			var date2 = new Date(d2);
-			var diff_in_time = date2.getTime() - date1.getTime(); 
-			var diff_in_days = diff_in_time / (1000 * 3600 * 24); 
-  
+			var diff_in_time = date2.getTime() - date1.getTime();
+			var diff_in_days = diff_in_time / (1000 * 3600 * 24);
+
 			return (Math.abs(diff_in_days) + 1) .toString();
 		},
 
@@ -672,7 +894,7 @@ export default {
 				case 'de':
 					locale = 'de-DE';
 					break;
-			
+
 				default:
 					locale = this._i18n.fallbackLocale;
 					break;
@@ -714,7 +936,8 @@ export default {
 
 			var tmp = {
 				active: 1,
-				only_editable_by_creator: 1,
+        only_editable_by_creator: 1,
+        questions: []
 			};
 
 			if(!this.oSurvey) this.oSurvey = this.copyObject(tmp);
@@ -763,7 +986,7 @@ export default {
 
 					if(_t.bCreate) {
 						_t.$router.push({
-							name: 'backend.survey', 
+							name: 'backend.survey',
 							params: {
 								id: _t.oSurvey.id
 							}

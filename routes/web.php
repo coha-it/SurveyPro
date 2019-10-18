@@ -69,7 +69,6 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
         } catch (\Throwable $th) {
             return "ne man";
         }
-
     });
 
     Route::get('groups', function() {
@@ -84,9 +83,20 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
         dd(Auth()->user()->groups->first()->users);
         // Or like This
         dd(Auth()->user()->groups()->first()->users()->get());
-        
+
         // Get all Groups from current User
         dd(Auth()->user()->groups);
+    });
+
+
+    Route::get('survey-question', function() {
+        // dd(Auth()->user()->surveys()->find(12)->questions);
+        // dd(App\Question::find(1)->survey);
+        // dd(App\Question::find(1)->option);
+
+        // dd(App\QuestionOption::find(1)->question->with(['option'])->get());
+        // echo "<pre><code>";
+        // print_r(App\QuestionOption::find(1)->question->toArray());
     });
 
     // Send Mail

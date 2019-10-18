@@ -71,27 +71,27 @@
                   </template>
                 </v-dialog>
 
-            <UserDataModal 
+            <UserDataModal
                 sEditText="Firmen bearbeiten"
-                sCreateText="Neue Firma erstellen" 
+                sCreateText="Neue Firma erstellen"
                 sInputLabel="Firmenname"
                 p_sModel="company"
                 :p_oModels="user.companies" />
-            <UserDataModal 
+            <UserDataModal
                 sEditText="Abteilungen bearbeiten"
-                sCreateText="Neue Abteilung Erstellen" 
+                sCreateText="Neue Abteilung Erstellen"
                 sInputLabel="Abteilungsname"
                 p_sModel="department"
                 :p_oModels="user.departments" />
-            <UserDataModal 
+            <UserDataModal
                 sEditText="Orte Bearbeiten"
-                sCreateText="Neuen Ort erstellen" 
+                sCreateText="Neuen Ort erstellen"
                 sInputLabel="Ortsname"
                 p_sModel="location"
                 :p_oModels="user.locations" />
-            <UserDataModal 
+            <UserDataModal
                 sEditText="Gruppen Bearbeiten"
-                sCreateText="Neue Gruppe erstellen" 
+                sCreateText="Neue Gruppe erstellen"
                 sInputLabel="Gruppenname"
                 sInputLabel2="Gruppenbeschreibung Öffentlich"
                 sInputLabel3="Gruppenbeschreibung für Moderatoren"
@@ -116,8 +116,8 @@
                     Created Users
                     <div class="flex-grow-1"></div>
                 </v-card-title>
-                <v-card-text> 
-                    <!-- <v-row no-gutters align-content="end" align="end" justify="end"> 
+                <v-card-text>
+                    <!-- <v-row no-gutters align-content="end" align="end" justify="end">
                         <v-col cols="12" md="6">
                             <v-btn depressed color="primary">Benutzer erstellen</v-btn>
                         </v-col>
@@ -149,40 +149,40 @@
                             </template>
                             <v-list>
                                 <BulkGroupChanges
-                                    :aItems="user.groups_moderating" 
-                                    :selected="selected" 
+                                    :aItems="user.groups_moderating"
+                                    :selected="selected"
                                     />
 
                                 <!-- Menu: Company -->
-                                <BulkProfileChanges 
+                                <BulkProfileChanges
                                     :aItems="user.companies"
-                                    :selected="selected" 
-                                    sId="company_id" 
-                                    sModel="company" 
-                                    title="Ändere Firma" 
+                                    :selected="selected"
+                                    sId="company_id"
+                                    sModel="company"
+                                    title="Ändere Firma"
                                     label="Firma wählen"
                                     menuText="Firma"
                                      />
 
                                 <!-- Menu: Department -->
-                                <BulkProfileChanges 
+                                <BulkProfileChanges
                                     :aItems="user.departments"
-                                    :selected="selected" 
-                                    sId="department_id" 
-                                    sModel="department" 
-                                    title="Ändere Abteilung" 
-                                    label="Abteilung wählen" 
+                                    :selected="selected"
+                                    sId="department_id"
+                                    sModel="department"
+                                    title="Ändere Abteilung"
+                                    label="Abteilung wählen"
                                     menuText="Abteilung"
                                     />
 
                                 <!-- Menu: Location -->
-                                <BulkProfileChanges 
+                                <BulkProfileChanges
                                     :aItems="user.locations"
-                                    :selected="selected" 
-                                    sId="location_id" 
-                                    sModel="location" 
-                                    title="Ändere Ort" 
-                                    label="Ort wählen" 
+                                    :selected="selected"
+                                    sId="location_id"
+                                    sModel="location"
+                                    title="Ändere Ort"
+                                    label="Ort wählen"
                                     menuText="Ort"
                                     />
 
@@ -191,7 +191,7 @@
 
 
                         <Print :users="selected" :disabled="getUnsaved(selected).length > 0 ? true : false" />
-                        
+
                         <v-btn text rounded error warning @click.stop="deleteUsersDialog = true">
                             <v-icon left>delete</v-icon> {{ selected.length + ' ' + $t('delete') }}
                         </v-btn>
@@ -207,7 +207,7 @@
                                 </v-row>
                             </v-container>
                         </v-dialog>
-                        
+
                         <!-- <v-switch class="mt-6 ml-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="accent"></v-switch> -->
                         <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></v-switch>
                         <div class="flex-grow-1"></div>
@@ -229,10 +229,10 @@
                     :items="usersCreated"
                     v-model="selected"
                     :search="search"
-                    show-select 
-                    multi-sort 
+                    show-select
+                    multi-sort
                     :loading="loading"
-                    :loading-text="$t('loading.text')" 
+                    :loading-text="$t('loading.text')"
                     :items-per-page="parseInt(itemsPerPage)"
                     :footer-props="{
                         showFirstLastPage: true,
@@ -248,10 +248,10 @@
                                 <v-edit-dialog
                                     @cancel="cancel"
                                     @open="open"
-                                    @close="close" 
+                                    @close="close"
                                     @save="save"
                                     :return-value.sync="item.pan.pan"
-                                    lazy 
+                                    lazy
                                     persistent
                                     ref="dialog"
                                 >
@@ -265,13 +265,13 @@
                                     </template>
                                     <template v-slot:input>
                                         <div class="pan--dialog-input c-code-text">
-                                            <v-text-field 
+                                            <v-text-field
                                                 v-model="item.pan.pan"
                                                 :rules="[maxPanChars]"
                                                 :label="$t('edit')"
                                                 single-line
-                                                v-on:change="changePan(item)" 
-                                                :error="!panIsOk(item)" 
+                                                v-on:change="changePan(item)"
+                                                :error="!panIsOk(item)"
                                                 :disabled="panIsLoading"
                                                 :loading="panIsLoading"
                                                 counter>
@@ -285,8 +285,8 @@
                                         </div>
                                     </template>
                                 </v-edit-dialog>
-                            </span>   
-                        </template>                    
+                            </span>
+                        </template>
                     </template>
 
 
@@ -297,9 +297,9 @@
                                 <v-edit-dialog
                                     @cancel="cancel"
                                     @open="open"
-                                    @close="close" 
+                                    @close="close"
                                     @save="save"
-                                    lazy 
+                                    lazy
                                     persistent
                                 >
                                     <span class="coha--list-item pin">
@@ -312,16 +312,16 @@
                                     </span>
                                     <template v-slot:input>
                                         <div class="pin--dialog-input c-code-text">
-                                            <v-text-field 
+                                            <v-text-field
                                                 v-model="item.pan.pin"
                                                 :label="$t('edit')"
                                                 single-line
-                                                v-on:change="changePin(item)" 
+                                                v-on:change="changePin(item)"
                                                 counter
-                                                type="text" 
+                                                type="text"
                                                 pattern="[0-9]*"
-                                                name="pin" 
-                                                v-mask="'####'" 
+                                                name="pin"
+                                                v-mask="'####'"
                                                 maxlength="4"
                                                 :rules="[maxPinChars]"
                                                 required
@@ -331,7 +331,7 @@
                                                         <v-icon class="mr-1" v-on="on" @click="generateRandomPin(item)">mdi-repeat</v-icon>
                                                     </template>
                                                     <span>Zufällige PIN generieren</span>
-                                                </v-tooltip>    
+                                                </v-tooltip>
                                             </v-text-field>
                                         </div>
                                     </template>
@@ -347,12 +347,12 @@
                                 <span v-bind:key="i">
                                     <v-tooltip bottom :open-delay="group.pivot ? group.pivot.is_member ? 1000 : 100 : 100">
                                         <template v-slot:activator="{ on }">
-                                            <v-chip v-on="on" small outlined v-if="user.groups_moderating.find(x => x.id === group.id)" class="mr-1 mt-1 mb-1" 
+                                            <v-chip v-on="on" small outlined v-if="user.groups_moderating.find(x => x.id === group.id)" class="mr-1 mt-1 mb-1"
                                                 :color="getGroupPivotColor(group)">
                                                 {{ user.groups_moderating.find(x => x.id === group.id).name }}
                                             </v-chip>
                                             <v-chip v-on="on" small outlined disabled v-else class="mr-1 mt-1 mb-1">
-                                                {{ group.name }} 
+                                                {{ group.name }}
                                             </v-chip>
                                         </template>
                                         <span v-if="group && group.pivot">
@@ -364,7 +364,7 @@
                                                     Teilnehmer
                                                 </template>
                                                 <template v-if="group.pivot.is_member && group.pivot.is_mod">
-                                                    & 
+                                                    &
                                                 </template>
                                                 <template v-if="group.pivot.is_mod">
                                                     Moderator
@@ -412,12 +412,12 @@
 
                                                                     <v-list-item-action>
                                                                         <v-list-item-action-text>ID #{{ group.id }}</v-list-item-action-text>
-                                                                        <v-btn 
-                                                                            depressed 
-                                                                            rounded 
-                                                                            outlined 
-                                                                            text 
-                                                                            small 
+                                                                        <v-btn
+                                                                            depressed
+                                                                            rounded
+                                                                            outlined
+                                                                            text
+                                                                            small
                                                                             color="error"
                                                                             @click="removeCreatedUserFromGroup(item, i)"
                                                                             >- {{ $t('remove') }}</v-btn>
@@ -451,20 +451,20 @@
 
                                                                     <v-list-item-action>
                                                                         <v-list-item-action-text>ID #{{ group.id }}</v-list-item-action-text>
-                                                                        <v-btn 
-                                                                            v-if="alreadyInGroups(group, item.groups)" 
-                                                                            depressed 
-                                                                            rounded 
-                                                                            outlined 
-                                                                            text 
+                                                                        <v-btn
+                                                                            v-if="alreadyInGroups(group, item.groups)"
+                                                                            depressed
+                                                                            rounded
+                                                                            outlined
+                                                                            text
                                                                             small>{{ $t('added')}}</v-btn>
-                                                                        <v-btn 
-                                                                            v-else 
-                                                                            depressed 
-                                                                            rounded 
-                                                                            outlined 
-                                                                            text 
-                                                                            small 
+                                                                        <v-btn
+                                                                            v-else
+                                                                            depressed
+                                                                            rounded
+                                                                            outlined
+                                                                            text
+                                                                            small
                                                                             color="success"
                                                                             @click="addCreatedUserToGroup(item, group)">+ {{ $t('add_to') }}</v-btn>
                                                                     </v-list-item-action>
@@ -492,10 +492,10 @@
                     <template v-slot:item.company="{ item }">
                         <select v-model="item.company_id" @change="companyChanged(item)">
                             <option disabled>Bitte auswählen</option>
-                            <option 
-                                :value="company.id" 
+                            <option
+                                :value="company.id"
                                 :selected="(item.company && item.company.id == company.id)"
-                                v-for="company in user.companies" 
+                                v-for="company in user.companies"
                                 v-bind:key="company.id"
                                 >{{ company.name }}</option>
                         </select>
@@ -505,10 +505,10 @@
                     <template v-slot:item.department="{ item }">
                         <select v-model="item.department_id" @change="departmentChanged(item)">
                             <option disabled>Bitte auswählen</option>
-                            <option 
-                                :value="department.id" 
+                            <option
+                                :value="department.id"
                                 :selected="(item.department && item.department.id == department.id)"
-                                v-for="department in user.departments" 
+                                v-for="department in user.departments"
                                 v-bind:key="department.id"
                                 >{{ department.name }}</option>
                         </select>
@@ -518,10 +518,10 @@
                     <template v-slot:item.location="{ item }">
                         <select v-model="item.location_id" @change="locationChanged(item)">
                             <option disabled>Bitte auswählen</option>
-                            <option 
-                                :value="location.id" 
+                            <option
+                                :value="location.id"
                                 :selected="(item.location && item.location.id == location.id)"
-                                v-for="location in user.locations" 
+                                v-for="location in user.locations"
                                 v-bind:key="location.id"
                                 >{{ location.name }}</option>
                         </select>
@@ -534,12 +534,12 @@
                                 small
                                 color="success"
                                 rounded
-                                depressed 
+                                depressed
                                 class="mr-2"
                                 @click="updateUser(item)"
                                 :disabled="isSaved(item) || !validUser(item)"
                             >{{ $t('save') }}</v-btn>
-                            
+
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                     <v-icon :disabled="isSaved(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
@@ -634,9 +634,9 @@ export default {
                         return this.filterId(this.oFilters.iId, sWhere)
                     },
                 },
-                { 
-                    text: this.$t('PAN'), 
-                    value: 'pan.pan', 
+                {
+                    text: this.$t('PAN'),
+                    value: 'pan.pan',
                     filter: sWhere => {
                         return this.filterPan(this.oFilters.sPan, sWhere)
                     },
@@ -653,7 +653,7 @@ export default {
                 { text: this.$t('updated_at'), value: 'updated_at'},
                 { text: this.$t('created_at'), value: 'created_at'},
                 { text: 'Actions', value: 'action', sortable: false },
-            ]; 
+            ];
         }
     },
 
@@ -682,10 +682,10 @@ export default {
               }
           },
           panIsLoading: false,
-  
+
           usersCreatedOld: [],
           selected: [],
-  
+
           loading: false,
           showPin: false,
           itemsPerPage: 10,
@@ -696,18 +696,18 @@ export default {
               sPan: '',
               sPin: '',
           },
-  
+
           all_groups: [],
-  
+
           maxPanChars: v => v && v.length <= 6 || 'Input too long!',
           maxPinChars: v => v && v.length == 4 || 'Pin Wrong!',
-  
+
           // Snackbar
           snack: false,
           snackColor: '',
           snackText: '',
           snackTimeout: 3000,
-  
+
           // Create Users
           iCreateUsersNumber: 5,
           bCreateUsersDialog: false,
@@ -727,7 +727,7 @@ export default {
         }
     },
 
-    created: function() {        
+    created: function() {
         this.$store.dispatch('users/fetchUsersCreated')
         this.$store.dispatch('users/fetchGroupsModerating')
     },
@@ -825,12 +825,12 @@ export default {
                 _this.bCreateUsersLoading = false;
                 _this.bCreateUsersDialog = false;
             });
-            
+
         },
 
         validUser(item) {
             if(
-                this.pinIsOk(item) && 
+                this.pinIsOk(item) &&
                 this.panIsOk(item)
             ) {
                 return true;

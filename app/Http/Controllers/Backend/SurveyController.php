@@ -17,8 +17,8 @@ class SurveyController extends Controller
     public function __construct()
     {
         $this->middleware([
-            'auth', 
-            'auth.user.email', 
+            'auth',
+            'auth.user.email',
             'auth.user.can_create_surveys'
         ]);
     }
@@ -42,30 +42,70 @@ class SurveyController extends Controller
         }
     }
 
-    public function updateOrCreateSurvey($self, $reqSurvey) {
-        // Update or Create
-        $survey = $self->surveys()->updateOrCreate(
-            ['id' => $reqSurvey['id'] ?? 0],
-            $reqSurvey
-        );
-
+    public function connectSurveyAndGroups($self, $survey, $aGroups) {
         // Go through requeste's User-Groups
         $aSync = [];
-        $aGroups = $reqSurvey['groups'] ?? [];
-        foreach ($aGroups as $group) {
+        foreach ($aGroups as $group)
+        {
             // If Self has Rights
             if ( $self->groupsModerating->find($group['id']) ) {
                 array_push($aSync, $group['id']);
             }
         }
         $survey->groups()->sync($aSync);
+    }
 
-        // Return Survey
+    public function updateOrCreateQuestionOptions($question, $options)
+    {
+        // Go Through all Requestet Question-Options
+        foreach ($options as $j => $reqOption)
+        {
+            // Update or Create the QuestionOptions
+            $question->options()->updateOrCreate(
+                ['id' => $reqOption['id'] ?? 0],
+                $reqOption
+            );
+        }
+    }
+
+    public function updateOrCreateQuestions($self, $survey, $reqQuestions)
+    {
+        // Go Through all Requested Questions
+        foreach ($reqQuestions as $i => $reqQuestion)
+        {
+            // Update or Create the Question
+            $tmp = $reqQuestion;
+            unset($tmp['options']);
+            $question = $survey->questions()->updateOrCreate(
+                ['id' => $reqQuestion['id'] ?? 0],
+                $tmp
+            );
+
+            $this->updateOrCreateQuestionOptions( $question, $reqQuestion['options'] ?? [] );
+        }
+    }
+
+    public function updateOrCreateSurvey($self, $reqSurvey)
+    {
+        // Update or Create
+        $survey = $self->surveys()->updateOrCreate(
+            ['id' => $reqSurvey['id'] ?? 0],
+            $reqSurvey
+        );
+
+        // Connect survey with group
+        $this->connectSurveyAndGroups($self, $survey, $reqSurvey['groups'] ?? []);
+
+        // UpdateOrCreate the questions (and options)
+        $this->updateOrCreateQuestions($self, $survey, $reqSurvey['questions'] ?? []);
+
+        // Return the Survey
         return $survey;
     }
 
     // Update the Created Survey
-    public function tryUpdateCreatedSurvey(Request $request) {
+    public function tryUpdateCreatedSurvey(Request $request)
+    {
         // 1. Validate the Requests
         $request->validate([
             'survey' => 'required',
@@ -77,9 +117,9 @@ class SurveyController extends Controller
         $self = $request->user();
 
         // 3. Check if Request has ID
-        if( 
-            array_key_exists('id', $reqSurvey) && 
-            $survey = $self->surveys->find( $reqSurvey['id'])    
+        if(
+            array_key_exists('id', $reqSurvey) &&
+            $survey = $self->surveys->find( $reqSurvey['id'])
         ) {
             // 3.1 If ID exists and survey found - Check if Survey is editable
             if($survey->isEditable())
