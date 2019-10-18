@@ -17,11 +17,13 @@
                 v-if="surveysCreated && surveysCreated.length >= 1"
                 :headers="aHeaders"
                 :items="surveysCreated"
-                :search="sSearch" 
-                multi-sort 
+                :search="sSearch"
+                multi-sort
                 :footer-props="{
                     showFirstLastPage: true,
                 }"
+                :sort-by="['id']"
+                :sort-desc="true"
                 dense
                 >
                 <template v-slot:item.action="{ item }">
@@ -74,7 +76,7 @@ export default {
         })
     },
 
-    created: function() {        
+    created: function() {
         this.$store.dispatch('surveys/fetchSurveysCreated')
     },
 }

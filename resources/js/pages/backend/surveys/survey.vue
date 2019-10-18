@@ -479,7 +479,14 @@
                 </v-list-item>
 
                 <v-list-item>
-                  <v-btn @click="oSurvey.questions.push({order: oSurvey.questions.length+1})">+ Frage hinzufügen</v-btn>
+                  <v-btn @click="duplicateLastQuestion()" color="primary">
+                    <v-icon left>control_point_duplicate</v-icon>
+                    Letzte Frage duplizieren
+                  </v-btn>&nbsp;
+                  <v-btn @click="addNewQuestion()">
+                    <v-icon left>plus_one</v-icon>
+                    Neue Frage hinzufügen
+                  </v-btn>
                 </v-list-item>
 
                 <v-list-item></v-list-item>
@@ -757,6 +764,32 @@ export default {
     getPositionByOrder(iOrder, oObject) {
       return oObject.map(function(x) {return x.order; }).indexOf(iOrder)
     },
+
+
+    addNewQuestion() {
+      this.addQuestion({});
+    },
+
+    duplicateLastQuestion() {
+      var aQ = this.oSurvey.questions;
+      var oLastQ = aQ[aQ.length - 1];
+      var oNewQ = this.copyObject(oLastQ);
+
+      delete oNewQ.id;
+
+      this.addQuestion(oNewQ);
+    },
+
+    addQuestion(q) {
+      var aQ = this.oSurvey.questions;
+
+      // Increment one order-point up
+      q.order = aQ.length+1;
+
+      // Push to other Questions
+      aQ.push(q);
+    },
+
 
 		changeTab(num) {
 			window.location.hash = num;
