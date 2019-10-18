@@ -618,7 +618,7 @@ export default {
 			},
 
 			// Today
-			sToday: new Date().toISOString().substr(0, 10),
+			sToday: moment().toISOString().substr(0, 10),
 
 			// Tmps Start
 			bDialogStartDate: false,
@@ -834,8 +834,8 @@ export default {
 				return '';
 			}
 
-			var t1 = new Date(this.oSurvey.start_datetime);
-			var t2 = new Date(this.oSurvey.end_datetime);
+			var t1 = moment(this.oSurvey.start_datetime);
+			var t2 = moment(this.oSurvey.end_datetime);
 
 			// get total seconds between the times
 			var delta = Math.abs(t1 - t2) / 1000;
