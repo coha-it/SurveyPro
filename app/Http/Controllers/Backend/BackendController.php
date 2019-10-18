@@ -108,9 +108,13 @@ class BackendController extends Controller
             $user->pan->save();
             $user->save();
 
+            // Get pan and pin
+            $user = $user->getSelfWithPanUserRelations();
+            $user->pan->makeVisible(['pin', 'pan', 'pan.pin']);
+
             array_push(
                 $arr,
-                $user->getSelfWithPanUserRelations()
+                $user
             );
         }
 
