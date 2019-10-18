@@ -30,18 +30,18 @@
 
 
 					<!-- Basic Settings -->
-					<v-tabs fixed-tabs color="secondary" icons-and-text>
-						<v-tab>
+					<v-tabs fixed-tabs color="secondary" icons-and-text v-model="active_tab">
+						<v-tab @click="changeTab(0)">
 							Basis
 							<v-icon>settings</v-icon>
 						</v-tab>
 
-						<v-tab>
+						<v-tab @click="changeTab(1)">
 							Fragen
 							<v-icon>question_answer</v-icon>
 						</v-tab>
 
-						<v-tab>
+						<v-tab @click="changeTab(2)">
 							Gruppen
 							<v-icon>group</v-icon>
 						</v-tab>
@@ -64,7 +64,7 @@
 												label="Title"
 												required 
 												:rules="required" 
-												:placeholder="oSurveyOld.title"
+												:placeholder="oSurveyOld.title ? oSurveyOld.title : 'z.B.: &quot;Umfrage Mitarbeiterzufriedenheit&quot; '"
 											></v-text-field>
 										</v-list-item-content>
 									</v-list-item>
@@ -78,6 +78,7 @@
 												persistent-hint 
 												outlined 
 												hint="Author in Textform. Wird angezeigt" 
+												:placeholder="oSurveyOld.author ? oSurveyOld.author : 'z.B.: &quot;Dr. Johannes Müller&quot; '"
 												v-model="oSurvey.author" 
 												label="Autor" 
 												required
@@ -387,12 +388,12 @@
 										dark 
 										class="mr-4"
 									>Zurück</v-btn>
-									<v-btn 
-										dark 
+									<v-btn  
 										:color="isUnsaved() ? 'success' : 'grey' "  
 										type="submit" 
-										class="mr-4" 
-										:disabled="!valid || surveyIsUneditable()"
+										class="mr-4 white--text" 
+										v-if="surveyIsEditable()"
+										:disabled="surveyFormIsInvalid()"
 									>Speichern</v-btn>
 								</v-list-item>
 					</v-list>
@@ -413,6 +414,11 @@ export default {
 
 	data() {
 		return {
+
+			// Tabs
+			active_tab: null,
+
+			// Back Route
 			oBackRoute: { name: 'backend.surveys' },
 			bCreate: false,
 			bEdit: false,
@@ -528,9 +534,31 @@ export default {
 			this.$router.push(this.oBackRoute);
 		}
 
+		// Check Tab for Hash
+		this.checkTabForHash();
+
 	},
 
 	methods: {
+
+		changeTab(num) {
+			window.location.hash = num;
+		},
+
+		checkTabForHash() {
+			if(window.location.hash) {
+				var num = parseInt(window.location.hash.substr(1));
+				num ? this.active_tab = num : undefined
+			}
+		},
+
+		surveyFormIsValid() {
+			return this.valid ? true : false;
+		},
+
+		surveyFormIsInvalid() {
+			return !this.surveyFormIsValid();
+		},
 
 		surveyIsEditable() {
 			return (this.oSurvey.is_editable && this.bEdit) || this.bCreate;
