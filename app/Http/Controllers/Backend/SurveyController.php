@@ -23,20 +23,20 @@ class SurveyController extends Controller
         ]);
     }
 
-    // Get the Created Surveys
-    public function getCreatedSurveys(Request $request) {
-        return $request->user()->surveys->toJson();
+    // Get the Allowed Surveys
+    public function getAllowedSurveys(Request $request) {
+        return $request->user()->allowedSurveys()->toJson();
     }
 
-    // Get the Created Survey
-    public function getCreatedSurvey(Request $request) {
+    // Get the Allowed Survey
+    public function getAllowedSurvey(Request $request) {
         // Validate
         $request->validate(
             ['id' => 'required|int|min:1']
         );
 
         // Search Survey
-        $survey = $request->user()->surveys->find($request->id);
+        $survey = $request->user()->allowedSurveys()->find($request->id);
         if($survey) {
             return $survey->getSelfWithRelations()->toJson();
         }
@@ -87,11 +87,16 @@ class SurveyController extends Controller
 
     public function updateOrCreateSurvey($self, $reqSurvey)
     {
-        // Update or Create
-        $survey = $self->surveys()->updateOrCreate(
-            ['id' => $reqSurvey['id'] ?? 0],
-            $reqSurvey
-        );
+        // Update
+        if( $survey = $self->allowedSurveys()->find($reqSurvey['id'] ?? 0) )
+        {
+            $survey->update($reqSurvey);
+        }
+        // Or Create
+        else
+        {
+            $survey = $self->createdSurveys()->create($reqSurvey);
+        }
 
         // Connect survey with group
         $this->connectSurveyAndGroups($self, $survey, $reqSurvey['groups'] ?? []);
@@ -104,7 +109,7 @@ class SurveyController extends Controller
     }
 
     // Update the Created Survey
-    public function tryUpdateCreatedSurvey(Request $request)
+    public function tryUpdateAllowedSurvey(Request $request)
     {
         // 1. Validate the Requests
         $request->validate([
@@ -119,7 +124,7 @@ class SurveyController extends Controller
         // 3. Check if Request has ID
         if(
             array_key_exists('id', $reqSurvey) &&
-            $survey = $self->surveys->find( $reqSurvey['id'])
+            $survey = $self->allowedSurveys()->find( $reqSurvey['id'])
         ) {
             // 3.1 If ID exists and survey found - Check if Survey is editable
             if($survey->isEditable())
@@ -139,6 +144,22 @@ class SurveyController extends Controller
             $survey = $this->updateOrCreateSurvey($self, $reqSurvey);
             return $survey->getSelfWithRelations()->toJson();
         }
+    }
+
+
+    public function deleteQuestions(Request $request)
+    {
+        // Validate
+        $request->validate([
+            'ids' => 'required|array'
+        ]);
+
+        // Variables
+        $self = $request->user();
+
+        // Go Through all Sended Question-IDs
+        // $self->questions->find($id)->delete();
+        return $self->allowedQuestions->find($request->ids)->toJson();
     }
 
 }

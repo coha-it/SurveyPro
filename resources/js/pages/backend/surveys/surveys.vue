@@ -14,9 +14,9 @@
                 ></v-text-field>
             </v-card-title>
             <v-data-table
-                v-if="surveysCreated && surveysCreated.length >= 1"
+                v-if="surveysAllowed && surveysAllowed.length >= 1"
                 :headers="aHeaders"
-                :items="surveysCreated"
+                :items="surveysAllowed"
                 :search="sSearch"
                 multi-sort
                 :footer-props="{
@@ -72,12 +72,12 @@ export default {
     computed: {
         ...mapGetters({
             user: 'auth/user',
-            surveysCreated: 'surveys/surveysCreated',
+            surveysAllowed: 'surveys/surveysAllowed',
         })
     },
 
     created: function() {
-        this.$store.dispatch('surveys/fetchSurveysCreated')
+        this.$store.dispatch('surveys/fetchSurveysAllowed')
     },
 }
 

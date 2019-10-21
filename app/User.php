@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Survey;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
@@ -17,6 +18,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
+
+    protected $primaryKey = 'id';
+
 
     /**
      * The attributes that are mass assignable.
@@ -131,7 +135,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasOne('App\UserNewsletter', 'user_id');
     }
 
-    public function getNewsletterAttribute() 
+    public function getNewsletterAttribute()
     {
         return $this->newsletter();
     }
@@ -229,9 +233,45 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     /**
      * Get the company record associated with the user.
      */
-    public function surveys()
+    public function createdSurveys()
     {
         return $this->hasMany('App\Survey', 'created_by');
+    }
+
+    /**
+     * Get the company record associated with the user.
+     */
+    public function groupSurveys()
+    {
+        return Survey::
+            join('survey_group',      'surveys.id',             '=', 'survey_group.survey_id')->
+            join('groups',            'groups.id',              '=', 'survey_group.group_id')->
+            join('group_user',        'group_user.group_id',    '=', 'groups.id')->
+            where('group_user.is_mod', '=', 1)->
+            select(
+                'surveys.*',
+                'groups.id AS group_id',
+                'survey_group.survey_id AS survey_id',
+                'group_user.group_id'
+            )->
+            get()-> // Hols dir
+            unique('survey_id') // Eindeutige IDs
+        ;
+    }
+
+    /**
+     * Get the company record associated with the user.
+     */
+    public function allowedSurveys()
+    {
+        return $this
+            ->createdSurveys()
+            ->get()
+            ->unique('id')
+            ->merge(
+                $this->groupSurveys()
+            )
+        ;
     }
 
     /**

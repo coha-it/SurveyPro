@@ -37,13 +37,13 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::patch('settings/profile', 'Settings\ProfileController@update');
         Route::patch('settings/password', 'Settings\PasswordController@update');
 
-        
+
         // Company
         Route::get('companies/all', 'User\UserController@getCompanies');
         Route::patch('user/company/set', 'User\UserController@setCompanyId');
         Route::post('company/create', 'User\UserController@createCompany');
         Route::patch('company/update', 'User\UserController@updateCompany');
-        
+
         // Department
         Route::get('departments/all', 'User\UserController@getDepartments');
         Route::patch('user/department/set', 'User\UserController@setDepartmentId');
@@ -81,13 +81,16 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['middleware' => ['auth.user.can_create_surveys'], 'prefix' => 'backend' ], function()
         {
             // Get Survey(s)
-            Route::get('surveys-created', 'Backend\SurveyController@getCreatedSurveys');
-            Route::get('survey-created',  'Backend\SurveyController@getCreatedSurvey')->name('backend.survey');
+            Route::get('surveys-allowed', 'Backend\SurveyController@getAllowedSurveys');
+            Route::get('survey-allowed',  'Backend\SurveyController@getAllowedSurvey')->name('backend.survey');
 
             // Change Surveys
-            Route::patch('update-created-survey', 'Backend\SurveyController@tryUpdateCreatedSurvey');
-            Route::patch('delete-created-survey', 'Backend\SurveyController@deleteSurvey');
+            Route::patch('update-allowed-survey', 'Backend\SurveyController@tryUpdateAllowedSurvey');
+            Route::patch('delete-allowed-survey', 'Backend\SurveyController@deleteSurvey');
             Route::post('create-survey', 'Backend\SurveyController@createUsers');
+
+            // Delete Questions
+            Route::patch('delete-questions', 'Backend\SurveyController@deleteQuestions');
         });
     });
 });

@@ -352,130 +352,174 @@
 						<v-tab-item>
 							<v-list>
                 <v-list-item>
+                  <v-list-item-content>
+                    <!-- No Select Toolbar -->
+                    <v-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="sSearch == ''" floating min-height="85px" height="auto">
+                        <!-- <v-switch class="mt-6 mr-6" v-model="bTableDense"  color="primary"></v-switch> -->
+                        <div class="flex-grow-1"></div>
+                        <v-text-field style="max-width: 400px;" v-model="sSearch" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined></v-text-field>
+                        <v-text-field v-model="iItemsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
+                    </v-toolbar>
 
-                  <v-data-table
-                    :headers="headers"
-
-                    v-model="selected"
-                    :items="oSurvey.questions"
-
-                    dense
-                    multi-sort
-                    show-select
-
-                    show-expand
-                    :expanded.sync="expanded"
-
-                    :sort-by="['order']"
-                    :sort-desc="[false]"
-
-                    :items-per-page="parseInt(25)"
-                    :footer-props="{
-                        showFirstLastPage: true,
-                    }"
-                  >
-
-                    <template v-slot:item.description="props">
-                      <v-edit-dialog :return-value.sync="props.item.description">
-                        {{ props.item.description }}
-                        <template v-slot:input>
-                          <v-text-field
-                            v-model="props.item.description"
-                            label="Edit"
-                            counter
-                          ></v-text-field>
-                        </template>
-                      </v-edit-dialog>
-                    </template>
-
-                    <template v-slot:item.order="props">
-                      <div style="white-space: nowrap;">
-                        <v-icon @click="moveUp(props.item, oSurvey.questions)" x-small>mdi-arrow-up</v-icon>
-                          {{ props.item.order }}
-                        <v-icon @click="moveDown(props.item, oSurvey.questions)" x-small>mdi-arrow-down</v-icon>
-                      </div>
-                    </template>
-
-                    <!-- Expand Area -->
-                    <template v-slot:expanded-item="{ headers, item }">
-                      <td></td>
-                      <td :colspan="headers.length-1">
-                        <v-row>
-                          <v-col xl="6" sm="6" xs="12">
-                            <v-card style="margin: 10px 0;">
-                              <v-list-item three-line>
-                                <v-list-item-content>
-                                  <div class="overline mb-4">ID #{{ item.id }}</div>
-                                  <v-list-item-title class="headline">
-                                    <h6>Frage-Einstellungen</h6>
-                                  </v-list-item-title>
-                                  <v-list-item-subtitle>Einstellungen zu der Frage</v-list-item-subtitle>
-                                </v-list-item-content>
+                    <v-toolbar class="coha--toolbar" v-else :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
+                        <v-menu offset-y>
+                            <template v-slot:activator="{ on:menuedit }">
+                                <v-btn text rounded v-on="{ ...menuedit }">
+                                    <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
+                                </v-btn>
+                            </template>
+                            <v-list>
+                              <v-list-item>
+                                Duplicate
                               </v-list-item>
-                                <v-list dense>
-                                  <v-divider></v-divider>
+                              <v-list-item @click="bDeleteDialog = true">
+                                Löschen
+                              </v-list-item>
+                            </v-list>
+                        </v-menu>
+                    </v-toolbar>
 
 
-                                  <v-list-item>
-                                    <v-list-item-content>Kommentierbar:</v-list-item-content>
-                                    <v-list-item-content class="align-end">
-                                      <v-switch v-model="item.is_commentable" :true-value="1" :false-value="0" color="accent" :label="item.is_commentable ? 'Ist Kommentierbar' : 'Nicht kommentierbar'"></v-switch>
-                                    </v-list-item-content>
-                                  </v-list-item>
-                                  <v-divider></v-divider>
-
-                                  <v-list-item>
-                                    <v-list-item-content>Kommentar ist erforderlich:</v-list-item-content>
-                                    <v-list-item-content class="align-end">{{ item.comment_is_required }}</v-list-item-content>
-                                  </v-list-item>
-                                  <v-divider></v-divider>
-
-                                  <v-list-item>
-                                    <v-list-item-content>Kommentar ist eine Nummer:</v-list-item-content>
-                                    <v-list-item-content class="align-end">{{ item.comment_is_number }}</v-list-item-content>
-                                  </v-list-item>
-                                  <v-divider></v-divider>
-
-                                  <v-list-item>
-                                    <v-list-item-content>Kommentar: Maximale Zeichen:</v-list-item-content>
-                                    <v-list-item-content class="align-end">{{ item.comment_max_signs }}</v-list-item-content>
-                                  </v-list-item>
-                                  <v-divider></v-divider>
-
-
-                                  <v-list-item>
-                                    <v-list-item-content>Überspringbar:</v-list-item-content>
-                                    <v-list-item-content class="align-end">{{ item.is_skippable }}</v-list-item-content>
-                                  </v-list-item>
-                                  <v-divider></v-divider>
-
-                                  <v-list-item>
-                                    <v-list-item-content>Minimale Optionen:</v-list-item-content>
-                                    <v-list-item-content class="align-end">
-                                      {{ item.min_options }}
-                                    </v-list-item-content>
-                                  </v-list-item>
-                                  <v-divider></v-divider>
-                                  <v-list-item>
-                                    <v-list-item-content>Maximale Optionen:</v-list-item-content>
-                                    <v-list-item-content class="align-end">
-                                      {{ item.max_options }}
-                                    </v-list-item-content>
-                                  </v-list-item>
-                                  <v-divider></v-divider>
-                                </v-list>
-                            </v-card>
-                          </v-col>
-                          <v-col xl="6" sm="6" xs="12">
-                              <div v-for="(option, i) in item.options" v-bind:key="i">
-                                <v-text-field v-model="option.title"></v-text-field>
-                                <v-text-field v-model="option.value"></v-text-field>
-                              </div>
+                    <!-- Delete - Dialog -->
+                    <v-dialog v-model="bDeleteDialog" max-width="500" dark content-class="naked dark centered">
+                      <h2 class="display-2">Fragen Löschen?</h2>
+                      <p>Möchten Sie {{ selected.length }} Fragen löschen?</p>
+                      <v-container fluid>
+                        <v-row align="center">
+                          <v-col class="text-center" cols="12" sm="12">
+                            <v-btn depressed @click="bDeleteDialog = false" outlined>Abbruch</v-btn>
+                            <v-btn depressed @click.prevent="deleteQuestions(selected)" color="error">Löschen</v-btn>
                           </v-col>
                         </v-row>
-                      </td>
-                    </template>
-                  </v-data-table>
+                      </v-container>
+                    </v-dialog>
+
+
+                    <v-data-table
+                      :headers="headers"
+
+                      v-model="selected"
+                      :items="oSurvey.questions"
+
+                      dense
+                      multi-sort
+                      show-select
+
+                      show-expand
+                      :expanded.sync="expanded"
+
+                      :search="sSearch"
+                      :sort-by="['order']"
+                      :sort-desc="[false]"
+
+                      :items-per-page="parseInt(iItemsPerPage)"
+                      :footer-props="{
+                          showFirstLastPage: true,
+                      }"
+                    >
+
+                      <template v-slot:item.description="props">
+                        <v-edit-dialog :return-value.sync="props.item.description">
+                          {{ props.item.description }}
+                          <template v-slot:input>
+                            <v-text-field
+                              v-model="props.item.description"
+                              label="Edit"
+                              counter
+                            ></v-text-field>
+                          </template>
+                        </v-edit-dialog>
+                      </template>
+
+                      <template v-slot:item.order="props">
+                        <div style="white-space: nowrap;">
+                          <v-icon @click="moveUp(props.item, oSurvey.questions)" x-small>mdi-arrow-up</v-icon>
+                            {{ props.item.order }}
+                          <v-icon @click="moveDown(props.item, oSurvey.questions)" x-small>mdi-arrow-down</v-icon>
+                        </div>
+                      </template>
+
+                      <!-- Expand Area -->
+                      <template v-slot:expanded-item="{ headers, item }">
+                        <td></td>
+                        <td :colspan="headers.length-1">
+                          <v-row>
+                            <v-col xl="6" sm="6" xs="12">
+                              <v-card style="margin: 10px 0;">
+                                <v-list-item three-line>
+                                  <v-list-item-content>
+                                    <div class="overline mb-4">ID #{{ item.id }}</div>
+                                    <v-list-item-title class="headline">
+                                      <h6>Frage-Einstellungen</h6>
+                                    </v-list-item-title>
+                                    <v-list-item-subtitle>Einstellungen zu der Frage</v-list-item-subtitle>
+                                  </v-list-item-content>
+                                </v-list-item>
+                                  <v-list dense>
+                                    <v-divider></v-divider>
+
+
+                                    <v-list-item>
+                                      <v-list-item-content>Kommentierbar:</v-list-item-content>
+                                      <v-list-item-content class="align-end">
+                                        <v-switch v-model="item.is_commentable" :true-value="1" :false-value="0" color="accent" :label="item.is_commentable ? 'Ist Kommentierbar' : 'Nicht kommentierbar'"></v-switch>
+                                      </v-list-item-content>
+                                    </v-list-item>
+                                    <v-divider></v-divider>
+
+                                    <v-list-item>
+                                      <v-list-item-content>Kommentar ist erforderlich:</v-list-item-content>
+                                      <v-list-item-content class="align-end">{{ item.comment_is_required }}</v-list-item-content>
+                                    </v-list-item>
+                                    <v-divider></v-divider>
+
+                                    <v-list-item>
+                                      <v-list-item-content>Kommentar ist eine Nummer:</v-list-item-content>
+                                      <v-list-item-content class="align-end">{{ item.comment_is_number }}</v-list-item-content>
+                                    </v-list-item>
+                                    <v-divider></v-divider>
+
+                                    <v-list-item>
+                                      <v-list-item-content>Kommentar: Maximale Zeichen:</v-list-item-content>
+                                      <v-list-item-content class="align-end">{{ item.comment_max_signs }}</v-list-item-content>
+                                    </v-list-item>
+                                    <v-divider></v-divider>
+
+
+                                    <v-list-item>
+                                      <v-list-item-content>Überspringbar:</v-list-item-content>
+                                      <v-list-item-content class="align-end">{{ item.is_skippable }}</v-list-item-content>
+                                    </v-list-item>
+                                    <v-divider></v-divider>
+
+                                    <v-list-item>
+                                      <v-list-item-content>Minimale Optionen:</v-list-item-content>
+                                      <v-list-item-content class="align-end">
+                                        {{ item.min_options }}
+                                      </v-list-item-content>
+                                    </v-list-item>
+                                    <v-divider></v-divider>
+                                    <v-list-item>
+                                      <v-list-item-content>Maximale Optionen:</v-list-item-content>
+                                      <v-list-item-content class="align-end">
+                                        {{ item.max_options }}
+                                      </v-list-item-content>
+                                    </v-list-item>
+                                    <v-divider></v-divider>
+                                  </v-list>
+                              </v-card>
+                            </v-col>
+                            <v-col xl="6" sm="6" xs="12">
+                                <div v-for="(option, i) in item.options" v-bind:key="i">
+                                  <v-text-field v-model="option.title"></v-text-field>
+                                  <v-text-field v-model="option.value"></v-text-field>
+                                </div>
+                            </v-col>
+                          </v-row>
+                        </td>
+                      </template>
+                    </v-data-table>
+                  </v-list-item-content>
                 </v-list-item>
 
                 <v-list-item>
@@ -562,6 +606,8 @@ export default {
 		return {
 
       // Questions
+      bDeleteDialog: false,
+      sSearch: '',
       headers: [
         { text: '', value: 'data-table-select' },
         {
@@ -594,6 +640,7 @@ export default {
       ],
       selected: [],
       expanded: [],
+      iItemsPerPage: 50,
 
 			// Tabs
 			active_tab: null,
@@ -648,13 +695,13 @@ export default {
 	computed: {
 		...mapGetters({
 			user: 'auth/user',
-			surveyCreated: 'surveys/surveyCreated'
+			surveyAllowed: 'surveys/surveyAllowed'
 		})
 	},
 
 
 	watch: {
-		surveyCreated(promise)
+		surveyAllowed(promise)
 		{
 			// save Promise result in local state
 			this.oSurvey = this.copyObject(promise);
@@ -715,7 +762,7 @@ export default {
 		}
 		else if (typeof id == "number")
 		{
-			this.$store.dispatch('surveys/fetchSurveyCreated', id)
+			this.$store.dispatch('surveys/fetchSurveyAllowed', id)
 			this.startEditMode();
 		}
 		else
@@ -738,7 +785,28 @@ export default {
       return moment(moment() + 5).toISOString().substr(0, 10)
     },
 
+
+
     // Question Methods
+
+    deleteQuestions(selected) {
+      // Variables
+      var _this = this;
+      this.bDeleteDialog = false;
+
+      // Delete User
+      this.$store.dispatch('surveys/deleteQuestions', {
+        ids: selected.map(selected => selected.id)
+      }).then(function(e) {
+        var aAq = this.oSurvey.questions;
+
+        this.oSurvey.questions    = aAq.filter(function(x) { return selected.indexOf(x) < 0 });
+        this.oSurveyOld.questions = aAq.filter(function(x) { return selected.indexOf(x) < 0 });
+      });
+
+
+    },
+
     move(oElement1, aList, iDir) {
       // var key1 = this.getPositionByOrder( ( parseInt(oElement1.order) + iDir) , aList);
       var key1 = this.getPositionById( oElement1, aList);

@@ -88,6 +88,48 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
         dd(Auth()->user()->groups);
     });
 
+    Route::get('allowed-surveys', function() {
+
+        // $createdSurveys = Auth()->user()->createdSurveys()->get();
+
+        // $createdSurveys =
+        // DB::table('surveys')
+        //     ->join('users', 'users.id', '=', 'surveys.created_by')
+        //     ->where('users.id', '=', 1)
+        //     ->get()
+        // ;
+
+        // Hole alle Umfragen
+        // App\Survey::
+
+        dd(Auth()->user()->allowedSurveys());
+        // dd(Auth()->user()->groupSurveys());
+    });
+
+
+    Route::get('group-surveys', function() {
+        dd(Auth()->user()->groupSurveys());
+    });
+
+
+    // Route::get('allowed-surveys', function() {
+    //     $self = Auth()->user();
+    //     $allowedSurveys = $self->surveys();
+
+    //     foreach ($self->groupsModerating() as $i => $group)
+    //     {
+    //         foreach ($group->surveys as $j => $survey)
+    //         {
+    //             if( !$allowedSurveys->find($survey->id) )
+    //             {
+    //                 $allowedSurveys->push($survey);
+    //             }
+    //         }
+    //     }
+
+    //     dd( $allowedSurveys );
+    // });
+
 
     Route::get('survey-question', function() {
         // dd(Auth()->user()->surveys()->find(12)->questions);

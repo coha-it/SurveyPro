@@ -46,7 +46,7 @@ class Group extends Model
     {
         return $this->belongsToMany('App\User')->wherePivot('is_member', 1);
     }
-    
+
     /**
      * Get the user record associated with the info.
      */
@@ -60,6 +60,6 @@ class Group extends Model
      */
     public function surveys()
     {
-        return $this->belongsToMany('App\Survey');
+        return $this->belongsToMany('App\Survey', 'survey_group');
     }
 }
