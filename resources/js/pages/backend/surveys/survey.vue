@@ -360,7 +360,8 @@
                     </v-toolbar>
 
                     <v-toolbar class="coha--toolbar" v-else :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
-                        <v-menu offset-y>
+
+                        <v-menu right offset-y>
                             <template v-slot:activator="{ on:menuedit }">
                                 <v-btn text rounded v-on="{ ...menuedit }">
                                     <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
@@ -375,6 +376,28 @@
                               </v-list-item>
                             </v-list>
                         </v-menu>
+
+												<v-tooltip top>
+													<template v-slot:activator="{ on }">
+														<v-btn @click="moveSelectedUp()" icon text rounded v-on="on">
+															<v-icon>mdi-chevron-up</v-icon>
+														</v-btn>
+													</template>
+													<span>Position Hoch</span>
+												</v-tooltip>
+
+
+												<v-tooltip top>
+													<template v-slot:activator="{ on }">
+														<v-btn @click="moveSelectedDown()" icon text rounded v-on="on">
+															<v-icon>mdi-chevron-down</v-icon>
+														</v-btn>
+													</template>
+													<span>Position Runter</span>
+												</v-tooltip>
+
+												<!-- <div class="flex-grow-1"></div> -->
+
                     </v-toolbar>
 
 
@@ -582,7 +605,7 @@
 										class="mr-4 white--text"
 										v-if="surveyIsEditable()"
 										:disabled="surveyFormIsInvalid()"
-									>Speichern {{ isUnsaved() ? '*' : undefined }}</v-btn>
+									>Umfrage Speichern {{ isUnsaved() ? '*' : undefined }}</v-btn>
 								</v-list-item>
 					</v-list>
 
@@ -591,6 +614,23 @@
 				</v-form>
 			</template>
 		</div>
+
+		<!-- Dialog Loading -->
+    <v-dialog
+      v-model="bIsLoading"
+			max-width="500" dark content-class="naked dark centered"
+			persistent
+    >
+			<v-progress-circular
+				:size="70"
+				:width="5"
+				indeterminate
+				color="white"
+			></v-progress-circular>
+			<div>{{ $t('loading.text') }}</div>
+		</v-dialog>
+
+
 	</div>
 </template>
 
@@ -639,7 +679,10 @@ export default {
       ],
       selected: [],
       expanded: [],
-      iItemsPerPage: 50,
+			iItemsPerPage: 50,
+			
+			// Loading
+			bIsLoading: false,
 
 			// Tabs
 			active_tab: null,
@@ -724,7 +767,7 @@ export default {
 		'oSurvey': {
 			handler() {
 				// console.log('oSurvey Changed');
-        // this.$refs.form.validate();
+				// this.$refs.form.validate();
 			},
 			deep: true
 		},
@@ -740,7 +783,7 @@ export default {
 				this.updateDatetimes();
 			},
 			deep: true
-		}
+		},
 
 	},
 
@@ -829,7 +872,31 @@ export default {
       }
 
       this.oSurvey.questions.sort((a, b) => (a.order > b.order) ? 1 : -1);
-    },
+		},
+
+		sortSelectedByOrder() {
+			this.selected.sort((a, b) => (a.order > b.order) ? 1 : -1);
+		},
+		
+		moveSelectedUp() {
+			this.sortSelectedByOrder();
+			for (var i = 0; i < this.selected.length; i++) {
+				this.moveUp(
+					this.selected[i], 
+					this.oSurvey.questions
+				);
+			}
+		},
+
+		moveSelectedDown() {
+			this.sortSelectedByOrder();
+			for (var i = this.selected.length-1; i >= 0; i--) {
+				this.moveDown(
+					this.selected[i], 
+					this.oSurvey.questions
+				);
+			}
+		},
 
     moveUp(oElement1, aList) {
       this.move(oElement1, aList, -1);
@@ -1118,6 +1185,7 @@ export default {
 
 		updateSurvey: function() {
 			var _t = this;
+			this.bIsLoading = true;
 
 			// Update Users
 			this.$store.dispatch('surveys/updateSurvey', {
@@ -1141,7 +1209,7 @@ export default {
 					_t.startEditMode();
 
 				}
-				_t.bLoading = false;
+				_t.bIsLoading = false;
 			}).catch(function(e) {
 				console.log(e);
 				// Error
@@ -1154,8 +1222,7 @@ export default {
 				}
 
 				_t.showSnackbarError(_t.$t('data_unsaved') + "<br />" + errText);
-
-				_t.bLoading = false;
+				_t.bIsLoading = false;
 			});
 		}
 	}
