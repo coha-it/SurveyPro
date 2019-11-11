@@ -1,6 +1,5 @@
 <template>
     <div>
-        <v-btn color="primary">a</v-btn>
         <h1>Surveys Management</h1>
         <p>Manage your Surveys or <router-link :to="{name: 'backend.survey', params: {id: 'create'}}">create a new one</router-link></p>
 
