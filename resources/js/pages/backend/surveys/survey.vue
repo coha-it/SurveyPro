@@ -523,13 +523,14 @@
                 </v-list-item>
 
                 <v-list-item>
-                  <v-btn @click="duplicateLastQuestion()" color="primary">
-                    <v-icon left>control_point_duplicate</v-icon>
-                    Letzte Frage duplizieren
-                  </v-btn>&nbsp;
                   <v-btn @click="addNewQuestion()">
                     <v-icon left>plus_one</v-icon>
                     Neue Frage hinzufügen
+                  </v-btn>
+									&nbsp; &nbsp;
+                  <v-btn @click="duplicateLastQuestion()" color="primary" :disabled="oSurvey.questions.length <= 0">
+                    <v-icon left>control_point_duplicate</v-icon>
+                    Letzte Frage duplizieren
                   </v-btn>
                 </v-list-item>
 
@@ -847,12 +848,15 @@ export default {
 
     duplicateLastQuestion() {
       var aQ = this.oSurvey.questions;
-      var oLastQ = aQ[aQ.length - 1];
-      var oNewQ = this.copyObject(oLastQ);
+			var oLastQ = aQ[aQ.length - 1];
+			
+			if(oLastQ) {
+      	var oNewQ = this.copyObject(oLastQ);
 
-      delete oNewQ.id;
+      	delete oNewQ.id;
 
-      this.addQuestion(oNewQ);
+				this.addQuestion(oNewQ);
+			}
     },
 
     addQuestion(q) {
