@@ -40,10 +40,6 @@ import { mapGetters } from 'vuex'
 export default {
   scrollToTop: false,
 
-  metaInfo () {
-    return { title: this.$t('settings') }
-  },
-
   data: () => ({
     form: new Form({
       name: '',

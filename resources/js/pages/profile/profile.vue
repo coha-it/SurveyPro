@@ -112,9 +112,9 @@ import Combobox from '~/components/ProfileCombobox'
 export default {
   scrollToTop: false,
 
-  metaInfo () {
-    return { title: this.$t('profile.title') }
-  },
+  // metaInfo () {
+  //   return { title: this.$t('profile.title') }
+  // },
 
   components: {
     Combobox,

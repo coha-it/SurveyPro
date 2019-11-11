@@ -12,10 +12,10 @@ export default [
   { path: '/p/:pan', redirect: { path: '/pan/:pan' } },
   { path: '/login', name: 'login', component: page('_guest/auth/login.vue') },
   { path: '/register', name: 'register', component: page('_guest/auth/register.vue') },
-  { path: '/password/reset', name: 'password.request', component: page('_guest/auth/password/email.vue') },
+  { path: '/password/reset', name: 'password.request', component: page('_guest/auth/password/email.vue'), meta: { title: 'reset_password' } },
   { path: '/password/reset/:token', name: 'password.reset', component: page('_guest/auth/password/reset.vue') },
-  { path: '/email/verify/:id', name: 'verification.verify', component: page('_guest/auth/verification/verify.vue') },
-  { path: '/email/resend', name: 'verification.resend', component: page('_guest/auth/verification/resend.vue') },
+  { path: '/email/verify/:id', name: 'verification.verify', component: page('_guest/auth/verification/verify.vue'), meta: { title: 'verify_email' } },
+  { path: '/email/resend', name: 'verification.resend', component: page('_guest/auth/verification/resend.vue'), meta: { title: 'verify_email' } },
 
   // Authentificated
   { path: '/',
@@ -25,12 +25,12 @@ export default [
     },
     children: [
       // Landing Pages
-      { path: '/home', name: 'home', component: page('home.vue') },
-      { path: '/faq', name: 'faq', component: page('faq.vue') },
+      { path: '/home', name: 'home', component: page('home.vue'), meta: { title: 'home' } },
+      { path: '/faq', name: 'faq', component: page('faq.vue'), meta: { title: 'FAQ' } },
 
       // Account Settings
       { path: '/surveys', name: 'surveys', component: page('surveys/surveys.vue') },
-      { path: '/profile', name: 'profile', component: page('profile/profile.vue') }
+      { path: '/profile', name: 'profile', component: page('profile/profile.vue'), meta: { title: 'profile.title' } }
 
       // Old Settings
       // { path: '/settings',
@@ -38,7 +38,7 @@ export default [
       //   children: [
       //     { path: '', redirect: { name: 'settings.profile' } },
       //     { path: 'profile', name: 'settings.profile', component: page('settings/profile.vue') },
-      //     { path: 'password', name: 'settings.password', component: page('settings/password.vue') }
+      //     { path: 'password', name: 'settings.password', component: page('settings/password.vue'), meta: {title: 'settings'} }
       //   ]
       // }
 

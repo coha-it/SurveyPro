@@ -4,9 +4,11 @@ import Meta from 'vue-meta'
 import routes from './routes'
 import Router from 'vue-router'
 import { sync } from 'vuex-router-sync'
+import i18n from '~/plugins/i18n'
 
 Vue.use(Meta)
 Vue.use(Router)
+Vue.use(i18n)
 
 // The middleware for every page of the application.
 const globalMiddleware = ['locale', 'check-auth']
@@ -94,6 +96,8 @@ async function beforeEach (to, from, next) {
  */
 async function afterEach (to, from, next) {
   await router.app.$nextTick()
+
+  if (to.meta.title) document.title = i18n.t(to.meta.title)
 
   router.app.$loading.finish()
 }

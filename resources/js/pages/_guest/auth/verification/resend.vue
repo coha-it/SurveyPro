@@ -52,10 +52,6 @@ export default {
   middleware: 'guest',
   layout: 'rightsided',
 
-  metaInfo () {
-    return { title: this.$t('verify_email') }
-  },
-
   data: () => ({
     status: '',
     form: new Form({

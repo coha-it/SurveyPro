@@ -91,10 +91,6 @@ export default {
     Back
   },
 
-  metaInfo () {
-    return { title: this.$t('reset_password') }
-  },
-
   data: () => ({
     status: '',
     form: new Form({

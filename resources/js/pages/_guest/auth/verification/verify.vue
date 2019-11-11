@@ -70,10 +70,6 @@ export default {
   middleware: 'guest',
   layout: 'rightsided',
 
-  metaInfo () {
-    return { title: this.$t('verify_email') }
-  },
-
   async beforeRouteEnter (to, from, next) {
     try {
       const { data } = await axios.post(`/api/email/verify/${to.params.id}?${qs(to.query)}`)
