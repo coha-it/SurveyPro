@@ -1,7 +1,5 @@
 <template>
 	<div>
-
-
 			<template>
 				<v-btn small outlined depressed color="grey" rounded tag="router-link" :to="oBackRoute" class="small ml-auto my-auto">
 					<v-icon left dark>keyboard_arrow_left</v-icon>
@@ -808,11 +806,11 @@ export default {
 
     },
 
-    move(oElement1, aList, iDir) {
-      // var key1 = this.getPositionByOrder( ( parseInt(oElement1.order) + iDir) , aList);
-      var key1 = this.getPositionById( oElement1, aList);
-      var key2 = key1 + iDir;
-      var oElement1 = oElement1;
+    move(oMovingElement, aList, iDir) {
+      var key1 = this.getPositionByOrder( oMovingElement.order , aList);
+			var key2 = key1 + iDir;
+			console.log(key1, key2);
+      var oElement1 = oMovingElement;
       var oElement2 = aList[key2];
 
       if(oElement2) {
