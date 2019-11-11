@@ -6,6 +6,7 @@ use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Survey as Survey;
+use App\Question as Question;
 
 class SurveyController extends Controller
 {
@@ -151,7 +152,8 @@ class SurveyController extends Controller
     {
         // Validate
         $request->validate([
-            'ids' => 'required|array'
+            'survey_id' => 'required|int',
+            'question_ids' => 'required|array',
         ]);
 
         // Variables
@@ -159,7 +161,16 @@ class SurveyController extends Controller
 
         // Go Through all Sended Question-IDs
         // $self->questions->find($id)->delete();
-        return $self->allowedQuestions->find($request->ids)->toJson();
+        $aDeleteQuestions = $self
+                                ->allowedSurveys()
+                                ->find($request->survey_id)
+                                ->questions
+                                ->find($request->question_ids);
+        
+        // Delete Them
+        foreach ($aDeleteQuestions as $key => $question) {
+            $question->delete();
+        }
     }
 
 }

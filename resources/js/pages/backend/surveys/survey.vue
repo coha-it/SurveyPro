@@ -367,8 +367,8 @@
                                 </v-btn>
                             </template>
                             <v-list>
-                              <v-list-item>
-                                Duplicate
+                              <v-list-item @click="duplicateSelectedQuestions()">
+                                Duplizieren
                               </v-list-item>
                               <v-list-item @click="bDeleteDialog = true">
                                 Löschen
@@ -718,13 +718,7 @@ export default {
       }
 
       // Go Through it and reorder it!
-      var oQuestions = this.oSurvey.questions;
-      for (var i in oQuestions) {
-        if (oQuestions.hasOwnProperty(i)) {
-          var oQuestion = oQuestions[i];
-          oQuestion.order = parseInt(i)+1;
-        }
-      }
+      this.reorderQuestions();
 		},
 
 		'oSurvey': {
@@ -784,7 +778,15 @@ export default {
       return moment(moment() + 5).toISOString().substr(0, 10)
     },
 
-
+		reorderQuestions() {
+			var oQuestions = this.oSurvey.questions;
+      for (var i in oQuestions) {
+        if (oQuestions.hasOwnProperty(i)) {
+          var oQuestion = oQuestions[i];
+          oQuestion.order = parseInt(i)+1;
+        }
+      }
+		},
 
     // Question Methods
 
@@ -793,14 +795,20 @@ export default {
       var _this = this;
       this.bDeleteDialog = false;
 
-      // Delete User
+      // Try to Delete
       this.$store.dispatch('surveys/deleteQuestions', {
-        ids: selected.map(selected => selected.id)
+				survey_id: _this.oSurvey.id,
+        question_ids: selected.map(selected => selected.id)
       }).then(function(e) {
-        var aAq = this.oSurvey.questions;
+				// Delete Them from Arrays
+        _this.oSurvey.questions    = _this.oSurvey.questions.filter(function(x) { return selected.indexOf(x) < 0 });
+				_this.oSurveyOld.questions = _this.oSurveyOld.questions.filter(function(x) { return selected.indexOf(x) < 0 });
+				
+				// Empty Selected
+				_this.selected = [];
 
-        this.oSurvey.questions    = aAq.filter(function(x) { return selected.indexOf(x) < 0 });
-        this.oSurveyOld.questions = aAq.filter(function(x) { return selected.indexOf(x) < 0 });
+				// Reorder Questions
+				_this.reorderQuestions();
       });
 
 
@@ -839,23 +847,9 @@ export default {
       return oObject.map(function(x) {return x.order; }).indexOf(iOrder)
     },
 
-
-    addNewQuestion() {
-      this.addQuestion({});
-    },
-
-    duplicateLastQuestion() {
-      var aQ = this.oSurvey.questions;
-			var oLastQ = aQ[aQ.length - 1];
-			
-			if(oLastQ) {
-      	var oNewQ = this.copyObject(oLastQ);
-
-      	delete oNewQ.id;
-
-				this.addQuestion(oNewQ);
-			}
-    },
+		getRandomId() {
+			return '_' + Date.now() + Math.random();
+		},
 
     addQuestion(q) {
       var aQ = this.oSurvey.questions;
@@ -864,8 +858,49 @@ export default {
       q.order = aQ.length+1;
 
       // Push to other Questions
-      aQ.push(q);
+			aQ.push(q);
+			
+			// Return Question
+			return q;
     },
+
+    addNewQuestion() {
+      return this.addQuestion({
+				id: this.getRandomId()
+			});
+		},
+		
+		duplicateQuestion(question) {
+      var aQ = this.oSurvey.questions;
+			
+			if(question) {
+      	var oNewQ = this.copyObject(question);
+
+				// delete oNewQ.id;
+				oNewQ.id = this.getRandomId();
+
+				return this.addQuestion(oNewQ);
+			}
+		},
+
+		duplicateSelectedQuestions() {
+			var aNewSelected = [];
+			this.selected.forEach(question => {
+				aNewSelected.push(
+					this.duplicateQuestion(question)
+				);
+			});
+			this.selected = aNewSelected;
+			console.log(aNewSelected);
+		},
+
+    duplicateLastQuestion() {
+			var aQ = this.oSurvey.questions;
+			var oLastQ = aQ[aQ.length - 1];
+			this.duplicateQuestion(oLastQ);
+    },
+
+
 
 
 		changeTab(num) {
@@ -1068,7 +1103,7 @@ export default {
 		    if(itemL && itemR) {
 		        // Differences
 		        if(JSON.stringify(itemR) != JSON.stringify(itemL)) {
-		            console.log(JSON.stringify(itemR), JSON.stringify(itemL));
+		            // console.log(JSON.stringify(itemR), JSON.stringify(itemL));
 		            return false;
 		        } else {
 		            return true;
