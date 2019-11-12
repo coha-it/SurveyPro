@@ -117,7 +117,6 @@
 										</v-list-item-content>
 									</v-list-item>
 
-
 									<v-subheader>Konfigurations-Einstellungen</v-subheader>
 
 									<v-list-item>
