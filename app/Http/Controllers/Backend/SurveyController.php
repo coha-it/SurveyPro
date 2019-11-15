@@ -61,6 +61,9 @@ class SurveyController extends Controller
         // Go Through all Requestet Question-Options
         foreach ($options as $j => $reqOption)
         {
+            // Remove Dialog
+            unset($reqOption['dialog']);
+
             // Update or Create the QuestionOptions
             $question->options()->updateOrCreate(
                 ['id' => $reqOption['id'] ?? 0],
@@ -166,7 +169,7 @@ class SurveyController extends Controller
                                 ->find($request->survey_id)
                                 ->questions
                                 ->find($request->question_ids);
-        
+
         // Delete Them
         foreach ($aDeleteQuestions as $key => $question) {
             $question->delete();
