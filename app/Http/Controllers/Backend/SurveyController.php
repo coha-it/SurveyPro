@@ -56,49 +56,68 @@ class SurveyController extends Controller
         $survey->groups()->sync($aSync);
     }
 
-    public function updateOrCreateQuestionOptions($question, $options)
+    public function updateOrCreateQuestionOptions($bIsNew, $question, $reqOptions)
     {
         // Go Through all Requestet Question-Options
-        foreach ($options as $j => $reqOption)
+        foreach ($reqOptions as $j => $reqOption)
         {
             // Remove Dialog
             unset($reqOption['dialog']);
 
-            // Update or Create the QuestionOptions
-            $question->options()->updateOrCreate(
-                ['id' => $reqOption['id'] ?? 0],
-                $reqOption
-            );
+            // Create if New
+            if($bIsNew) {
+                unset($reqOption['id']);
+                $question->options()->updateOrCreate($reqOption);
+            }
+            // Update if not
+            else {
+                $question->options()->updateOrCreate(
+                    ['id' => $reqOption['id']],
+                    $reqOption
+                );
+            }
+
         }
     }
 
-    public function updateOrCreateQuestions($self, $survey, $reqQuestions)
+    public function updateOrCreateQuestions($survey, $reqQuestions)
     {
         // Go Through all Requested Questions
         foreach ($reqQuestions as $i => $reqQuestion)
         {
             // Update or Create the Question
             $tmp = $reqQuestion;
-            unset($tmp['options']);
-            $question = $survey->questions()->updateOrCreate(
-                ['id' => $reqQuestion['id'] ?? 0],
-                $tmp
-            );
+            $bIsNew = array_key_exists('is_new', $reqQuestion) ? $reqQuestion['is_new'] : false;
 
-            $this->updateOrCreateQuestionOptions( $question, $reqQuestion['options'] ?? [] );
+            unset($tmp['options']);
+            unset($tmp['is_new']);
+
+            if($bIsNew) {
+                unset($tmp['id']);
+                $question = $survey->questions()->updateOrCreate($tmp);
+            }
+            else {
+                $question = $survey->questions()->updateOrCreate(
+                    ['id' => $reqQuestion['id']],
+                    $tmp
+                );
+            }
+
+            $this->updateOrCreateQuestionOptions( $bIsNew, $question, $reqQuestion['options'] ?? [] );
         }
     }
 
-    public function updateOrCreateSurvey($self, $reqSurvey)
+    public function updateOrCreateSurvey($self, $request)
     {
+        // Get Request-Survey
+        $reqSurvey = $request->survey;
+
         // Update
-        if( $survey = $self->allowedSurveys()->find($reqSurvey['id'] ?? 0) )
-        {
+        if( $survey = $self->allowedSurveys()->find($reqSurvey['id'] ?? 0) ) {
             $survey->update($reqSurvey);
         }
         // Or Create
-        else
-        {
+        else {
             $survey = $self->createdSurveys()->create($reqSurvey);
         }
 
@@ -106,7 +125,13 @@ class SurveyController extends Controller
         $this->connectSurveyAndGroups($self, $survey, $reqSurvey['groups'] ?? []);
 
         // UpdateOrCreate the questions (and options)
-        $this->updateOrCreateQuestions($self, $survey, $reqSurvey['questions'] ?? []);
+        $this->updateOrCreateQuestions($survey, $reqSurvey['questions'] ?? []);
+
+        // Try to Delete some Questions Options
+        $this->deleteQuestionOptions($survey, $request);
+
+        // Try to Delete Some Questions
+        $this->deleteQuestions($survey, $request);
 
         // Return the Survey
         return $survey;
@@ -133,7 +158,7 @@ class SurveyController extends Controller
             // 3.1 If ID exists and survey found - Check if Survey is editable
             if($survey->isEditable())
             {
-                $survey = $this->updateOrCreateSurvey($self, $reqSurvey);
+                $survey = $this->updateOrCreateSurvey($self, $request);
                 return $survey->getSelfWithRelations()->toJson();
             }
 
@@ -145,35 +170,40 @@ class SurveyController extends Controller
         // 3.2 If no ID is in Params
         else {
             //  - then create a survey
-            $survey = $this->updateOrCreateSurvey($self, $reqSurvey);
+            $survey = $this->updateOrCreateSurvey($self, $request);
             return $survey->getSelfWithRelations()->toJson();
         }
     }
 
-
-    public function deleteQuestions(Request $request)
+    public function deleteQuestions($survey, $req)
     {
-        // Validate
-        $request->validate([
-            'survey_id' => 'required|int',
-            'question_ids' => 'required|array',
-        ]);
-
-        // Variables
-        $self = $request->user();
-
         // Go Through all Sended Question-IDs
-        // $self->questions->find($id)->delete();
-        $aDeleteQuestions = $self
-                                ->allowedSurveys()
-                                ->find($request->survey_id)
-                                ->questions
-                                ->find($request->question_ids);
+        $oDeleteQuestions   = $survey->questions->find($req['delete_questions_ids'] ?? []);
 
-        // Delete Them
-        foreach ($aDeleteQuestions as $key => $question) {
+        // Delete Questions
+        foreach ($oDeleteQuestions as $question)
+        {
+            // Try to Delete Question
             $question->delete();
         }
     }
+
+    public function deleteQuestionOptions($survey, $req)
+    {
+        $aDeleteOptions = $req['delete_options_ids'] ?? [];
+
+        // Go Through all Question-IDs and try to delete an deleted Option
+        foreach ($survey->questions as $question)
+        {
+            // Try to Delete Options
+            foreach($aDeleteOptions as $id)
+            {
+                $option = $question->options->find($id);
+                if($option) $option->delete();
+            }
+        }
+    }
+
+
 
 }

@@ -41,4 +41,16 @@ class Question extends Model
         return $this->hasMany('App\QuestionOption');
     }
 
+
+    public function delete()
+    {
+        // delete all related photos
+        foreach ($this->options as $option) {
+            $option->delete();
+        }
+
+        // delete the question
+        return parent::delete();
+    }
+
 }

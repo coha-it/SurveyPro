@@ -370,7 +370,7 @@
                               <v-list-item @click="duplicateSelectedQuestions()">
                                 Duplizieren
                               </v-list-item>
-                              <v-list-item @click="bDeleteDialog = true">
+                              <v-list-item @click="bDeleteQuestionDialog = true">
                                 Löschen
                               </v-list-item>
                             </v-list>
@@ -401,13 +401,13 @@
 
 
                     <!-- Delete - Dialog -->
-                    <v-dialog v-model="bDeleteDialog" max-width="500" dark content-class="naked dark centered">
+                    <v-dialog v-model="bDeleteQuestionDialog" max-width="500" dark content-class="naked dark centered">
                       <h2 class="display-2">Fragen Löschen?</h2>
                       <p>Möchten Sie {{ selected.length }} Fragen löschen?</p>
                       <v-container fluid>
                         <v-row align="center">
                           <v-col class="text-center" cols="12" sm="12">
-                            <v-btn depressed @click="bDeleteDialog = false" outlined>Abbruch</v-btn>
+                            <v-btn depressed @click="bDeleteQuestionDialog = false" outlined>Abbruch</v-btn>
                             <v-btn depressed @click.prevent="deleteQuestions(selected)" color="error">Löschen</v-btn>
                           </v-col>
                         </v-row>
@@ -606,7 +606,7 @@
                                   </v-list-item>
                                 </template>
 
-                                <v-subheader>Einstellungen: Optionen (Für die {{ item.options.length ? item.options.length : '' }} Optionen) </v-subheader>
+                                <v-subheader>Einstellungen: Optionen</v-subheader>
 
                                   <v-list-item>
                                     <v-list-item-content>
@@ -762,7 +762,23 @@
                                   </template>
                                 </v-data-table>
                                 <v-card-actions>
-                                  <v-btn @click="addNewOption(item)">Neue Option</v-btn>
+                                  <v-btn @click="addNewOption(item)">Neue Option</v-btn>&nbsp;
+                                  <v-btn @click="bDeleteOptionDialog = true">Ausgewählte Optionen Löschen</v-btn>
+
+                                  <!-- Delete - Dialog -->
+                                  <v-dialog v-model="bDeleteOptionDialog" max-width="500" dark content-class="naked dark centered">
+                                    <h2 class="display-2">Fragen Löschen?</h2>
+                                    <p>Möchten Sie {{ selected.length }} Fragen löschen?</p>
+                                    <v-container fluid>
+                                      <v-row align="center">
+                                        <v-col class="text-center" cols="12" sm="12">
+                                          <v-btn depressed @click="bDeleteOptionDialog = false" outlined>Abbruch</v-btn>
+                                          <v-btn depressed @click.prevent="deleteOptions(item, aSelectedOptions)" color="error">Löschen</v-btn>
+                                        </v-col>
+                                      </v-row>
+                                    </v-container>
+                                  </v-dialog>
+
                                 </v-card-actions>
                               </v-card>
                             </v-col>
@@ -875,7 +891,7 @@ export default {
 		return {
 
       // Questions
-      bDeleteDialog: false,
+      bDeleteQuestionDialog: false,
       sSearch: '',
       headers: [
         { text: '', value: 'data-table-select' },
@@ -941,6 +957,13 @@ export default {
         },
         { value: 'color', text: 'Color', align:'center' },
       ],
+      bDeleteOptionDialog: false,
+
+      // To Delete
+      aDeleteQuestionsIds:  [],
+      aDeleteOptionsIds:    [],
+
+      // Options
       aSelectedOptions: [],
 
 			// Loading
@@ -1111,32 +1134,57 @@ export default {
           oQuestion.order = parseInt(i)+1;
         }
       }
+    },
+
+		reorderOptions(question) {
+			var oOptions = question.options;
+      for (var i in oOptions) {
+        if (oOptions.hasOwnProperty(i)) {
+          var oOption = oOptions[i];
+          oOption.order = parseInt(i)+1;
+        }
+      }
 		},
 
     // Question Methods
 
     deleteQuestions(selected) {
-      // Variables
-      var _this = this;
-      this.bDeleteDialog = false;
+			// Delete Them from Arrays
+      this.oSurvey.questions    = this.oSurvey.questions.filter(function(x) { return selected.indexOf(x) < 0 });
+      this.oSurveyOld.questions = this.oSurveyOld.questions.filter(function(x) { return selected.indexOf(x) < 0 });
 
-      // Try to Delete
-      this.$store.dispatch('surveys/deleteQuestions', {
-				survey_id: _this.oSurvey.id,
-        question_ids: selected.map(selected => selected.id)
-      }).then(function(e) {
-				// Delete Them from Arrays
-        _this.oSurvey.questions    = _this.oSurvey.questions.filter(function(x) { return selected.indexOf(x) < 0 });
-				_this.oSurveyOld.questions = _this.oSurveyOld.questions.filter(function(x) { return selected.indexOf(x) < 0 });
+      // Push into delete_questions
+      this.aDeleteQuestionsIds = this.getIdsFromObject(
+        this.copyObject(selected)
+      );
 
-				// Empty Selected
-				_this.selected = [];
+			// Empty Selected
+      this.selected = [];
 
-				// Reorder Questions
-				_this.reorderQuestions();
-      });
+			// Reorder Questions
+      this.reorderQuestions();
 
+      // Close Dialog
+      this.bDeleteQuestionDialog = false;
+    },
 
+    deleteOptions(question, selected) {
+			// Delete Them from Arrays
+      question.options = question.options.filter(function(x) { return selected.indexOf(x) < 0 });
+
+      // Push into delete_questions
+      this.aDeleteOptionsIds = this.getIdsFromObject(
+        this.copyObject(selected)
+      );
+
+			// Empty Selected
+      this.selected = [];
+
+			// Reorder Questions
+      this.reorderOptions(question);
+
+      // Close Dialog
+      this.bDeleteOptionDialog = false;
     },
 
     move(oMovingElement, aList, iDir) {
@@ -1197,7 +1245,7 @@ export default {
     },
 
 		getRandomId() {
-			return '_' + Date.now() + Math.random();
+			return parseInt(Date.now() + Math.random() * 1000);
 		},
 
     addOption(o, question) {
@@ -1219,6 +1267,7 @@ export default {
 
       // Increment one order-point up
       q.order = aQ.length+1;
+      q.is_new = true;
 
       // Push to other Questions
 			aQ.push(q);
@@ -1229,7 +1278,8 @@ export default {
 
     addNewQuestion() {
       return this.addQuestion({
-				id: this.getRandomId()
+        id: this.getRandomId(),
+        options: [],
 			});
 		},
 
@@ -1239,8 +1289,13 @@ export default {
 			if(question) {
       	var oNewQ = this.copyObject(question);
 
-				// delete oNewQ.id;
-				oNewQ.id = this.getRandomId();
+				// Delete oNewQ.id;
+        oNewQ.id = this.getRandomId();
+
+        // Delete oNewQ.options.id
+        oNewQ.options.forEach(option => {
+          option.question_id = oNewQ.id;
+        });
 
 				return this.addQuestion(oNewQ);
 			}
@@ -1263,9 +1318,6 @@ export default {
 			this.duplicateQuestion(oLastQ);
     },
 
-
-
-
 		changeTab(num) {
 			window.location.hash = num;
 		},
@@ -1279,7 +1331,11 @@ export default {
 
 		surveyFormIsValid() {
 			return this.valid ? true : false;
-		},
+    },
+
+    getIdsFromObject(obj) {
+      return obj.map(function(e) {return e.id;});
+    },
 
 		surveyFormIsInvalid() {
 			return !this.surveyFormIsValid();
@@ -1485,7 +1541,9 @@ export default {
 
 			// Update Users
 			this.$store.dispatch('surveys/updateSurvey', {
-				survey: _t.oSurvey
+        survey: _t.oSurvey,
+        delete_questions_ids: _t.aDeleteQuestionsIds,
+        delete_options_ids: _t.aDeleteOptionsIds,
 			}).then(function(e) {
 				// Success
 				if(!e || !e.response || !e.response.data || !e.response.data.error) {
@@ -1500,7 +1558,10 @@ export default {
 								id: _t.oSurvey.id
 							}
 						});
-					}
+          }
+
+          _t.aDeleteQuestionsIds = [];
+          _t.aDeleteOptionsIds = [];
 
 					_t.startEditMode();
 
