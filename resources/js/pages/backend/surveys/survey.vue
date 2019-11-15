@@ -17,7 +17,7 @@
 
 			<!-- Data Sheet -->
 			<template>
-				<v-form @submit.prevent="updateSurvey" @keydown="form.onKeydown($event)" v-model="valid" ref="form" style="max-width: 1280px;">
+				<v-form v-on:submit.prevent @keydown="form.onKeydown($event)" v-model="valid" ref="form" style="max-width: 1280px;">
 
 					<v-toolbar color="primary" dark >
 						<v-toolbar-title>
@@ -355,7 +355,7 @@
                         <!-- <v-switch class="mt-6 mr-6" v-model="bTableDense"  color="primary"></v-switch> -->
                         <div class="flex-grow-1"></div>
                         <v-text-field style="max-width: 400px;" v-model="sSearch" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined></v-text-field>
-                        <v-text-field v-model="iItemsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
+                        <v-text-field v-model="iQuestionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
                     </v-toolbar>
 
                     <v-toolbar class="coha--toolbar" v-else :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
@@ -421,7 +421,6 @@
                       v-model="selected"
                       :items="oSurvey.questions"
 
-                      dense
                       multi-sort
                       show-select
 
@@ -432,7 +431,7 @@
                       :sort-by="['order']"
                       :sort-desc="[false]"
 
-                      :items-per-page="parseInt(iItemsPerPage)"
+                      :items-per-page="parseInt(iQuestionsPerPage)"
                       :footer-props="{
                           showFirstLastPage: true,
                       }"
@@ -646,6 +645,27 @@
                                 </v-list>
 
 
+                                <!-- Selected Toolbar -->
+                                <v-toolbar class="coha--toolbar" v-if="aSelectedOptions && aSelectedOptions.length" :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
+                                  <v-btn
+                                    v-if="aSelectedOptions && aSelectedOptions.length"
+                                    @click="bDeleteOptionDialog = true"
+                                    depressed
+                                    color="red"
+                                    dark
+                                  >
+                                    <v-icon left>mdi-delete</v-icon>&nbsp;
+                                    Ausgewählte Optionen Löschen
+                                  </v-btn>
+
+                                </v-toolbar>
+
+                                <!-- No Selected Toolbar -->
+                                <v-toolbar class="coha--toolbar" v-else  :flat="sSearch == ''" floating min-height="85px" height="auto">
+                                    <div class="flex-grow-1"></div>
+                                    <v-text-field v-model="iOptionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
+                                </v-toolbar>
+
                                 <v-data-table
                                   :headers="aOptionHeaders"
 
@@ -656,6 +676,7 @@
                                   multi-sort
                                   show-select
 
+                                  :items-per-page="parseInt(iOptionsPerPage)"
                                   :sort-by="['order']"
                                   :sort-desc="[false]"
                                   :footer-props="{
@@ -762,13 +783,19 @@
                                   </template>
                                 </v-data-table>
                                 <v-card-actions>
-                                  <v-btn @click="addNewOption(item)">Neue Option</v-btn>&nbsp;
-                                  <v-btn @click="bDeleteOptionDialog = true">Ausgewählte Optionen Löschen</v-btn>
+                                  <v-btn @click="addNewOption(item)">
+                                    <v-icon left>plus_one</v-icon>
+                                    Neue Option hinzufügen
+                                  </v-btn>&nbsp;
+                                  <v-btn color="primary" @click="duplicateLastOption(item)">
+                                    <v-icon left>control_point_duplicate</v-icon>
+                                    Letzte Option duplizieren
+                                  </v-btn>
 
                                   <!-- Delete - Dialog -->
                                   <v-dialog v-model="bDeleteOptionDialog" max-width="500" dark content-class="naked dark centered">
-                                    <h2 class="display-2">Fragen Löschen?</h2>
-                                    <p>Möchten Sie {{ selected.length }} Fragen löschen?</p>
+                                    <h2 class="display-2">Optionen Löschen?</h2>
+                                    <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
                                     <v-container fluid>
                                       <v-row align="center">
                                         <v-col class="text-center" cols="12" sm="12">
@@ -848,10 +875,47 @@
 									<v-btn
 										color="success"
 										type="submit"
+                    @click="updateSurvey()"
 										class="mr-4 white--text"
 										v-if="surveyIsEditable()"
 										:disabled="surveyFormIsInvalid()"
 									>Umfrage Speichern {{ isUnsaved() ? '*' : undefined }}</v-btn>
+
+                  <!-- Save as FAB -->
+                  <v-fab-transition>
+                    <v-speed-dial
+                      bottom
+                      right
+                      :open-on-hover="true"
+                      v-model="bFabButtonInner"
+                      fixed
+                    >
+                      <template v-slot:activator v-slot:extension>
+                          <v-fab-transition>
+                            <v-btn
+                              v-show="isUnsaved()"
+                              v-model="bFabButtonInner"
+                              color="success"
+                              dark
+                              fab
+                              type="submit"
+                              @click="updateSurvey()"
+                            >
+                              <v-icon v-if="bFabButtonInner || true">mdi-content-save</v-icon>
+                              <!-- <v-icon v-else>mdi-content-save-outline</v-icon> -->
+                            </v-btn>
+                          </v-fab-transition>
+                      </template>
+                      <v-btn
+                        fab
+                        dark
+                        small
+                        color="warning"
+                      >
+                        <v-icon>mdi-restore</v-icon>
+                      </v-btn>
+                </v-speed-dial>
+                  </v-fab-transition>
 								</v-list-item>
 					</v-list>
 
@@ -860,6 +924,7 @@
 				</v-form>
 			</template>
 		</div>
+
 
 		<!-- Dialog Loading -->
     <v-dialog
@@ -889,6 +954,9 @@ export default {
 
 	data() {
 		return {
+
+      // FAB
+      bFabButtonInner: false,
 
       // Questions
       bDeleteQuestionDialog: false,
@@ -925,7 +993,7 @@ export default {
       ],
       selected: [],
       expanded: [],
-      iItemsPerPage: 50,
+      iQuestionsPerPage: 50,
 
       // Options
       aOptionHeaders: [
@@ -958,6 +1026,7 @@ export default {
         { value: 'color', text: 'Color', align:'center' },
       ],
       bDeleteOptionDialog: false,
+      iOptionsPerPage: 50,
 
       // To Delete
       aDeleteQuestionsIds:  [],
@@ -1084,7 +1153,7 @@ export default {
 				this.updateDatetimes();
 			},
 			deep: true
-		},
+    },
 
 	},
 
@@ -1178,7 +1247,7 @@ export default {
       );
 
 			// Empty Selected
-      this.selected = [];
+      this.aSelectedOptions = [];
 
 			// Reorder Questions
       this.reorderOptions(question);
@@ -1260,8 +1329,27 @@ export default {
         id: this.getRandomId(),
         color: '#C6C6C6'
 			}, question);
+    },
+
+		duplicateOption(option, question) {
+			if(question && option) {
+      	var oNewOption = this.copyObject(option);
+
+				// Delete oNewOption.id;
+        oNewOption.id = this.getRandomId();
+
+				return this.addOption(oNewOption, question);
+			}
 		},
 
+    duplicateLastOption(question) {
+			var oLast = question.options[question.options.length - 1];
+			this.duplicateOption(oLast, question);
+    },
+
+
+
+    // QUESTIONS
     addQuestion(q) {
       var aQ = this.oSurvey.questions;
 
@@ -1516,6 +1604,7 @@ export default {
 		},
 
 		isSaved() {
+        var bReturn = true;
 		    var itemL = this.copyObject(this.oSurvey);
 		    var itemR = this.copyObject(this.oSurveyOld);
 
@@ -1523,12 +1612,12 @@ export default {
 		        // Differences
 		        if(JSON.stringify(itemR) != JSON.stringify(itemL)) {
 		            // console.log(JSON.stringify(itemR), JSON.stringify(itemL));
-		            return false;
+		            bReturn = false;
 		        } else {
-		            return true;
+		            bReturn = true;
 		        }
-		    }
-		    return true;
+        }
+        return bReturn;
 		},
 
 		isUnsaved() {
