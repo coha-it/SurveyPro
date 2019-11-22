@@ -35,7 +35,7 @@
               <q-item-label header>List Header</q-item-label>
             </template>
 
-            <q-item v-for="item in cat.pages" :key="item.title" clickable v-ripple>
+            <q-item  exact :to="item.route" v-for="item in cat.pages" :key="item.title" clickable v-ripple>
               <q-item-section avatar>
                 <q-icon :name="item.icon" />
               </q-item-section>
@@ -44,11 +44,34 @@
               </q-item-section>
             </q-item>
 
-
           </q-list>
-        </q-scroll-area>
 
+          <!-- Bottom of Sidenav -->
+          <div style="position: sticky; bottom: 0;" class="bg-white">
+            <div class="q-pa-sm">
+              <q-btn block outline depressed :label="$t('logout.btn')" color="grey" @click="logoutDialog = true" class="full-width" />
+            </div>
+          </div>
+
+        </q-scroll-area>
       </q-drawer>
+
+      <q-dialog v-model="logoutDialog">
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="logout" color="primary" text-color="white" />
+            <span class="q-ml-sm">
+              <p>{{ $t('logout.title') }}<br>{{ $t('logout.desc') }}</p>
+            </span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn outline :label="$t('logout.btn_stay_here')" @click="logoutDialog = false" color="primary" v-close-popup />
+            <q-btn outline :label="$t('logout.btn')" @click="logout" color="warning" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
   </div>
 
 
