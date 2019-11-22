@@ -10,7 +10,7 @@
             :search-input.sync="search"
             :label="$t(sInputLabel)"
             multiple
-            dense 
+            dense
             autocomplete="new-password"
         >
             <template v-slot:no-data>
@@ -147,7 +147,7 @@ export default {
         },
 
         setModelForUser(item) {
-            axios.patch('/api/user/' + this.sModel + '/set', { 
+            axios.patch('/api/user/' + this.sModel + '/set', {
                 id: item.id
             });
             this.oUser[this.sModel].id = id;
@@ -170,10 +170,9 @@ export default {
                 .indexOf(query.toString().toLowerCase()) > -1
         },
 
-
         watchProfileInput(val, prev) {
             var _this = this;
-            
+
             if (val.length === prev.length) return
 
             if(this.model && this.model.length && this.model.length >= 1) {
@@ -204,8 +203,8 @@ export default {
                     id: null
                 });
             }
-        
-            
+
+
             if (val.length > 1) {
                 this.$nextTick(() => this.model.shift())
             }
