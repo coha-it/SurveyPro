@@ -486,104 +486,24 @@
 
                       <!-- Expand Area -->
                       <template v-slot:expanded-item="{ headers, item }">
-                        <td colspan="100%">
-                          <v-row>
-                            <v-col xl="12" sm="12" xs="12">
-                              <v-card>
-                                <v-card-title>Frage-Einstellungen #{{ item.id }}</v-card-title>
-                                <!-- <v-card-text>Einstellungen zur {{ item.order }}. Frage</v-card-text> -->
-                              <v-list subheader two-line flat >
+                        <template v-if="item">
+                          <td colspan="100%">
+                            <v-row>
+                              <v-col xl="12" sm="12" xs="12">
+                                <v-card>
+                                  <v-card-title>Frage-Einstellungen #{{ item.id }}</v-card-title>
+                                  <!-- <v-card-text>Einstellungen zur {{ item.order }}. Frage</v-card-text> -->
+                                <v-list subheader two-line flat >
 
-                                <v-subheader>Allgemeine Frage-Einstellungen</v-subheader>
-
-                                <v-list-item>
-                                  <v-list-item-action>
-                                    <v-checkbox v-model="item.is_skippable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
-                                  </v-list-item-action>
-                                  <v-list-item-content>
-                                    <v-list-item-title>Überspringbar</v-list-item-title>
-                                    <v-list-item-subtitle>Ist diese Frage überspringbar</v-list-item-subtitle>
-                                  </v-list-item-content>
-                                </v-list-item>
-
-                                <v-list-item>
-                                  <v-list-item-content>
-                                    <v-text-field
-                                      :disabled="surveyIsUneditable()"
-                                      dense
-                                      persistent-hint
-                                      outlined
-                                      hint="Titel der Frage. Wird am größten Angezeigt"
-                                      placeholder="z.B.: 'Fazit zur Umfrage' "
-                                      v-model="item.title"
-                                      label="Titel"
-                                      required
-                                    ></v-text-field>
-                                  </v-list-item-content>
-                                </v-list-item>
-
-                                <v-list-item>
-                                  <v-list-item-content>
-                                    <v-text-field
-                                      :disabled="surveyIsUneditable()"
-                                      dense
-                                      persistent-hint
-                                      outlined
-                                      hint="Subtitel / Untertitel der Frage. Wird unter Titel angezeigt"
-                                      placeholder="z.B.: 'Wie fanden Sie diese Umfrage?' "
-                                      v-model="item.subtitle"
-                                      label="Untertitel"
-                                      required
-                                    ></v-text-field>
-                                  </v-list-item-content>
-                                </v-list-item>
-
-                                <v-list-item>
-                                  <v-list-item-content>
-                                    <v-textarea
-                                      :disabled="surveyIsUneditable()"
-                                      dense
-                                      persistent-hint
-                                      outlined
-                                      hint="Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt."
-                                      placeholder="z.B.: 'Bewerten Sie diese Umfrage bitte mit 0 (negativ) bis 10 (positiv) Punkten' "
-                                      v-model="item.description"
-                                      label="Beschreibung"
-                                      required
-                                    ></v-textarea>
-                                  </v-list-item-content>
-                                </v-list-item>
-
-                                <v-subheader>Kommentar-Einstellungen</v-subheader>
-
-                                <v-list-item>
-                                  <v-list-item-action>
-                                    <v-checkbox v-model="item.is_commentable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
-                                  </v-list-item-action>
-                                  <v-list-item-content>
-                                    <v-list-item-title>Kommentierbar</v-list-item-title>
-                                    <v-list-item-subtitle>Ist diese Frage kommentierbar</v-list-item-subtitle>
-                                  </v-list-item-content>
-                                </v-list-item>
-
-                                <template v-if="item.is_commentable || true">
-                                  <v-list-item>
-                                    <v-list-item-action>
-                                      <v-checkbox v-model="item.comment_is_required" :disabled="surveyIsUneditable() && item.is_commentable" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
-                                    </v-list-item-action>
-                                    <v-list-item-content>
-                                      <v-list-item-title>Kommentar ist erforderlich</v-list-item-title>
-                                      <v-list-item-subtitle>Ist ein Kommentar erforderlich</v-list-item-subtitle>
-                                    </v-list-item-content>
-                                  </v-list-item>
+                                  <v-subheader>Allgemeine Frage-Einstellungen</v-subheader>
 
                                   <v-list-item>
                                     <v-list-item-action>
-                                      <v-checkbox v-model="item.comment_is_number" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
+                                      <v-checkbox v-model="item.is_skippable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
                                     </v-list-item-action>
                                     <v-list-item-content>
-                                      <v-list-item-title>Kommentar ist eine Nummer</v-list-item-title>
-                                      <v-list-item-subtitle>Wenn der Kommentar eine Nummer sein soll</v-list-item-subtitle>
+                                      <v-list-item-title>Überspringbar</v-list-item-title>
+                                      <v-list-item-subtitle>Ist diese Frage überspringbar</v-list-item-subtitle>
                                     </v-list-item-content>
                                   </v-list-item>
 
@@ -594,223 +514,305 @@
                                         dense
                                         persistent-hint
                                         outlined
-                                        hint="Kommentar: Maximale Zeichen"
-                                        placeholder="1 - 255"
-                                        type="number"
-                                        v-model="item.comment_max_signs"
-                                        label="Maximale Zeichen"
+                                        hint="Titel der Frage. Wird am größten Angezeigt"
+                                        placeholder="z.B.: 'Fazit zur Umfrage' "
+                                        v-model="item.title"
+                                        label="Titel"
                                         required
                                       ></v-text-field>
                                     </v-list-item-content>
                                   </v-list-item>
-                                </template>
-
-                                <v-subheader>Einstellungen: Optionen</v-subheader>
 
                                   <v-list-item>
                                     <v-list-item-content>
-                                      <v-row>
-                                        <v-col xl="6" sm="6" xs="12">
-                                          <v-text-field
-                                            :disabled="surveyIsUneditable()"
-                                            dense
-                                            persistent-hint
-                                            outlined
-                                            hint="Minimal wählbare Optionen"
-                                            placeholder="1 - 255"
-                                            type="number"
-                                            v-model="item.min_options"
-                                            label="Minimale Optionen"
-                                            required
-                                          ></v-text-field>
-                                        </v-col>
-                                        <v-col xl="6" sm="6" xs="12">
-                                          <v-text-field
-                                            :disabled="surveyIsUneditable()"
-                                            dense
-                                            persistent-hint
-                                            outlined
-                                            hint="Maximale wählbare Optionen"
-                                            placeholder="1 - 255"
-                                            type="number"
-                                            :min="item.min_options"
-                                            v-model="item.max_options"
-                                            label="Maximale Optionen"
-                                            required
-                                          ></v-text-field>
-                                        </v-col>
-                                      </v-row>
+                                      <v-text-field
+                                        :disabled="surveyIsUneditable()"
+                                        dense
+                                        persistent-hint
+                                        outlined
+                                        hint="Subtitel / Untertitel der Frage. Wird unter Titel angezeigt"
+                                        placeholder="z.B.: 'Wie fanden Sie diese Umfrage?' "
+                                        v-model="item.subtitle"
+                                        label="Untertitel"
+                                        required
+                                      ></v-text-field>
                                     </v-list-item-content>
                                   </v-list-item>
-                                </v-list>
 
+                                  <v-list-item>
+                                    <v-list-item-content>
+                                      <v-textarea
+                                        :disabled="surveyIsUneditable()"
+                                        dense
+                                        persistent-hint
+                                        outlined
+                                        hint="Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt."
+                                        placeholder="z.B.: 'Bewerten Sie diese Umfrage bitte mit 0 (negativ) bis 10 (positiv) Punkten' "
+                                        v-model="item.description"
+                                        label="Beschreibung"
+                                        required
+                                      ></v-textarea>
+                                    </v-list-item-content>
+                                  </v-list-item>
 
-                                <!-- Selected Toolbar -->
-                                <v-toolbar class="coha--toolbar" v-if="aSelectedOptions && aSelectedOptions.length" :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
-                                  <v-btn
-                                    v-if="aSelectedOptions && aSelectedOptions.length"
-                                    @click="bDeleteOptionDialog = true"
-                                    depressed
-                                    color="red"
-                                    dark
-                                  >
-                                    <v-icon left>mdi-delete</v-icon>&nbsp;
-                                    Ausgewählte Optionen Löschen
-                                  </v-btn>
+                                  <v-subheader>Kommentar-Einstellungen</v-subheader>
 
-                                </v-toolbar>
+                                  <v-list-item>
+                                    <v-list-item-action>
+                                      <v-checkbox v-model="item.is_commentable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
+                                    </v-list-item-action>
+                                    <v-list-item-content>
+                                      <v-list-item-title>Kommentierbar</v-list-item-title>
+                                      <v-list-item-subtitle>Ist diese Frage kommentierbar</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                  </v-list-item>
 
-                                <!-- No Selected Toolbar -->
-                                <v-toolbar class="coha--toolbar" v-else  :flat="sSearch == ''" floating min-height="85px" height="auto">
-                                    <div class="flex-grow-1"></div>
-                                    <v-text-field v-model="iOptionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
-                                </v-toolbar>
+                                  <template v-if="item.is_commentable || true">
+                                    <v-list-item>
+                                      <v-list-item-action>
+                                        <v-checkbox v-model="item.comment_is_required" :disabled="surveyIsUneditable() && item.is_commentable" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
+                                      </v-list-item-action>
+                                      <v-list-item-content>
+                                        <v-list-item-title>Kommentar ist erforderlich</v-list-item-title>
+                                        <v-list-item-subtitle>Ist ein Kommentar erforderlich</v-list-item-subtitle>
+                                      </v-list-item-content>
+                                    </v-list-item>
 
-                                <v-data-table
-                                  :headers="aOptionHeaders"
+                                    <v-list-item>
+                                      <v-list-item-action>
+                                        <v-checkbox v-model="item.comment_is_number" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
+                                      </v-list-item-action>
+                                      <v-list-item-content>
+                                        <v-list-item-title>Kommentar ist eine Nummer</v-list-item-title>
+                                        <v-list-item-subtitle>Wenn der Kommentar eine Nummer sein soll</v-list-item-subtitle>
+                                      </v-list-item-content>
+                                    </v-list-item>
 
-                                  v-model="aSelectedOptions"
-                                  :items="item.options"
-
-                                  dense
-                                  multi-sort
-                                  show-select
-
-                                  :items-per-page="parseInt(iOptionsPerPage)"
-                                  :sort-by="['order']"
-                                  :sort-desc="[false]"
-                                  :footer-props="{
-                                      showFirstLastPage: true,
-                                  }"
-                                >
-
-                                  <template v-slot:item.value="props">
-                                    <v-edit-dialog :return-value.sync="props.item.value">
-                                      {{ props.item.value }}
-                                      <template v-slot:input>
+                                    <v-list-item>
+                                      <v-list-item-content>
                                         <v-text-field
-                                          v-model="props.item.value"
-                                          label="Edit"
+                                          :disabled="surveyIsUneditable()"
+                                          dense
+                                          persistent-hint
+                                          outlined
+                                          hint="Kommentar: Maximale Zeichen"
+                                          placeholder="1 - 255"
                                           type="number"
+                                          v-model="item.comment_max_signs"
+                                          label="Maximale Zeichen"
+                                          required
                                         ></v-text-field>
-                                      </template>
-                                    </v-edit-dialog>
+                                      </v-list-item-content>
+                                    </v-list-item>
                                   </template>
 
-                                  <template v-slot:item.title="props">
-                                    <v-edit-dialog :return-value.sync="props.item.title">
-                                      {{ props.item.title }}
-                                      <template v-slot:input>
-                                        <v-text-field
-                                          v-model="props.item.title"
-                                          label="Edit"
-                                          counter
-                                        ></v-text-field>
-                                      </template>
-                                    </v-edit-dialog>
-                                  </template>
+                                  <v-subheader>Einstellungen: Optionen</v-subheader>
 
-                                  <template v-slot:item.subtitle="props">
-                                    <v-edit-dialog :return-value.sync="props.item.subtitle">
-                                      {{ props.item.subtitle }}
-                                      <template v-slot:input>
-                                        <v-text-field
-                                          v-model="props.item.subtitle"
-                                          label="Edit"
-                                          counter
-                                        ></v-text-field>
-                                      </template>
-                                    </v-edit-dialog>
-                                  </template>
+                                    <v-list-item>
+                                      <v-list-item-content>
+                                        <v-row>
+                                          <v-col xl="3" md="3" sm="6" xs="12">
+                                            <v-text-field
+                                              :disabled="surveyIsUneditable()"
+                                              dense
+                                              persistent-hint
+                                              outlined
+                                              hint="Minimal wählbare Optionen"
+                                              placeholder="1 - 255"
+                                              type="number"
+                                              v-model="item.min_options"
+                                              label="Minimale Optionen"
+                                              required
+                                            ></v-text-field>
+                                          </v-col>
+                                          <v-col xl="3" md="3" sm="6" xs="12">
+                                            <v-text-field
+                                              :disabled="surveyIsUneditable()"
+                                              dense
+                                              persistent-hint
+                                              outlined
+                                              hint="Maximale wählbare Optionen"
+                                              placeholder="1 - 255"
+                                              type="number"
+                                              :min="item.min_options"
+                                              v-model="item.max_options"
+                                              label="Maximale Optionen"
+                                              required
+                                            ></v-text-field>
+                                          </v-col>
+                                        </v-row>
+                                      </v-list-item-content>
+                                    </v-list-item>
+                                  </v-list>
 
-                                  <template v-slot:item.description="props">
-                                    <v-edit-dialog :return-value.sync="props.item.description">
-                                      {{ props.item.description }}
-                                      <template v-slot:input>
-                                        <v-text-field
-                                          v-model="props.item.description"
-                                          label="Edit"
-                                          counter
-                                        ></v-text-field>
-                                      </template>
-                                    </v-edit-dialog>
-                                  </template>
 
-                                  <template v-slot:item.order="props">
-                                    <div style="white-space: nowrap;">
-                                      <v-icon @click="moveUp(props.item, item.options)" x-small>mdi-arrow-up</v-icon>
-                                        {{ props.item.order }}
-                                      <v-icon @click="moveDown(props.item, item.options)" x-small>mdi-arrow-down</v-icon>
-                                    </div>
-                                  </template>
-                                  <template v-slot:item.color="props">
+                                  <!-- Selected Toolbar -->
+                                  <v-toolbar class="coha--toolbar" v-if="aSelectedOptions && aSelectedOptions.length" :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
+                                    <v-btn
+                                      v-if="aSelectedOptions && aSelectedOptions.length"
+                                      @click="bDeleteOptionDialog = true"
+                                      depressed
+                                      color="red"
+                                      dark
+                                    >
+                                      <v-icon left>mdi-delete</v-icon>&nbsp;
+                                      Ausgewählte Optionen Löschen
+                                    </v-btn>
 
-                                    <v-dialog v-model="props.item.dialog" max-width="290">
-                                      <template v-slot:activator="{ on }">
-                                        <div><v-btn
-                                          v-on="on"
-                                          small
-                                          depressed
-                                          fab
-                                          dark
-                                          :color="props.item.color"
-                                        >
-                                          <v-icon dark>mdi-palette</v-icon>
-                                        </v-btn></div>
-                                        <div>{{ props.item.color }}</div>
-                                      </template>
-                                      <v-card>
-                                        <v-card-title>Farbe auswählen</v-card-title>
-                                        <v-card-text>
-                                          <v-btn block small :color="props.item.color">{{ props.item.color }}</v-btn>
-                                          <template v-for="oColor in aAllOptionColors">
-                                            <div style="margin-top: 5px;" v-bind:key="oColor.title" >
-                                              <v-btn block small :color="oColor.hex" @click="props.item.color = oColor.hex">{{ oColor.title }}</v-btn>
-                                            </div>
-                                          </template>
-                                        </v-card-text>
-                                        <v-color-picker
-                                          mode="rgba"
-                                          value="#666666"
-                                          v-model="props.item.color"
-                                          flat
-                                        ></v-color-picker>
-                                        <v-card-actions>
-                                          <v-btn  @click="props.item.dialog = false">Übernehmen und schließen</v-btn>
-                                        </v-card-actions>
-                                      </v-card>
+                                  </v-toolbar>
+
+                                  <!-- No Selected Toolbar -->
+                                  <v-toolbar class="coha--toolbar" v-else  :flat="sSearch == ''" floating min-height="85px" height="auto">
+                                      <div class="flex-grow-1"></div>
+                                      <v-text-field v-model="iOptionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
+                                  </v-toolbar>
+
+                                  <v-data-table
+                                    :headers="aOptionHeaders"
+
+                                    v-model="aSelectedOptions"
+                                    :items="item.options"
+
+                                    dense
+                                    multi-sort
+                                    show-select
+
+                                    :items-per-page="parseInt(iOptionsPerPage)"
+                                    :sort-by="['order']"
+                                    :sort-desc="[false]"
+                                    :footer-props="{
+                                        showFirstLastPage: true,
+                                    }"
+                                  >
+
+                                    <template v-slot:item.value="props">
+                                      <v-edit-dialog :return-value.sync="props.item.value">
+                                        {{ props.item.value }}
+                                        <template v-slot:input>
+                                          <v-text-field
+                                            v-model="props.item.value"
+                                            label="Edit"
+                                            type="number"
+                                          ></v-text-field>
+                                        </template>
+                                      </v-edit-dialog>
+                                    </template>
+
+                                    <template v-slot:item.title="props">
+                                      <v-edit-dialog :return-value.sync="props.item.title">
+                                        {{ props.item.title }}
+                                        <template v-slot:input>
+                                          <v-text-field
+                                            v-model="props.item.title"
+                                            label="Edit"
+                                            counter
+                                          ></v-text-field>
+                                        </template>
+                                      </v-edit-dialog>
+                                    </template>
+
+                                    <template v-slot:item.subtitle="props">
+                                      <v-edit-dialog :return-value.sync="props.item.subtitle">
+                                        {{ props.item.subtitle }}
+                                        <template v-slot:input>
+                                          <v-text-field
+                                            v-model="props.item.subtitle"
+                                            label="Edit"
+                                            counter
+                                          ></v-text-field>
+                                        </template>
+                                      </v-edit-dialog>
+                                    </template>
+
+                                    <template v-slot:item.description="props">
+                                      <v-edit-dialog :return-value.sync="props.item.description">
+                                        {{ props.item.description }}
+                                        <template v-slot:input>
+                                          <v-text-field
+                                            v-model="props.item.description"
+                                            label="Edit"
+                                            counter
+                                          ></v-text-field>
+                                        </template>
+                                      </v-edit-dialog>
+                                    </template>
+
+                                    <template v-slot:item.order="props">
+                                      <div style="white-space: nowrap;">
+                                        <v-icon @click="moveUp(props.item, item.options)" x-small>mdi-arrow-up</v-icon>
+                                          {{ props.item.order }}
+                                        <v-icon @click="moveDown(props.item, item.options)" x-small>mdi-arrow-down</v-icon>
+                                      </div>
+                                    </template>
+                                    <template v-slot:item.color="props">
+
+                                      <v-dialog v-model="props.item.dialog" max-width="290">
+                                        <template v-slot:activator="{ on }">
+                                          <div><v-btn
+                                            v-on="on"
+                                            small
+                                            depressed
+                                            fab
+                                            dark
+                                            :color="props.item.color"
+                                          >
+                                            <v-icon dark>mdi-palette</v-icon>
+                                          </v-btn></div>
+                                          <div>{{ props.item.color }}</div>
+                                        </template>
+                                        <v-card>
+                                          <v-card-title>Farbe auswählen</v-card-title>
+                                          <v-card-text>
+                                            <v-btn block small :color="props.item.color">{{ props.item.color }}</v-btn>
+                                            <template v-for="oColor in aAllOptionColors">
+                                              <div style="margin-top: 5px;" v-bind:key="oColor.title" >
+                                                <v-btn block small :color="oColor.hex" @click="props.item.color = oColor.hex">{{ oColor.title }}</v-btn>
+                                              </div>
+                                            </template>
+                                          </v-card-text>
+                                          <v-color-picker
+                                            mode="rgba"
+                                            value="#666666"
+                                            v-model="props.item.color"
+                                            flat
+                                          ></v-color-picker>
+                                          <v-card-actions>
+                                            <v-btn  @click="props.item.dialog = false">Übernehmen und schließen</v-btn>
+                                          </v-card-actions>
+                                        </v-card>
+                                      </v-dialog>
+                                    </template>
+                                  </v-data-table>
+                                  <v-card-actions>
+                                    <v-btn @click="addNewOption(item)">
+                                      <v-icon left>plus_one</v-icon>
+                                      Neue Option hinzufügen
+                                    </v-btn>&nbsp;
+                                    <v-btn color="primary" @click="duplicateLastOption(item)">
+                                      <v-icon left>control_point_duplicate</v-icon>
+                                      Letzte Option duplizieren
+                                    </v-btn>
+
+                                    <!-- Delete - Dialog -->
+                                    <v-dialog v-model="bDeleteOptionDialog" max-width="500" dark content-class="naked dark centered">
+                                      <h2 class="display-2">Optionen Löschen?</h2>
+                                      <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
+                                      <v-container fluid>
+                                        <v-row align="center">
+                                          <v-col class="text-center" cols="12" sm="12">
+                                            <v-btn depressed @click="bDeleteOptionDialog = false" outlined>Abbruch</v-btn>
+                                            <v-btn depressed @click.prevent="deleteOptions(item, aSelectedOptions)" color="error">Löschen</v-btn>
+                                          </v-col>
+                                        </v-row>
+                                      </v-container>
                                     </v-dialog>
-                                  </template>
-                                </v-data-table>
-                                <v-card-actions>
-                                  <v-btn @click="addNewOption(item)">
-                                    <v-icon left>plus_one</v-icon>
-                                    Neue Option hinzufügen
-                                  </v-btn>&nbsp;
-                                  <v-btn color="primary" @click="duplicateLastOption(item)">
-                                    <v-icon left>control_point_duplicate</v-icon>
-                                    Letzte Option duplizieren
-                                  </v-btn>
 
-                                  <!-- Delete - Dialog -->
-                                  <v-dialog v-model="bDeleteOptionDialog" max-width="500" dark content-class="naked dark centered">
-                                    <h2 class="display-2">Optionen Löschen?</h2>
-                                    <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
-                                    <v-container fluid>
-                                      <v-row align="center">
-                                        <v-col class="text-center" cols="12" sm="12">
-                                          <v-btn depressed @click="bDeleteOptionDialog = false" outlined>Abbruch</v-btn>
-                                          <v-btn depressed @click.prevent="deleteOptions(item, aSelectedOptions)" color="error">Löschen</v-btn>
-                                        </v-col>
-                                      </v-row>
-                                    </v-container>
-                                  </v-dialog>
-
-                                </v-card-actions>
-                              </v-card>
-                            </v-col>
-                          </v-row>
-                        </td>
+                                  </v-card-actions>
+                                </v-card>
+                              </v-col>
+                            </v-row>
+                          </td>
+                        </template>
                       </template>
                     </v-data-table>
                   </v-list-item-content>
