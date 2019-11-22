@@ -1,71 +1,75 @@
 <template>
     <div class="rightsided-content coha--pan-wrapper">
-      <template>
-        <div class="text-center">
-          <v-snackbar v-model="snackbar" top :multi-line="true" right color="error">{{ $t(snackbarText) }}<v-btn color="black" text @click="snackbar = false">{{ $t('closer_button') }}</v-btn></v-snackbar>
-        </div>
-      </template>
-
       <div class="inner-content">
-          <v-container>
-            <v-row>  
-              <v-col cols="12" sm="12" md="12">
+          <div class="container">
+            <div class="row items-center content-center">
+              <div class="col-12 col-sm-12 col-md12">
                 <Back :to="{ name:'auth' }" />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="10" sm="10" md="10" align-self="center">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-10 col-sm-10 col-md-10 self-center">
                 <h1>{{ $t('pan_title') }}</h1>
                 <p class="subtitle">{{ $t('pan_desc') }}</p>
-              </v-col>
-              <v-col cols="2" sm="2" md="2" align-self="center">
-                <v-icon x-large color="white">mdi-account</v-icon>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12">
-                <v-form @submit.prevent="loginpan" @keydown="form.onKeydown($event)">
-                    <v-text-field 
-                    v-model="form.pan" 
-                    :label="$t('PAN')" 
-                    color='black' 
-                    :error="form.errors.has('pan')" 
-                    type="text" 
-                    name="pan" 
-                    required 
-                    ref="pan" 
-                    :hint="getLengthHint(form.pan, pan_maxlength)"
-                    :maxlength="pan_maxlength" 
-                    autocomplete="off" 
-                    v-mask="'XXX XXX'" 
-                    v-on:input="changePan" 
-                    persistent-hint 
-                    ></v-text-field><br>
+              </div>
+              <div class="col-2 col-sm-2 col-md-2 self-center">
+                <q-icon name="mdi-dialpad" size="xl"></q-icon>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <q-form @submit.prevent="loginpan" @keydown="form.onKeydown($event)">
+                    <q-input
+                      v-model="form.pan"
+                      :standout="'text-white bg-primary'"
+                      :label="$t('PAN')"
+                      color='black'
+                      XXXerror="form.errors.has('pan')"
+                      type="text"
+                      name="pan"
+                      required
+                      ref="pan"
+                      :maxlength="pan_maxlength"
+                      autocomplete="off"
+                      v-mask="'XXX XXX'"
+                      v-on:input="changePan"
+                      persistent-hint
+                      class="big-input"
+                    >
+                      <template v-slot:hint>
+                        {{ getLengthHint(form.pan, pan_maxlength) }}
+                      </template>
+                    </q-input>
 
-                    <v-text-field 
-                    v-model="form.pin" 
-                    :label="$t('PIN')" 
-                    color='black' 
-                    :error="form.errors.has('pin')" 
-                    type="text" 
-                    pattern="[0-9]*"
-                    name="pin" 
-                    ref="pin"
-                    required 
-                    autocomplete="off" 
-                    :maxlength="pin_maxlength" 
-                    :hint="form.pin.length + ' / ' + (pin_maxlength)" 
-                    v-mask="'####'" 
-                    v-on:input="changePin" 
-                    class="pin" 
-                    persistent-hint 
-                    ></v-text-field><br>
-                    <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</v-btn>
-                    <v-btn color="secondary">secondary</v-btn>
-                </v-form>
-              </v-col>
-            </v-row>
-          </v-container>
+                    <br>
+
+                    <q-input
+                      v-model="form.pin"
+                      :label="$t('PIN')"
+                      color='black'
+                      :standout="'text-white bg-primary'"
+                      XXXerror="form.errors.has('pin')"
+                      type="text"
+                      pattern="[0-9]*"
+                      name="pin"
+                      ref="pin"
+                      required
+                      autocomplete="off"
+                      :maxlength="pin_maxlength"
+                      v-mask="'####'"
+                      v-on:input="changePin"
+                      class="big-input"
+                      persistent-hint
+                    >
+                      <template v-slot:hint>
+                        {{ form.pin.length + ' / ' + (pin_maxlength) }}
+                      </template>
+                    </q-input><br>
+                    <q-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</q-btn>
+                </q-form>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
 </template>
@@ -171,16 +175,16 @@ export default {
 
       if(this.form.busy) return;
 
-      this.snackbar = false;
-
       // Submit the form.
       const { data } = await this.form.post('/api/loginpan')
       .catch((error) => {
         _this.form.pin = '';
         if(error && error.response && error.response.data) {
-          this.snackbarText = error.response.data.message;
-          this.snackbar = false;
-          this.snackbar = true;
+          this.$q.notify({
+            message: error.response.data.message,
+            icon: 'error',
+            color: 'error',
+          });
         }
       });
 
@@ -195,6 +199,7 @@ export default {
 
       // Redirect home.
       this.$router.push({ name: 'home' })
+
     },
 
   },

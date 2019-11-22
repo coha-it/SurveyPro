@@ -8,7 +8,10 @@
 @import 'elements/transitions';
 
 // Import Vuetify
-@import '~vuetify/dist/vuetify.min.css';
+// @import '~vuetify/dist/vuetify.min.css';
+
+// Import Quasar
+@import '~quasar/dist/quasar.min.css';
 
 // Import CSS Files
 @import "../css/vivify/vivify.min.css"; // http://vivify.mkcreative.cz/

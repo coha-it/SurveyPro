@@ -1,14 +1,14 @@
 <template>
-    <v-footer>
-      <v-layout wrap align-center>
-        <v-flex xs4 sm6>
+  <div class="footer">
+    <div class="fit row wrap justify-between items-center content-center">
+        <div class="q-pa-md">
           <LocaleSwitcher />
-        </v-flex>
-        <v-flex xs8 sm6 text-right>
+        </div>
+        <div class="q-pa-md text-right">
           <span>Corporate Happiness &copy; {{ new Date().getFullYear() }}</span>
-        </v-flex>
-      </v-layout>
-    </v-footer>
+        </div>
+    </div>
+  </div>
 </template>
 
 <script>

@@ -1,18 +1,20 @@
 <template>
-    <v-card :color="color" dark ripple :to="{ name: route }" class="auth-panel">
-      <v-list-item three-line>
+  <router-link :to="{ name: route }" tag="div" style="cursor: pointer;">
+    <q-card color="primary" dark v-ripple :class="'auth-panel bg-'+ color">
+      <q-card-section>
+        <div class="row items-center no-wrap">
+          <div class="col">
+            <div class="text-h6 headline">{{ title }}</div>
+            <div class="text-subtitle2 subtitle">{{ text }}</div>
+          </div>
 
-        <v-list-item-content class="align-self-center">
-          <v-list-item-title class="headline mb-2" v-text="title" ></v-list-item-title>
-          <v-list-item-subtitle v-text="text"></v-list-item-subtitle>
-        </v-list-item-content>
-
-        <v-list-item-icon class="align-self-center">
-          <v-icon x-large v-text="icon"></v-icon>
-        </v-list-item-icon>
-
-      </v-list-item>
-    </v-card>
+          <div class="col-auto">
+            <q-icon x-large :name="icon" class="icon"></q-icon>
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
+  </router-link>
 </template>
 
 <script>

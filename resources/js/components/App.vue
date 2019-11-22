@@ -1,10 +1,16 @@
 <template>
-  <v-app>
-    <loading ref="loading" />
-    <transition name="page" mode="out-in">
-      <component :is="layout" v-if="layout" />
-    </transition>
-  </v-app>
+  <div id="app">
+    <q-layout>
+      <q-page-container>
+        <q-page>
+          <loading ref="loading" />
+          <transition name="page" mode="out-in">
+            <component :is="layout" v-if="layout" />
+          </transition>
+        </q-page>
+      </q-page-container>
+    </q-layout>
+  </div>
 </template>
 
 <script>

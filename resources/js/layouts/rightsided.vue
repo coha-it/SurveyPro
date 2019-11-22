@@ -1,20 +1,22 @@
 <template>
-    <v-content>
-        <v-container fluid style="padding: 0; height: 100vh;">
-            <v-layout wrap class="v-application" fill-height>
-              <v-flex md6 xs12 class="hidden-sm-and-down coha--banner-wrapper">
-                  <div class="coha--banner">
-                      <div class="image" v-bind:style="{ backgroundImage: backgroundImage }"></div>
-                      <div class="text"></div>
-                  </div>
-              </v-flex>
-              <v-flex md6 xs12 style="display: grid; grid-template-rows: 1fr auto; grid-template-columns: 100%;">
-                <child />
-                <Footer />
-              </v-flex>
-            </v-layout>
-        </v-container>
-    </v-content>
+  <q-page>
+    <div class="row">
+      <div class="col-12 col-sm-12 col-md-6 col-xl-6">
+        <div class="gt-sm coha--banner-wrapper">
+            <div class="coha--banner">
+                <div class="image" v-bind:style="{ backgroundImage: backgroundImage }"></div>
+                <div class="text"></div>
+            </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-12 col-md-6 col-xl-6">
+        <div style="display: grid; grid-template-rows: 1fr auto; grid-template-columns: 100%;min-height: 100vh;">
+          <child />
+          <Footer />
+        </div>
+      </div>
+    </div>
+  </q-page>
 </template>
 
 <script>

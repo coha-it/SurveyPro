@@ -1,9 +1,6 @@
 <template>
     <div>
-        <v-btn color="blue-grey" text :to="to" >
-            <v-icon left dark>mdi-chevron-left</v-icon>
-            {{ $t('back') }}
-        </v-btn>
+      <q-btn rounded icon="mdi-chevron-left" :to="to" flat color="blue-grey" style="color: #FF0080; padding-left: 0;" :label="$t('back')" />
     </div>
 </template>
 

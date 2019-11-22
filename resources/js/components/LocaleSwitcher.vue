@@ -1,21 +1,6 @@
 <template>
   <span data-app>
-    <template>
-        <v-overlay :value="sheet"></v-overlay>
-        <v-bottom-sheet v-model="sheet" scrollable>
-          <template v-slot:activator="{ on }">
-            <a href="#" v-on="on" >{{ $t(locales[locale]) }}</a>
-          </template>
-          <v-sheet class="text-center" scrollable>
-            <v-container fluid>
-              <v-radio-group style="display: inline-block;" v-model="localeRadio" :mandatory="true" @change="setLocale(localeRadio)">
-                <v-radio v-for="(value, key) in locales" :label="$t(value)" :value="key" :key="key"></v-radio>
-              </v-radio-group>
-            </v-container>
-            <v-btn class="mt-6" text color="info" @click="sheet = !sheet">{{ $t('closer_button') }}</v-btn>
-          </v-sheet>
-        </v-bottom-sheet>
-    </template>
+    <a href="#" @click="show()" >{{ $t(locales[locale]) }}</a>
   </span>
 </template>
 
@@ -41,6 +26,18 @@ export default {
         this.$store.dispatch('lang/setLocale', { locale })
       }
     },
+    show () {
+      this.$q.bottomSheet({
+        message: 'Sprache auswählen',
+        actions: this.aLocaleOptions,
+      }).onOk(action => {
+        this.setLocale(action.id);
+      }).onCancel(() => {
+        // console.log('Dismissed')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
+    },
   },
 
   data () {
@@ -48,13 +45,23 @@ export default {
       dialogm1: '',
       dialog: false,
       localeRadio: 'de',
+      aLocaleOptions: [],
       sheet: false,
     }
   },
 
   mounted() {
+    var _t = this;
+
     if(this.locale) {
       this.localeRadio = this.locale;
+
+      for (var element in this.locales) {
+        this.aLocaleOptions.push({
+          label: _t.$t(element),
+          id: element
+        })
+      }
     }
   }
 

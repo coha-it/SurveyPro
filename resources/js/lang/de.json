@@ -161,7 +161,7 @@
     "required": "Dieses Feld ist erforderlich",
     "days": "Tage",
     "hours": "Stunden",
-    "minutes": "Minuten"
+    "minutes": "Minuten",
+    "The given data was invalid.": "Die eingegebenen Daten sind nicht korrekt"
 
   }
-  

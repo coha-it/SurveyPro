@@ -1,86 +1,57 @@
 <template>
+
   <div>
-    <!-- SideNavigation -->
-    <v-navigation-drawer app left fixed light resize v-model="drawer">
-      <v-list-item>
-          <v-list-item-avatar>
-            <v-img :src="'/storage/corporate-happiness-gmbh.svg'"></v-img>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="title">
-              {{ title }}
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ $t('sidenav.subtitle') }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-      </v-list-item>
-      <v-divider></v-divider>
-      <!-- SideNavigation Categories / Pages -->
-      <template v-if="user">
-        <div v-for="(cat, key) in sidenav" v-bind:key="key">
-          <template v-if="!(cat.hide_for_pan && user && user.pan)">
-            <v-subheader v-if="cat.title">{{ $t(cat.title) }}</v-subheader>
-              <v-list>
-                <template v-for="item in cat.pages">
-                  <v-list-item
-                    :key="item.title"
-                    link
-                    :to="item.route"
-                    v-if="checkRights(item)"
-                  >
-                      <v-list-item-icon>
-                        <v-icon>{{ item.icon }}</v-icon>
-                      </v-list-item-icon>
+      <q-drawer show-if-above v-model="bLeft" side="left" bordered @input="callToggleNavigation">
+        <!-- drawer content -->
 
-                      <v-list-item-content>
-                        <v-list-item-title style="white-space: pre;">{{ $t( item.title) }}</v-list-item-title>
-                      </v-list-item-content>
-                  </v-list-item>
-                </template>
-              </v-list>
+        <q-scroll-area class="fit">
+
+          <q-item>
+            <q-item-section top thumbnail class="q-ml-none">
+                <img :src="'/storage/corporate-happiness-gmbh.svg'" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                {{ title }}
+              </q-item-label>
+              <q-item-label caption>
+                {{ $t('sidenav.subtitle') }}
+              </q-item-label>
+            </q-item-section>
+
+            <q-item-section side top>
+              <q-item-label caption>
+
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <br>
+
+          <q-list v-for="(cat, key) in sidenav" v-bind:key="key">
+
+            <template v-if="cat.title">
+              <q-separator spaced />
+              <q-item-label header>List Header</q-item-label>
             </template>
-        </div>
-      </template>
-      <!-- Bottom of Sidenav -->
-     <template v-slot:append fixed bottom>
-        <div class="pa-2">
-          <v-btn block outlined depressed color="grey" @click.stop="logoutDialog = true">{{ $t('logout.btn') }}</v-btn>
-        </div>
-      </template>
-    </v-navigation-drawer>
 
-    <!-- BottomBar -->
-    <template>
-      <v-bottom-navigation bottom fixed shift color="black accent-4" class="d-none d-md-flex d-sm-flex d-flex d-lg-none">
-        <v-btn :input-value="drawer" @click.stop="drawer = !drawer">
-          <span>{{ $t('bottombar.menu') }}</span>
-          <v-icon>menu</v-icon>
-        </v-btn>
+            <q-item v-for="item in cat.pages" :key="item.title" clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon :name="item.icon" />
+              </q-item-section>
+              <q-item-section>
+                {{ $t( item.title) }}
+              </q-item-section>
+            </q-item>
 
-        <v-btn v-for="item in bottomnav" :key="item.title" :to="item.route">
-          <span>{{ $t(item.title) }}</span>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-btn>
 
-      </v-bottom-navigation>
-    </template>
+          </q-list>
+        </q-scroll-area>
 
-    <!-- Logout Dialog -->
-    <v-dialog v-model="logoutDialog" max-width="290" dark content-class="naked dark centered">
-        <h2 class="display-2">{{ $t('logout.title') }}</h2>
-        <p>{{ $t('logout.desc') }}</p>
-        <v-container fluid>
-          <v-row align="center">
-            <v-col class="text-center" cols="12" sm="12">
-              <v-btn depressed @click="logoutDialog = false" outlined>{{ $t('logout.btn_stay_here') }}</v-btn>
-              <v-btn depressed @click.prevent="logout" color="error">{{ $t('logout.btn') }}</v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-    </v-dialog>
-
+      </q-drawer>
   </div>
+
+
 </template>
 
 <script>
@@ -93,8 +64,16 @@ export default {
     user: 'auth/user'
   }),
 
+  mounted() {
+  },
+
+  // created: function() {
+  //   this.$parent.$on('updateNavigation', this.toggleNavigation);
+  // },
+
   data () {
     return {
+      bLeft: false,
       title: window.config.appName,
       sidenav: [
         {
@@ -117,16 +96,7 @@ export default {
         }
       ],
 
-      drawer: null,
-      bottomnav: [
-        { title: 'bottombar.profile', icon: 'person', route: {name: 'profile'} },
-        { title: 'bottombar.home', icon: 'home', route: {name: 'home'} },
-        { title: 'bottombar.surveys', icon: 'poll', route: {name: 'surveys'} },
-        { title: 'bottombar.faq', icon: 'help', route: {name: 'faq'} },
-      ],
-
       logoutDialog: false,
-      
     }
   },
 
@@ -137,6 +107,14 @@ export default {
 
       // Redirect to login.
       this.$router.push({ name: 'welcome' })
+    },
+
+    callToggleNavigation: function() {
+      this.$emit('navigationStateChanged', this.bLeft);
+    },
+
+    setNavigation(state) {
+      this.bLeft = state;
     },
 
     userIsAdmin() {

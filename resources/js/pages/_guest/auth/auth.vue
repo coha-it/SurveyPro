@@ -5,29 +5,29 @@
         <p style="max-width: 400px;">Um sich in ihr SurveyPro-Konto anzumelden, klicken Sie auf eine der drei unterstehenden Optionen</p>
 
         <div style="max-width: 500px;">
-          
-          <v-subheader class="divider"><span>{{ $t('pan_and_pin') }}</span></v-subheader>
-          <AuthPanel 
+
+          <q-item-label header class="divider"><span>{{ $t('pan_and_pin') }}</span></q-item-label>
+          <AuthPanel
             :title="$t('pan_title')"
-            :text="$t('pan_desc')" 
+            :text="$t('pan_desc')"
             :route="'pan'"
-            :color="'accent'" 
+            :color="'accent'"
             :icon="'mdi-dialpad'"
             />
 
-          <v-subheader class="divider"><span>{{ $t('with_email') }}</span></v-subheader>
-          <AuthPanel 
+          <q-item-label header class="divider"><span>{{ $t('with_email') }}</span></q-item-label>
+          <AuthPanel
             :title="$t('register')"
-            :text="$t('register_desc')" 
+            :text="$t('register_desc')"
             :route="'register'"
-            :color="'secondary'" 
+            :color="'secondary'"
             :icon="'mdi-account-plus'"
             />
-          <AuthPanel 
+          <AuthPanel
             :title="$t('login')"
-            :text="$t('login_desc')" 
+            :text="$t('login_desc')"
             :route="'login'"
-            :color="'info'" 
+            :color="'info'"
             :icon="'mdi-account'"
             />
 
@@ -41,7 +41,7 @@
 import AuthPanel from '~/components/AuthPanel';
 
 export default {
-  
+
   middleware: 'guest',
   layout: 'rightsided',
 
