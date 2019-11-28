@@ -1,80 +1,73 @@
 <template>
+    <q-drawer show-if-above v-model="bLeft" side="left" bordered @input="callToggleNavigation">
+      <!-- drawer content -->
+      <q-scroll-area class="fit">
 
-  <div>
-      <q-drawer show-if-above v-model="bLeft" side="left" bordered @input="callToggleNavigation">
-        <!-- drawer content -->
+              <q-item>
+                <q-item-section top thumbnail class="q-ml-none">
+                    <img :src="'/storage/corporate-happiness-gmbh.svg'" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ title }}
+                  </q-item-label>
+                  <q-item-label caption>
+                    {{ $t('sidenav.subtitle') }}
+                  </q-item-label>
+                </q-item-section>
 
-        <q-scroll-area class="fit">
+                <q-item-section side top>
+                  <q-item-label caption>
 
-          <q-item>
-            <q-item-section top thumbnail class="q-ml-none">
-                <img :src="'/storage/corporate-happiness-gmbh.svg'" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                {{ title }}
-              </q-item-label>
-              <q-item-label caption>
-                {{ $t('sidenav.subtitle') }}
-              </q-item-label>
-            </q-item-section>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
 
-            <q-item-section side top>
-              <q-item-label caption>
+              <br>
 
-              </q-item-label>
-            </q-item-section>
-          </q-item>
+              <q-list v-for="(cat, key) in sidenav" v-bind:key="key">
 
-          <br>
+                <template v-if="cat.title">
+                  <q-separator spaced />
+                  <q-item-label header>List Header</q-item-label>
+                </template>
 
-          <q-list v-for="(cat, key) in sidenav" v-bind:key="key">
+                <q-item  exact :to="item.route" v-for="item in cat.pages" :key="item.title" clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-icon :name="item.icon" />
+                  </q-item-section>
+                  <q-item-section>
+                    {{ $t( item.title) }}
+                  </q-item-section>
+                </q-item>
 
-            <template v-if="cat.title">
-              <q-separator spaced />
-              <q-item-label header>List Header</q-item-label>
-            </template>
+              </q-list>
 
-            <q-item  exact :to="item.route" v-for="item in cat.pages" :key="item.title" clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon :name="item.icon" />
-              </q-item-section>
-              <q-item-section>
-                {{ $t( item.title) }}
-              </q-item-section>
-            </q-item>
 
-          </q-list>
-
-          <!-- Bottom of Sidenav -->
-          <div style="position: sticky; bottom: 0;" class="bg-white">
-            <div class="q-pa-sm">
+            <!-- Bottom of Sidenav -->
+            <div style="position: sticky; bottom: 0;" class="q-pa-sm bg-white">
+            <!-- <q-footer class="bg-white"> -->
               <q-btn block outline depressed :label="$t('logout.btn')" color="grey" @click="logoutDialog = true" class="full-width" />
+            <!-- </q-footer> -->
             </div>
-          </div>
 
-        </q-scroll-area>
-      </q-drawer>
-
+      </q-scroll-area>
       <q-dialog v-model="logoutDialog">
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="logout" color="primary" text-color="white" />
-            <span class="q-ml-sm">
-              <p>{{ $t('logout.title') }}<br>{{ $t('logout.desc') }}</p>
-            </span>
-          </q-card-section>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="logout" color="primary" text-color="white" />
+              <span class="q-ml-sm">
+                <p>{{ $t('logout.title') }}<br>{{ $t('logout.desc') }}</p>
+              </span>
+            </q-card-section>
 
-          <q-card-actions align="right">
-            <q-btn outline :label="$t('logout.btn_stay_here')" @click="logoutDialog = false" color="primary" v-close-popup />
-            <q-btn outline :label="$t('logout.btn')" @click="logout" color="warning" v-close-popup />
-          </q-card-actions>
-        </q-card>
+            <q-card-actions align="right">
+              <q-btn outline :label="$t('logout.btn_stay_here')" @click="logoutDialog = false" color="primary" v-close-popup />
+              <q-btn outline :label="$t('logout.btn')" @click="logout" color="warning" v-close-popup />
+            </q-card-actions>
+          </q-card>
       </q-dialog>
-
-  </div>
-
-
+    </q-drawer>
 </template>
 
 <script>

@@ -1,15 +1,17 @@
 <template>
   <div class="coha-app--view">
-    <q-layout view="hHh lpR lFf">
+    <q-layout view="hHh LpR lFf">
 
       <Navigation ref="childRef" @navigationStateChanged="navigationStateChanged"  />
 
       <q-page-container>
-        <div class="container" fluid>
-          <div class="main-layout">
-            <child />
+        <q-page padding>
+          <div class="container" fluid>
+            <div class="main-layout">
+              <child />
+            </div>
           </div>
-        </div>
+        </q-page>
       </q-page-container>
 
       <NavigationBottomBar @toggle-navigation="toggleNavigation" />

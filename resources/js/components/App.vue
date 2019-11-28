@@ -1,15 +1,9 @@
 <template>
   <div id="app">
-    <q-layout>
-      <q-page-container>
-        <q-page>
-          <loading ref="loading" />
-          <transition name="page" mode="out-in">
-            <component :is="layout" v-if="layout" />
-          </transition>
-        </q-page>
-      </q-page-container>
-    </q-layout>
+    <loading ref="loading" />
+    <transition name="page" mode="out-in">
+      <component :is="layout" v-if="layout" />
+    </transition>
   </div>
 </template>
 
