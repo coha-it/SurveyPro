@@ -1,9 +1,9 @@
 <template>
-    <v-dialog v-model="dialog" transition="disabled" overflowed content-class="naked dark" no-click-animation>
+    <q-dialog v-model="dialog" transition="disabled" overflowed content-class="naked dark" no-click-animation>
         <template v-slot:activator="{ on }">
-            <v-btn text rounded error warning @click="printView()" :disabled="disabled">
-                <v-icon left>print</v-icon> {{ users.length + ' ' + $t('print') }}
-            </v-btn>
+            <q-btn text rounded error warning @click="printView()" :disabled="disabled">
+                <q-icon left>print</q-icon> {{ users.length + ' ' + $t('print') }}
+            </q-btn>
 
             <component is="style" type="text/css">
                 @media print {
@@ -33,19 +33,19 @@
 
         </template>
 
-        <v-toolbar dark color="primary" fixed absolute top >
-                <v-btn icon dark @click="dialog = false">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-                <v-btn text rounded dark @click="printUsers()" class="ml-3 mr-3">
-                    <v-icon left>print</v-icon> Drucken
-                </v-btn>
-                <v-switch class="mt-7 ml-1 mr-5" v-model="colorfull" :label="colorfull ? 'Farbenfroh' : 'Schwarz & Weiß' " color="accent"></v-switch>
-                <v-switch class="mt-7 ml-1 mr-5" v-model="oPrint.bShowCompany" label="Firma" color="secondary"></v-switch>
-                <v-switch class="mt-7 ml-1 mr-5" v-model="oPrint.bShowDepartment" label="Abteilung" color="secondary"></v-switch>
-                <v-switch class="mt-7 ml-1 mr-5" v-model="oPrint.bShowLocation" label="Ort" color="secondary"></v-switch>
+        <q-toolbar dark color="primary" fixed absolute top >
+                <q-btn icon dark @click="dialog = false">
+                    <q-icon>mdi-close</q-icon>
+                </q-btn>
+                <q-btn text rounded dark @click="printUsers()" class="ml-3 mr-3">
+                    <q-icon left>print</q-icon> Drucken
+                </q-btn>
+                <q-switch class="mt-7 ml-1 mr-5" v-model="colorfull" :label="colorfull ? 'Farbenfroh' : 'Schwarz & Weiß' " color="accent"></q-switch>
+                <q-switch class="mt-7 ml-1 mr-5" v-model="oPrint.bShowCompany" label="Firma" color="secondary"></q-switch>
+                <q-switch class="mt-7 ml-1 mr-5" v-model="oPrint.bShowDepartment" label="Abteilung" color="secondary"></q-switch>
+                <q-switch class="mt-7 ml-1 mr-5" v-model="oPrint.bShowLocation" label="Ort" color="secondary"></q-switch>
                 <div class="flex-grow-1"></div>
-        </v-toolbar>
+        </q-toolbar>
 
         <div class="coha--print">
             <div v-for="user in users" v-bind:key="user.id" class="element page-break" :class="colorfull ? '' : 'blackAndWhite'">
@@ -82,9 +82,9 @@
                 </div>
             </div>
         </div>
-        
 
-    </v-dialog>
+
+    </q-dialog>
 </template>
 
 <script>
@@ -145,7 +145,7 @@ export default {
         max-height: 3000px;
         padding: 100px;
         color: #000;
-        
+
         letter-spacing: 0.05em;
         display: flex;
         align-items: center;

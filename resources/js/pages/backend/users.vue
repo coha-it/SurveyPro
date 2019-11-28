@@ -4,72 +4,70 @@
         <p>Create Users with PAN & PIN</p>
         <p>
                 <!-- Create User -->
-                <v-dialog v-model="bCreateUsersDialog" transition="dialog-bottom-transition" max-width="700" :content-class="bCreateUsersLoading ? 'naked dark centered': '' " persistent>
-                  <template v-slot:activator="{ on }">
-                    <!-- Create User: Button -->
-                    <template>
-                        <v-btn size="large" tile depressed color="primary" v-on="on" class="mt-2 mr-2">
-                            Benutzer erstellen&nbsp;<v-icon right class="pr-2">mdi-account-plus</v-icon>
-                        </v-btn>
-                    </template>
-                  </template>
 
+                <q-btn unelevated color="primary" @click="bCreateUsersDialog = true" icon-right="mdi-account-plus">
+                    Benutzer erstellen&nbsp;&nbsp;&nbsp;
+                </q-btn>
+
+                <q-dialog v-model="bCreateUsersDialog" max-width="700" persistent>
                   <!-- Create User: Modal -->
-                  <v-card v-if="!bCreateUsersLoading">
-                    <v-toolbar dark color="primary">
-                      <v-btn icon dark @click="bCreateUsersDialog = false">
-                        <v-icon>mdi-close</v-icon>
-                      </v-btn>
-                      <v-toolbar-title>Erstelle neue Zugänge</v-toolbar-title>
+                  <q-card v-if="!bCreateUsersLoading">
+                    <q-toolbar class="bg-primary text-white" dark color="primary">
+                      <q-btn flat round dense class="q-mr-sm" icon="mdi-close" dark @click="bCreateUsersDialog = false"></q-btn>
+                      <q-toolbar-title>Erstelle neue Zugänge</q-toolbar-title>
                       <div class="flex-grow-1"></div>
-                      <v-toolbar-items>
-                        <v-btn dark text @click="createUsers()" v-if="iCreateUsersNumber > 0">{{ iCreateUsersNumber }} Zugänge Generieren</v-btn>
-                      </v-toolbar-items>
-                    </v-toolbar>
-                    <v-list three-line subheader>
-                      <v-subheader>Zugänge Konfigurieren</v-subheader>
-                      <v-list-item>
-                        <v-list-item-content>
-                          <v-list-item-title>Benutzer / Zugänge erstellen</v-list-item-title>
-                          <v-list-item-subtitle>Wählen Sie eine Anzahl der zu erstellenden Benutzer aus</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
+                      <q-btn dark flat class="q-mr-sm" @click="createUsers()" v-if="iCreateUsersNumber > 0">{{ iCreateUsersNumber }} Zugänge Generieren</q-btn>
+                    </q-toolbar>
+                    <q-list three-line subheader>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label>Benutzer / Zugänge erstellen</q-item-label>
+                          <q-item-label caption>Wählen Sie eine Anzahl der zu erstellenden Benutzer aus</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                      <v-list-item>
-                        <v-list-item-content style="max-width:400px;">
-                            <v-text-field outlined clearable label="Benutzeranzahl" v-model="iCreateUsersNumber" required hide-details type="number"></v-text-field>
-                        </v-list-item-content>
-                      </v-list-item>
+                      <q-item>
+                        <q-item-section style="max-width:400px;">
+                            <q-input outlined clearable label="Benutzeranzahl" v-model="iCreateUsersNumber" required hide-details type="number" />
+                        </q-item-section>
+                      </q-item>
 
-                      <v-list-item>
-                        <v-list-item-action>
-                          <v-checkbox v-model="bCreateUsersRandomPin" color="primary"></v-checkbox>
-                        </v-list-item-action>
-                        <v-list-item-content>
-                          <v-list-item-title>Zufällige PIN</v-list-item-title>
-                          <v-list-item-subtitle>Generiert eine Zufällige PIN. z.B. 1534 oder 5664. Die PIN kann im Anschluss angepasst werden</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
+                      <q-item tag="label" v-ripple>
+                        <q-item-section side top>
+                          <q-checkbox v-model="bCreateUsersRandomPin" />
+                        </q-item-section>
 
-                      <v-list-item>
-                        <v-list-item-action>
-                          <v-checkbox v-model="bCreateUsersRandomPan" disabled color="primary"></v-checkbox>
-                        </v-list-item-action>
-                        <v-list-item-content>
-                          <v-list-item-title>Zufällige PAN</v-list-item-title>
-                          <v-list-item-subtitle>Generiert eine Zufällige und individuelle / einmalige PAN. z.B.: G4D 4Y6. Die PAN kann im Anschluss angepasst werden</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
+                        <q-item-section>
+                          <q-item-label>Zufällige PIN</q-item-label>
+                          <q-item-label caption>
+                            Generiert eine Zufällige PIN. z.B. 1534 oder 5664. Die PIN kann im Anschluss angepasst werden
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    </v-list>
-                    <v-divider></v-divider>
-                  </v-card>
+
+                      <q-item tag="label" disable>
+                        <q-item-section side top>
+                          <q-checkbox v-model="bCreateUsersRandomPan" disable />
+                        </q-item-section>
+
+                        <q-item-section>
+                          <q-item-label>Zufällige PAN</q-item-label>
+                          <q-item-label caption>
+                            Generiert eine Zufällige und individuelle / einmalige PAN. z.B.: G4D 4Y6. Die PAN kann im Anschluss angepasst werden
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+
+                    </q-list>
+                    <q-separator></q-separator>
+                  </q-card>
                   <!-- Loading -->
                   <template v-else>
                     <p>{{ $t('loading.text') }}</p>
-                    <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+                    <q-progress-linear indeterminate color="white" class="mb-0"></q-progress-linear>
                   </template>
-                </v-dialog>
+                </q-dialog>
 
             <UserDataModal
                 sEditText="Firmen bearbeiten"
@@ -98,12 +96,36 @@
                 p_sModel="group"
                 :p_oModels="user.groups_moderating"
                 :p_aHeaders="[
-                    { text: this.$t('id'), value: 'id' },
-                    { text: this.$t('name'), value: 'name' },
-                    { text: this.$t('description_public'), value: 'description_public' },
-                    { text: this.$t('description_mods'), value: 'description_mods' },
-                    { text: this.$t('updated_at'), value: 'updated_at'},
-                    { text: this.$t('created_at'), value: 'created_at'}
+                    {
+                      name: 'id',
+                      label: this.$t('id'),
+                      field: 'id',
+                    },
+                    {
+                      name: 'name',
+                      label: this.$t('name'),
+                      field: 'name',
+                    },
+                    {
+                      name: 'description_public',
+                      label: this.$t('description_public'),
+                      field: 'description_public',
+                    },
+                    {
+                      name: 'description_mods',
+                      label: this.$t('description_mods'),
+                      field: 'description_mods',
+                    },
+                    {
+                      name: 'updated_at',
+                      label: this.$t('updated_at'),
+                      field: 'updated_at',
+                    },
+                    {
+                      name: 'created_at',
+                      label: this.$t('created_at'),
+                      field: 'created_at',
+                    }
                 ]" />
 
         </p>
@@ -111,126 +133,34 @@
         <br>
 
         <template>
-            <v-card>
-                <v-card-title>
-                    Created Users
-                    <div class="flex-grow-1"></div>
-                </v-card-title>
-                <v-card-text>
-                    <!-- <v-row no-gutters align-content="end" align="end" justify="end">
-                        <v-col cols="12" md="6">
-                            <v-btn depressed color="primary">Benutzer erstellen</v-btn>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                        </v-col>
-                    </v-row> -->
-                </v-card-text>
-                    <!-- No Select Toolbar -->
-                    <v-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="search == ''" floating min-height="85px" height="auto">
-                        <v-switch class="mt-6 mr-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="primary"></v-switch>
-                        <v-switch class="mt-6 mr-6" v-model="showPin" :label="'PIN Zeigen'" color="primary"></v-switch>
-                        <div class="flex-grow-1"></div>
-                        <v-text-field style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined></v-text-field>
-                        <v-text-field v-model="itemsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
-                    </v-toolbar>
-                    <!-- Toolbar for Selections -->
-                    <v-toolbar class="coha--toolbar" v-else :flat="search == ''" color="primary"  dark floating min-height="85px" height="auto">
+            <q-card>
+                <q-card-section>
+                  <div class="text-h6">Created Users</div>
+                  <div class="text-subtitle2">All your Created Users</div>
+                </q-card-section>
+                <q-card-section>
+                    <!-- <q-row no-gutters align-content="end" align="end" justify="end">
+                        <q-col cols="12" md="6">
+                            <q-btn depressed color="primary">Benutzer erstellen</q-btn>
+                        </q-col>
+                        <q-col cols="12" md="6">
+                            <q-input v-model="search" append-icon="search" label="Search" single-line hide-details />
+                        </q-col>
+                    </q-row> -->
+                </q-card-section>
 
-                        <v-btn color="success" rounded @click="updateUsers(getUnsaved(selected))" :disabled="!getUnsaved(selected).length">
-                            <v-icon left>mdi-content-save</v-icon> {{ getUnsaved(selected).length + ' ' + $t('save') }}
-                        </v-btn>
-
-                        <v-menu offset-y>
-                            <template v-slot:activator="{ on:menuedit }">
-                                <v-btn text rounded v-on="{ ...menuedit }">
-                                    <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
-                                </v-btn>
-                            </template>
-                            <v-list>
-                                <BulkGroupChanges
-                                    :aItems="user.groups_moderating"
-                                    :selected="selected"
-                                    />
-
-                                <!-- Menu: Company -->
-                                <BulkProfileChanges
-                                    :aItems="user.companies"
-                                    :selected="selected"
-                                    sId="company_id"
-                                    sModel="company"
-                                    title="Ändere Firma"
-                                    label="Firma wählen"
-                                    menuText="Firma"
-                                     />
-
-                                <!-- Menu: Department -->
-                                <BulkProfileChanges
-                                    :aItems="user.departments"
-                                    :selected="selected"
-                                    sId="department_id"
-                                    sModel="department"
-                                    title="Ändere Abteilung"
-                                    label="Abteilung wählen"
-                                    menuText="Abteilung"
-                                    />
-
-                                <!-- Menu: Location -->
-                                <BulkProfileChanges
-                                    :aItems="user.locations"
-                                    :selected="selected"
-                                    sId="location_id"
-                                    sModel="location"
-                                    title="Ändere Ort"
-                                    label="Ort wählen"
-                                    menuText="Ort"
-                                    />
-
-                            </v-list>
-                        </v-menu>
-
-
-                        <Print :users="selected" :disabled="getUnsaved(selected).length > 0 ? true : false" />
-
-                        <v-btn text rounded error warning @click.stop="deleteUsersDialog = true">
-                            <v-icon left>delete</v-icon> {{ selected.length + ' ' + $t('delete') }}
-                        </v-btn>
-                        <v-dialog v-model="deleteUsersDialog" max-width="290" dark content-class="naked dark centered">
-                            <h2 class="display-2">Delete?</h2>
-                            <p>Delete?</p>
-                            <v-container fluid>
-                                <v-row align="center">
-                                    <v-col class="text-center" cols="12" sm="12">
-                                        <v-btn depressed @click.stop="deleteUsersDialog = false" outlined>Abbruch</v-btn>
-                                        <v-btn depressed @click="deleteUsers(selected)" color="error">Zugänge Löschen!</v-btn>
-                                    </v-col>
-                                </v-row>
-                            </v-container>
-                        </v-dialog>
-
-                        <!-- <v-switch class="mt-6 ml-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="accent"></v-switch> -->
-                        <v-switch class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></v-switch>
-                        <div class="flex-grow-1"></div>
-                        <v-text-field v-model="itemsPerPage" type="number" number hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
-                    </v-toolbar>
-
-
-                    <v-container fluid v-if="bExtendedFilter && false">
-                        <v-row>
-                            <v-col>
-                                <v-checkbox v-model="bShowDeletedUsers" color="primary" label="Gelöschte Nutzer zeigen"></v-checkbox>
-                            </v-col>
-                        </v-row>
-                    </v-container>
-
-                <v-data-table
+                <q-table
                     v-if="usersCreated && usersCreated.length >= 1"
-                    :headers="headers"
-                    :items="usersCreated"
-                    v-model="selected"
-                    :search="search"
+                    :columns="headers"
+                    :data="usersCreated"
+                    :filter="search"
+                    :filter-method="myFilter"
+                    selection="multiple"
+                    bordered
+                    :sort-method="customSort"
+                    separator="cell"
+
                     show-select
-                    multi-sort
                     :loading="loading"
                     :loading-text="$t('loading.text')"
                     :items-per-page="parseInt(itemsPerPage)"
@@ -238,160 +168,291 @@
                         showFirstLastPage: true,
                     }"
                     dense
+                    :selected.sync="selected"
+                    class="my-sticky-header-table"
                     >
 
+                    <!-- Toolbars -->
+                    <template v-slot:top="props">
+                      <!-- No Select Toolbar -->
+                      <q-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="search == ''" floating min-height="85px" height="auto">
+                          <!-- <q-toggle class="mt-6 mr-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="primary" /> -->
+                          <q-toggle class="mt-6 mr-6" v-model="showPin" :label="'PIN Zeigen'" color="red" />
+                          <div class="flex-grow-1"></div>
+                          <q-toolbar-title></q-toolbar-title>
+                          <q-input outlined style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outline />
+                          &nbsp;
+                          <q-input outlined v-model="itemsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline  />
+                          <q-btn
+                            flat round dense
+                            :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                            @click="props.toggleFullscreen"
+                            class="q-ml-md"
+                          />
+                      </q-toolbar>
+                      <!-- Toolbar for Selections -->
+                      <q-toolbar class="coha--toolbar bg-primary text-white" v-else :flat="search == ''" color="primary"  dark floating min-height="85px" height="auto">
+
+                          <q-btn color="success" rounded @click="updateUsers(getUnsaved(selected))" :disabled="!getUnsaved(selected).length" icon-left="content-save">
+                              {{ getUnsaved(selected).length + ' ' + $t('save') }}
+                          </q-btn>
+
+                          <q-menu offset-y>
+                              <template v-slot:activator="{ on:menuedit }">
+                                  <q-btn text rounded v-on="{ ...menuedit }">
+                                      <q-icon left>mdi-pencil</q-icon> {{ selected.length + ' ' + $t('edit') }}
+                                  </q-btn>
+                              </template>
+                              <q-list>
+                                  <BulkGroupChanges
+                                      :aItems="user.groups_moderating"
+                                      :selected="selected"
+                                      />
+
+                                  <!-- Menu: Company -->
+                                  <!-- <BulkProfileChanges
+                                      :aItems="user.companies"
+                                      :selected="selected"
+                                      sId="company_id"
+                                      sModel="company"
+                                      title="Ändere Firma"
+                                      label="Firma wählen"
+                                      menuText="Firma"
+                                      /> -->
+
+                                  <!-- Menu: Department -->
+                                  <!-- <BulkProfileChanges
+                                      :aItems="user.departments"
+                                      :selected="selected"
+                                      sId="department_id"
+                                      sModel="department"
+                                      title="Ändere Abteilung"
+                                      label="Abteilung wählen"
+                                      menuText="Abteilung"
+                                      /> -->
+
+                                  <!-- Menu: Location -->
+                                  <!-- <BulkProfileChanges
+                                      :aItems="user.locations"
+                                      :selected="selected"
+                                      sId="location_id"
+                                      sModel="location"
+                                      title="Ändere Ort"
+                                      label="Ort wählen"
+                                      menuText="Ort"
+                                      /> -->
+
+                              </q-list>
+                          </q-menu>
+
+
+                          <Print :users="selected" :disabled="getUnsaved(selected).length > 0 ? true : false" />
+
+                          <q-btn text rounded error warning @click.stop="deleteUsersDialog = true">
+                              <q-icon left>delete</q-icon> {{ selected.length + ' ' + $t('delete') }}
+                          </q-btn>
+
+                          <q-dialog v-model="deleteUsersDialog" max-width="290" dark content-class="naked dark centered">
+                              <h2 class="display-2">Delete?</h2>
+                              <p>Delete?</p>
+                              <q-container fluid>
+                                  <q-row align="center">
+                                      <q-col class="text-center" cols="12" sm="12">
+                                          <q-btn depressed @click.stop="deleteUsersDialog = false" outline>Abbruch</q-btn>
+                                          <q-btn depressed @click="deleteUsers(selected)" color="error">Zugänge Löschen!</q-btn>
+                                      </q-col>
+                                  </q-row>
+                              </q-container>
+                          </q-dialog>
+
+                          <!-- <q-checkbox left-label  class="mt-6 ml-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="accent"></q-checkbox> -->
+                          <q-checkbox left-label class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></q-checkbox>
+                          <div class="flex-grow-1"></div>
+                          <q-input v-model="itemsPerPage" type="number" number hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline />
+                          <q-btn
+                            flat round dense
+                            :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                            @click="props.toggleFullscreen"
+                            class="q-ml-md"
+                          />
+                      </q-toolbar>
+
+
+                      <q-container fluid v-if="bExtendedFilter && false">
+                          <q-row>
+                              <q-col>
+                                  <q-checkbox v-model="bShowDeletedUsers" color="primary" label="Gelöschte Nutzer zeigen"></q-checkbox>
+                              </q-col>
+                          </q-row>
+                      </q-container>
+                    </template>
+
                     <!-- PAN -->
-                    <template v-slot:item.pan.pan="{ item }">
-                        <template v-if="item.pan">
-                            <!-- <v-btn @click="item.pan.pan='gusman'">Los</v-btn> -->
-                            <span class="coha--list-item pan c-code-text">
-                                <v-edit-dialog
-                                    @cancel="cancel"
-                                    @open="open"
-                                    @close="close"
-                                    @save="save"
-                                    :return-value.sync="item.pan.pan"
-                                    lazy
-                                    persistent
-                                    ref="dialog"
-                                >
-                                    <template v-if="item.pan.pan && item.pan.pan != ''">
-                                        <span :class="!panIsOk(item) ? 'red--text' : ''">
-                                            <span class="pan--part">{{ item.pan.pan.substring(0,3) }}</span><span class="pan--part">{{ item.pan.pan.substring(3,6) }}</span>
-                                        </span>
-                                    </template>
-                                    <template v-else>
-                                        <span style="text-transform: uppercase;" class="red--text">{{ $t('empty') }}</span>
-                                    </template>
-                                    <template v-slot:input>
-                                        <div class="pan--dialog-input c-code-text">
-                                            <v-text-field
-                                                v-model="item.pan.pan"
-                                                :rules="[maxPanChars]"
-                                                :label="$t('edit')"
-                                                single-line
-                                                v-on:change="changePan(item)"
-                                                :error="!panIsOk(item)"
-                                                :disabled="panIsLoading"
-                                                :loading="panIsLoading"
-                                                counter>
-                                                <v-tooltip slot="append" top>
-                                                    <template #activator="{ on }">
-                                                        <v-icon class="mr-1" v-on="on" @click="getRandomPan(item)">mdi-repeat</v-icon>
-                                                    </template>
-                                                    <span>Zufällige PAN generieren</span>
-                                                </v-tooltip>
-                                            </v-text-field>
-                                        </div>
-                                    </template>
-                                </v-edit-dialog>
+                    <template v-slot:body-cell-pan="props">
+                      <q-td :props="props">
+                        <div class="pan--dialog-input c-code-text">
+                          <template v-if="props && props.row && props.row.pan.pan && props.row.pan.pan.length > 0">
+                              <span :class="!panIsOk(props.row) ? 'red--text' : ''">
+                                  <span class="pan--part">{{ props.row.pan.pan.substring(0,3) }}</span><span class="pan--part">
+                                    {{ props.row.pan.pan.substring(3,6) }}
+                                  </span>
+                              </span>
+                          </template>
+                          <template v-else>
+                              <span style="text-transform: uppercase;" class="text-red c-code-text">{{ $t('empty') }}</span>
+                          </template>
+                          <q-popup-edit
+                              v-model="props.row.pan.pan"
+                              buttons
+                              @save="save(props.row)"
+                              @cancel="cancel"
+                              @open="open"
+                              @close="close"
+                              single-line
+                              :label="$t('edit')"
+                              persistent
+                              :cover="false"
+                              self="center left"
+                              anchor="center right"
+                              :offset="[5, 0]"
+                            >
+                            <span class="coha--list-item pan c-code-text ">
+                              <q-input
+                                v-model="props.row.pan.pan"
+                                dense
+                                autofocus
+                                counter
+                                persistent-hint
+                                :rules="[maxPanChars]"
+                                v-on:keyup="changePan(props.row)"
+                                v-on:change="changePan(props.row)"
+                                :error="!panIsOk(props.row)"
+                                :disabled="panIsLoading"
+                                :loading="panIsLoading"
+                                required
+                                maxlength="6"
+                              >
+                                <template v-slot:append>
+                                  <q-btn dense flat round icon="repeat" @click="getRandomPan(props.row)"></q-btn>
+                                  <q-tooltip>Zufällige PAN generieren</q-tooltip>
+                                </template>
+                              </q-input>
                             </span>
-                        </template>
+                          </q-popup-edit>
+                        </div>
+                      </q-td>
                     </template>
 
 
                     <!-- PIN -->
-                    <template v-slot:item.pan.pin="{ item }">
-                        <template v-if="item.pan && item.pan.pin">
-                            <span class="coha--list-item pin c-code-text">
-                                <v-edit-dialog
-                                    @cancel="cancel"
-                                    @open="open"
-                                    @close="close"
-                                    @save="save"
-                                    lazy
-                                    persistent
-                                >
-                                    <span class="coha--list-item pin">
-                                        <template v-if="item.pan.pin">
-                                            <span :class="!pinIsOk(item) ? 'red--text' : ''">{{ showPin ? item.pan.pin : '****' }}</span>
-                                        </template>
-                                        <template v-else>
-                                            <span style="text-transform: uppercase;" class="red--text">{{ $t('empty') }}</span>
-                                        </template>
-                                    </span>
-                                    <template v-slot:input>
-                                        <div class="pin--dialog-input c-code-text">
-                                            <v-text-field
-                                                v-model="item.pan.pin"
-                                                :label="$t('edit')"
-                                                single-line
-                                                v-on:change="changePin(item)"
-                                                counter
-                                                type="text"
-                                                pattern="[0-9]*"
-                                                name="pin"
-                                                v-mask="'####'"
-                                                maxlength="4"
-                                                :rules="[maxPinChars]"
-                                                required
-                                                autocomplete="off">
-                                                <v-tooltip slot="append" top>
-                                                    <template #activator="{ on }">
-                                                        <v-icon class="mr-1" v-on="on" @click="generateRandomPin(item)">mdi-repeat</v-icon>
-                                                    </template>
-                                                    <span>Zufällige PIN generieren</span>
-                                                </v-tooltip>
-                                            </v-text-field>
-                                        </div>
-                                    </template>
-                                </v-edit-dialog>
+                    <template v-slot:body-cell-pin="props">
+                      <q-td :props="props">
+                        <div class="pin--dialog-input c-code-text">
+                          <template v-if="props && props.row && props.row.pan.pin && props.row.pan.pin.length > 0">
+                              <span :class="!pinIsOk(props.row) ? 'red--text' : ''">
+                                {{ showPin ? props.row.pan.pin : '****' }}
+                              </span>
+                          </template>
+                          <template v-else>
+                              <span style="text-transform: uppercase;" class="text-red c-code-text">{{ $t('empty') }}</span>
+                          </template>
+
+                          <q-popup-edit
+                              v-model="props.row.pan.pin"
+                              buttons
+                              @save="save(props.row)"
+                              @cancel="cancel"
+                              @open="open"
+                              @close="close"
+                              single-line
+                              :label="$t('edit')"
+                              persistent
+                              :cover="false"
+                              self="center left"
+                              anchor="center right"
+                              :offset="[5, 0]"
+                            >
+                            <span class="coha--list-item pin c-code-text ">
+                              <q-input
+                                v-model="props.row.pan.pin"
+                                dense
+                                autofocus
+                                counter
+                                persistent-hint
+                                :rules="[maxPinChars]"
+                                v-on:keyup="changePin(props.row)"
+                                v-on:change="changePin(props.row)"
+                                :error="!pinIsOk(props.row)"
+                                required
+                                autocomplete="off"
+                                type="text"
+                                pattern="[0-9]*"
+                                name="pin"
+                                v-mask="'####'"
+                                maxlength="4"
+                              >
+                                <template v-slot:append>
+                                  <q-btn dense flat round icon="repeat" @click="generateRandomPin(props.row)"></q-btn>
+                                  <q-tooltip>Zufällige PIN generieren</q-tooltip>
+                                </template>
+                              </q-input>
                             </span>
-                        </template>
+                          </q-popup-edit>
+                        </div>
+                      </q-td>
                     </template>
 
+
                     <!-- Groups -->
-                    <template v-slot:item.groups="{ item }">
+                    <template v-slot:body-cell-groups="props">
+                      <q-td :props="props">
                         <template v-if="user.groups_moderating && user.groups_moderating.length >= 1">
-                            <template v-for="(group, i) in item.groups">
+                            <template v-for="(group, i) in props.row.groups">
                                 <span v-bind:key="i">
-                                    <v-tooltip bottom :open-delay="group.pivot ? group.pivot.is_member ? 1000 : 100 : 100">
-                                        <template v-slot:activator="{ on }">
-                                            <v-chip v-on="on" small outlined v-if="user.groups_moderating.find(x => x.id === group.id)" class="mr-1 mt-1 mb-1"
-                                                :color="getGroupPivotColor(group)">
-                                                {{ user.groups_moderating.find(x => x.id === group.id).name }}
-                                            </v-chip>
-                                            <v-chip v-on="on" small outlined disabled v-else class="mr-1 mt-1 mb-1">
-                                                {{ group.name }}
-                                            </v-chip>
-                                        </template>
-                                        <span v-if="group && group.pivot">
-                                            <template v-if="!group.pivot.is_member && !group.pivot.is_mod">
-                                                Keine Rolle!
+
+
+                                    <q-chip v-if="user.groups_moderating.find(x => x.id === group.id)" small outlined class="mr-1 mt-1 mb-1"
+                                        :color="getGroupPivotColor(group)">
+                                        {{ user.groups_moderating.find(x => x.id === group.id).name }}
+                                        <q-tooltip bottom :open-delay="group.pivot ? group.pivot.is_member ? 1000 : 100 : 100">
+                                            <template v-if="group.pivot.is_member">
+                                                Teilnehmer
                                             </template>
-                                            <template v-else>
-                                                <template v-if="group.pivot.is_member">
-                                                    Teilnehmer
-                                                </template>
-                                                <template v-if="group.pivot.is_member && group.pivot.is_mod">
-                                                    &
-                                                </template>
-                                                <template v-if="group.pivot.is_mod">
-                                                    Moderator
-                                                </template>
+                                            <template v-if="group.pivot.is_member && group.pivot.is_mod">
+                                                &
                                             </template>
-                                        </span>
-                                    </v-tooltip>
+                                            <template v-if="group.pivot.is_mod">
+                                                Moderator
+                                            </template>
+                                        </q-tooltip>
+                                    </q-chip>
+                                    <q-chip v-else small outlined disabled  class="mr-1 mt-1 mb-1">
+                                        {{ group.name }}
+                                        <q-tooltip bottom :open-delay="group.pivot ? group.pivot.is_member ? 1000 : 100 : 100">
+                                          Keine Rolle!
+                                        </q-tooltip>
+                                    </q-chip>
+
                                 </span>
                             </template>
 
                             <!-- Gruppen hinzufügen / entfernen -->
                             <template>
-                                <v-dialog v-model="item.groupDialog" scrollable max-width="500px">
-                                    <template v-slot:activator="{ on }">
-                                        <v-chip v-on="on" small :disabled="item.groupDialog" class="mt-1 mb-1">{{ $t('edit') }}</v-chip>
-                                    </template>
-                                    <v-card>
-                                        <v-card-title>Gruppen hinzufügen / entfernen</v-card-title>
-                                        <v-divider></v-divider>
 
-                                        <v-card-text style="height: 500px;">
-                                            <p>Der Gewählte Nutzer mit der ID "{{ item.id }}" und mit der PAN "{{ item.pan && item.pan.pan ? item.pan.pan : '' }}"</p>
-                                            <v-card outlined>
+                                <div>Bearbeiten</div>
+
+                                <q-popup-edit v-model="props.row">
+                                    <q-card>
+                                        <q-card-title>Gruppen hinzufügen / entfernen</q-card-title>
+                                        <q-separator />
+
+                                        <q-card-text style="height: 500px;">
+                                            <p>Der Gewählte Nutzer mit der ID "{{ props.row.id }}" und mit der PAN "{{ props.row.pan && props.row.pan.pan ? props.row.pan.pan : '' }}"</p>
+                                            <q-card outlined>
                                                 <v-list subheader two-line flat>
                                                     <v-subheader>Nutzer ist in Gruppen:</v-subheader>
-                                                    <template v-if="item.groups">
-                                                        <template  v-for="(group, i) in item.groups">
+                                                    <template v-if="props.row.groups">
+                                                        <template  v-for="(group, i) in props.row.groups">
                                                             <div v-bind:key="group.id">
 
                                                                 <v-list-item>
@@ -419,27 +480,27 @@
                                                                             text
                                                                             small
                                                                             color="error"
-                                                                            @click="removeCreatedUserFromGroup(item, i)"
+                                                                            @click="removeCreatedUserFromGroup(props.row, i)"
                                                                             >- {{ $t('remove') }}</v-btn>
                                                                     </v-list-item-action>
                                                                 </v-list-item>
 
-                                                                <v-divider v-if="i+1 < item.groups.length" inset></v-divider>
+                                                                <v-divider v-if="i+1 < props.row.groups.length" inset></v-divider>
                                                             </div>
                                                         </template>
                                                     </template>
                                                 </v-list>
-                                            </v-card>
+                                            </q-card>
 
                                             <br>
 
-                                            <v-card outlined>
+                                            <q-card outlined>
                                                 <v-list subheader two-line flat>
                                                     <v-subheader>Nutzer für diese Gruppen hinzufügen</v-subheader>
                                                     <template v-if="user.groups_moderating">
                                                         <template v-for="(group, i) in user.groups_moderating">
                                                             <div v-bind:key="group.id">
-                                                                <v-list-item :disabled="alreadyInGroups(group, item.groups)">
+                                                                <v-list-item :disabled="alreadyInGroups(group, props.row.groups)">
                                                                     <v-list-item-avatar>
                                                                         <v-icon>mdi-account-multiple-plus</v-icon>
                                                                     </v-list-item-avatar>
@@ -452,7 +513,7 @@
                                                                     <v-list-item-action>
                                                                         <v-list-item-action-text>ID #{{ group.id }}</v-list-item-action-text>
                                                                         <v-btn
-                                                                            v-if="alreadyInGroups(group, item.groups)"
+                                                                            v-if="alreadyInGroups(group, props.row.groups)"
                                                                             depressed
                                                                             rounded
                                                                             outlined
@@ -466,7 +527,7 @@
                                                                             text
                                                                             small
                                                                             color="success"
-                                                                            @click="addCreatedUserToGroup(item, group)">+ {{ $t('add_to') }}</v-btn>
+                                                                            @click="addCreatedUserToGroup(item.row, group)">+ {{ $t('add_to') }}</v-btn>
                                                                     </v-list-item-action>
                                                                 </v-list-item>
 
@@ -475,17 +536,22 @@
                                                         </template>
                                                     </template>
                                                 </v-list>
-                                            </v-card>
-                                        </v-card-text>
-                                        <v-divider></v-divider>
-                                        <v-card-actions>
-                                            <v-btn color="blue darken-1" text @click="item.groupDialog = false">{{ $t('closer_button') }}</v-btn>
-                                        </v-card-actions>
-                                    </v-card>
-                                </v-dialog>
+                                            </q-card>
+                                        </q-card-text>
+                                        <q-separator />
+                                        <q-card-actions>
+                                            <v-btn color="blue darken-1" text @click="item.row.groupDialog = false">{{ $t('closer_button') }}</v-btn>
+                                        </q-card-actions>
+                                    </q-card>
+                                </q-popup-edit>
+
+
+
+
                             </template>
 
                         </template>
+                      </q-td>
                     </template>
 
                     <!-- Company -->
@@ -540,15 +606,15 @@
                                 :disabled="isSaved(item) || !validUser(item)"
                             >{{ $t('save') }}</v-btn>
 
-                            <v-tooltip top>
+                            <q-tooltip top>
                                 <template v-slot:activator="{ on }">
                                     <v-icon :disabled="isSaved(item)" v-on="on" small class="mr-2" @click="resetUser(item)">replay</v-icon>
                                 </template>
                                 <span>{{ $t('reset') }}</span>
-                            </v-tooltip>
+                            </q-tooltip>
                             <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
 
-                            <v-dialog v-model="item.deleteUserDialog" max-width="290" dark content-class="naked dark centered" transition="dialog-bottom-transition">
+                            <q-dialog v-model="item.deleteUserDialog" max-width="290" dark content-class="naked dark centered" transition="dialog-bottom-transition">
                                     <template v-slot:activator="{ on }">
                                         <v-icon small v-on="on">delete</v-icon>
                                     </template>
@@ -562,44 +628,16 @@
                                             </v-col>
                                         </v-row>
                                     </v-container>
-                            </v-dialog>
+                            </q-dialog>
 
 
                         </div>
                     </template>
 
 
-                    <!-- Footer Bottom Filter -->
-                    <template v-slot:body.prepend>
-                        <tr v-if="bExtendedFilter">
-                            <td></td>
-                            <td>
-                                <v-text-field class="mt-2 mb-2 coha--filter-input" v-model="oFilters.iId" type="number" label="ID" single-line solo :flat="!oFilters.iId" clearable hide-details></v-text-field>
-                            </td>
-                            <td>
-                                <v-text-field class="mt-2 mb-2 coha--filter-input" v-model="oFilters.sPan" type="text" label="PAN" single-line solo :flat="!oFilters.sPan" clearable hide-details></v-text-field>
-                            </td>
-                            <td>
-                                <v-text-field class="mt-2 mb-2 coha--filter-input" v-model="oFilters.sPin" type="text" label="PIN" single-line solo :flat="!oFilters.sPin" clearable hide-details></v-text-field>
-                            </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </template>
+                </q-table>
 
-                </v-data-table>
-
-                <v-snackbar v-model="snack" :timeout="snackTimeout" :color="snackColor" top>
-                    <span v-html="snackText"></span>
-                    <v-btn text @click="snack = false">{{ $t('closer_button') }}</v-btn>
-                </v-snackbar>
-
-            </v-card>
+            </q-card>
         </template>
 
     </div>
@@ -614,9 +652,20 @@ import UserDataModal from '~/components/BackendUserDataModal'
 import Print from '~/components/BackendUsersPrint'
 import BulkProfileChanges from '~/components/BackendUserBulkProfileChanges'
 import BulkGroupChanges from '~/components/BackendUserBulkGroupChanges'
+import MyPopupEdit from '~/components/MyPopupEdit'
+import { type } from 'os';
 
 export default {
     middleware: 'canCreateUsers',
+
+    components: {
+        TheMask,
+        UserDataModal,
+        Print,
+        BulkProfileChanges,
+        BulkGroupChanges,
+        MyPopupEdit
+    },
 
     computed: {
         ...mapGetters({
@@ -627,42 +676,77 @@ export default {
         headers() {
             return [
                 {
-                    text: 'ID',
-                    align: 'left',
-                    value: 'id',
-                    filter: sWhere => {
-                        return this.filterId(this.oFilters.iId, sWhere)
-                    },
+                  label: 'ID',
+                  align: 'left',
+                  name: 'id',
+                  field: 'id',
+                  filter: sWhere => {
+                      return this.filterId(this.oFilters.iId, sWhere)
+                  },
+                  sortable: true,
                 },
                 {
-                    text: this.$t('PAN'),
-                    value: 'pan.pan',
-                    filter: sWhere => {
-                        return this.filterPan(this.oFilters.sPan, sWhere)
-                    },
+                  label: this.$t('PAN'),
+                  name: 'pan',
+                  field: 'pan',
+                  filter: sWhere => {
+                      return this.filterPan(this.oFilters.sPan, sWhere)
+                  },
+                  sortable: true,
                 },
-                { text: this.$t('PIN'), value: 'pan.pin',
-                    filter: sWhere => {
-                        return this.filterBasic(this.oFilters.sPin, sWhere)
-                    },
+                {
+                  label: this.$t('PIN'),
+                  name: 'pin',
+                  field: 'pin',
+                  filter: sWhere => {
+                      return this.filterBasic(this.oFilters.sPin, sWhere)
+                  },
+                  sortable: true,
                 },
-                { text: this.$t('groups'), value: 'groups'},
-                { text: this.$t('company'), value: 'company'},
-                { text: this.$t('department'), value: 'department'},
-                { text: this.$t('location'), value: 'location'},
-                { text: this.$t('updated_at'), value: 'updated_at'},
-                { text: this.$t('created_at'), value: 'created_at'},
-                { text: 'Actions', value: 'action', sortable: false },
+                {
+                  label: this.$t('groups'),
+                  name: 'groups',
+                  field: 'groups',
+                  sortable: true,
+                },
+                {
+                  label: this.$t('company'),
+                  name: 'company',
+                  field: 'company',
+                  sortable: true,
+                },
+                {
+                  label: this.$t('department'),
+                  name: 'department',
+                  field: 'department',
+                  sortable: true,
+                },
+                {
+                  label: this.$t('location'),
+                  name: 'location',
+                  field: 'location',
+                  sortable: true,
+                },
+                {
+                  label: this.$t('updated_at'),
+                  name: 'updated_at',
+                  field: 'updated_at',
+                  sortable: true,
+                },
+                {
+                  label: this.$t('created_at'),
+                  name: 'created_at',
+                  field: 'created_at',
+                  sortable: true,
+                },
+                {
+                  label: 'Actions',
+                  name: 'action',
+                  field: 'action',
+                  sortable: false
+                },
             ];
         }
-    },
-
-    components: {
-        TheMask,
-        UserDataModal,
-        Print,
-        BulkProfileChanges,
-        BulkGroupChanges
     },
 
     directives: {
@@ -699,14 +783,8 @@ export default {
 
           all_groups: [],
 
-          maxPanChars: v => v && v.length <= 6 || 'Input too long!',
-          maxPinChars: v => v && v.length == 4 || 'Pin Wrong!',
-
-          // Snackbar
-          snack: false,
-          snackColor: '',
-          snackText: '',
-          snackTimeout: 3000,
+          maxPanChars: v => v && v.length <= 6 + 1 || 'Input too long!',
+          maxPinChars: v => v && v.length == 4 + 1 || 'Pin Wrong!',
 
           // Create Users
           iCreateUsersNumber: 5,
@@ -733,6 +811,54 @@ export default {
     },
 
     methods: {
+
+      testShowDialog() {
+        this.$q.dialog({
+          title: 'Alert',
+          message: 'Modern HTML5 front-end framework on steroids.'
+        })
+      },
+
+        myFilter (rows, terms, cols, cellValue) {
+          const lowerTerms = terms ? terms.toLowerCase() : ''
+          return rows.filter(
+            row => cols.some( function(col) {
+              return (JSON.stringify(cellValue(col,row)) + '').toLowerCase().indexOf(lowerTerms) !== -1;
+            })
+          )
+        },
+
+        customSort (rows, sortBy, descending) {
+          let data = [...rows]
+
+          if (sortBy) {
+            data.sort((a, b) => {
+              let x = descending ? b : a
+              let y = descending ? a : b
+
+              switch (sortBy) {
+                case 'name':
+                  // String Sort
+                  return x[sortBy] > y[sortBy] ? 1 : x[sortBy] < y[sortBy] ? -1 : 0
+                  break;
+
+                case 'pin':
+                case 'pan':
+                  // String Sort
+                  return x.pan[sortBy] > y.pan[sortBy] ? 1 : x.pan[sortBy] < y.pan[sortBy] ? -1 : 0
+                  break;
+
+                default:
+                  // numeric sort
+                  return parseFloat(x[sortBy]) - parseFloat(y[sortBy])
+                  break;
+              }
+
+            })
+          }
+
+          return data;
+        },
 
         getGroupPivotColor(group) {
             var p = group.pivot;
@@ -923,10 +1049,12 @@ export default {
             }).then(function(e) {
                 // Success
                 if(!e || !e.response || !e.response.data || !e.response.data.error) {
-                    _this.snackTimeout = 3000;
-                    _this.snack = true;
-                    _this.snackColor = 'success'
-                    _this.snackText = _this.$t('data_saved')
+
+                    _this.$q.notify({
+                      message: this.$t('data_saved'),
+                      color: 'green',
+                      timeout: 3000,
+                    })
 
                     // Save Old
                     for (var i in users) {
@@ -945,10 +1073,11 @@ export default {
                     errText += ': ' + err[e];
                 }
 
-                _this.snackTimeout = 6000;
-                _this.snack = true;
-                _this.snackColor = 'error';
-                _this.snackText = _this.$t('attribute_unsaved') + "<br />" + errText;
+                _this.$q.notify({
+                  message: _this.$t('attribute_unsaved') + "<br />" + errText,
+                  color: 'error',
+                  timeout: 6000,
+                })
 
                 _this.loading = false;
             });
@@ -974,10 +1103,12 @@ export default {
             }).then(function(e) {
                 // Success
                 _this.loading = false;
-                _this.snackTimeout = 3000;
-                _this.snack = true;
-                _this.snackColor = 'success'
-                _this.snackText = _this.$t('data_saved')
+
+                _this.$q.notify({
+                  message: this.$t('data_saved'),
+                  color: 'green',
+                  timeout: 3000,
+                })
 
                 var tmpUsers = _this.copyObject(users);
                 for (var i in tmpUsers) {
@@ -991,17 +1122,19 @@ export default {
         },
 
         save() {
-            this.snackTimeout = 3000;
-            this.snack = true
-            this.snackColor = 'primary'
-            this.snackText = this.$t('attribute_changed')
+            this.$q.notify({
+              message: this.$t('attribute_changed'),
+              color: 'primary',
+              timeout: 3000,
+            })
         },
 
         cancel () {
-            this.snackTimeout = 3000;
-            this.snack = true
-            this.snackColor = 'primary'
-            this.snackText = this.$t('canceled')
+            this.$q.notify({
+              message: this.$t('canceled'),
+              color: 'primary',
+              timeout: 3000,
+            })
         },
         open () {
             // When Edit Dialog Open
@@ -1049,3 +1182,22 @@ export default {
 }
 
 </script>
+
+<style lang="sass">
+.my-sticky-header-table
+  /* max height is important */
+  .q-table__middle
+    max-height: 75vh
+
+  thead tr th
+    position: sticky
+    z-index: 1
+    background: #fff
+  thead tr:first-child th
+    top: 0
+
+  /* this is when the loading indicator appears */
+  &.q-table--loading thead tr:last-child th
+    /* height of all previous header rows */
+    top: 48px
+</style>

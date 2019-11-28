@@ -1,141 +1,97 @@
 <template>
     <span>
+        <q-btn @click="editDialog = true" color="primary" depressed tile outline class="mt-2 mr-2">{{ sEditText }}</q-btn>
+        <q-dialog
+          v-model="editDialog"
+          max-width="900px"
+          max-height="1000px"
+          min-height="500px"
+          height="90%"
+          persistent
+          scrollable
+          transition="dialog-bottom-transition"
+          :maximized="maximizedToggle"
+          >
+            <q-card>
+                <q-toolbar class="bg-primary text-white" dark color="primary">
+                    <q-toolbar-title>{{ sEditText }}</q-toolbar-title>
 
-        <v-snackbar v-model="snack" :timeout="snackTimeout" :color="snackColor" top>
-            <span v-html="snackText"></span>
-            <v-btn text @click="snack = false">{{ $t('closer_button') }}</v-btn>
-        </v-snackbar>
+                      <q-space />
 
-        <v-dialog v-model="editDialog" max-width="900px" max-height="1000px" min-height="500px" height="90%" persistent scrollable transition="dialog-bottom-transition">
-            <template v-slot:activator="{ on }">
-                <v-btn color="primary" depressed tile outlined class="mt-2 mr-2" v-on="on">{{ sEditText }}</v-btn>
-            </template>
-            <v-card>
-                <v-toolbar dark color="primary">
-                    <v-btn icon dark @click="editDialog = false">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>{{ sEditText }}</v-toolbar-title>
-                </v-toolbar>
-                <v-card-text>
+                      <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
+                        <q-tooltip v-if="maximizedToggle" content-class="bg-white text-primary">Minimieren</q-tooltip>
+                      </q-btn>
+                      <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
+                        <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximieren</q-tooltip>
+                      </q-btn>
+                      <q-btn dense flat icon="close" v-close-popup>
+                        <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
+                      </q-btn>
+
+
+                </q-toolbar>
+                <q-card-section>
                     <br>
-                    <v-card>
-                        <v-card-title>
+                    <q-card>
+                        <q-card-section>
                             <!-- New Company -->
-                            <v-dialog v-model="createDialog" persistent max-width="290">
-                                <template v-slot:activator="{ on }">
-                                    <v-btn color="primary" depressed dark v-on="on">{{ sCreateText }}</v-btn>
-                                </template>
-                                <v-card>
-                                    <v-card-title class="headline">{{ sCreateText }}</v-card-title>
-                                    <v-card-text>
-                                        <v-text-field :label="sInputLabel" required v-model="item.name" autofocus></v-text-field>
-                                        <template v-if="sModel == 'group'">
-                                            <v-text-field :label="sInputLabel2" required v-model="item.description_public"></v-text-field>
-                                            <v-text-field :label="sInputLabel3" required v-model="item.description_mods"></v-text-field>
-                                        </template>
-                                    </v-card-text>
-                                    <v-card-actions>
-                                        <div class="flex-grow-1"></div>
-                                        <v-btn color="green darken-1" text @click="createDialog = false">{{ $t('cancel') }}</v-btn>
-                                        <v-btn color="green darken-1" text @click="createModel(item)">{{ $t('save') }}</v-btn>
-                                    </v-card-actions>
-                                </v-card>
-                            </v-dialog>     
+                            <q-btn @click="createDialog = true" color="primary" depressed dark >{{ sCreateText }}</q-btn>
+                            <q-dialog v-model="createDialog" persistent>
+
+                              <q-card style="min-width: 350px">
+                                <q-card-section>
+                                  <div class="text-h6">{{ sCreateText }}</div>
+                                </q-card-section>
+
+                                <q-card-section>
+                                  <q-input dense v-model="item.name" :label="sInputLabel" required autofocus @keyup.enter="prompt = false" />
+                                  <template v-if="sModel == 'group'">
+                                       <q-input :label="sInputLabel2" required v-model="item.description_public" />
+                                       <q-input :label="sInputLabel3" required v-model="item.description_mods" />
+                                  </template>
+                                </q-card-section>
+
+                                <q-card-actions align="right" class="text-primary">
+                                  <q-btn flat :label="$t('cancel')" v-close-popup />
+                                  <q-btn flat :label="$t('save')" v-close-popup @click="createModel(item)" />
+                                </q-card-actions>
+                              </q-card>
+
+                            </q-dialog>
                             <div class="flex-grow-1"></div>
-                            <!-- <v-text-field v-model="sSearch" append-icon="search" label="Search" single-line hide-details></v-text-field> -->
-                        </v-card-title>
-                        <v-data-table
-                            :headers="aHeaders"
-                            :items="oModels"
+
+                        </q-card-section>
+                        <q-table
+                            :columns="aHeaders"
+                            :data="oModels"
                             :items-per-page="20"
-                            class="elevation-1"
+                            class="elevation-1 my-sticky-header-table"
                             v-if="aHeaders">
-                            <template v-slot:item.name="props">
-                                <v-edit-dialog
-                                    :return-value.sync="props.item.name"
-                                    @save="save(props.item)"
-                                    @cancel="cancel"
-                                    @open="open"
-                                    @close="close" 
-                                    lazy 
-                                >
-                                <span v-if="props && props.item && props.item.name && props.item.name.length > 0">{{ props.item.name }}</span>
-                                <span v-else class="red--text c-code-text">{{ $t('empty') }}</span>
-                                    <template v-slot:input>
-                                        <v-text-field
-                                            v-model="props.item.name"
-                                            label="Edit"
-                                            single-line
-                                            :rules="[minChars]"
-                                            counter 
-                                            required 
-                                        ></v-text-field>
-                                    </template>
-                                </v-edit-dialog>
+
+
+                            <template v-slot:body-cell-name="props">
+                              <q-td :props="props">
+                                <MyPopupEdit :props="props" val="name" :save="save" />
+                              </q-td>
                             </template>
 
-                            <!-- Description Public -->
-                            <template v-slot:item.description_public="props">
-                                <v-edit-dialog
-                                    :return-value.sync="props.item.description_public"
-                                    @save="save(props.item)"
-                                    @cancel="cancel"
-                                    @open="open"
-                                    @close="close" 
-                                    lazy 
-                                >
-                                    <span v-if="props && props.item && props.item.description_public && props.item.description_public.length > 0">{{ props.item.description_public }}</span>
-                                    <span v-else class="red--text c-code-text">{{ $t('empty') }}</span>
-                                    <template v-slot:input>
-                                        <v-text-field
-                                            v-model="props.item.description_public"
-                                            label="Edit"
-                                            single-line
-                                            :rules="[minChars]"
-                                            counter 
-                                            required 
-                                        ></v-text-field>
-                                    </template>
-                                </v-edit-dialog>
-                            </template>
-                            
-                            <!-- Description Mods -->
-                            <template v-slot:item.description_mods="props">
-                                <v-edit-dialog
-                                    :return-value.sync="props.item.description_mods"
-                                    @save="save(props.item)"
-                                    @cancel="cancel"
-                                    @open="open"
-                                    @close="close" 
-                                    lazy 
-                                >
-                                <span v-if="props && props.item && props.item.description_mods && props.item.description_mods.length > 0">{{ props.item.description_mods }}</span>
-                                <span v-else class="red--text c-code-text">{{ $t('empty') }}</span>
-                                    <template v-slot:input>
-                                        <v-text-field
-                                            v-model="props.item.description_mods"
-                                            label="Edit"
-                                            single-line
-                                            :rules="[minChars]"
-                                            counter 
-                                            required 
-                                        ></v-text-field>
-                                    </template>
-                                </v-edit-dialog>
+                            <template v-slot:body-cell-description_public="props">
+                              <q-td :props="props">
+                                <MyPopupEdit :props="props" val="description_public" :save="save" />
+                              </q-td>
                             </template>
 
-                        </v-data-table>
-                    </v-card>       
-                </v-card-text>
-                <v-card-actions>
-                    <div class="flex-grow-1"></div>
-                    <v-btn color="primary" text @click="editDialog = false">
-                        close
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+                            <template v-slot:body-cell-description_mods="props">
+                              <q-td :props="props">
+                                <MyPopupEdit :props="props" val="description_mods" :save="save" />
+                              </q-td>
+                            </template>
+
+                        </q-table>
+                    </q-card>
+                </q-card-section>
+            </q-card>
+        </q-dialog>
     </span>
 </template>
 
@@ -143,8 +99,14 @@
 
 import { mapGetters } from 'vuex'
 import axios from 'axios'
+import MyPopupEdit from '~/components/MyPopupEdit'
 
 export default {
+
+    components: {
+      MyPopupEdit,
+    },
+
     computed: {
         ...mapGetters({
             user: 'auth/user',
@@ -164,6 +126,7 @@ export default {
 
     data() {
         return {
+            maximizedToggle: false,
             editDialog: false,
             createDialog: false,
             item: {
@@ -172,24 +135,48 @@ export default {
             },
             sSearch: '',
 
-            // Snackbar
-            snack: false,
-            snackColor: '',
-            snackText: '',
-            snackTimeout: 3000,
-
             // From Parent
             sModel:  this.p_sModel,
             oModels: this.p_oModels,
 
             // Company Headers
             aHeaders: this.p_aHeaders || [
-                { text: this.$t('id'), value: 'id' },
-                { text: this.$t('name'), value: 'name' },
-                { text: this.$t('public'), value: 'public' },
-                { text: this.$t('created_by'), value: 'created_by' },
-                { text: this.$t('updated_at'), value: 'updated_at'},
-                { text: this.$t('created_at'), value: 'created_at'},
+                {
+                  name: 'id',
+                  label: this.$t('id'),
+                  field: 'id',
+                  sortable: true,
+                },
+                {
+                  name: 'name',
+                  label: this.$t('name'),
+                  field: 'name',
+                  sortable: true,
+                },
+                {
+                  name: 'public',
+                  label: this.$t('public'),
+                  field: 'public',
+                  sortable: true,
+                },
+                {
+                  name: 'created_by',
+                  label: this.$t('created_by'),
+                  field: 'created_by',
+                  sortable: true,
+                },
+                {
+                  name: 'updated_at',
+                  label: this.$t('updated_at'),
+                  field: 'updated_at',
+                  sortable: true,
+                },
+                {
+                  name: 'created_at',
+                  label: this.$t('created_at'),
+                  field: 'created_at',
+                  sortable: true,
+                },
             ],
 
             // Rules
@@ -201,10 +188,12 @@ export default {
         save(item) {
             if(!item.name) return;
 
-            this.snackTimeout = 5000;
-            this.snack = true
-            this.snackColor = 'success'
-            this.snackText = this.$t('data_saved')
+            this.$q.notify({
+              message: this.$t('data_saved'),
+              color: 'green',
+              timeout: 5000,
+            })
+
             axios.patch('/api/'+ this.sModel +'/update', {
                 item: item
             });
@@ -225,12 +214,9 @@ export default {
         },
 
         cancel () {
-            // this.snackTimeout = 3000;
-            // this.snack = true
-            // this.snackColor = 'primary'
-            // this.snackText = this.$t('canceled')
+
         },
-        
+
         open () {
         },
 
