@@ -66,10 +66,10 @@
           <div class="row">
             <div class="col-12 sm-12 md-12 self-right">
               <!-- Submit Button -->
-              <q-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</q-btn>
+              <q-btn class="full-width" color="primary" large :loading="form.busy" type="submit">{{ $t('login') }}</q-btn>
             </div>
-            <div class="col-12 sm-12 md-12 self-center">
-
+            <div class="col-12 sm-12 md-12 self-center text-center">
+              <br>
               <p>Neu hier? <router-link :to="{ name: 'register' }" class="small ml-auto my-auto">{{ $t('free_register') }}</router-link></p>
               <p>Haben Sie Ihr <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">{{ $t('forgot_password') }}</router-link></p>
 
