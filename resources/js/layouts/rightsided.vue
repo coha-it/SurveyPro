@@ -1,22 +1,26 @@
 <template>
-  <q-page>
-    <div class="row">
-      <div class="col-12 col-sm-12 col-md-6 col-xl-6">
-        <div class="gt-sm coha--banner-wrapper">
-            <div class="coha--banner">
-                <div class="image" v-bind:style="{ backgroundImage: backgroundImage }"></div>
-                <div class="text"></div>
-            </div>
+  <q-layout>
+  <q-page-container>
+    <q-page>
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-6 col-xl-6">
+          <div class="gt-sm coha--banner-wrapper">
+              <div class="coha--banner">
+                  <div class="image" v-bind:style="{ backgroundImage: backgroundImage }"></div>
+                  <div class="text"></div>
+              </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-xl-6">
+          <div style="display: grid; grid-template-rows: 1fr auto; grid-template-columns: 100%;min-height: 100vh;">
+            <child />
+            <Footer />
+          </div>
         </div>
       </div>
-      <div class="col-12 col-sm-12 col-md-6 col-xl-6">
-        <div style="display: grid; grid-template-rows: 1fr auto; grid-template-columns: 100%;min-height: 100vh;">
-          <child />
-          <Footer />
-        </div>
-      </div>
-    </div>
-  </q-page>
+    </q-page>
+  </q-page-container>
+  </q-layout>
 </template>
 
 <script>

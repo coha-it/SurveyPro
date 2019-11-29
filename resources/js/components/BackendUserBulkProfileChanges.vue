@@ -1,49 +1,69 @@
 <template>
-    <div>
-        <v-menu offset-x open-on-hover>
-            <template v-slot:activator="{ on: menu }">
-                <v-list-item v-on="{ ...menu }">
-                    <v-list-item-title>{{ menuText }}</v-list-item-title>
-                    <v-list-item-action>
-                        <v-icon>mdi-chevron-right</v-icon>
-                    </v-list-item-action>
-                </v-list-item>
-            </template>
-            <v-list>
-                <v-list-item @click="dialog = !dialog">
-                    <v-list-item-title>Ändern</v-list-item-title>
-                </v-list-item>
-            </v-list>
-        </v-menu>
-        <v-dialog v-model="dialog" transition="dialog-bottom-transition" max-width="700" persistent>
-            <v-toolbar dark color="primary">
-                <v-btn icon dark @click="dialog = false">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-                <v-toolbar-title>{{ title }}</v-toolbar-title>
-                <div class="flex-grow-1"></div>
-                <v-toolbar-items>
-                    <v-btn dark text @click="changeUser(selected, oNewItem)">Änderungen übernehmen</v-btn>
-                </v-toolbar-items>
-            </v-toolbar>
-            <v-list three-line subheader>
-                <v-subheader>Firma wählen</v-subheader>
-                <v-list-item>
-                    <v-list-item-content style="max-width:400px;">
-                        <v-select 
-                            outlined 
-                            clearable 
-                            :label="label" 
-                            required 
-                            :items="aItems"
+
+    <q-item clickable>
+      <q-item-section>{{ menuText }}</q-item-section>
+      <q-item-section side>
+        <q-icon name="keyboard_arrow_right" />
+      </q-item-section>
+      <q-menu anchor="top right" self="top left">
+          <q-list>
+              <q-item clickable @click="dialog = true">
+                <q-item-section>
+                  <q-item-label>Ändern</q-item-label>
+                </q-item-section>
+              </q-item>
+          </q-list>
+      </q-menu>
+
+        <q-dialog v-model="dialog" :maximized="maximizedToggle"  transition="dialog-bottom-transition" max-width="700" persistent>
+          <q-card>
+            <q-toolbar class="bg-primary text-white" dark color="primary">
+                <div>{{ title }}</div>
+                <q-space />
+                <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
+                  <q-tooltip v-if="maximizedToggle" content-class="bg-white text-primary">Minimieren</q-tooltip>
+                </q-btn>
+                <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
+                  <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximieren</q-tooltip>
+                </q-btn>
+                <q-btn dense flat icon="close" v-close-popup>
+                  <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
+                </q-btn>
+            </q-toolbar>
+            <q-list three-line subheader>
+                <q-item>
+                  <q-item-section>
+                    Firma wählen
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section style="max-width:400px;">
+                        <q-select
+                            outlined
+                            clearable
+                            :label="label"
+                            required
+                            :options="aItems"
                             v-model="oNewItem"
-                            item-text="name"
-                            return-object></v-select>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
-        </v-dialog>
-    </div>
+                            option-label="name"
+                            />
+                    </q-item-section>
+                </q-item>
+              <q-item>
+                <q-btn unelevated color="primary" dark @click="changeUser(selected, oNewItem)">Änderungen übernehmen</q-btn>
+              </q-item>
+            </q-list>
+
+
+          </q-card>
+        </q-dialog>
+
+    </q-item>
+
+
+
+
+
 </template>
 
 <script>
@@ -71,13 +91,15 @@ export default {
     data () {
       return {
           dialog: false,
-          oNewItem: {}
+          oNewItem: '',
+          maximizedToggle: false
       };
     },
 
     methods: {
         changeUser(aSelectedUsers, item) {
             for (var i in aSelectedUsers) {
+              console.log(item);
                 var oUser = aSelectedUsers[i];
                 oUser[this.sId] = item.id;
                 oUser[this.sModel] = item;

@@ -13,6 +13,24 @@ h1 {
   margin-bottom: 0.25em;
 }
 
+// PRINT
+@media print {
+  // nav,
+  // .v-application--wrap,
+  // .q-toolbar{
+  //     display: none !important;
+  // }
+
+  // .coha--print,
+  // .q-dialog__inner,
+  // .q-dialog,
+  // .q-dialog__inner--maximized>div
+  //  {
+  //     position: inherit;
+  // }
+
+}
+
 // Guest / Rightsided Content View
 .rightsided-content {
     padding: 5px 20px;
@@ -210,7 +228,7 @@ select {
 }
 
 // PIN
-input[name="pin"] {
+.secured input {
     -moz-appearance: textfield;
     -webkit-appearance: textfield;
     -webkit-text-security: disc;
@@ -290,6 +308,51 @@ input[name="pin"] {
     &.pin {
         white-space: nowrap;
     }
-
 }
 
+// Fullsize PopUp Edit
+.q-menu.scroll.q-popup-edit.maximize {
+  left: 0 !important;
+  right: 0 !important;
+  margin: auto;
+  top: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.25);
+  position: fixed;
+  width: 100% !important;
+  max-width: unset !important;
+  height: 100% !important;
+  max-height: 1200px !important;
+
+  .inner,
+  .q-popup-edit__buttons
+  {
+    margin: auto;
+    min-width: 380px !important;
+    width: 50vw !important;
+    max-width: 90% !important;
+  }
+
+
+
+  .inner {
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    height: auto;
+    padding: 20px;
+    background: #fff;
+    max-height: 90vh !important;
+    overflow: scroll;
+  }
+
+  .q-popup-edit__buttons {
+    background: #fff;
+    bottom: -8px;
+    position: sticky;
+  }
+
+
+}

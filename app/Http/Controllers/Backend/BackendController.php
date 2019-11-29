@@ -24,10 +24,10 @@ class BackendController extends Controller
 
     /**
      * Get the user's profile as JSON itself.
-     * 
+     *
      * Examples:
      * return $request->user();
-     * return App\User::with(['pan', 'right'])->find($request->user()->id); 
+     * return App\User::with(['pan', 'right'])->find($request->user()->id);
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
@@ -45,7 +45,7 @@ class BackendController extends Controller
 
     /**
      * Just Create a Random PIN with 0-9 and 4 Characters
-     * 
+     *
      * @return String $token
      */
     public function getRandom($pattern, $max) {
@@ -54,7 +54,7 @@ class BackendController extends Controller
 
     /**
      * Just Create a Random String with A-Z and 0-9 and 6 Characters
-     * 
+     *
      *
      * @return String $token
      */
@@ -71,7 +71,7 @@ class BackendController extends Controller
 
     /**
      * Just Create a Random PIN with 0-9 and 4 Characters
-     * 
+     *
      * @return String $token
      */
     public function getRandomPin() {
@@ -96,7 +96,7 @@ class BackendController extends Controller
         $arr = [];
 
         // Go Through Number
-        for ($i=0; $i < $number; $i++) { 
+        for ($i=0; $i < $number; $i++) {
             $sRandPan = $this->getRandomPan();
             $sRandPin = $this->getRandomPin();
 
@@ -128,10 +128,10 @@ class BackendController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function updateCreatedUsers(Request $request) {
-        
+
         // Get Data
         $self = $request->user();
-        
+
 
         // Validate Data
         $validator = \Validator::make($request->all(), [
@@ -141,7 +141,7 @@ class BackendController extends Controller
         if ($validator->fails()) {
             return response()->json(
                 [
-                    'error' => $validator->errors(), 
+                    'error' => $validator->errors(),
                     'user' => $user->toJson()
                 ],
                 400
@@ -161,7 +161,7 @@ class BackendController extends Controller
 
             // If Group is in Request
             if($user->groups) {
-                
+
                 $aSync = [];
 
                 // Go through requestes User-Groups
@@ -182,7 +182,7 @@ class BackendController extends Controller
             // Update Data
             $user->update($reqUser);
             $user->pan()->update($reqUser['pan']);
-            array_push($response, $user->toJson());
+            array_push($response, $user->toArray());
         }
 
         return $response;
@@ -206,11 +206,11 @@ class BackendController extends Controller
         $deletedIds = [];
         $self = $request->user();
 
-        for ($i=0; $i < count($userIds); $i++) { 
+        for ($i=0; $i < count($userIds); $i++) {
             // Find
             $id = $userIds[$i];
             $user = $self->users->find($id);
-            
+
             // Delete
             array_push($deletedIds, $user->id);
             $user->pan->delete();

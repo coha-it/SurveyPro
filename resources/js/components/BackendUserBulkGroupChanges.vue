@@ -1,89 +1,112 @@
 <template>
-    <div>
-        <v-menu offset-x open-on-hover>
-            <template v-slot:activator="{ on: menugroup }">
-                <v-list-item v-on="{ ...menugroup }">
-                    <v-list-item-title>Gruppe</v-list-item-title>
-                    <v-list-item-action>
-                        <v-icon>mdi-chevron-right</v-icon>
-                    </v-list-item-action>
-                </v-list-item>
-            </template>
-            <v-list>
-                <v-list-item @click="bAddDialog = true">
-                    <v-list-item-title>Hinzufügen</v-list-item-title>
-                </v-list-item>
+    <q-item clickable>
+        <q-item-section>Gruppe</q-item-section>
+        <q-item-section side>
+          <q-icon name="keyboard_arrow_right" />
+        </q-item-section>
+        <q-menu anchor="top right" self="top left">
+            <q-list>
+                <q-item clickable @click="bAddDialog = true">
+                  <q-item-section>
+                    <q-item-label>Zu Gruppe hinzufügen</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item clickable @click="bDeleteDialog = true">
+                  <q-item-section>
+                    <q-item-label>Gruppen-Verbindungen lösen</q-item-label>
+                  </q-item-section>
+                </q-item>
+            </q-list>
+        </q-menu>
 
-                <v-list-item @click="bDeleteDialog = true">
-                    <v-list-item-title>Löschen</v-list-item-title>
-                </v-list-item>
-            </v-list>
-        </v-menu>
+        <q-dialog v-model="bAddDialog" :maximized="maximizedToggle" transition="dialog-bottom-transition" max-width="700" persistent>
+          <q-card>
+            <q-toolbar class="bg-primary text-white" dark color="primary">
+                <div>Gruppe(n) hinzufügen</div>
+                <q-space />
+                <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
+                  <q-tooltip v-if="maximizedToggle" content-class="bg-white text-primary">Minimieren</q-tooltip>
+                </q-btn>
+                <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
+                  <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximieren</q-tooltip>
+                </q-btn>
+                <q-btn dense flat icon="close" v-close-popup>
+                  <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
+                </q-btn>
+            </q-toolbar>
+            <q-list three-line subheader>
+                <q-item>
+                  <q-item-section>
+                    Gruppen zum hinzufügen wählen
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                    <q-item-section style="max-width:400px;">
+                        <q-select
+                          filled
+                          clearable
+                          label="Gruppe(n) Hinzufügen"
+                          :options="aItems"
+                          v-model="aAddItems"
+                          option-label="name"
+                          option-value="id"
+                          multiple
+                          />
+                    </q-item-section>
+                </q-item>
 
-        <v-dialog v-model="bAddDialog" transition="dialog-bottom-transition" max-width="700" persistent>
-            <v-toolbar dark color="primary">
-                <v-btn icon dark @click="bAddDialog = false">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-                <v-toolbar-title>Gruppe(n) hinzufügen</v-toolbar-title>
-                <div class="flex-grow-1"></div>
-                <v-toolbar-items>
-                    <v-btn dark text @click="addGroupToUser(selected, aAddItems)">Änderungen übernehmen</v-btn>
-                </v-toolbar-items>
-            </v-toolbar>
-            <v-list three-line subheader>
-                <v-subheader>Gruppen zum hinzufügen wählen</v-subheader>
-                <v-list-item>
-                    <v-list-item-content style="max-width:400px;">
-                        <v-select 
-                            outlined 
-                            clearable 
-                            label="Hinzufügen" 
-                            required 
-                            :items="aItems"
-                            v-model="aAddItems"
-                            item-text="name"
-                            return-object
-                            multiple
-                            chips
-                            ></v-select>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
-        </v-dialog>
+                <q-item>
+                  <q-btn dark unelevated color="primary" @click="addGroupToUser(selected, aAddItems)" label="Änderungen übernehmen" />
+                </q-item>
+            </q-list>
+          </q-card>
+        </q-dialog>
 
-        <v-dialog v-model="bDeleteDialog" transition="dialog-bottom-transition" max-width="700" persistent>
-            <v-toolbar dark color="primary">
-                <v-btn icon dark @click="bDeleteDialog = false">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-                <v-toolbar-title>Gruppen von Nutzern entfernen</v-toolbar-title>
-                <div class="flex-grow-1"></div>
-                <v-toolbar-items>
-                    <v-btn dark text @click="removeGroupFromUser(selected, aRemoveItems)">Änderungen übernehmen</v-btn>
-                </v-toolbar-items>
-            </v-toolbar>
-            <v-list three-line subheader>
-                <v-subheader>Gruppe zum Entfernen wählen</v-subheader>
-                <v-list-item>
-                    <v-list-item-content style="max-width:400px;">
-                        <v-select 
-                            outlined 
-                            clearable 
-                            label="Löschen" 
-                            required 
-                            :items="aItems"
-                            v-model="aRemoveItems"
-                            item-text="name"
-                            return-object
-                            multiple
-                            chips
-                            ></v-select>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
-        </v-dialog>
-    </div>
+
+
+
+        <q-dialog v-model="bDeleteDialog" :maximized="maximizedToggle" transition="dialog-bottom-transition" max-width="700" persistent>
+          <q-card>
+            <q-toolbar class="bg-primary text-white" dark color="primary">
+                <div>Gruppe(n) hinzufügen</div>
+                <q-space />
+                <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
+                  <q-tooltip v-if="maximizedToggle" content-class="bg-white text-primary">Minimieren</q-tooltip>
+                </q-btn>
+                <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
+                  <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximieren</q-tooltip>
+                </q-btn>
+                <q-btn dense flat icon="close" v-close-popup>
+                  <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
+                </q-btn>
+            </q-toolbar>
+            <q-list three-line subheader>
+                <q-item>
+                  <q-item-section>
+                    Gruppen von Nutzern entfernen
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                    <q-item-section style="max-width:400px;">
+                        <q-select
+                          filled
+                          clearable
+                          label="Gruppe wählen"
+                          :options="aItems"
+                          v-model="aRemoveItems"
+                          option-label="name"
+                          option-value="id"
+                          multiple
+                          />
+                    </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-btn dark unelevated color="primary" @click="removeGroupFromUser(selected, aRemoveItems)" label="Änderungen übernehmen" />
+                </q-item>
+            </q-list>
+          </q-card>
+        </q-dialog>
+    </q-item>
 </template>
 
 <script>
@@ -105,10 +128,11 @@ export default {
 
     data () {
       return {
+          maximizedToggle: false,
           bAddDialog: false,
           bDeleteDialog: false,
-          aAddItems: [],
-          aRemoveItems: [],
+          aAddItems: null,
+          aRemoveItems: null,
       };
     },
 
@@ -132,7 +156,7 @@ export default {
                     oItem.pivot.is_mod = 0;
                     oItem.pivot.is_member = 1;
 
-                    // If not found 
+                    // If not found
                     if(oUser.groups.findIndex(group => group.id === oItem.id) === -1) {
                         oUser.groups.push(oItem);
                     }
@@ -157,7 +181,7 @@ export default {
                     if(foundIndex >= 0) {
                         oUser.groups.splice(foundIndex, 1);
                     }
-                    
+
                 }
 
             }
