@@ -12,7 +12,7 @@
         :label="users.length + ' ' + $t('print')"
         />
 
-      <q-dialog content-class="coha--print-wrapper" v-model="dialog" transition="disabled" overflowed maximized no-click-animation>
+      <q-dialog content-class="coha--print-wrapper" v-model="dialog" maximized>
         <div>
           <q-toolbar class="bg-primary text-white" dark color="primary">
             <q-btn icon dark @click="dialog = false">
@@ -63,17 +63,48 @@
                   </div>
               </div>
           </div>
-          <template>
-              <component v-if="dialog" is="style" type="text/css">
-                    .q-dialog,
-                    .q-dialog__inner,
-                    .q-dialog__inner--maximized>div {
-
-                    }
-              </component>
-          </template>
         </div>
       </q-dialog>
+
+      <component v-if="bBeforePrint" is="style" type="text/css">
+
+        #app {
+          display: none !important;
+        }
+
+        html,
+        body,
+        .q-body--fullscreen-mixin,
+        .q-body--prevent-scroll,
+        .q-body--dialog,
+        .q-dialog,
+        .q-dialog__inner,
+        .q-dialog__inner--maximized>div,
+        .coha--print-wrapper,
+        .coha--print-wrapper .q-dialog__inner,
+        .coha--print-wrapper .q-dialog__inner--maximized>div,
+        .coha--print-wrapper .coha--print
+        {
+          max-height: unset !important;
+          height: auto !important;
+          position: static !important;
+          overflow: scroll !important;
+          will-change: inherit !important;
+          -webkit-overflow-scrolling: inherit !important;
+        }
+
+
+        nav,
+        .v-application--wrap,
+        .q-toolbar{
+            display: none !important;
+        }
+
+        .fixed, .fixed-bottom, .fixed-bottom-left, .fixed-bottom-right, .fixed-center, .fixed-full, .fixed-left, .fixed-right, .fixed-top, .fixed-top-left, .fixed-top-right, .fullscreen {
+          position: static !important;
+        }
+      </component>
+
     </span>
 </template>
 
@@ -95,6 +126,7 @@ export default {
 
     data() {
         return {
+            bBeforePrint: false,
             dialog: false,
             colorfull: true,
             oPrint: {
@@ -108,11 +140,21 @@ export default {
 
     methods: {
         printView() {
-            var _this = this;
-            _this.dialog = true;
+          var _this = this;
+          _this.dialog = true;
         },
         printUsers() {
+          var _this = this;
+
+          _this.bBeforePrint = true;
+
+          setTimeout(function() {
             window.print();
+            setTimeout(function() {
+              _this.bBeforePrint = false;
+            }, 10);
+          }, 10);
+
         },
         url(user) {
             return "https://surveypro.tk/p/"+user.pan.pan;
@@ -124,19 +166,23 @@ export default {
 <style lang="scss" scoped>
 
 .coha--print-wrapper {
+    // position: fixed;
+    // left: 0;
+    // top: 0;
+    // width: auto;
+    // height: auto;
+    // z-index: 99999;
+    // background: #ffff;
+    // overflow: visible;
   .coha--print {
       display: block;
       font-size: .5cm;
       .element {
           margin: auto;
-          min-width: 500px;
           width: 100vw;
-          max-width: 2000px;
-          min-height: 500px;
           height: 100vh;
-          max-height: 3000px;
-          padding: 100px;
           color: #000;
+          display: inline-block;
 
           letter-spacing: 0.05em;
           display: flex;
@@ -144,15 +190,20 @@ export default {
           justify-content: center;
           align-self: center;
 
+          page-break-inside: avoid;
+
           .inner {
               page-break-inside: avoid;
               position: relative;
               display: block;
-              width: 90mm;
-              height: 150mm;
+              width: 110mm;
+              height: 170mm;
               padding: 2mm 10mm;
               text-align: center;
               margin: auto;
+              h3 {
+                margin: 0;
+              }
               .bg {
                   // background: #e8d03e;
                   width: 100%;
@@ -217,4 +268,13 @@ export default {
       }
   }
 }
+
+.q-dialog__inner>div {
+  overflow: inherit;
+}
+
+@media print {
+
+}
+
 </style>

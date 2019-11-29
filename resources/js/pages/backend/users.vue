@@ -316,10 +316,13 @@
                             </q-card>
                           </q-dialog>
 
+
                           <!-- <q-checkbox left-label  class="mt-6 ml-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="accent"></q-checkbox> -->
-                          <q-checkbox left-label class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent"></q-checkbox>
+                          <q-toggle class="mt-6 ml-6" v-model="showPin" :label="showPin ? 'PIN ist sichtbar' : 'PIN ist versteckt'" color="accent" />
+
+                          <q-toolbar-title></q-toolbar-title>
                           <div class="flex-grow-1"></div>
-                          <q-input v-model="itemsPerPage" type="number" number hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline />
+                          <q-input outlined dark v-model="itemsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline  />
                           <q-btn
                             flat round dense
                             :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -864,6 +867,7 @@ export default {
 
     methods: {
 
+
       testShowDialog() {
         this.$q.dialog({
           title: 'Alert',
@@ -885,8 +889,10 @@ export default {
 
           if (sortBy) {
             data.sort((a, b) => {
-              let x = descending ? b : a
-              let y = descending ? a : b
+              let x  = descending ? b : a
+              let xf = x[sortBy]
+              let y  = descending ? a : b
+              let yf = y[sortBy]
 
               switch (sortBy) {
                 case 'name':
@@ -898,6 +904,27 @@ export default {
                 case 'pan':
                   // String Sort
                   return x.pan[sortBy] > y.pan[sortBy] ? 1 : x.pan[sortBy] < y.pan[sortBy] ? -1 : 0
+                  break;
+
+                case 'company':
+                case 'location':
+                case 'department':
+                  var xn = xf && xf.name ? xf.name : ''
+                  var yn = yf && yf.name ? yf.name : ''
+
+                  return xn > yn ? 1 : xn < yn ? -1 : 0
+                  break;
+
+                case 'groups':
+                  var xid = xf.length > 0 ? xf.reduce(function(prev, curr) {
+                    return prev.id > curr.id ? prev : curr;
+                  }).id : 0
+
+                  var yid = yf.length > 0 ? yf.reduce(function(prev, curr) {
+                    return prev.id > curr.id ? prev : curr;
+                  }).id : 0
+
+                  return xid > yid ? 1 : xid < yid ? -1 : 0
                   break;
 
                 default:
