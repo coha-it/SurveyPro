@@ -3,22 +3,23 @@
         <h1>Surveys Management</h1>
         <p>Manage your Surveys or <router-link :to="{name: 'backend.survey', params: {id: 'create'}}">create a new one</router-link></p>
 
-        <v-card>
-            <v-card-title>
-                <v-text-field
+        <q-card>
+            <q-card-section>
+                <q-input
                     v-model="sSearch"
                     append-icon="search"
                     label="Search"
                     single-line
                     hide-details
-                ></v-text-field>
-            </v-card-title>
-            <v-data-table
+                />
+            </q-card-section>
+            <q-table
                 v-if="surveysAllowed && surveysAllowed.length >= 1"
-                :headers="aHeaders"
-                :items="surveysAllowed"
+                :columns="aHeaders"
+                :data="surveysAllowed"
                 :search="sSearch"
-                multi-sort
+                separator="cell"
+                class="my-data-table"
                 :footer-props="{
                     showFirstLastPage: true,
                 }"
@@ -26,11 +27,13 @@
                 :sort-desc="true"
                 dense
                 >
-                <template v-slot:item.action="{ item }">
-                    <router-link :to="{ name: 'backend.survey', params: {id: item.id } }" tag="v-icon" small class="mr-2">edit</router-link>
+                <template v-slot:body-cell-action="props">
+                  <q-td :props="props">
+                    <router-link :to="{ name: 'backend.survey', params: {id: props.row.id } }" tag="v-icon" small class="mr-2">edit</router-link>
+                  </q-td>
                 </template>
-                </v-data-table>
-        </v-card>
+                </q-table>
+        </q-card>
     </div>
 </template>
 
@@ -47,24 +50,88 @@ export default {
             sSearch: "",
             aHeaders : [
                 {
-                    text: 'ID',
-                    align: 'left',
-                    value: 'id',
+                  label: "Title",
+                  field: 'title',
+                  name: 'title',
+                  sortable: true,
                 },
-                { text: "Title", value: 'title'},
-                { text: "Description Short", value: 'desc_short'},
-                { text: "Description Long", value: 'desc_long'},
-                { text: "Author", value: 'author'},
-                { text: "Created By", value: 'created_by'},
-                { text: "Active", value: 'active'},
-                { text: "Start", value: 'start_datetime'},
-                { text: "End", value: 'end_datetime'},
-                { text: "Finished", value: 'is_finished'},
-                { text: "Canceled", value: 'is_canceled'},
-                { text: "Only Editable by Creator", value: 'only_editable_by_creator'},
-                { text: "Public", value: 'is_public'},
-
-                { text: "Bearbeiten", value: 'action'},
+                {
+                    label: 'ID',
+                    field: 'id',
+                    align: 'left',
+                    name: 'id',
+                },
+                {
+                  label: "Description Short",
+                  field: 'desc_short',
+                  name: 'desc_short',
+                  sortable: true,
+                },
+                {
+                  label: "Description Long",
+                  field: 'desc_long',
+                  name: 'desc_long',
+                  sortable: true,
+                },
+                {
+                  label: "Author",
+                  field: 'author',
+                  name: 'author',
+                  sortable: true,
+                },
+                {
+                  label: "Created By",
+                  field: 'created_by',
+                  name: 'created_by',
+                  sortable: true,
+                },
+                {
+                  label: "Active",
+                  field: 'active',
+                  name: 'active',
+                  sortable: true,
+                },
+                {
+                  label: "Start",
+                  field: 'start_datetime',
+                  name: 'start_datetime',
+                  sortable: true,
+                },
+                {
+                  label: "End",
+                  field: 'end_datetime',
+                  name: 'end_datetime',
+                  sortable: true,
+                },
+                {
+                  label: "Finished",
+                  field: 'is_finished',
+                  name: 'is_finished',
+                  sortable: true,
+                },
+                {
+                  label: "Canceled",
+                  field: 'is_canceled',
+                  name: 'is_canceled',
+                  sortable: true,
+                },
+                {
+                  label: "Only Editable by Creator",
+                  field: 'only_editable_by_creator',
+                  name: 'only_editable_by_creator',
+                  sortable: true,
+                },
+                {
+                  label: "Public",
+                  field: 'is_public',
+                  name: 'is_public',
+                  sortable: true,
+                },
+                {
+                  label: "Bearbeiten",
+                  field: 'action',
+                  name: 'action',
+                },
             ]
         }
     },

@@ -4,6 +4,7 @@ html body {
     color: #425D64;
     // padding: 4px 4px 0;
     font-size: 16px;
+    background-color: #fafafa;
 }
 
 h1 {
@@ -355,4 +356,47 @@ select {
   }
 
 
+}
+
+
+// MY DATA TABLE
+.my-data-table {
+  /* max height is important */
+  .q-table__middle{
+    max-height: 75vh;
+  }
+
+  thead tr th{
+    position: sticky;
+    z-index: 1;
+    background: #fff;
+  }
+  thead tr:first-child th{
+    top: 0;
+  }
+
+  /* this is when the loading indicator appears */
+  &.q-table--loading thead tr:last-child th{
+    /* height of all previous header rows */
+    top: 48px;
+  }
+
+  th:first-child,
+  td:first-child,
+  th:last-child,
+  td:last-child{
+    position: sticky !important;
+    background-color: #fff;
+    z-index: 100;
+  }
+
+  th:last-child,
+  td:last-child{
+    right: 0 !important;
+  }
+
+  th:first-child,
+  td:first-child{
+    left: 0;
+  }
 }

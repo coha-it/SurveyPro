@@ -32,7 +32,7 @@
                   <q-item-label header>List Header</q-item-label>
                 </template>
 
-                <q-item  exact :to="item.route" v-for="item in cat.pages" :key="item.title" clickable v-ripple>
+                <q-item color="red" exact :to="item.route" v-for="item in cat.pages" :key="item.title" clickable v-ripple>
                   <q-item-section avatar>
                     <q-icon :name="item.icon" />
                   </q-item-section>
