@@ -7,7 +7,7 @@
         dense
         align="justify"
         active-color="black"
-        class="bg-white text-grey-5"
+        class="bg-white text-grey-5 coha-bottom-bar"
         indicator-color="transparent"
         no-caps
         style="max-width: 770px; margin: 0 auto;"
@@ -55,7 +55,7 @@ export default {
 </script>
 
 <style lang="scss">
-.q-tabs__content > * {
+.coha-bottom-bar .q-tabs__content > * {
   padding: 0;
   flex: 1 1 auto;
   flex-basis: 0 !important;

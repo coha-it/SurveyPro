@@ -1,58 +1,52 @@
 <template>
 	<div>
 			<template>
-				<v-btn small outlined depressed color="grey" rounded tag="router-link" :to="oBackRoute" class="small ml-auto my-auto">
-					<v-icon left dark>keyboard_arrow_left</v-icon>
-					{{ $t('Zurück zu den Umfragen') }}
-				</v-btn>
+				<q-btn icon="keyboard_arrow_left" small outline unelevated color="grey" rounded tag="router-link" :to="oBackRoute" class="small ml-auto my-auto" :label="$t('Zurück zu den Umfragen')" />
 				<br>
 				<br>
 			</template>
 
 		<div v-if="oSurvey">
-			<v-snackbar v-model="oSnackbar.bActive" :timeout="oSnackbar.iDuration" :color="oSnackbar.sColor" top>
-				<span v-html="oSnackbar.sText"></span>
-				<v-btn text @click="oSnackbar.bActive = false">{{ $t('closer_button') }}</v-btn>
-			</v-snackbar>
 
 			<!-- Data Sheet -->
 			<template>
-				<v-form v-on:submit.prevent @keydown="form.onKeydown($event)" v-model="valid" ref="form" style="max-width: 1280px;">
+				<q-form v-on:submit.prevent @keydown="form.onKeydown($event)" v-model="valid" ref="form" style="max-width: 1280px;">
 
-					<v-toolbar color="primary" dark >
-						<v-toolbar-title>
+					<q-toolbar color="primary" dark >
+						<q-toolbar-title>
 								<template v-if="bCreate">{{ "Neue Umfrage erstellen" }}</template>
 								<template v-if="bEdit && oSurvey">{{ 'Umfrage' }} #{{ oSurvey.id }}</template>
-						</v-toolbar-title>
-					</v-toolbar>
+						</q-toolbar-title>
+					</q-toolbar>
 
 
 					<!-- Basic Settings -->
-					<v-tabs fixed-tabs color="secondary" icons-and-text v-model="active_tab">
-						<v-tab @click="changeTab(0)">
-							Basis
-							<v-icon>settings</v-icon>
-						</v-tab>
+					<q-tabs
+            fixed-tabs
+            color="secondary"
+            icons-and-text
+            v-model="active_tab"
+            align="justify"
+            dense
+            narrow-indicator
+          >
+						<q-tab @click="changeTab('basis')" name="basis" label="Basis" icon="settings" />
+						<q-tab @click="changeTab('fragen')" name="fragen" label="Fragen" icon="question_answer" />
+						<q-tab @click="changeTab('gruppen')" name="gruppen" label="Gruppen" icon="group" />
+					</q-tabs>
 
-						<v-tab @click="changeTab(1)">
-							Fragen
-							<v-icon>question_answer</v-icon>
-						</v-tab>
+          <q-separator />
 
-						<v-tab @click="changeTab(2)">
-							Gruppen
-							<v-icon>group</v-icon>
-						</v-tab>
-
+          <q-tab-panels v-model="active_tab" animated>
 						<!-- Einstellungen -->
-						<v-tab-item>
-							<v-list subheader two-line flat >
-									<v-subheader>Textliche Einstellungen</v-subheader>
+						<q-tab-panel name="basis">
+							<q-list subheader two-line flat >
+									<q-item-label>Textliche Einstellungen</q-item-label>
 
 									<!-- Title -->
-									<v-list-item>
-										<v-list-item-content>
-											<v-text-field
+									<q-item>
+										<q-item-section>
+											<q-input
 												:disabled="surveyIsUneditable()"
 												dense
 												persistent-hint
@@ -63,14 +57,14 @@
 												required
 												:rules="required"
 												:placeholder="oSurveyOld.title ? oSurveyOld.title : 'z.B.: &quot;Umfrage Mitarbeiterzufriedenheit&quot; '"
-											></v-text-field>
-										</v-list-item-content>
-									</v-list-item>
+											/>
+										</q-item-section>
+									</q-item>
 
 									<!-- Author -->
-									<v-list-item>
-										<v-list-item-content>
-											<v-text-field
+									<q-item>
+										<q-item-section>
+											<q-input
 												:disabled="surveyIsUneditable()"
 												dense
 												persistent-hint
@@ -80,15 +74,15 @@
 												v-model="oSurvey.author"
 												label="Autor"
 												required
-											></v-text-field>
-										</v-list-item-content>
-									</v-list-item>
+											/>
+										</q-item-section>
+									</q-item>
 
 
 									<!-- Description Short -->
-									<v-list-item>
-										<v-list-item-content>
-											<v-text-field
+									<q-item>
+										<q-item-section>
+											<q-input
 												:disabled="surveyIsUneditable()"
 												dense
 												persistent-hint
@@ -97,14 +91,14 @@
 												v-model="oSurvey.desc_short"
 												label="Kurzbeschreibung"
 												required
-											></v-text-field>
-										</v-list-item-content>
-									</v-list-item>
+											/>
+										</q-item-section>
+									</q-item>
 
 									<!-- Description Long -->
-									<v-list-item>
-										<v-list-item-content>
-											<v-textarea
+									<q-item>
+										<q-item-section>
+											<q-input type="textarea"
 												:disabled="surveyIsUneditable()"
 												outlined
 												dense
@@ -113,149 +107,162 @@
 												hint="Lange Beschreibung der Umfrage"
 												label="Langbeschreibung"
 												required
-											></v-textarea>
-										</v-list-item-content>
-									</v-list-item>
+											/>
+										</q-item-section>
+									</q-item>
 
-									<v-subheader>Konfigurations-Einstellungen</v-subheader>
+									<q-item-label>Konfigurations-Einstellungen</q-item-label>
 
-									<v-list-item>
-										<v-list-item-action>
-											<v-checkbox
+									<q-item>
+										<q-item-section side top>
+											<q-checkbox
 												:disabled="surveyIsUneditable()"
 											 	v-model="oSurvey.active"
 												color="primary"
 												:true-value="1"
 												:false-value="0"
-											></v-checkbox>
-										</v-list-item-action>
-										<v-list-item-content>
-											<v-list-item-title>Aktiviert</v-list-item-title>
-											<v-list-item-subtitle>Ist diese Umfrage ausfüllbar (aktiviert) oder nicht ausfüllbar. Standard ist aktiviert.</v-list-item-subtitle>
-										</v-list-item-content>
-									</v-list-item>
+											/>
+										</q-item-section>
+										<q-item-section>
+											<q-item-label>Aktiviert</q-item-label>
+											<q-item-label caption>Ist diese Umfrage ausfüllbar (aktiviert) oder nicht ausfüllbar. Standard ist aktiviert.</q-item-label>
+										</q-item-section>
+									</q-item>
 
-									<v-list-item>
-										<v-list-item-action>
-											<v-checkbox
+									<q-item>
+										<q-item-section side top>
+											<q-checkbox
 											:disabled="surveyIsUneditable()"
 											v-model="oSurvey.only_editable_by_creator"
 											color="primary"
 											:true-value="1" :false-value="0"
-											></v-checkbox>
-										</v-list-item-action>
-										<v-list-item-content>
-											<v-list-item-title>Nur für Ersteller Editierbar</v-list-item-title>
-											<v-list-item-subtitle>Nur Sie selbst als Ersteller können diese Umfrage editieren. Im Standard sind Umfragen nur für Sie selbst editierbar</v-list-item-subtitle>
-										</v-list-item-content>
-									</v-list-item>
+											/>
+										</q-item-section>
+										<q-item-section>
+											<q-item-label>Nur für Ersteller Editierbar</q-item-label>
+											<q-item-label caption>Nur Sie selbst als Ersteller können diese Umfrage editieren. Im Standard sind Umfragen nur für Sie selbst editierbar</q-item-label>
+										</q-item-section>
+									</q-item>
 
-									<v-list-item>
-										<v-list-item-action>
-											<v-checkbox
+									<q-item>
+										<q-item-section side top>
+											<q-checkbox
 											:disabled="surveyIsUneditable()"
 											v-model="oSurvey.is_public"
 											color="red"
 											:true-value="1"
 											:false-value="0"
-											></v-checkbox>
-										</v-list-item-action>
-										<v-list-item-content>
-											<v-list-item-title>Öffentlich</v-list-item-title>
-											<v-list-item-subtitle>Diese Umfrage ist öffentlich verfügbar. Im Standard sind Umfragen nicht öffentlich</v-list-item-subtitle>
-										</v-list-item-content>
-									</v-list-item>
+											/>
+										</q-item-section>
+										<q-item-section>
+											<q-item-label>Öffentlich</q-item-label>
+											<q-item-label caption>Diese Umfrage ist öffentlich verfügbar. Im Standard sind Umfragen nicht öffentlich</q-item-label>
+										</q-item-section>
+									</q-item>
 
 
 									<template v-if="bEdit">
-										<v-list-item>
-											<v-list-item-action>
-												<v-checkbox
+										<q-item>
+											<q-item-section>
+												<q-checkbox
 												v-model="bExtendedSettings"
 												:disabled="oSurvey.is_finished == 1 || oSurvey.is_canceled == 1"
-												color="primary" ></v-checkbox>
-											</v-list-item-action>
-											<v-list-item-content>
-												<v-list-item-title>Erweiterte Einstellungen</v-list-item-title>
-												<v-list-item-subtitle>Zeige erweiterte Einstellungen</v-list-item-subtitle>
-											</v-list-item-content>
-										</v-list-item>
+												color="primary" />
+											</q-item-section>
+											<q-item-section>
+												<q-item-label>Erweiterte Einstellungen</q-item-label>
+												<q-item-label caption>Zeige erweiterte Einstellungen</q-item-label>
+											</q-item-section>
+										</q-item>
 
 										<template v-if="bExtendedSettings">
-											<v-list-item>
-												<v-list-item-action>
-													<v-checkbox
+											<q-item>
+												<q-item-section>
+													<q-checkbox
 													 color="error"
 													 v-model="oSurvey.is_finished"
 													 :true-value="1" :false-value="0"
 													 :disabled="surveyIsUneditable()"
-													 ></v-checkbox>
-												</v-list-item-action>
-												<v-list-item-content>
-													<v-list-item-title>Beendet</v-list-item-title>
-													<v-list-item-subtitle>Die Umfrage wurde Beendet. Nicht umkehrbar</v-list-item-subtitle>
-												</v-list-item-content>
-											</v-list-item>
+													 />
+												</q-item-section>
+												<q-item-section>
+													<q-item-label>Beendet</q-item-label>
+													<q-item-label caption>Die Umfrage wurde Beendet. Nicht umkehrbar</q-item-label>
+												</q-item-section>
+											</q-item>
 
-											<v-list-item>
-												<v-list-item-action>
-													<v-checkbox
+											<q-item>
+												<q-item-section>
+													<q-checkbox
 													:disabled="surveyIsUneditable()"
 													color="error"
 													v-model="oSurvey.is_canceled"
 													:true-value="1"
-													:false-value="0" ></v-checkbox>
-												</v-list-item-action>
-												<v-list-item-content>
-													<v-list-item-title>Abgebrochen</v-list-item-title>
-													<v-list-item-subtitle>Die Umfrage wurde abgebrochen. Nicht umkehrbar</v-list-item-subtitle>
-												</v-list-item-content>
-											</v-list-item>
+													:false-value="0" />
+												</q-item-section>
+												<q-item-section>
+													<q-item-label>Abgebrochen</q-item-label>
+													<q-item-label caption>Die Umfrage wurde abgebrochen. Nicht umkehrbar</q-item-label>
+												</q-item-section>
+											</q-item>
 										</template>
 									</template>
 
+                  <q-item-label header>Datums-Einstellungen</q-item-label>
 
-									<v-subheader>Datums-Einstellungen</v-subheader>
-									<v-list-item>
+                <q-item>
 							<!-- DateRange-->
-							<div>
-								<span>
-									<v-date-picker
-										:disabled="surveyIsUneditable()"
-										required
-										:min="getMinDate()"
-										v-model="aDates"
-										range
-										:selected-items-text="getDatesDiffDays() + ' Tage Zeit'"
-										color="secondary"
-										header-color="primary"
-										locale="de-DE"
-										></v-date-picker>
-								</span>
-								<span style="max-width: 770px; display: inline-block;">
-									<v-card>
-										<v-card-title class="headline">
-											Beginn und Ende anpassen
-										</v-card-title>
+							<div class="row">
+								<div class="col">
+                  <div class="q-gutter-md row items-start">
+                    <q-date
+                      :disabled="surveyIsUneditable()"
+                      required
+                      :min="getMinDate()"
+                      v-model="oSurvey.start_datetime"
+                      range
+                      :selected-items-text="getDatesDiffDays() + ' Tage Zeit'"
+                      color="secondary"
+                      header-color="primary"
+                      mask="YYYY-MM-DD HH:mm:ss"
+                      ></q-date>
+                      <q-time format24h v-model="oSurvey.start_datetime" mask="YYYY-MM-DD HH:mm:ss" color="purple" />
+                  </div>
+								</div>
+								<div class="col">
+									<q-card>
+                    <q-card-section>
+                      <div class="text-h6">Beginn und Ende anpassen</div>
+                    </q-card-section>
 
-										<v-card-text>
+										<q-card-section>
 											<p>Sobald ihre Umfrage beginnt - können Sie diese nicht mehr anpassen</p>
 
-											<v-row>
-												<v-col cols="12" sm="6" md="6">
-													<v-text-field
-													:value="formatDate(oSurvey.start_datetime)"
-													label="Beginnt am"
-													placeholder="Bitte am Kalender wählen"
-													prepend-icon="event_available"
-													readonly
-													:rules="required"
-													disabled></v-text-field>
-												</v-col>
-												<v-col cols="12" sm="6" md="6">
-													<v-dialog ref="dialog2" v-model="bDialogStartTime" :return-value.sync="oTimes.sStartTime" persistent width="290px" >
+											<div class="row">
+												<div class="col col-12 col-sm-6 col-md-6">
+													<q-input
+                            :value="formatDate(oSurvey.start_datetime)"
+                            label="Beginnt am"
+                            placeholder="Bitte auswählen"
+                            prepend-icon="event_available"
+                            readonly
+                            :rules="required"
+                            disabled/>
+												</div>
+                        <div class="col col-12 col-sm-6 col-md-6">
+													<q-input
+                            :value="formatDate(oSurvey.start_datetime)"
+                            label="Beginnt um"
+                            placeholder="Bitte auswählen"
+                            prepend-icon="event_available"
+                            readonly
+                            :rules="required"
+                            disabled/>
+                        </div>
+												<div class="col" cols="12" sm="6" md="6">
+													<q-dialog ref="dialog2" v-model="bDialogStartTime" :return-value.sync="oTimes.sStartTime" persistent width="290px" >
 														<template v-slot:activator="{ on }">
-															<v-text-field
+															<q-input
 																:disabled="surveyIsUneditable()"
 																v-model="oTimes.sStartTime"
 																label="Start-Uhrzeit"
@@ -264,7 +271,7 @@
 																required
 																:rules="required"
 																v-on="on"
-															></v-text-field>
+															/>
 														</template>
 														<v-time-picker
 														:disabled="surveyIsUneditable()"
@@ -276,16 +283,16 @@
 														format="24hr"
 														color="secondary">
 															<v-spacer></v-spacer>
-															<v-btn text color="primary" @click="bDialogStartTime = false">Cancel</v-btn>
-															<v-btn text color="primary" @click="$refs.dialog2.save(oTimes.sStartTime)">OK</v-btn>
+															<q-btn text color="primary" @click="bDialogStartTime = false">Cancel</q-btn>
+															<q-btn text color="primary" @click="$refs.dialog2.save(oTimes.sStartTime)">OK</q-btn>
 														</v-time-picker>
-													</v-dialog>
-												</v-col>
-											</v-row>
+													</q-dialog>
+												</div>
+											</div>
 
-											<v-row>
-												<v-col cols="12" sm="6" md="6">
-													<v-text-field
+											<div class="row">
+												<div class="col" cols="12" sm="6" md="6">
+													<q-input
 														:value="formatDate(oSurvey.end_datetime)"
 														label="Endet am"
 														placeholder="Bitte am Kalender wählen"
@@ -293,12 +300,12 @@
 														readonly
 														:rules="required"
 														disabled
-													></v-text-field>
-												</v-col>
-												<v-col cols="12" sm="6" md="6">
-													<v-dialog ref="dialog4" v-model="bDialogEndTime" :return-value.sync="oTimes.sEndTime" persistent width="290px" >
+													/>
+												</div>
+												<div class="col" cols="12" sm="6" md="6">
+													<q-dialog ref="dialog4" v-model="bDialogEndTime" :return-value.sync="oTimes.sEndTime" persistent width="290px" >
 														<template v-slot:activator="{ on }">
-															<v-text-field
+															<q-input
 															:disabled="surveyIsUneditable()"
 															v-model="oTimes.sEndTime"
 															label="End-Uhrzeit"
@@ -307,7 +314,7 @@
 															readonly
 															v-on="on"
 															:rules="required"
-															></v-text-field>
+															/>
 														</template>
 														<v-time-picker :disabled="surveyIsUneditable()"
 														 required
@@ -316,16 +323,16 @@
 														 v-model="oTimes.sEndTime"
 														 full-width format="24hr" color="primary">
 															<v-spacer></v-spacer>
-															<v-btn text color="primary" @click="bDialogEndTime = false">Cancel</v-btn>
-															<v-btn text color="primary" @click="$refs.dialog4.save(oTimes.sEndTime)">OK</v-btn>
+															<q-btn text color="primary" @click="bDialogEndTime = false">Cancel</q-btn>
+															<q-btn text color="primary" @click="$refs.dialog4.save(oTimes.sEndTime)">OK</q-btn>
 														</v-time-picker>
-													</v-dialog>
-												</v-col>
-											</v-row>
+													</q-dialog>
+												</div>
+											</div>
 
-											<v-row>
-												<v-col>
-												<v-text-field
+											<div class="row">
+												<div class="col">
+												<q-input
 													label="Zeit für die Umfrage"
 													hide-details
 													:value="getDiffDatetimeLabel()"
@@ -334,53 +341,53 @@
 													disabled
 													prepend-icon="event_note"
 													readonly
-												></v-text-field>
-												</v-col>
-											</v-row>
-										</v-card-text>
-									</v-card>
-								</span>
+												/>
+												</div>
+											</div>
+										</q-card-section>
+									</q-card>
+								</div>
 							</div>
-									</v-list-item>
-							</v-list>
-						</v-tab-item>
+									</q-item>
+							</q-list>
+						</q-tab-panel>
 
             <!-- Questions -->
-						<v-tab-item>
-							<v-list>
-                <v-list-item>
-                  <v-list-item-content>
+						<q-tab-panel name="fragen">
+							<q-list>
+                <q-item>
+                  <q-item-section>
                     <!-- No Select Toolbar -->
                     <v-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="sSearch == ''" floating min-height="85px" height="auto">
                         <!-- <v-switch class="mt-6 mr-6" v-model="bTableDense"  color="primary"></v-switch> -->
                         <div class="flex-grow-1"></div>
-                        <v-text-field style="max-width: 400px;" v-model="sSearch" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined></v-text-field>
-                        <v-text-field v-model="iQuestionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
+                        <q-input style="max-width: 400px;" v-model="sSearch" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined/>
+                        <q-input v-model="iQuestionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
                     </v-toolbar>
 
                     <v-toolbar class="coha--toolbar" v-else :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
 
                         <v-menu right offset-y>
                             <template v-slot:activator="{ on:menuedit }">
-                                <v-btn text rounded v-on="{ ...menuedit }">
+                                <q-btn text rounded v-on="{ ...menuedit }">
                                     <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
-                                </v-btn>
+                                </q-btn>
                             </template>
-                            <v-list>
-                              <v-list-item @click="duplicateSelectedQuestions()">
+                            <q-list>
+                              <q-item @click="duplicateSelectedQuestions()">
                                 Duplizieren
-                              </v-list-item>
-                              <v-list-item @click="bDeleteQuestionDialog = true">
+                              </q-item>
+                              <q-item @click="bDeleteQuestionDialog = true">
                                 Löschen
-                              </v-list-item>
-                            </v-list>
+                              </q-item>
+                            </q-list>
                         </v-menu>
 
 												<v-tooltip top>
 													<template v-slot:activator="{ on }">
-														<v-btn @click="moveSelectedUp()" icon text rounded v-on="on">
+														<q-btn @click="moveSelectedUp()" icon text rounded v-on="on">
 															<v-icon>mdi-chevron-up</v-icon>
-														</v-btn>
+														</q-btn>
 													</template>
 													<span>Position Hoch</span>
 												</v-tooltip>
@@ -388,9 +395,9 @@
 
 												<v-tooltip top>
 													<template v-slot:activator="{ on }">
-														<v-btn @click="moveSelectedDown()" icon text rounded v-on="on">
+														<q-btn @click="moveSelectedDown()" icon text rounded v-on="on">
 															<v-icon>mdi-chevron-down</v-icon>
-														</v-btn>
+														</q-btn>
 													</template>
 													<span>Position Runter</span>
 												</v-tooltip>
@@ -401,21 +408,21 @@
 
 
                     <!-- Delete - Dialog -->
-                    <v-dialog v-model="bDeleteQuestionDialog" max-width="500" dark content-class="naked dark centered">
+                    <q-dialog v-model="bDeleteQuestionDialog" max-width="500" dark content-class="naked dark centered">
                       <h2 class="display-2">Fragen Löschen?</h2>
                       <p>Möchten Sie {{ selected.length }} Fragen löschen?</p>
                       <v-container fluid>
-                        <v-row align="center">
-                          <v-col class="text-center" cols="12" sm="12">
-                            <v-btn depressed @click="bDeleteQuestionDialog = false" outlined>Abbruch</v-btn>
-                            <v-btn depressed @click.prevent="deleteQuestions(selected)" color="error">Löschen</v-btn>
-                          </v-col>
-                        </v-row>
+                        <div class="row" align="center">
+                          <div class="col text-center" cols="12" sm="12">
+                            <q-btn depressed @click="bDeleteQuestionDialog = false" outlined>Abbruch</q-btn>
+                            <q-btn depressed @click.prevent="deleteQuestions(selected)" color="error">Löschen</q-btn>
+                          </div>
+                        </div>
                       </v-container>
-                    </v-dialog>
+                    </q-dialog>
 
 
-                    <v-data-table
+                    <q-table
                       :headers="headers"
 
                       v-model="selected"
@@ -441,11 +448,11 @@
                         <v-edit-dialog :return-value.sync="props.item.title">
                           {{ props.item.title }}
                           <template v-slot:input>
-                            <v-text-field
+                            <q-input
                               v-model="props.item.title"
                               label="Edit"
                               counter
-                            ></v-text-field>
+                            />
                           </template>
                         </v-edit-dialog>
                       </template>
@@ -454,11 +461,11 @@
                         <v-edit-dialog :return-value.sync="props.item.subtitle">
                           {{ props.item.subtitle }}
                           <template v-slot:input>
-                            <v-text-field
+                            <q-input
                               v-model="props.item.subtitle"
                               label="Edit"
                               counter
-                            ></v-text-field>
+                            />
                           </template>
                         </v-edit-dialog>
                       </template>
@@ -467,11 +474,11 @@
                         <v-edit-dialog :return-value.sync="props.item.description">
                           {{ props.item.description }}
                           <template v-slot:input>
-                            <v-text-field
+                            <q-input
                               v-model="props.item.description"
                               label="Edit"
                               counter
-                            ></v-text-field>
+                            />
                           </template>
                         </v-edit-dialog>
                       </template>
@@ -488,28 +495,28 @@
                       <template v-slot:expanded-item="{ headers, item }">
                         <template v-if="item">
                           <td colspan="100%">
-                            <v-row>
-                              <v-col xl="12" sm="12" xs="12">
-                                <v-card>
+                            <div class="row">
+                              <div class="col" xl="12" sm="12" xs="12">
+                                <q-card>
                                   <v-card-title>Frage-Einstellungen #{{ item.id }}</v-card-title>
                                   <!-- <v-card-text>Einstellungen zur {{ item.order }}. Frage</v-card-text> -->
-                                <v-list subheader two-line flat >
+                                <q-list subheader two-line flat >
 
-                                  <v-subheader>Allgemeine Frage-Einstellungen</v-subheader>
+                                  <q-item-label>Allgemeine Frage-Einstellungen</q-item-label>
 
-                                  <v-list-item>
-                                    <v-list-item-action>
-                                      <v-checkbox v-model="item.is_skippable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
-                                    </v-list-item-action>
-                                    <v-list-item-content>
-                                      <v-list-item-title>Überspringbar</v-list-item-title>
-                                      <v-list-item-subtitle>Ist diese Frage überspringbar</v-list-item-subtitle>
-                                    </v-list-item-content>
-                                  </v-list-item>
+                                  <q-item>
+                                    <q-item-section>
+                                      <q-checkbox v-model="item.is_skippable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
+                                    </q-item-section>
+                                    <q-item-section>
+                                      <q-item-label>Überspringbar</q-item-label>
+                                      <q-item-label caption>Ist diese Frage überspringbar</q-item-label>
+                                    </q-item-section>
+                                  </q-item>
 
-                                  <v-list-item>
-                                    <v-list-item-content>
-                                      <v-text-field
+                                  <q-item>
+                                    <q-item-section>
+                                      <q-input
                                         :disabled="surveyIsUneditable()"
                                         dense
                                         persistent-hint
@@ -519,13 +526,13 @@
                                         v-model="item.title"
                                         label="Titel"
                                         required
-                                      ></v-text-field>
-                                    </v-list-item-content>
-                                  </v-list-item>
+                                      />
+                                    </q-item-section>
+                                  </q-item>
 
-                                  <v-list-item>
-                                    <v-list-item-content>
-                                      <v-text-field
+                                  <q-item>
+                                    <q-item-section>
+                                      <q-input
                                         :disabled="surveyIsUneditable()"
                                         dense
                                         persistent-hint
@@ -535,13 +542,13 @@
                                         v-model="item.subtitle"
                                         label="Untertitel"
                                         required
-                                      ></v-text-field>
-                                    </v-list-item-content>
-                                  </v-list-item>
+                                      />
+                                    </q-item-section>
+                                  </q-item>
 
-                                  <v-list-item>
-                                    <v-list-item-content>
-                                      <v-textarea
+                                  <q-item>
+                                    <q-item-section>
+                                      <q-input type="textarea"
                                         :disabled="surveyIsUneditable()"
                                         dense
                                         persistent-hint
@@ -551,46 +558,46 @@
                                         v-model="item.description"
                                         label="Beschreibung"
                                         required
-                                      ></v-textarea>
-                                    </v-list-item-content>
-                                  </v-list-item>
+                                      />
+                                    </q-item-section>
+                                  </q-item>
 
-                                  <v-subheader>Kommentar-Einstellungen</v-subheader>
+                                  <q-item-label>Kommentar-Einstellungen</q-item-label>
 
-                                  <v-list-item>
-                                    <v-list-item-action>
-                                      <v-checkbox v-model="item.is_commentable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
-                                    </v-list-item-action>
-                                    <v-list-item-content>
-                                      <v-list-item-title>Kommentierbar</v-list-item-title>
-                                      <v-list-item-subtitle>Ist diese Frage kommentierbar</v-list-item-subtitle>
-                                    </v-list-item-content>
-                                  </v-list-item>
+                                  <q-item>
+                                    <q-item-section>
+                                      <q-checkbox v-model="item.is_commentable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
+                                    </q-item-section>
+                                    <q-item-section>
+                                      <q-item-label>Kommentierbar</q-item-label>
+                                      <q-item-label caption>Ist diese Frage kommentierbar</q-item-label>
+                                    </q-item-section>
+                                  </q-item>
 
                                   <template v-if="item.is_commentable || true">
-                                    <v-list-item>
-                                      <v-list-item-action>
-                                        <v-checkbox v-model="item.comment_is_required" :disabled="surveyIsUneditable() && item.is_commentable" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
-                                      </v-list-item-action>
-                                      <v-list-item-content>
-                                        <v-list-item-title>Kommentar ist erforderlich</v-list-item-title>
-                                        <v-list-item-subtitle>Ist ein Kommentar erforderlich</v-list-item-subtitle>
-                                      </v-list-item-content>
-                                    </v-list-item>
+                                    <q-item>
+                                      <q-item-section>
+                                        <q-checkbox v-model="item.comment_is_required" :disabled="surveyIsUneditable() && item.is_commentable" color="primary" :true-value="1" :false-value="0" />
+                                      </q-item-section>
+                                      <q-item-section>
+                                        <q-item-label>Kommentar ist erforderlich</q-item-label>
+                                        <q-item-label caption>Ist ein Kommentar erforderlich</q-item-label>
+                                      </q-item-section>
+                                    </q-item>
 
-                                    <v-list-item>
-                                      <v-list-item-action>
-                                        <v-checkbox v-model="item.comment_is_number" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" ></v-checkbox>
-                                      </v-list-item-action>
-                                      <v-list-item-content>
-                                        <v-list-item-title>Kommentar ist eine Nummer</v-list-item-title>
-                                        <v-list-item-subtitle>Wenn der Kommentar eine Nummer sein soll</v-list-item-subtitle>
-                                      </v-list-item-content>
-                                    </v-list-item>
+                                    <q-item>
+                                      <q-item-section>
+                                        <q-checkbox v-model="item.comment_is_number" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
+                                      </q-item-section>
+                                      <q-item-section>
+                                        <q-item-label>Kommentar ist eine Nummer</q-item-label>
+                                        <q-item-label caption>Wenn der Kommentar eine Nummer sein soll</q-item-label>
+                                      </q-item-section>
+                                    </q-item>
 
-                                    <v-list-item>
-                                      <v-list-item-content>
-                                        <v-text-field
+                                    <q-item>
+                                      <q-item-section>
+                                        <q-input
                                           :disabled="surveyIsUneditable()"
                                           dense
                                           persistent-hint
@@ -601,18 +608,18 @@
                                           v-model="item.comment_max_signs"
                                           label="Maximale Zeichen"
                                           required
-                                        ></v-text-field>
-                                      </v-list-item-content>
-                                    </v-list-item>
+                                        />
+                                      </q-item-section>
+                                    </q-item>
                                   </template>
 
-                                  <v-subheader>Einstellungen: Optionen</v-subheader>
+                                  <q-item-label>Einstellungen: Optionen</q-item-label>
 
-                                    <v-list-item>
-                                      <v-list-item-content>
-                                        <v-row>
-                                          <v-col xl="3" md="3" sm="6" xs="12">
-                                            <v-text-field
+                                    <q-item>
+                                      <q-item-section>
+                                        <div class="row">
+                                          <div class="col" xl="3" md="3" sm="6" xs="12">
+                                            <q-input
                                               :disabled="surveyIsUneditable()"
                                               dense
                                               persistent-hint
@@ -623,10 +630,10 @@
                                               v-model="item.min_options"
                                               label="Minimale Optionen"
                                               required
-                                            ></v-text-field>
-                                          </v-col>
-                                          <v-col xl="3" md="3" sm="6" xs="12">
-                                            <v-text-field
+                                            />
+                                          </div>
+                                          <div class="col" xl="3" md="3" sm="6" xs="12">
+                                            <q-input
                                               :disabled="surveyIsUneditable()"
                                               dense
                                               persistent-hint
@@ -638,17 +645,17 @@
                                               v-model="item.max_options"
                                               label="Maximale Optionen"
                                               required
-                                            ></v-text-field>
-                                          </v-col>
-                                        </v-row>
-                                      </v-list-item-content>
-                                    </v-list-item>
-                                  </v-list>
+                                            />
+                                          </div>
+                                        </div>
+                                      </q-item-section>
+                                    </q-item>
+                                  </q-list>
 
 
                                   <!-- Selected Toolbar -->
                                   <v-toolbar class="coha--toolbar" v-if="aSelectedOptions && aSelectedOptions.length" :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
-                                    <v-btn
+                                    <q-btn
                                       v-if="aSelectedOptions && aSelectedOptions.length"
                                       @click="bDeleteOptionDialog = true"
                                       depressed
@@ -657,17 +664,17 @@
                                     >
                                       <v-icon left>mdi-delete</v-icon>&nbsp;
                                       Ausgewählte Optionen Löschen
-                                    </v-btn>
+                                    </q-btn>
 
                                   </v-toolbar>
 
                                   <!-- No Selected Toolbar -->
                                   <v-toolbar class="coha--toolbar" v-else  :flat="sSearch == ''" floating min-height="85px" height="auto">
                                       <div class="flex-grow-1"></div>
-                                      <v-text-field v-model="iOptionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined ></v-text-field>
+                                      <q-input v-model="iOptionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
                                   </v-toolbar>
 
-                                  <v-data-table
+                                  <q-table
                                     :headers="aOptionHeaders"
 
                                     v-model="aSelectedOptions"
@@ -689,11 +696,11 @@
                                       <v-edit-dialog :return-value.sync="props.item.value">
                                         {{ props.item.value }}
                                         <template v-slot:input>
-                                          <v-text-field
+                                          <q-input
                                             v-model="props.item.value"
                                             label="Edit"
                                             type="number"
-                                          ></v-text-field>
+                                          />
                                         </template>
                                       </v-edit-dialog>
                                     </template>
@@ -702,11 +709,11 @@
                                       <v-edit-dialog :return-value.sync="props.item.title">
                                         {{ props.item.title }}
                                         <template v-slot:input>
-                                          <v-text-field
+                                          <q-input
                                             v-model="props.item.title"
                                             label="Edit"
                                             counter
-                                          ></v-text-field>
+                                          />
                                         </template>
                                       </v-edit-dialog>
                                     </template>
@@ -715,11 +722,11 @@
                                       <v-edit-dialog :return-value.sync="props.item.subtitle">
                                         {{ props.item.subtitle }}
                                         <template v-slot:input>
-                                          <v-text-field
+                                          <q-input
                                             v-model="props.item.subtitle"
                                             label="Edit"
                                             counter
-                                          ></v-text-field>
+                                          />
                                         </template>
                                       </v-edit-dialog>
                                     </template>
@@ -728,11 +735,11 @@
                                       <v-edit-dialog :return-value.sync="props.item.description">
                                         {{ props.item.description }}
                                         <template v-slot:input>
-                                          <v-text-field
+                                          <q-input
                                             v-model="props.item.description"
                                             label="Edit"
                                             counter
-                                          ></v-text-field>
+                                          />
                                         </template>
                                       </v-edit-dialog>
                                     </template>
@@ -746,9 +753,9 @@
                                     </template>
                                     <template v-slot:item.color="props">
 
-                                      <v-dialog v-model="props.item.dialog" max-width="290">
+                                      <q-dialog v-model="props.item.dialog" max-width="290">
                                         <template v-slot:activator="{ on }">
-                                          <div><v-btn
+                                          <div><q-btn
                                             v-on="on"
                                             small
                                             depressed
@@ -757,16 +764,16 @@
                                             :color="props.item.color"
                                           >
                                             <v-icon dark>mdi-palette</v-icon>
-                                          </v-btn></div>
+                                          </q-btn></div>
                                           <div>{{ props.item.color }}</div>
                                         </template>
-                                        <v-card>
+                                        <q-card>
                                           <v-card-title>Farbe auswählen</v-card-title>
                                           <v-card-text>
-                                            <v-btn block small :color="props.item.color">{{ props.item.color }}</v-btn>
+                                            <q-btn block small :color="props.item.color">{{ props.item.color }}</q-btn>
                                             <template v-for="oColor in aAllOptionColors">
                                               <div style="margin-top: 5px;" v-bind:key="oColor.title" >
-                                                <v-btn block small :color="oColor.hex" @click="props.item.color = oColor.hex">{{ oColor.title }}</v-btn>
+                                                <q-btn block small :color="oColor.hex" @click="props.item.color = oColor.hex">{{ oColor.title }}</q-btn>
                                               </div>
                                             </template>
                                           </v-card-text>
@@ -777,75 +784,75 @@
                                             flat
                                           ></v-color-picker>
                                           <v-card-actions>
-                                            <v-btn  @click="props.item.dialog = false">Übernehmen und schließen</v-btn>
+                                            <q-btn  @click="props.item.dialog = false">Übernehmen und schließen</q-btn>
                                           </v-card-actions>
-                                        </v-card>
-                                      </v-dialog>
+                                        </q-card>
+                                      </q-dialog>
                                     </template>
-                                  </v-data-table>
+                                  </q-table>
                                   <v-card-actions>
-                                    <v-btn @click="addNewOption(item)">
+                                    <q-btn @click="addNewOption(item)">
                                       <v-icon left>plus_one</v-icon>
                                       Neue Option hinzufügen
-                                    </v-btn>&nbsp;
-                                    <v-btn color="primary" @click="duplicateLastOption(item)">
+                                    </q-btn>&nbsp;
+                                    <q-btn color="primary" @click="duplicateLastOption(item)">
                                       <v-icon left>control_point_duplicate</v-icon>
                                       Letzte Option duplizieren
-                                    </v-btn>
+                                    </q-btn>
 
                                     <!-- Delete - Dialog -->
-                                    <v-dialog v-model="bDeleteOptionDialog" max-width="500" dark content-class="naked dark centered">
+                                    <q-dialog v-model="bDeleteOptionDialog" max-width="500" dark content-class="naked dark centered">
                                       <h2 class="display-2">Optionen Löschen?</h2>
                                       <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
                                       <v-container fluid>
-                                        <v-row align="center">
-                                          <v-col class="text-center" cols="12" sm="12">
-                                            <v-btn depressed @click="bDeleteOptionDialog = false" outlined>Abbruch</v-btn>
-                                            <v-btn depressed @click.prevent="deleteOptions(item, aSelectedOptions)" color="error">Löschen</v-btn>
-                                          </v-col>
-                                        </v-row>
+                                        <div class="row" align="center">
+                                          <div class="col text-center" cols="12" sm="12">
+                                            <q-btn depressed @click="bDeleteOptionDialog = false" outlined>Abbruch</q-btn>
+                                            <q-btn depressed @click.prevent="deleteOptions(item, aSelectedOptions)" color="error">Löschen</q-btn>
+                                          </div>
+                                        </div>
                                       </v-container>
-                                    </v-dialog>
+                                    </q-dialog>
 
                                   </v-card-actions>
-                                </v-card>
-                              </v-col>
-                            </v-row>
+                                </q-card>
+                              </div>
+                            </div>
                           </td>
                         </template>
                       </template>
-                    </v-data-table>
-                  </v-list-item-content>
-                </v-list-item>
+                    </q-table>
+                  </q-item-section>
+                </q-item>
 
-                <v-list-item>
-                  <v-btn @click="addNewQuestion()">
+                <q-item>
+                  <q-btn @click="addNewQuestion()">
                     <v-icon left>plus_one</v-icon>
                     Neue Frage hinzufügen
-                  </v-btn>
+                  </q-btn>
 									&nbsp; &nbsp;
-                  <v-btn @click="duplicateLastQuestion()" color="primary" :disabled="oSurvey.questions.length <= 0">
+                  <q-btn @click="duplicateLastQuestion()" color="primary" :disabled="oSurvey.questions.length <= 0">
                     <v-icon left>control_point_duplicate</v-icon>
                     Letzte Frage duplizieren
-                  </v-btn>
-                </v-list-item>
+                  </q-btn>
+                </q-item>
 
-                <v-list-item></v-list-item>
+                <q-item></q-item>
 
 
                 <v-divider></v-divider>
 
-              </v-list>
-						</v-tab-item>
+              </q-list>
+						</q-tab-panel>
 
 						<!-- Gruppeneinstellungen -->
-						<v-tab-item>
-							<v-list subheader two-line flat >
-									<v-subheader>Gruppen</v-subheader>
+						<q-tab-panel name="gruppen">
+							<q-list subheader two-line flat >
+									<q-item-label>Gruppen</q-item-label>
 
 									<!-- Title -->
-									<v-list-item>
-										<v-list-item-content>
+									<q-item>
+										<q-item-section>
 											<v-select
 												v-model="oSurvey.groups"
 												:items="user.groups_moderating"
@@ -857,44 +864,44 @@
 												:disabled="surveyIsUneditable()"
 											>
 											</v-select>
-										</v-list-item-content>
-									</v-list-item>
-							</v-list>
+										</q-item-section>
+									</q-item>
+							</q-list>
 
 
-						</v-tab-item>
-					</v-tabs>
+						</q-tab-panel>
+					</q-tab-panels>
 
-					<v-list>
-							<v-list-item>
-									<v-text-field v-model="oSurvey.title" required :rules="required" style="display: none;"></v-text-field>
+					<q-list>
+							<q-item>
+									<q-input v-model="oSurvey.title" required :rules="required" style="display: none;"/>
 
-									<v-btn
+									<q-btn
 										color="grey"
 										dark
 										class="mr-4"
-									>Zurück</v-btn>
-									<v-btn
+									>Zurück</q-btn>
+									<q-btn
 										color="success"
 										type="submit"
                     @click="updateSurvey()"
 										class="mr-4 white--text"
 										v-if="surveyIsEditable()"
 										:disabled="surveyFormIsInvalid()"
-									>Umfrage Speichern {{ isUnsaved() ? '*' : undefined }}</v-btn>
+									>Umfrage Speichern {{ isUnsaved() ? '*' : undefined }}</q-btn>
 
                   <!-- Save as FAB -->
-                  <v-fab-transition>
-                    <v-speed-dial
+                  <q-page-sticky
                       bottom
                       right
                       :open-on-hover="true"
                       v-model="bFabButtonInner"
                       fixed
-                    >
+                  >
+
                       <template v-slot:activator v-slot:extension>
-                          <v-fab-transition>
-                            <v-btn
+                          <q-page-sticky>
+                            <q-btn
                               v-show="isUnsaved()"
                               v-model="bFabButtonInner"
                               color="success"
@@ -902,34 +909,31 @@
                               fab
                               type="submit"
                               @click="updateSurvey()"
+                              :icon="bFabButtonInner ? 'mdi-content-save' : false"
                             >
-                              <v-icon v-if="bFabButtonInner || true">mdi-content-save</v-icon>
-                              <!-- <v-icon v-else>mdi-content-save-outline</v-icon> -->
-                            </v-btn>
-                          </v-fab-transition>
+                            </q-btn>
+                          </q-page-sticky>
                       </template>
-                      <v-btn
+                      <q-btn
                         fab
                         dark
                         small
                         color="warning"
-                      >
-                        <v-icon>mdi-restore</v-icon>
-                      </v-btn>
-                </v-speed-dial>
-                  </v-fab-transition>
-								</v-list-item>
-					</v-list>
+                        icon="mdi-restore"
+                      />
+                  </q-page-sticky>
+								</q-item>
+					</q-list>
 
 
 
-				</v-form>
+				</q-form>
 			</template>
 		</div>
 
 
 		<!-- Dialog Loading -->
-    <v-dialog
+    <q-dialog
       v-model="bIsLoading"
 			max-width="500" dark content-class="naked dark centered"
 			persistent
@@ -941,7 +945,7 @@
 				color="white"
 			></v-progress-circular>
 			<div>{{ $t('loading.text') }}</div>
-		</v-dialog>
+		</q-dialog>
 
 
 	</div>
@@ -1041,7 +1045,7 @@ export default {
 			bIsLoading: false,
 
 			// Tabs
-			active_tab: null,
+			active_tab: 'basis',
 
 			// Back Route
 			oBackRoute: { name: 'backend.surveys' },
@@ -1056,7 +1060,6 @@ export default {
       ],
 
 			// Dates and Times
-			aDates: [],
 			oTimes : {
 				sStartTime: '',
 				sEndTime: '',
@@ -1066,14 +1069,10 @@ export default {
 			sToday: moment().toISOString().substr(0, 10),
 
 			// Tmps Start
-			bDialogStartDate: false,
-			bDialogStartTime: false,
-			sStartDate: this.getStartDate(),
+			// sStartDate: '', // this.getStartDate(),
 
 			// Tmps End
-			bDialogEndDate: false,
-			bDialogEndTime: false,
-			sEndDate: this.getEndDate(),
+			// sEndDate: '', // this.getEndDate(),
 
 			// Surveys
 			oSurvey : null,
@@ -1094,14 +1093,6 @@ export default {
           hex: '#D09786',
         }
       ],
-
-			// Snackbar
-			oSnackbar: {
-				bActive: false,
-				sColor: '',
-				sText: '',
-				iDuration: 3000,
-			},
 
 		};
 	},
@@ -1190,12 +1181,12 @@ export default {
 		},
 
     getStartDate() {
-      return moment().toISOString().substr(0, 10);
+      return moment().format().substr(0, 10);
     },
 
-    getEndDate() {
-      return moment(moment() + 5).toISOString().substr(0, 10)
-    },
+    // getEndDate() {
+    //   return moment(moment() + 5).format().substr(0, 10)
+    // },
 
 		reorderQuestions() {
 			var oQuestions = this.oSurvey.questions;
@@ -1414,8 +1405,8 @@ export default {
 
 		checkTabForHash() {
 			if(window.location.hash) {
-				var num = parseInt(window.location.hash.substr(1));
-				num ? this.active_tab = num : undefined
+				var tab = window.location.hash.substr(1);
+				tab ? this.active_tab = tab : undefined
 			}
 		},
 
@@ -1524,7 +1515,7 @@ export default {
 		},
 
 		getDatesDiffDays() {
-			return this.getDiffDays(this.aDates[0], this.aDates[1]);
+			return this.getDiffDays(this.sStartDate, this.sEndDate);
 		},
 
 		getDiffDays(d1, d2) {
@@ -1559,24 +1550,22 @@ export default {
 			}
 		},
 
-		showSnackbar: function() {
-			this.oSnackbar.bActive = true;
-		},
-
 		showSnackbarError: function(text) {
-			this.showSnackbar();
-
-			this.oSnackbar.iDuration = 6000;
-			this.oSnackbar.sColor = 'error';
-			this.oSnackbar.sText = text;
+      _this.$q.notify({
+        message: _this.$t(text),
+        color: 'red',
+        position: 'top',
+        timeout: 6000,
+      })
 		},
 
 		showSnackbarSuccess: function(text) {
-			this.showSnackbar();
-
-			this.oSnackbar.iDuration = 3000;
-			this.oSnackbar.sColor = 'success';
-			this.oSnackbar.sText = text;
+      _this.$q.notify({
+        message: _this.$t(text),
+        color: 'green',
+        position: 'top',
+        timeout: 3000,
+      })
 		},
 
 		startEditMode: function() {
