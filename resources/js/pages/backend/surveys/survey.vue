@@ -210,145 +210,152 @@
 
                   <q-item-label header>Datums-Einstellungen</q-item-label>
 
-                <q-item>
-							<!-- DateRange-->
-							<div class="row">
-								<div class="col">
-                  <div class="q-gutter-md row items-start">
-                    <q-date
-                      :disabled="surveyIsUneditable()"
-                      required
-                      :min="getMinDate()"
-                      v-model="oSurvey.start_datetime"
-                      range
-                      :selected-items-text="getDatesDiffDays() + ' Tage Zeit'"
-                      color="secondary"
-                      header-color="primary"
-                      mask="YYYY-MM-DD HH:mm:ss"
-                      ></q-date>
-                      <q-time format24h v-model="oSurvey.start_datetime" mask="YYYY-MM-DD HH:mm:ss" color="purple" />
-                  </div>
-								</div>
-								<div class="col">
-									<q-card>
-                    <q-card-section>
-                      <div class="text-h6">Beginn und Ende anpassen</div>
-                    </q-card-section>
+                <!-- DateRange-->
+                <q-item class="row">
+                  <div class="col col-12 col-sm-6 col-md-6">
+                    <q-card>
+                      <q-card-section>
+                        <div class="text-h6">Beginn und Ende anpassen</div>
+                      </q-card-section>
 
-										<q-card-section>
-											<p>Sobald ihre Umfrage beginnt - können Sie diese nicht mehr anpassen</p>
+                      <q-card-section>
+                        <p>Sobald ihre Umfrage beginnt - können Sie diese nicht mehr anpassen</p>
 
-											<div class="row">
-												<div class="col col-12 col-sm-6 col-md-6">
-													<q-input
-                            :value="formatDate(oSurvey.start_datetime)"
-                            label="Beginnt am"
-                            placeholder="Bitte auswählen"
-                            prepend-icon="event_available"
-                            readonly
-                            :rules="required"
-                            disabled/>
-												</div>
-                        <div class="col col-12 col-sm-6 col-md-6">
-													<q-input
-                            :value="formatDate(oSurvey.start_datetime)"
-                            label="Beginnt um"
-                            placeholder="Bitte auswählen"
-                            prepend-icon="event_available"
-                            readonly
-                            :rules="required"
-                            disabled/>
+
+<q-datetime-range
+  type="datetime"
+  v-model="range"
+  :min="min"
+  :max="max"
+/>
+
+                        <div class="row">
+                          <div class="col col-12 col-sm-6 col-md-6">
+                            <q-input
+                              :value="formatDate(oSurvey.start_datetime)"
+                              label="Beginnt am"
+                              placeholder="Bitte auswählen"
+                              readonly
+                              disabled
+                              :rules="required"
+                              color="teal"
+                              standout
+                            >
+                              <template v-slot:prepend>
+                                <q-icon name="event" />
+                              </template>
+                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                <q-date
+                                  :disabled="surveyIsUneditable()"
+                                  required
+                                  v-model="oSurvey.start_datetime"
+                                  :options="getMinStartdate"
+                                  range
+                                  :selected-items-text="getDatesDiffDays() + ' Tage Zeit'"
+                                  color="secondary"
+                                  header-color="primary"
+                                  mask="YYYY-MM-DD HH:mm:ss"
+                                  >
+                                    <div class="row items-center justify-end q-gutter-sm">
+                                      <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
+                                    </div>
+                                  </q-date>
+                              </q-popup-proxy>
+                            </q-input>
+                          </div>
+                          <div class="col col-12 col-sm-6 col-md-6">
+                            <q-input
+                              v-if="oSurvey.start_datetime"
+                              :value="formatTime(oSurvey.start_datetime)"
+                              label="Beginnt um"
+                              placeholder="Bitte auswählen"
+                              readonly
+                              :rules="required"
+                              disabled
+                              standout
+                            >
+                              <template v-slot:prepend>
+                                <q-icon name="schedule" />
+                              </template>
+                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                <q-time format24h v-model="oSurvey.start_datetime" mask="YYYY-MM-DD HH:mm:ss" color="purple">
+                                  <div class="row items-center justify-end q-gutter-sm">
+                                    <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
+                                  </div>
+                                </q-time>
+                              </q-popup-proxy>
+                            </q-input>
+                          </div>
                         </div>
-												<div class="col" cols="12" sm="6" md="6">
-													<q-dialog ref="dialog2" v-model="bDialogStartTime" :return-value.sync="oTimes.sStartTime" persistent width="290px" >
-														<template v-slot:activator="{ on }">
-															<q-input
-																:disabled="surveyIsUneditable()"
-																v-model="oTimes.sStartTime"
-																label="Start-Uhrzeit"
-																prepend-icon="timer"
-																readonly
-																required
-																:rules="required"
-																v-on="on"
-															/>
-														</template>
-														<v-time-picker
-														:disabled="surveyIsUneditable()"
-														required
-														v-if="bDialogStartTime"
-														:max="getStartTimeMax()"
-														v-model="oTimes.sStartTime"
-														full-width
-														format="24hr"
-														color="secondary">
-															<v-spacer></v-spacer>
-															<q-btn text color="primary" @click="bDialogStartTime = false">Cancel</q-btn>
-															<q-btn text color="primary" @click="$refs.dialog2.save(oTimes.sStartTime)">OK</q-btn>
-														</v-time-picker>
-													</q-dialog>
-												</div>
-											</div>
 
-											<div class="row">
-												<div class="col" cols="12" sm="6" md="6">
-													<q-input
-														:value="formatDate(oSurvey.end_datetime)"
-														label="Endet am"
-														placeholder="Bitte am Kalender wählen"
-														prepend-icon="event_busy"
-														readonly
-														:rules="required"
-														disabled
-													/>
-												</div>
-												<div class="col" cols="12" sm="6" md="6">
-													<q-dialog ref="dialog4" v-model="bDialogEndTime" :return-value.sync="oTimes.sEndTime" persistent width="290px" >
-														<template v-slot:activator="{ on }">
-															<q-input
-															:disabled="surveyIsUneditable()"
-															v-model="oTimes.sEndTime"
-															label="End-Uhrzeit"
-															prepend-icon="timer_off"
-															required
-															readonly
-															v-on="on"
-															:rules="required"
-															/>
-														</template>
-														<v-time-picker :disabled="surveyIsUneditable()"
-														 required
-														 v-if="bDialogEndTime"
-														 :min="getEndTimeMin()"
-														 v-model="oTimes.sEndTime"
-														 full-width format="24hr" color="primary">
-															<v-spacer></v-spacer>
-															<q-btn text color="primary" @click="bDialogEndTime = false">Cancel</q-btn>
-															<q-btn text color="primary" @click="$refs.dialog4.save(oTimes.sEndTime)">OK</q-btn>
-														</v-time-picker>
-													</q-dialog>
-												</div>
-											</div>
+                        <div class="row" v-if="oSurvey.start_datetime">
+                          <div class="col col-12 col-sm-6 col-md-6">
+                            <q-input
+                              :value="formatDate(oSurvey.end_datetime)"
+                              label="Endet am"
+                              prepend-icon="event_available"
+                              readonly
+                              :rules="required"
+                              disabled
+                            >
+                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                <q-date
+                                  :disabled="surveyIsUneditable()"
+                                  required
+                                  :min="getMinDate()"
+                                  v-model="oSurvey.end_datetime"
+                                  range
+                                  color="secondary"
+                                  header-color="primary"
+                                  mask="YYYY-MM-DD HH:mm:ss"
+                                  >
+                                    <div class="row items-center justify-end q-gutter-sm">
+                                      <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
+                                    </div>
+                                  </q-date>
+                              </q-popup-proxy>
+                            </q-input>
+                          </div>
+                          <div class="col col-12 col-sm-6 col-md-6">
+                            <q-input
+                              :value="formatTime(oSurvey.end_datetime)"
+                              label="Endet um"
+                              prepend-icon="event_busy"
+                              readonly
+                              :rules="required"
+                              disabled
+                              icon="schedule"
+                            >
+                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                <q-time format24h v-model="oSurvey.end_datetime" mask="YYYY-MM-DD HH:mm:ss" color="purple">
+                                  <div class="row items-center justify-end q-gutter-sm">
+                                    <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
+                                  </div>
+                                </q-time>
+                              </q-popup-proxy>
+                            </q-input>
+                          </div>
+                        </div>
 
-											<div class="row">
-												<div class="col">
-												<q-input
-													label="Zeit für die Umfrage"
-													hide-details
-													:value="getDiffDatetimeLabel()"
-													style="max-width: 320px;"
-													dense
-													disabled
-													prepend-icon="event_note"
-													readonly
-												/>
-												</div>
-											</div>
-										</q-card-section>
-									</q-card>
-								</div>
-							</div>
-									</q-item>
+                        <div class="row">
+                          <div class="col">
+                          <q-input
+                            label="Zeit für die Umfrage"
+                            hide-details
+                            :value="getDiffDatetimeLabel()"
+                            style="max-width: 320px;"
+                            dense
+                            disabled
+                            prepend-icon="event_note"
+                            readonly
+                          />
+                          </div>
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </div>
+                </q-item>
+
 							</q-list>
 						</q-tab-panel>
 
@@ -956,10 +963,16 @@ import axios from 'axios'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 
+
 export default {
 
 	data() {
 		return {
+
+      // Timeing
+      range: '',
+      min: '',
+      max: '',
 
       // FAB
       bFabButtonInner: false,
@@ -1432,7 +1445,16 @@ export default {
 
 		getMinDate() {
 			return (this.oSurvey.active) ? this.sToday : undefined;
-		},
+    },
+
+    getMinStartdate (date) {
+      return date >= '2019/02/03' && date <= '2019/02/15'
+      if(this.oSurvey.active) {
+        return date >= this.sToday
+      } else {
+        return date >= this.oSurvey.end_datetime
+      }
+    },
 
 		getDiffDatetimeLabel() {
 			if(!this.oSurvey || !this.oSurvey.start_datetime || !this.oSurvey.end_datetime) {
@@ -1549,6 +1571,10 @@ export default {
 				return dDate.toLocaleDateString(locale);
 			}
 		},
+
+    formatTime(sDate) {
+      return sDate ? sDate.substr(11,5) + ' Uhr' : '';
+    },
 
 		showSnackbarError: function(text) {
       _this.$q.notify({
