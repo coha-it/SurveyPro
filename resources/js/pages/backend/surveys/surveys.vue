@@ -29,7 +29,13 @@
                 >
                 <template v-slot:body-cell-action="props">
                   <q-td :props="props">
-                    <router-link :to="{ name: 'backend.survey', params: {id: props.row.id } }" tag="v-icon" small class="mr-2">edit</router-link>
+                    <q-btn
+                      :label="$t('edit')"
+                      size="sm"
+                      :to="{ name: 'backend.survey', params: {id: props.row.id } }"
+                      unelevated
+                      outline
+                      />
                   </q-td>
                 </template>
                 </q-table>
