@@ -10,7 +10,7 @@
 
       <!-- Data Sheet -->
       <template>
-        <q-form v-on:submit.prevent @keydown="form.onKeydown($event)" v-model="valid" ref="form" style="max-width: 1280px;">
+        <q-form v-on:submit.prevent v-model="valid" ref="form" style="max-width: 1280px;">
 
           <q-toolbar color="primary" dark >
             <q-toolbar-title>
@@ -299,7 +299,6 @@
                                 <q-date
                                   :disabled="surveyIsUneditable()"
                                   required
-                                  :min="getMinDate()"
                                   v-model="oSurvey.end_datetime"
                                   :options="getMaxEndDate"
                                   range
@@ -347,7 +346,7 @@
                         <div class="row justify-center full-width">
                           <div class="col">
                             <q-chat-message
-                              :text="['Hallo! Die Umfrage ersteckt sich über folgende Zeit: <br/><strong>'+ getDiffDatetimeLabel() + '</strong>' ]"
+                              :text="['Hallo! Die Umfrage ersteckt sich über folgende Zeit: <br/><strong>'+ getDiffDatetimeLabel() + '</strong>. Startend am ' + formatDate(oSurvey.start_datetime) + ' bis zum ' + formatDate(oSurvey.end_datetime)  ]"
                               sent
                               :bg-color="getDiffDatetimeColor()"
                               text-color="white"
@@ -367,7 +366,7 @@
                       :events="events"
                       :event-color="eventColor"
                       :options="events"
-                      :value="sToday"
+                      :value="sTodayDatetime"
                       :title="getDiffDatetimeLabel()"
                       subtitle="Zeit für die Umfrage"
                     />
@@ -1099,7 +1098,9 @@ export default {
       },
 
       // Today
-      sToday: moment().format("YYYY-MM-DD HH:mm:ss"),
+      sTodayDate: moment().format("YYYY-MM-DD"),
+      sTodayTime: moment().format("HH:mm:ss"),
+      sTodayDatetime: moment().format("YYYY-MM-DD HH:mm:ss"),
 
       // Tmps Start
       // sStartDate: '', // this.getStartDate(),
@@ -1491,10 +1492,6 @@ export default {
       return !this.surveyIsEditable();
     },
 
-    getMinDate() {
-      return (this.oSurvey.active) ? this.sToday : undefined;
-    },
-
     getMaxEndDate(date) {
       return this.getMinMaxDate(date, 'end');
     },
@@ -1504,24 +1501,28 @@ export default {
     },
 
     getMinMaxDate(date, type) {
-      var d1 = moment(date).format("YYYY-MM-DD HH:mm:ss");
+      var d1 = this.getDate(date);
       var active = this.oSurvey.active;
 
       switch (type) {
         case 'start':
-          var end = moment(this.oSurvey.end_datetime).format("YYYY-MM-DD HH:mm:ss");
-          return d1 < end && (active ? this.sToday <= d1  : true)
+          if(this.oSurvey.end_datetime) {
+            var end = this.getDate(this.oSurvey.end_datetime);
+            return d1 < end && (active ? this.sTodayDate <= d1  : true)
+          }
           break;
 
         case 'end':
-          var start = moment(this.oSurvey.start_datetime).format("YYYY-MM-DD HH:mm:ss");
+          var start = this.getDate(this.oSurvey.start_datetime);
           return d1 >= start
           break;
       }
+
+      return (active ? this.sTodayDate <= d1 : true);
     },
 
     getDate(ts) {
-      return ts.substr(0,11);
+      return moment(ts).format('YYYY-MM-DD');
     },
 
     getMinStartTime(hr, min, sec) {
@@ -1543,11 +1544,13 @@ export default {
           var startDatetime = moment(this.oSurvey.start_datetime  ).format("YYYY-MM-DD HH:mm:ss");
 
           // SelTime
-          var selTime       = moment(this.oSurvey.start_datetime  ).toDate();
+          var selTime       = moment(this.oSurvey.start_datetime).toDate();
           if(hr) selTime.setHours(hr);
           if(min) selTime.setMinutes(min);
           if(sec) selTime.setSeconds(sec);
-          selTime = selTime.format("YYYY-MM-DD HH:mm:ss");
+
+          // Format again
+          selTime = moment(selTime).format("YYYY-MM-DD HH:mm:ss");
 
           switch (type) {
             case 'start':
