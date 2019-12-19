@@ -21,7 +21,7 @@
             <v-col>
               
                 <!-- Email -->
-                <v-text-field 
+                <q-input
                   v-model="form.email" 
                   :label="$t('email_label')" 
                   color='black' 
@@ -30,13 +30,13 @@
                   name="email" 
                   required
                   ref="email"
-                ></v-text-field>
+                />
             </v-col>
           </v-row>
           <v-row>
               <v-col cols="12" sm="12" md="12" align="right">
                 <!-- Submit Button -->
-                <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('send_verification_link') }}</v-btn>
+                <q-btn color="primary" large block :loading="form.busy" type="submit" :label="$t('send_verification_link')" />
               </v-col>
           </v-row>
         </form>

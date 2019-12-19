@@ -3,22 +3,22 @@
     <div class="inner-content">
 
       <!-- Back and Header -->
-      <v-container>
-        <v-row>  
-          <v-col cols="12" sm="12" md="12">
+      <div class="container">
+        <div class="row">
+          <div class="col col-12 col-sm-12 col-md-12">
             <Back :to="{ name:'auth' }" />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="10" sm="10" md="10" align-self="center">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col col-10 col-sm-12 col-md-12 align-center">
             <h1>{{ $t('register_title') }}</h1>
             <p class="subtitle">{{ $t('register_desc') }}</p>
-          </v-col>
-          <v-col cols="2" sm="2" md="2" align-self="center">
-            <v-icon x-large color="white">mdi-account</v-icon>
-          </v-col>
-        </v-row>
-      </v-container>
+          </div>
+          <div class="col col-2 col-sm-12 col-md-12 align-center">
+            <q-icon name="account" x-large color="white" />
+          </div>
+        </div>
+      </div>
 
 
       <!-- Form -->
@@ -27,12 +27,12 @@
       </template>
 
       <template v-else>
-        <v-form @submit.prevent="register" @keydown="form.onKeydown($event)">
-          <v-container>
-            <v-row>
-              <v-col cols="12" sm="12" md="12">
+        <q-form @submit.prevent="register" @keydown="form.onKeydown($event)">
+          <div class="container">
+            <div class="row">
+              <div class="col col-12 col-sm-12 md-12">
                 <!-- Email -->
-                <v-text-field 
+                <q-input 
                   v-model="form.email" 
                   :label="$t('email_label')" 
                   color='black' 
@@ -41,13 +41,13 @@
                   name="email" 
                   required
                   ref="email"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="12" md="12">
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col col-12 col-sm-12 md-12">
                 <!-- Password -->
-                <v-text-field 
+                <q-input 
                 v-model="form.password" 
                 :label="$t('password_label')" 
                 :error="form.errors.has('password')"  
@@ -58,14 +58,14 @@
                 required
                 color="black"
                 :hint="form.password.length + ' / 6 ' + $t('password_hint')"
-                ></v-text-field>
-              </v-col>
-            </v-row>
+                />
+              </div>
+            </div>
 
-            <v-row>
-              <v-col cols="12" sm="12" md="12">
+            <div class="row">
+              <div class="col col-12 col-sm-12 md-12">
                 <!-- Password Repeat -->
-                <v-text-field 
+                <q-input 
                 v-model="form.password_confirmation" 
                 :label="$t('password_label')" 
                 color='black' 
@@ -77,20 +77,20 @@
                 required 
                 :hint="$t('password_repeat_hint')"
 
-                ></v-text-field>
-              </v-col>
-            </v-row>
+                />
+              </div>
+            </div>
 
-            <v-row>
-              <v-col cols="12" sm="12" md="12" align="right">
+            <div class="row">
+              <div class="col col-12 col-sm-12 md-12 align-right">
                 <!-- Submit Button -->
-                <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('register') }}</v-btn>
-              </v-col>
-            </v-row>
+                <q-btn color="primary" large block :loading="form.busy" type="submit" :label="$t('register')" />
+              </div>
+            </div>
           
-          </v-container>
+          </div>
 
-        </v-form>
+        </q-form>
         <!-- End Form -->
 
       </template>
