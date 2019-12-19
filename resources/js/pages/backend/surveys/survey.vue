@@ -447,10 +447,10 @@
 
 
                     <q-table
-                      :headers="headers"
+                      :columns="headers"
 
                       v-model="selected"
-                      :items="oSurvey.questions"
+                      :data="oSurvey.questions"
 
                       multi-sort
                       show-select
@@ -906,7 +906,7 @@
                     class="mr-4"
                   >Zurück</q-btn>
                   <q-btn
-                    color="success"
+                    color="green"
                     type="submit"
                     @click="updateSurvey()"
                     class="mr-4 white--text"
@@ -1086,7 +1086,7 @@ export default {
       bExtendedSettings: false,
 
       // Form
-      valid: false,
+      valid: true,
       required: [
         v => !!v || this.$t('required'),
       ],
@@ -1717,6 +1717,7 @@ export default {
     },
 
     showSnackbarError: function(text) {
+      var _this = this;
       _this.$q.notify({
         message: _this.$t(text),
         color: 'red',
@@ -1726,6 +1727,7 @@ export default {
     },
 
     showSnackbarSuccess: function(text) {
+      var _this = this;
       _this.$q.notify({
         message: _this.$t(text),
         color: 'green',
