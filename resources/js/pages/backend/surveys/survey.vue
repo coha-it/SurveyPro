@@ -18,17 +18,15 @@
                 <template v-if="bEdit && oSurvey">{{ 'Umfrage' }} #{{ oSurvey.id }}</template>
             </q-toolbar-title>
           </q-toolbar>
-
-
           <!-- Basic Settings -->
           <q-tabs
-            fixed-tabs
-            color="secondary"
-            icons-and-text
             v-model="active_tab"
+            fixed-tabs
+            icons-and-text
             align="justify"
-            dense
-            narrow-indicator
+            inline-label
+            indicator-color="white"
+            class="bg-primary text-white shadow-2"
           >
             <q-tab @click="changeTab('basis')" name="basis" label="Basis" icon="settings" />
             <q-tab @click="changeTab('fragen')" name="fragen" label="Fragen" icon="question_answer" />
@@ -77,7 +75,6 @@
                       />
                     </q-item-section>
                   </q-item>
-
 
                   <!-- Description Short -->
                   <q-item>
@@ -160,10 +157,9 @@
                     </q-item-section>
                   </q-item>
 
-
                   <template v-if="bEdit">
                     <q-item>
-                      <q-item-section>
+                      <q-item-section side top>
                         <q-checkbox
                         v-model="bExtendedSettings"
                         :disabled="oSurvey.is_finished == 1 || oSurvey.is_canceled == 1"
@@ -177,7 +173,7 @@
 
                     <template v-if="bExtendedSettings">
                       <q-item>
-                        <q-item-section>
+                        <q-item-section side top>
                           <q-checkbox
                            color="error"
                            v-model="oSurvey.is_finished"
@@ -192,7 +188,7 @@
                       </q-item>
 
                       <q-item>
-                        <q-item-section>
+                        <q-item-section side top>
                           <q-checkbox
                           :disabled="surveyIsUneditable()"
                           color="error"
@@ -382,54 +378,47 @@
                 <q-item>
                   <q-item-section>
                     <!-- No Select Toolbar -->
-                    <v-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="sSearch == ''" floating min-height="85px" height="auto">
+                    <q-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="sSearch == ''" floating min-height="85px" height="auto">
                         <!-- <v-switch class="mt-6 mr-6" v-model="bTableDense"  color="primary"></v-switch> -->
                         <div class="flex-grow-1"></div>
                         <q-input style="max-width: 400px;" v-model="sSearch" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined/>
                         <q-input v-model="iQuestionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
-                    </v-toolbar>
+                    </q-toolbar>
 
-                    <v-toolbar class="coha--toolbar" v-else :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
-
-                        <v-menu right offset-y>
-                            <template v-slot:activator="{ on:menuedit }">
-                                <q-btn text rounded v-on="{ ...menuedit }">
-                                    <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
-                                </q-btn>
-                            </template>
-                            <q-list>
-                              <q-item @click="duplicateSelectedQuestions()">
-                                Duplizieren
-                              </q-item>
-                              <q-item @click="bDeleteQuestionDialog = true">
-                                Löschen
-                              </q-item>
-                            </q-list>
-                        </v-menu>
-
-                        <q-tooltip top>
+                    <q-toolbar class="coha--toolbar" v-else :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
+                      <v-menu right offset-y>
+                        <template v-slot:activator="{ on:menuedit }">
+                          <q-btn text rounded v-on="{ ...menuedit }">
+                            <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
+                          </q-btn>
+                        </template>
+                        <q-list>
+                          <q-item @click="duplicateSelectedQuestions()">
+                            Duplizieren
+                          </q-item>
+                          <q-item @click="bDeleteQuestionDialog = true">
+                            Löschen
+                          </q-item>
+                        </q-list>
+                      </v-menu>
+                      <q-tooltip top>
                           <template v-slot:activator="{ on }">
                             <q-btn @click="moveSelectedUp()" icon text rounded v-on="on">
                               <v-icon>mdi-chevron-up</v-icon>
                             </q-btn>
                           </template>
                           <span>Position Hoch</span>
-                        </q-tooltip>
-
-
-                        <q-tooltip top>
+                      </q-tooltip>
+                      <q-tooltip top>
                           <template v-slot:activator="{ on }">
                             <q-btn @click="moveSelectedDown()" icon text rounded v-on="on">
                               <q-icon icon="chevron-down" />
                             </q-btn>
                           </template>
                           <span>Position Runter</span>
-                        </q-tooltip>
-
-                        <!-- <div class="flex-grow-1"></div> -->
-
-                    </v-toolbar>
-
+                      </q-tooltip>
+                      <!-- <div class="flex-grow-1"></div> -->
+                    </q-toolbar>
 
                     <!-- Delete - Dialog -->
                     <q-dialog v-model="bDeleteQuestionDialog" max-width="500" dark content-class="naked dark centered">
@@ -464,21 +453,22 @@
 
                       :items-per-page="parseInt(iQuestionsPerPage)"
                       :footer-props="{
-                          showFirstLastPage: true,
+                        showFirstLastPage: true,
                       }"
                     >
-
-                      <template v-slot:item.title="props">
-                        <v-edit-dialog :return-value.sync="props.item.title">
-                          {{ props.item.title }}
-                          <template v-slot:input>
-                            <q-input
-                              v-model="props.item.title"
-                              label="Edit"
-                              counter
-                            />
-                          </template>
-                        </v-edit-dialog>
+                      <template v-slot:body-cell-title="props">
+                        <q-td :props="props">
+                          <q-dialog>
+                            {{ props.row.title }}
+                            <template v-slot:input>
+                              <q-input
+                                v-model="props.row.title"
+                                label="Edit"
+                                counter
+                              />
+                            </template>
+                          </q-dialog>
+                        </q-td>
                       </template>
 
                       <template v-slot:item.subtitle="props">
@@ -678,7 +668,7 @@
 
 
                                   <!-- Selected Toolbar -->
-                                  <v-toolbar class="coha--toolbar" v-if="aSelectedOptions && aSelectedOptions.length" :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
+                                  <q-toolbar class="coha--toolbar" v-if="aSelectedOptions && aSelectedOptions.length" :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
                                     <q-btn
                                       v-if="aSelectedOptions && aSelectedOptions.length"
                                       @click="bDeleteOptionDialog = true"
@@ -690,13 +680,13 @@
                                       Ausgewählte Optionen Löschen
                                     </q-btn>
 
-                                  </v-toolbar>
+                                  </q-toolbar>
 
                                   <!-- No Selected Toolbar -->
-                                  <v-toolbar class="coha--toolbar" v-else  :flat="sSearch == ''" floating min-height="85px" height="auto">
+                                  <q-toolbar class="coha--toolbar" v-else  :flat="sSearch == ''" floating min-height="85px" height="auto">
                                       <div class="flex-grow-1"></div>
                                       <q-input v-model="iOptionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
-                                  </v-toolbar>
+                                  </q-toolbar>
 
                                   <q-table
                                     :headers="aOptionHeaders"
@@ -998,32 +988,76 @@ export default {
       bDeleteQuestionDialog: false,
       sSearch: '',
       headers: [
-        { text: '', value: 'data-table-select' },
         {
-          text: 'Reihenfolge',
-          align: 'left',
-          value: 'order'
+          label: '',
+          align: false,
+          name: 'data-table-select',
+          field: 'data-table-select',
+          sortable: true
         },
         {
-          text: 'Title',
+          label: 'Reihenfolge',
           align: 'left',
-          value: 'title'
+          name: 'order',
+          field: 'order',
+          sortable: true
         },
         {
-          text: 'Untertitel',
+          label: 'Title',
           align: 'left',
-          value: 'subtitle'
+          name: 'title',
+          field: 'title',
+          sortable: true
         },
         {
-          text: 'Beschreibung',
+          label: 'Untertitel',
           align: 'left',
-          value: 'description'
+          name: 'subtitle',
+          field: 'subtitle',
+          sortable: true
         },
-        { value: 'is_skippable', text: 'Überspringbar' },
-        { value: 'is_commentable', text: 'Kommentierbar' },
-        { value: 'min_options', text: 'Mind. Optionen' },
-        { value: 'max_options', text: 'Max Optionen' },
-        { text: '', value: 'data-table-expand' }
+        {
+          label: 'Beschreibung',
+          align: 'left',
+          name: 'description',
+          field: 'description',
+          sortable: true
+        },
+        {
+          label: 'Überspringbar',
+          align: null,
+          name: 'is_skippable',
+          field: 'is_skippable',
+          sortable: true
+        },
+        {
+          label: 'Kommentierbar',
+          align: null,
+          name: 'is_commentable',
+          field: 'is_commentable',
+          sortable: true
+        },
+        {
+          label: 'Mind. Optionen',
+          align: null,
+          name: 'min_options',
+          field: 'min_options',
+          sortable: true
+        },
+        {
+          label: 'Max Optionen',
+          align: null,
+          name: 'max_options',
+          field: 'max_options',
+          sortable: true
+        },
+        {
+          label: '',
+          align: null,
+          name: 'data-table-expand',
+          field: 'data-table-expand',
+          sortable: false,
+        }
       ],
       selected: [],
       expanded: [],
