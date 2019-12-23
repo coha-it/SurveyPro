@@ -29,7 +29,7 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
-              :label="$t('åedit')"
+              :label="$t('edit')"
               size="sm"
               :to="{ name: 'backend.survey', params: {id: props.row.id } }"
               unelevated

@@ -389,7 +389,7 @@
                       <v-menu right offset-y>
                         <template v-slot:activator="{ on:menuedit }">
                           <q-btn text rounded v-on="{ ...menuedit }">
-                            <v-icon left>mdi-pencil</v-icon> {{ selected.length + ' ' + $t('edit') }}
+                            <q-icon left>mdi-pencil</q-icon> {{ selected.length + ' ' + $t('edit') }}
                           </q-btn>
                         </template>
                         <q-list>
@@ -404,7 +404,7 @@
                       <q-tooltip top>
                           <template v-slot:activator="{ on }">
                             <q-btn @click="moveSelectedUp()" icon text rounded v-on="on">
-                              <v-icon>mdi-chevron-up</v-icon>
+                              <q-icon>mdi-chevron-up</q-icon>
                             </q-btn>
                           </template>
                           <span>Position Hoch</span>
@@ -436,14 +436,16 @@
 
 
                     <q-table
-                      :columns="headers"
-
                       v-model="selected"
+                      :columns="headers"
                       :data="oSurvey.questions"
+                      dense
 
                       multi-sort
-                      show-select
+                      selection="multiple"
 
+                      show-select
+                      :selected.sync="selected"
                       show-expand
                       :expanded.sync="expanded"
 
@@ -458,51 +460,84 @@
                     >
                       <template v-slot:body-cell-title="props">
                         <q-td :props="props">
-                          <q-dialog>
-                            {{ props.row.title }}
-                            <template v-slot:input>
-                              <q-input
-                                v-model="props.row.title"
-                                label="Edit"
-                                counter
-                              />
-                            </template>
-                          </q-dialog>
+                          {{ props.row.title }}
+                          <q-popup-edit
+                            v-model="props.row.title"
+                            buttons
+                            :label="$t('edit')"
+                            single-line
+                            persistent
+                            :cover="false"
+                            self="center left"
+                            anchor="center right"
+                            :offset="[5, 0]"
+                            @save="save(props.row)"
+                          >
+                            <q-input
+                              v-model="props.row.title"
+                              label="Edit"
+                              counter
+                            />
+                          </q-popup-edit>
                         </q-td>
                       </template>
 
-                      <template v-slot:item.subtitle="props">
-                        <v-edit-dialog :return-value.sync="props.item.subtitle">
-                          {{ props.item.subtitle }}
-                          <template v-slot:input>
+                      <template v-slot:body-cell-subtitle="props">
+                        <q-td :props="props">
+                          {{ props.row.subtitle }}
+                          <q-popup-edit
+                            v-model="props.row.subtitle"
+                            buttons
+                            :label="$t('edit')"
+                            single-line
+                            persistent
+                            :cover="false"
+                            self="center left"
+                            anchor="center right"
+                            :offset="[5, 0]"
+                            @save="save(props.row)"
+                          >
                             <q-input
-                              v-model="props.item.subtitle"
+                              v-model="props.row.subtitle"
                               label="Edit"
                               counter
                             />
-                          </template>
-                        </v-edit-dialog>
+                          </q-popup-edit>
+                        </q-td>
                       </template>
 
-                      <template v-slot:item.description="props">
-                        <v-edit-dialog :return-value.sync="props.item.description">
-                          {{ props.item.description }}
-                          <template v-slot:input>
+                      <template v-slot:body-cell-description="props">
+                        <q-td :props="props">
+                          {{ props.row.description }}
+                          <q-popup-edit
+                            v-model="props.row.description"
+                            buttons
+                            :label="$t('edit')"
+                            single-line
+                            persistent
+                            :cover="false"
+                            self="center left"
+                            anchor="center right"
+                            :offset="[5, 0]"
+                            @save="save(props.row)"
+                          >
                             <q-input
-                              v-model="props.item.description"
+                              v-model="props.row.description"
                               label="Edit"
                               counter
                             />
-                          </template>
-                        </v-edit-dialog>
+                          </q-popup-edit>
+                        </q-td>
                       </template>
 
-                      <template v-slot:item.order="props">
-                        <div style="white-space: nowrap;">
-                          <v-icon @click="moveUp(props.item, oSurvey.questions)" x-small>mdi-arrow-up</v-icon>
-                          {{ props.item.order }}
-                          <v-icon @click="moveDown(props.item, oSurvey.questions)" x-small>mdi-arrow-down</v-icon>
-                        </div>
+                      <template v-slot:body-cell-order="props">
+                        <q-td :props="props">
+                          <div style="white-space: nowrap;">
+                            <q-icon name="mdi-arrow-up" x-small @click="moveUp(props.row, oSurvey.questions)" />
+                            {{ props.row.order }}
+                            <q-icon name="mdi-arrow-down" x-small @click="moveDown(props.row, oSurvey.questions)" />
+                          </div>
+                        </q-td>
                       </template>
 
                       <!-- Expand Area -->
@@ -676,7 +711,7 @@
                                       color="red"
                                       dark
                                     >
-                                      <v-icon left>mdi-delete</v-icon>&nbsp;
+                                      <q-icon left>mdi-delete</q-icon>&nbsp;
                                       Ausgewählte Optionen Löschen
                                     </q-btn>
 
@@ -720,16 +755,14 @@
                                     </template>
 
                                     <template v-slot:item.title="props">
-                                      <v-edit-dialog :return-value.sync="props.item.title">
+                                      <q-popup-edit v-model="props.item.title">
                                         {{ props.item.title }}
-                                        <template v-slot:input>
-                                          <q-input
-                                            v-model="props.item.title"
-                                            label="Edit"
-                                            counter
-                                          />
-                                        </template>
-                                      </v-edit-dialog>
+                                        <q-input
+                                          v-model="props.item.title"
+                                          label="Edit"
+                                          counter
+                                        />
+                                      </q-popup-edit>
                                     </template>
 
                                     <template v-slot:item.subtitle="props">
@@ -760,9 +793,9 @@
 
                                     <template v-slot:item.order="props">
                                       <div style="white-space: nowrap;">
-                                        <v-icon @click="moveUp(props.item, item.options)" x-small>mdi-arrow-up</v-icon>
+                                        <q-icon @click="moveUp(props.item, item.options)" x-small>mdi-arrow-up</q-icon>
                                           {{ props.item.order }}
-                                        <v-icon @click="moveDown(props.item, item.options)" x-small>mdi-arrow-down</v-icon>
+                                        <q-icon @click="moveDown(props.item, item.options)" x-small>mdi-arrow-down</q-icon>
                                       </div>
                                     </template>
                                     <template v-slot:item.color="props">
@@ -777,7 +810,7 @@
                                             dark
                                             :color="props.item.color"
                                           >
-                                            <v-icon dark>mdi-palette</v-icon>
+                                            <q-icon dark>mdi-palette</q-icon>
                                           </q-btn></div>
                                           <div>{{ props.item.color }}</div>
                                         </template>
@@ -806,11 +839,11 @@
                                   </q-table>
                                   <v-card-actions>
                                     <q-btn @click="addNewOption(item)">
-                                      <v-icon left>plus_one</v-icon>
+                                      <q-icon left>plus_one</q-icon>
                                       Neue Option hinzufügen
                                     </q-btn>&nbsp;
                                     <q-btn color="primary" @click="duplicateLastOption(item)">
-                                      <v-icon left>control_point_duplicate</v-icon>
+                                      <q-icon left>control_point_duplicate</q-icon>
                                       Letzte Option duplizieren
                                     </q-btn>
 
@@ -841,12 +874,12 @@
 
                 <q-item>
                   <q-btn @click="addNewQuestion()">
-                    <v-icon left>plus_one</v-icon>
+                    <q-icon left>plus_one</q-icon>
                     Neue Frage hinzufügen
                   </q-btn>
                   &nbsp; &nbsp;
                   <q-btn @click="duplicateLastQuestion()" color="primary" :disabled="oSurvey.questions.length <= 0">
-                    <v-icon left>control_point_duplicate</v-icon>
+                    <q-icon left>control_point_duplicate</q-icon>
                     Letzte Frage duplizieren
                   </q-btn>
                 </q-item>
@@ -854,7 +887,7 @@
                 <q-item></q-item>
 
 
-                <v-divider></v-divider>
+                <q-separator />
 
               </q-list>
             </q-tab-panel>
@@ -1243,6 +1276,14 @@ export default {
   },
 
   methods: {
+
+    save() {
+        this.$q.notify({
+          message: this.$t('attribute_changed'),
+          color: 'primary',
+          timeout: 3000,
+        })
+    },
 
     orderedOptions: function (options) {
       return options.sort((a, b) => (a.order > b.order) ? 1 : -1);
