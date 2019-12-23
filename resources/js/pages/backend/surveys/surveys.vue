@@ -24,6 +24,7 @@
         }"
         :sort-by="['id']"
         :sort-desc="true"
+        :pagination.sync="pagination"
         dense
       >
         <template v-slot:body-cell-action="props">
@@ -49,92 +50,99 @@ import { mapGetters } from 'vuex'
 export default {
   middleware: 'canCreateSurveys',
 
-  data() {
+  data () {
     return {
-      sSearch: "",
-      aHeaders : [
+      sSearch: '',
+      pagination: {
+        sortBy: 'id',
+        descending: true
+        // page: 1,
+        // rowsPerPage: 3
+      },
+      aHeaders: [
         {
-          label: "Title",
+          label: 'Title',
           field: 'title',
           name: 'title',
-          sortable: true,
+          sortable: true
         },
         {
           label: 'ID',
           field: 'id',
           align: 'left',
           name: 'id',
+          sortable: true
         },
         {
-          label: "Description Short",
+          label: 'Description Short',
           field: 'desc_short',
           name: 'desc_short',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Description Long",
+          label: 'Description Long',
           field: 'desc_long',
           name: 'desc_long',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Author",
+          label: 'Author',
           field: 'author',
           name: 'author',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Created By",
+          label: 'Created By',
           field: 'created_by',
           name: 'created_by',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Active",
+          label: 'Active',
           field: 'active',
           name: 'active',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Start",
+          label: 'Start',
           field: 'start_datetime',
           name: 'start_datetime',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "End",
+          label: 'End',
           field: 'end_datetime',
           name: 'end_datetime',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Finished",
+          label: 'Finished',
           field: 'is_finished',
           name: 'is_finished',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Canceled",
+          label: 'Canceled',
           field: 'is_canceled',
           name: 'is_canceled',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Only Editable by Creator",
+          label: 'Only Editable by Creator',
           field: 'only_editable_by_creator',
           name: 'only_editable_by_creator',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Public",
+          label: 'Public',
           field: 'is_public',
           name: 'is_public',
-          sortable: true,
+          sortable: true
         },
         {
-          label: "Bearbeiten",
+          label: 'Bearbeiten',
           field: 'action',
-          name: 'action',
+          name: 'action'
         }
       ]
     }

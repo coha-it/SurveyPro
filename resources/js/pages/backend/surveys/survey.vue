@@ -1,7 +1,7 @@
 <template>
   <div>
       <template>
-        <q-btn icon="keyboard_arrow_left" small outline unelevated color="grey" rounded tag="router-link" :to="oBackRoute" class="small ml-auto my-auto" :label="$t('Zurück zu den Umfragen')" />
+        <q-btn icon="keyboard_arrow_left" small outline unelevated color="grey" rounded tag="router-link" :to="oBackRoute" class="small ml-auto my-auto" :label="$t('Back to surveys')" />
         <br>
         <br>
       </template>
@@ -293,19 +293,19 @@
                               </template>
                               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                                 <q-date
+                                  v-model="oSurvey.end_datetime"
                                   :disabled="surveyIsUneditable()"
                                   required
-                                  v-model="oSurvey.end_datetime"
                                   :options="getMaxEndDate"
                                   range
                                   color="secondary"
                                   header-color="primary"
                                   mask="YYYY-MM-DD HH:mm:ss"
-                                  >
-                                    <div class="row items-center justify-end q-gutter-sm">
-                                      <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
-                                    </div>
-                                  </q-date>
+                                >
+                                  <div class="row items-center justify-end q-gutter-sm">
+                                    <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
+                                  </div>
+                                </q-date>
                               </q-popup-proxy>
                             </q-input>
                           </div>
@@ -382,11 +382,11 @@
                         <!-- <v-switch class="mt-6 mr-6" v-model="bTableDense"  color="primary"></v-switch> -->
                         <div class="flex-grow-1"></div>
                         <q-input style="max-width: 400px;" v-model="sSearch" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined/>
-                        <q-input v-model="iQuestionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
+                        <q-input v-model="pagination.rowsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
                     </q-toolbar>
 
                     <q-toolbar class="coha--toolbar" v-else :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
-                      <v-menu right offset-y>
+                      <q-menu right offset-y>
                         <template v-slot:activator="{ on:menuedit }">
                           <q-btn text rounded v-on="{ ...menuedit }">
                             <q-icon left>mdi-pencil</q-icon> {{ selected.length + ' ' + $t('edit') }}
@@ -400,7 +400,7 @@
                             Löschen
                           </q-item>
                         </q-list>
-                      </v-menu>
+                      </q-menu>
                       <q-tooltip top>
                           <template v-slot:activator="{ on }">
                             <q-btn @click="moveSelectedUp()" icon text rounded v-on="on">
@@ -434,7 +434,6 @@
                       </v-container>
                     </q-dialog>
 
-
                     <q-table
                       v-model="selected"
                       :columns="headers"
@@ -453,433 +452,495 @@
                       :sort-by="['order']"
                       :sort-desc="[false]"
 
-                      :items-per-page="parseInt(iQuestionsPerPage)"
+                      :pagination.sync="pagination"
                       :footer-props="{
                         showFirstLastPage: true,
                       }"
+
+                      class="my-data-table"
                     >
-                      <template v-slot:body-cell-title="props">
-                        <q-td :props="props">
-                          {{ props.row.title }}
-                          <q-popup-edit
-                            v-model="props.row.title"
-                            buttons
-                            :label="$t('edit')"
-                            single-line
-                            persistent
-                            :cover="false"
-                            self="center left"
-                            anchor="center right"
-                            :offset="[5, 0]"
-                            @save="save(props.row)"
-                          >
-                            <q-input
-                              v-model="props.row.title"
-                              label="Edit"
-                              counter
-                            />
-                          </q-popup-edit>
-                        </q-td>
-                      </template>
+                      <template v-slot:body="props">
+                        <q-tr :props="props">
+                          <!-- Selected -->
+                          <q-td>
+                            <q-checkbox v-model="props.selected" dense />
+                          </q-td>
 
-                      <template v-slot:body-cell-subtitle="props">
-                        <q-td :props="props">
-                          {{ props.row.subtitle }}
-                          <q-popup-edit
-                            v-model="props.row.subtitle"
-                            buttons
-                            :label="$t('edit')"
-                            single-line
-                            persistent
-                            :cover="false"
-                            self="center left"
-                            anchor="center right"
-                            :offset="[5, 0]"
-                            @save="save(props.row)"
-                          >
-                            <q-input
-                              v-model="props.row.subtitle"
-                              label="Edit"
-                              counter
-                            />
-                          </q-popup-edit>
-                        </q-td>
-                      </template>
-
-                      <template v-slot:body-cell-description="props">
-                        <q-td :props="props">
-                          {{ props.row.description }}
-                          <q-popup-edit
-                            v-model="props.row.description"
-                            buttons
-                            :label="$t('edit')"
-                            single-line
-                            persistent
-                            :cover="false"
-                            self="center left"
-                            anchor="center right"
-                            :offset="[5, 0]"
-                            @save="save(props.row)"
-                          >
-                            <q-input
-                              v-model="props.row.description"
-                              label="Edit"
-                              counter
-                            />
-                          </q-popup-edit>
-                        </q-td>
-                      </template>
-
-                      <template v-slot:body-cell-order="props">
-                        <q-td :props="props">
-                          <div style="white-space: nowrap;">
-                            <q-icon name="mdi-arrow-up" x-small @click="moveUp(props.row, oSurvey.questions)" />
-                            {{ props.row.order }}
-                            <q-icon name="mdi-arrow-down" x-small @click="moveDown(props.row, oSurvey.questions)" />
-                          </div>
-                        </q-td>
-                      </template>
-
-                      <!-- Expand Area -->
-                      <template v-slot:expanded-item="{ headers, item }">
-                        <template v-if="item">
-                          <td colspan="100%">
-                            <div class="row">
-                              <div class="col" xl="12" sm="12" xs="12">
-                                <q-card>
-                                  <v-card-title>Frage-Einstellungen #{{ item.id }}</v-card-title>
-                                  <!-- <v-card-text>Einstellungen zur {{ item.order }}. Frage</v-card-text> -->
-                                <q-list subheader two-line flat >
-
-                                  <q-item-label>Allgemeine Frage-Einstellungen</q-item-label>
-
-                                  <q-item>
-                                    <q-item-section>
-                                      <q-checkbox v-model="item.is_skippable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
-                                    </q-item-section>
-                                    <q-item-section>
-                                      <q-item-label>Überspringbar</q-item-label>
-                                      <q-item-label caption>Ist diese Frage überspringbar</q-item-label>
-                                    </q-item-section>
-                                  </q-item>
-
-                                  <q-item>
-                                    <q-item-section>
-                                      <q-input
-                                        :disabled="surveyIsUneditable()"
-                                        dense
-                                        persistent-hint
-                                        outlined
-                                        hint="Titel der Frage. Wird am größten Angezeigt"
-                                        placeholder="z.B.: 'Fazit zur Umfrage' "
-                                        v-model="item.title"
-                                        label="Titel"
-                                        required
-                                      />
-                                    </q-item-section>
-                                  </q-item>
-
-                                  <q-item>
-                                    <q-item-section>
-                                      <q-input
-                                        :disabled="surveyIsUneditable()"
-                                        dense
-                                        persistent-hint
-                                        outlined
-                                        hint="Subtitel / Untertitel der Frage. Wird unter Titel angezeigt"
-                                        placeholder="z.B.: 'Wie fanden Sie diese Umfrage?' "
-                                        v-model="item.subtitle"
-                                        label="Untertitel"
-                                        required
-                                      />
-                                    </q-item-section>
-                                  </q-item>
-
-                                  <q-item>
-                                    <q-item-section>
-                                      <q-input type="textarea"
-                                        :disabled="surveyIsUneditable()"
-                                        dense
-                                        persistent-hint
-                                        outlined
-                                        hint="Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt."
-                                        placeholder="z.B.: 'Bewerten Sie diese Umfrage bitte mit 0 (negativ) bis 10 (positiv) Punkten' "
-                                        v-model="item.description"
-                                        label="Beschreibung"
-                                        required
-                                      />
-                                    </q-item-section>
-                                  </q-item>
-
-                                  <q-item-label>Kommentar-Einstellungen</q-item-label>
-
-                                  <q-item>
-                                    <q-item-section>
-                                      <q-checkbox v-model="item.is_commentable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
-                                    </q-item-section>
-                                    <q-item-section>
-                                      <q-item-label>Kommentierbar</q-item-label>
-                                      <q-item-label caption>Ist diese Frage kommentierbar</q-item-label>
-                                    </q-item-section>
-                                  </q-item>
-
-                                  <template v-if="item.is_commentable || true">
-                                    <q-item>
-                                      <q-item-section>
-                                        <q-checkbox v-model="item.comment_is_required" :disabled="surveyIsUneditable() && item.is_commentable" color="primary" :true-value="1" :false-value="0" />
-                                      </q-item-section>
-                                      <q-item-section>
-                                        <q-item-label>Kommentar ist erforderlich</q-item-label>
-                                        <q-item-label caption>Ist ein Kommentar erforderlich</q-item-label>
-                                      </q-item-section>
-                                    </q-item>
-
-                                    <q-item>
-                                      <q-item-section>
-                                        <q-checkbox v-model="item.comment_is_number" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
-                                      </q-item-section>
-                                      <q-item-section>
-                                        <q-item-label>Kommentar ist eine Nummer</q-item-label>
-                                        <q-item-label caption>Wenn der Kommentar eine Nummer sein soll</q-item-label>
-                                      </q-item-section>
-                                    </q-item>
-
-                                    <q-item>
-                                      <q-item-section>
-                                        <q-input
-                                          :disabled="surveyIsUneditable()"
-                                          dense
-                                          persistent-hint
-                                          outlined
-                                          hint="Kommentar: Maximale Zeichen"
-                                          placeholder="1 - 255"
-                                          type="number"
-                                          v-model="item.comment_max_signs"
-                                          label="Maximale Zeichen"
-                                          required
-                                        />
-                                      </q-item-section>
-                                    </q-item>
-                                  </template>
-
-                                  <q-item-label>Einstellungen: Optionen</q-item-label>
-
-                                    <q-item>
-                                      <q-item-section>
-                                        <div class="row">
-                                          <div class="col" xl="3" md="3" sm="6" xs="12">
-                                            <q-input
-                                              :disabled="surveyIsUneditable()"
-                                              dense
-                                              persistent-hint
-                                              outlined
-                                              hint="Minimal wählbare Optionen"
-                                              placeholder="1 - 255"
-                                              type="number"
-                                              v-model="item.min_options"
-                                              label="Minimale Optionen"
-                                              required
-                                            />
-                                          </div>
-                                          <div class="col" xl="3" md="3" sm="6" xs="12">
-                                            <q-input
-                                              :disabled="surveyIsUneditable()"
-                                              dense
-                                              persistent-hint
-                                              outlined
-                                              hint="Maximale wählbare Optionen"
-                                              placeholder="1 - 255"
-                                              type="number"
-                                              :min="item.min_options"
-                                              v-model="item.max_options"
-                                              label="Maximale Optionen"
-                                              required
-                                            />
-                                          </div>
-                                        </div>
-                                      </q-item-section>
-                                    </q-item>
-                                  </q-list>
-
-
-                                  <!-- Selected Toolbar -->
-                                  <q-toolbar class="coha--toolbar" v-if="aSelectedOptions && aSelectedOptions.length" :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
-                                    <q-btn
-                                      v-if="aSelectedOptions && aSelectedOptions.length"
-                                      @click="bDeleteOptionDialog = true"
-                                      depressed
-                                      color="red"
-                                      dark
-                                    >
-                                      <q-icon left>mdi-delete</q-icon>&nbsp;
-                                      Ausgewählte Optionen Löschen
-                                    </q-btn>
-
-                                  </q-toolbar>
-
-                                  <!-- No Selected Toolbar -->
-                                  <q-toolbar class="coha--toolbar" v-else  :flat="sSearch == ''" floating min-height="85px" height="auto">
-                                      <div class="flex-grow-1"></div>
-                                      <q-input v-model="iOptionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
-                                  </q-toolbar>
-
-                                  <q-table
-                                    :headers="aOptionHeaders"
-
-                                    v-model="aSelectedOptions"
-                                    :items="item.options"
-
-                                    dense
-                                    multi-sort
-                                    show-select
-
-                                    :items-per-page="parseInt(iOptionsPerPage)"
-                                    :sort-by="['order']"
-                                    :sort-desc="[false]"
-                                    :footer-props="{
-                                        showFirstLastPage: true,
-                                    }"
-                                  >
-
-                                    <template v-slot:item.value="props">
-                                      <v-edit-dialog :return-value.sync="props.item.value">
-                                        {{ props.item.value }}
-                                        <template v-slot:input>
-                                          <q-input
-                                            v-model="props.item.value"
-                                            label="Edit"
-                                            type="number"
-                                          />
-                                        </template>
-                                      </v-edit-dialog>
-                                    </template>
-
-                                    <template v-slot:item.title="props">
-                                      <q-popup-edit v-model="props.item.title">
-                                        {{ props.item.title }}
-                                        <q-input
-                                          v-model="props.item.title"
-                                          label="Edit"
-                                          counter
-                                        />
-                                      </q-popup-edit>
-                                    </template>
-
-                                    <template v-slot:item.subtitle="props">
-                                      <v-edit-dialog :return-value.sync="props.item.subtitle">
-                                        {{ props.item.subtitle }}
-                                        <template v-slot:input>
-                                          <q-input
-                                            v-model="props.item.subtitle"
-                                            label="Edit"
-                                            counter
-                                          />
-                                        </template>
-                                      </v-edit-dialog>
-                                    </template>
-
-                                    <template v-slot:item.description="props">
-                                      <v-edit-dialog :return-value.sync="props.item.description">
-                                        {{ props.item.description }}
-                                        <template v-slot:input>
-                                          <q-input
-                                            v-model="props.item.description"
-                                            label="Edit"
-                                            counter
-                                          />
-                                        </template>
-                                      </v-edit-dialog>
-                                    </template>
-
-                                    <template v-slot:item.order="props">
-                                      <div style="white-space: nowrap;">
-                                        <q-icon @click="moveUp(props.item, item.options)" x-small>mdi-arrow-up</q-icon>
-                                          {{ props.item.order }}
-                                        <q-icon @click="moveDown(props.item, item.options)" x-small>mdi-arrow-down</q-icon>
-                                      </div>
-                                    </template>
-                                    <template v-slot:item.color="props">
-
-                                      <q-dialog v-model="props.item.dialog" max-width="290">
-                                        <template v-slot:activator="{ on }">
-                                          <div><q-btn
-                                            v-on="on"
-                                            small
-                                            depressed
-                                            fab
-                                            dark
-                                            :color="props.item.color"
-                                          >
-                                            <q-icon dark>mdi-palette</q-icon>
-                                          </q-btn></div>
-                                          <div>{{ props.item.color }}</div>
-                                        </template>
-                                        <q-card>
-                                          <v-card-title>Farbe auswählen</v-card-title>
-                                          <v-card-text>
-                                            <q-btn block small :color="props.item.color">{{ props.item.color }}</q-btn>
-                                            <template v-for="oColor in aAllOptionColors">
-                                              <div style="margin-top: 5px;" v-bind:key="oColor.title" >
-                                                <q-btn block small :color="oColor.hex" @click="props.item.color = oColor.hex">{{ oColor.title }}</q-btn>
-                                              </div>
-                                            </template>
-                                          </v-card-text>
-                                          <v-color-picker
-                                            mode="rgba"
-                                            value="#666666"
-                                            v-model="props.item.color"
-                                            flat
-                                          ></v-color-picker>
-                                          <v-card-actions>
-                                            <q-btn  @click="props.item.dialog = false">Übernehmen und schließen</q-btn>
-                                          </v-card-actions>
-                                        </q-card>
-                                      </q-dialog>
-                                    </template>
-                                  </q-table>
-                                  <v-card-actions>
-                                    <q-btn @click="addNewOption(item)">
-                                      <q-icon left>plus_one</q-icon>
-                                      Neue Option hinzufügen
-                                    </q-btn>&nbsp;
-                                    <q-btn color="primary" @click="duplicateLastOption(item)">
-                                      <q-icon left>control_point_duplicate</q-icon>
-                                      Letzte Option duplizieren
-                                    </q-btn>
-
-                                    <!-- Delete - Dialog -->
-                                    <q-dialog v-model="bDeleteOptionDialog" max-width="500" dark content-class="naked dark centered">
-                                      <h2 class="display-2">Optionen Löschen?</h2>
-                                      <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
-                                      <v-container fluid>
-                                        <div class="row" align="center">
-                                          <div class="col text-center" cols="12" sm="12">
-                                            <q-btn depressed @click="bDeleteOptionDialog = false" outlined>Abbruch</q-btn>
-                                            <q-btn depressed @click.prevent="deleteOptions(item, aSelectedOptions)" color="error">Löschen</q-btn>
-                                          </div>
-                                        </div>
-                                      </v-container>
-                                    </q-dialog>
-
-                                  </v-card-actions>
-                                </q-card>
-                              </div>
+                          <q-td key="order" :props="props">
+                            <div style="white-space: nowrap;">
+                              <q-icon name="mdi-arrow-up" x-small @click="moveUp(props.row, oSurvey.questions)" />
+                              {{ props.row.order }}
+                              <q-icon name="mdi-arrow-down" x-small @click="moveDown(props.row, oSurvey.questions)" />
                             </div>
-                          </td>
-                        </template>
+                          </q-td>
+
+                          <q-td key="title" :props="props">
+                            {{ props.row.title }}
+                            <q-popup-edit
+                              v-model="props.row.title"
+                              buttons
+                              single-line
+                              persistent
+                              :cover="false"
+                              self="center left"
+                              anchor="center right"
+                              :offset="[5, 0]"
+                              @save="save(props.row)"
+                            >
+                              <q-input
+                                v-model="props.row.title"
+                                :label="$t('title')"
+                                counter
+                                autofocus
+                              />
+                            </q-popup-edit>
+                          </q-td>
+
+                          <q-td key="subtitle" :props="props">
+                            {{ props.row.subtitle }}
+                            <q-popup-edit
+                              v-model="props.row.subtitle"
+                              buttons
+                              single-line
+                              persistent
+                              :cover="false"
+                              self="center left"
+                              anchor="center right"
+                              :offset="[5, 0]"
+                              @save="save(props.row)"
+                            >
+                              <q-input
+                                v-model="props.row.subtitle"
+                                :label="$t('subtitle')"
+                                counter
+                                autofocus
+                              />
+                            </q-popup-edit>
+                          </q-td>
+
+                          <q-td key="description" :props="props">
+                            {{ props.row.description }}
+                            <q-popup-edit
+                              v-model="props.row.description"
+                              buttons
+                              single-line
+                              persistent
+                              :cover="false"
+                              self="center left"
+                              anchor="center right"
+                              :offset="[5, 0]"
+                              @save="save(props.row)"
+                            >
+                              <q-input
+                                v-model="props.row.description"
+                                :label="$t('description')"
+                                counter
+                                autofocus
+                              />
+                            </q-popup-edit>
+                          </q-td>
+
+                          <q-td key="is_skippable" :props="props">
+                            <q-checkbox v-model="props.row.is_skippable" :true-value="1" :false-value="0" />
+                          </q-td>
+
+                          <q-td key="is_commentable" :props="props">
+                            <q-checkbox v-model="props.row.is_commentable" :true-value="1" :false-value="0" />
+                          </q-td>
+
+                          <q-td key="min_options" :props="props">
+                            {{ props.row.min_options }}
+                            <q-popup-edit
+                              v-model="props.row.min_options"
+                              buttons
+                              single-line
+                              persistent
+                              :cover="false"
+                              self="center left"
+                              anchor="center right"
+                              :offset="[5, 0]"
+                              @save="save(props.row)"
+                            >
+                              <q-input
+                                v-model="props.row.min_options"
+                                :label="$t('min_options')"
+                                :max="parseInt(props.row.max_options)"
+                                autofocus
+                                type="number"
+                              />
+                            </q-popup-edit>
+                          </q-td>
+
+                          <q-td key="max_options" :props="props">
+                            {{ props.row.max_options }}
+                            <q-popup-edit
+                              v-model="props.row.max_options"
+                              buttons
+                              single-line
+                              persistent
+                              :cover="false"
+                              self="center left"
+                              anchor="center right"
+                              :offset="[5, 0]"
+                              @save="save(props.row)"
+                            >
+                              <q-input
+                                v-model="props.row.max_options"
+                                :label="$t('max_options')"
+                                :min="parseInt(props.row.min_options)"
+                                :max="10"
+                                autofocus
+                                type="number"
+                              />
+                            </q-popup-edit>
+                          </q-td>
+
+                          <q-td key="expand" :props="props">
+                            <q-btn dense round flat :icon="props.expand ? 'arrow_drop_up' : 'arrow_drop_down'" @click="props.expand = !props.expand" />
+                          </q-td>
+                        </q-tr>
+
+                        <!-- Expandable Area -->
+                        <q-tr v-show="props.expand" :props="props" class="expandable-row">
+                          <q-td colspan="100%">
+                            <div class="text-left">
+                              <template v-if="props.row">
+                                <td colspan="100%">
+                                  <div class="row">
+                                    <div class="col" xl="12" sm="12" xs="12">
+                                      <h3>Frage-Einstellungen #{{ props.row.id }}</h3>
+                                        <!-- <q-card-section>Einstellungen zur {{ props.row.order }}. Frage</q-card-section> -->
+                                      <q-list subheader two-line flat>
+                                        <q-item-label>Allgemeine Frage-Einstellungen</q-item-label>
+                                        <q-item>
+                                          <q-item-section>
+                                            <q-checkbox v-model="props.row.is_skippable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
+                                          </q-item-section>
+                                          <q-item-section>
+                                            <q-item-label>Überspringbar</q-item-label>
+                                            <q-item-label caption>Ist diese Frage überspringbar</q-item-label>
+                                          </q-item-section>
+                                        </q-item>
+
+                                        <q-item>
+                                          <q-item-section>
+                                            <q-input
+                                              :disabled="surveyIsUneditable()"
+                                              dense
+                                              persistent-hint
+                                              outlined
+                                              hint="Titel der Frage. Wird am größten Angezeigt"
+                                              placeholder="z.B.: 'Fazit zur Umfrage' "
+                                              v-model="props.row.title"
+                                              label="Titel"
+                                              required
+                                            />
+                                          </q-item-section>
+                                        </q-item>
+
+                                        <q-item>
+                                          <q-item-section>
+                                            <q-input
+                                              :disabled="surveyIsUneditable()"
+                                              dense
+                                              persistent-hint
+                                              outlined
+                                              hint="Subtitel / Untertitel der Frage. Wird unter Titel angezeigt"
+                                              placeholder="z.B.: 'Wie fanden Sie diese Umfrage?' "
+                                              v-model="props.row.subtitle"
+                                              label="Untertitel"
+                                              required
+                                            />
+                                          </q-item-section>
+                                        </q-item>
+
+                                        <q-item>
+                                          <q-item-section>
+                                            <q-input type="textarea"
+                                              :disabled="surveyIsUneditable()"
+                                              dense
+                                              persistent-hint
+                                              outlined
+                                              hint="Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt."
+                                              placeholder="z.B.: 'Bewerten Sie diese Umfrage bitte mit 0 (negativ) bis 10 (positiv) Punkten' "
+                                              v-model="props.row.description"
+                                              label="Beschreibung"
+                                              required
+                                            />
+                                          </q-item-section>
+                                        </q-item>
+
+                                        <q-item-label>Kommentar-Einstellungen</q-item-label>
+
+                                        <q-item>
+                                          <q-item-section>
+                                            <q-checkbox v-model="props.row.is_commentable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
+                                          </q-item-section>
+                                          <q-item-section>
+                                            <q-item-label>Kommentierbar</q-item-label>
+                                            <q-item-label caption>Ist diese Frage kommentierbar</q-item-label>
+                                          </q-item-section>
+                                        </q-item>
+
+                                        <template v-if="props.row.is_commentable || true">
+                                          <q-item>
+                                            <q-item-section>
+                                              <q-checkbox v-model="props.row.comment_is_required" :disabled="surveyIsUneditable() && props.row.is_commentable" color="primary" :true-value="1" :false-value="0" />
+                                            </q-item-section>
+                                            <q-item-section>
+                                              <q-item-label>Kommentar ist erforderlich</q-item-label>
+                                              <q-item-label caption>Ist ein Kommentar erforderlich</q-item-label>
+                                            </q-item-section>
+                                          </q-item>
+
+                                          <q-item>
+                                            <q-item-section>
+                                              <q-checkbox v-model="props.row.comment_is_number" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
+                                            </q-item-section>
+                                            <q-item-section>
+                                              <q-item-label>Kommentar ist eine Nummer</q-item-label>
+                                              <q-item-label caption>Wenn der Kommentar eine Nummer sein soll</q-item-label>
+                                            </q-item-section>
+                                          </q-item>
+
+                                          <q-item>
+                                            <q-item-section>
+                                              <q-input
+                                                :disabled="surveyIsUneditable()"
+                                                dense
+                                                persistent-hint
+                                                outlined
+                                                hint="Kommentar: Maximale Zeichen"
+                                                placeholder="1 - 255"
+                                                type="number"
+                                                v-model="props.row.comment_max_signs"
+                                                label="Maximale Zeichen"
+                                                required
+                                              />
+                                            </q-item-section>
+                                          </q-item>
+                                        </template>
+
+                                        <q-item-label>Einstellungen: Optionen</q-item-label>
+
+                                          <q-item>
+                                            <q-item-section>
+                                              <div class="row">
+                                                <div class="col" xl="3" md="3" sm="6" xs="12">
+                                                  <q-input
+                                                    :disabled="surveyIsUneditable()"
+                                                    dense
+                                                    persistent-hint
+                                                    outlined
+                                                    hint="Minimal wählbare Optionen"
+                                                    placeholder="1 - 255"
+                                                    type="number"
+                                                    v-model="props.row.min_options"
+                                                    :max="parseInt(props.row.max_options)"
+                                                    label="Minimale Optionen"
+                                                    required
+                                                  />
+                                                </div>
+                                                <div class="col" xl="3" md="3" sm="6" xs="12">
+                                                  <q-input
+                                                    :disabled="surveyIsUneditable()"
+                                                    dense
+                                                    persistent-hint
+                                                    outlined
+                                                    hint="Maximale wählbare Optionen"
+                                                    placeholder="1 - 255"
+                                                    type="number"
+                                                    :min="parseInt(props.row.min_options)"
+                                                    v-model="props.row.max_options"
+                                                    label="Maximale Optionen"
+                                                    required
+                                                  />
+                                                </div>
+                                              </div>
+                                            </q-item-section>
+                                          </q-item>
+                                        </q-list>
+
+
+                                        <!-- Selected Toolbar -->
+                                        <q-toolbar class="coha--toolbar" v-if="aSelectedOptions && aSelectedOptions.length" :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
+                                          <q-btn
+                                            v-if="aSelectedOptions && aSelectedOptions.length"
+                                            @click="bDeleteOptionDialog = true"
+                                            depressed
+                                            color="red"
+                                            dark
+                                          >
+                                            <q-icon left>mdi-delete</q-icon>&nbsp;
+                                            Ausgewählte Optionen Löschen
+                                          </q-btn>
+
+                                        </q-toolbar>
+
+                                        <!-- No Selected Toolbar -->
+                                        <q-toolbar v-else class="coha--toolbar" :flat="sSearch == ''" floating min-height="85px" height="auto">
+                                          <div class="flex-grow-1"></div>
+                                          <q-input v-model="iOptionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
+                                        </q-toolbar>
+
+                                        <q-table
+                                          :headers="aOptionHeaders"
+
+                                          v-model="aSelectedOptions"
+                                          :items="props.row.options"
+
+                                          dense
+                                          multi-sort
+                                          show-select
+
+                                          :items-per-page="parseInt(iOptionsPerPage)"
+                                          :sort-by="['order']"
+                                          :sort-desc="[false]"
+                                          :footer-props="{
+                                            showFirstLastPage: true,
+                                          }"
+                                        >
+
+                                          <template v-slot:item.value="props">
+                                            <v-edit-dialog :return-value.sync="props.item.value">
+                                              {{ props.item.value }}
+                                              <template v-slot:input>
+                                                <q-input
+                                                  v-model="props.item.value"
+                                                  label="Edit"
+                                                  type="number"
+                                                />
+                                              </template>
+                                            </v-edit-dialog>
+                                          </template>
+
+                                          <template v-slot:item.title="props">
+                                            <q-popup-edit v-model="props.item.title">
+                                              {{ props.item.title }}
+                                              <q-input
+                                                v-model="props.item.title"
+                                                label="Edit"
+                                                counter
+                                              />
+                                            </q-popup-edit>
+                                          </template>
+
+                                          <template v-slot:item.subtitle="props">
+                                            <v-edit-dialog :return-value.sync="props.item.subtitle">
+                                              {{ props.item.subtitle }}
+                                              <template v-slot:input>
+                                                <q-input
+                                                  v-model="props.item.subtitle"
+                                                  label="Edit"
+                                                  counter
+                                                />
+                                              </template>
+                                            </v-edit-dialog>
+                                          </template>
+
+                                          <template v-slot:item.description="props">
+                                            <v-edit-dialog :return-value.sync="props.item.description">
+                                              {{ props.item.description }}
+                                              <template v-slot:input>
+                                                <q-input
+                                                  v-model="props.item.description"
+                                                  label="Edit"
+                                                  counter
+                                                />
+                                              </template>
+                                            </v-edit-dialog>
+                                          </template>
+
+                                          <template v-slot:item.order="props">
+                                            <div style="white-space: nowrap;">
+                                              <q-icon @click="moveUp(props.item, item.options)" x-small>mdi-arrow-up</q-icon>
+                                                {{ props.item.order }}
+                                              <q-icon @click="moveDown(props.item, item.options)" x-small>mdi-arrow-down</q-icon>
+                                            </div>
+                                          </template>
+                                          <template v-slot:item.color="props">
+
+                                            <q-dialog v-model="props.item.dialog" max-width="290">
+                                              <template v-slot:activator="{ on }">
+                                                <div><q-btn
+                                                  v-on="on"
+                                                  small
+                                                  depressed
+                                                  fab
+                                                  dark
+                                                  :color="props.item.color"
+                                                >
+                                                  <q-icon dark>mdi-palette</q-icon>
+                                                </q-btn></div>
+                                                <div>{{ props.item.color }}</div>
+                                              </template>
+                                              <q-card>
+                                                <q-card-section>Farbe auswählen</q-card-section>
+                                                <q-card-section>
+                                                  <q-btn block small :color="props.item.color">{{ props.item.color }}</q-btn>
+                                                  <template v-for="oColor in aAllOptionColors">
+                                                    <div style="margin-top: 5px;" v-bind:key="oColor.title" >
+                                                      <q-btn block small :color="oColor.hex" @click="props.item.color = oColor.hex">{{ oColor.title }}</q-btn>
+                                                    </div>
+                                                  </template>
+                                                </q-card-section>
+                                                <v-color-picker
+                                                  mode="rgba"
+                                                  value="#666666"
+                                                  v-model="props.item.color"
+                                                  flat
+                                                ></v-color-picker>
+                                                <q-card-section>
+                                                  <q-btn @click="props.item.dialog = false">Übernehmen und schließen</q-btn>
+                                                </q-card-section>
+                                              </q-card>
+                                            </q-dialog>
+                                          </template>
+                                        </q-table>
+                                          <q-btn @click="addNewOption(item)">
+                                            <q-icon name="mdi-plus_one" left />
+                                            Neue Option hinzufügen
+                                          </q-btn>&nbsp;
+                                          <q-btn color="primary" @click="duplicateLastOption(item)">
+                                            <q-icon name="control_point_duplicate" left />
+                                            Letzte Option duplizieren
+                                          </q-btn>
+
+                                          <!-- Delete - Dialog -->
+                                          <q-dialog v-model="bDeleteOptionDialog" max-width="500" dark content-class="naked dark centered">
+                                            <h2 class="display-2">Optionen Löschen?</h2>
+                                            <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
+                                            <v-container fluid>
+                                              <div class="row" align="center">
+                                                <div class="col text-center" cols="12" sm="12">
+                                                  <q-btn depressed @click="bDeleteOptionDialog = false" outlined>Abbruch</q-btn>
+                                                  <q-btn depressed @click.prevent="deleteOptions(item, aSelectedOptions)" color="error">Löschen</q-btn>
+                                                </div>
+                                              </div>
+                                            </v-container>
+                                          </q-dialog>
+                                    </div>
+                                  </div>
+                                </td>
+                              </template>
+
+                            </div>
+                          </q-td>
+                        </q-tr>
                       </template>
+
                     </q-table>
                   </q-item-section>
                 </q-item>
 
                 <q-item>
                   <q-btn @click="addNewQuestion()">
-                    <q-icon left>plus_one</q-icon>
+                    <q-icon name="plus_one" left />
                     Neue Frage hinzufügen
                   </q-btn>
                   &nbsp; &nbsp;
                   <q-btn @click="duplicateLastQuestion()" color="primary" :disabled="oSurvey.questions.length <= 0">
-                    <q-icon left>control_point_duplicate</q-icon>
+                    <q-icon name="control_point_duplicate" left />
                     Letzte Frage duplizieren
                   </q-btn>
                 </q-item>
@@ -985,12 +1046,7 @@
       max-width="500" dark content-class="naked dark centered"
       persistent
     >
-      <v-progress-circular
-        :size="70"
-        :width="5"
-        indeterminate
-        color="white"
-      ></v-progress-circular>
+      <q-circular-progress indeterminate />
       <div>{{ $t('loading.text') }}</div>
     </q-dialog>
 
@@ -1006,7 +1062,7 @@ import moment from 'moment'
 
 export default {
 
-  data() {
+  data () {
     return {
 
       // Timeing
@@ -1020,14 +1076,13 @@ export default {
       // Questions
       bDeleteQuestionDialog: false,
       sSearch: '',
+      pagination: {
+        sortBy: 'order',
+        descending: false,
+        page: 1,
+        rowsPerPage: 100
+      },
       headers: [
-        {
-          label: '',
-          align: false,
-          name: 'data-table-select',
-          field: 'data-table-select',
-          sortable: true
-        },
         {
           label: 'Reihenfolge',
           align: 'left',
@@ -1087,14 +1142,13 @@ export default {
         {
           label: '',
           align: null,
-          name: 'data-table-expand',
-          field: 'data-table-expand',
+          name: 'expand',
+          field: 'expand',
           sortable: false,
         }
       ],
       selected: [],
       expanded: [],
-      iQuestionsPerPage: 50,
 
       // Options
       aOptionHeaders: [
@@ -1796,7 +1850,8 @@ export default {
       _this.$q.notify({
         message: _this.$t(text),
         color: 'red',
-        position: 'top',
+        position: 'top-right',
+        actions: [{ icon: 'close', color: 'white' }],
         timeout: 6000,
       })
     },
@@ -1806,7 +1861,8 @@ export default {
       _this.$q.notify({
         message: _this.$t(text),
         color: 'green',
-        position: 'top',
+        position: 'top-right',
+        actions: [{ icon: 'close', color: 'white' }],
         timeout: 3000,
       })
     },

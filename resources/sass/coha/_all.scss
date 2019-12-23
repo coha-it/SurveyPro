@@ -370,7 +370,9 @@ select {
     position: sticky;
     z-index: 1;
     background: #fff;
+    z-index: 102;
   }
+
   thead tr:first-child th{
     top: 0;
   }
@@ -387,7 +389,7 @@ select {
   td:last-child{
     position: sticky !important;
     background-color: #fff;
-    z-index: 100;
+    // z-index: 102;
   }
 
   th:last-child,
@@ -398,5 +400,13 @@ select {
   th:first-child,
   td:first-child{
     left: 0;
+  }
+}
+
+.expandable-row {
+  td {
+    &:before {
+      display: none;
+    }
   }
 }
