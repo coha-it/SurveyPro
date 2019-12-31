@@ -1,28 +1,36 @@
 <template>
   <div>
-      <template>
-        <q-btn icon="keyboard_arrow_left" small outline unelevated color="grey" rounded tag="router-link" :to="oBackRoute" class="small ml-auto my-auto" :label="$t('Back to surveys')" />
-        <br>
-        <br>
-      </template>
+    <template>
+      <q-btn
+        icon="keyboard_arrow_left"
+        small
+        outline
+        unelevated
+        color="grey"
+        rounded
+        tag="router-link"
+        :to="oBackRoute"
+        class="small ml-auto my-auto"
+        :label="$t('Back to surveys')"
+      />
+      <br />
+      <br />
+    </template>
 
     <div v-if="oSurvey">
-
       <!-- Data Sheet -->
       <template>
         <q-form v-on:submit.prevent v-model="valid" ref="form" style="max-width: 1280px;">
-
-          <q-toolbar color="primary" dark >
+          <q-toolbar color="primary" dark>
             <q-toolbar-title>
-                <template v-if="bCreate">{{ "Neue Umfrage erstellen" }}</template>
-                <template v-if="bEdit && oSurvey">{{ 'Umfrage' }} #{{ oSurvey.id }}</template>
+              <template v-if="bCreate">{{ "Neue Umfrage erstellen" }}</template>
+              <template v-if="bEdit && oSurvey">{{ 'Umfrage' }} #{{ oSurvey.id }}</template>
             </q-toolbar-title>
           </q-toolbar>
           <!-- Basic Settings -->
           <q-tabs
             v-model="active_tab"
             :disable="surveyIsUneditable()"
-
             fixed-tabs
             icons-and-text
             align="justify"
@@ -31,7 +39,12 @@
             class="bg-primary text-white shadow-2"
           >
             <q-tab @click="changeTab('basis')" name="basis" label="Basis" icon="settings" />
-            <q-tab @click="changeTab('fragen')" name="fragen" label="Fragen" icon="question_answer" />
+            <q-tab
+              @click="changeTab('fragen')"
+              name="fragen"
+              label="Fragen"
+              icon="question_answer"
+            />
             <q-tab @click="changeTab('gruppen')" name="gruppen" label="Gruppen" icon="group" />
           </q-tabs>
 
@@ -40,173 +53,184 @@
           <q-tab-panels v-model="active_tab" animated>
             <!-- Einstellungen -->
             <q-tab-panel name="basis">
-              <q-list subheader two-line flat >
-                  <q-item-label>Textliche Einstellungen</q-item-label>
+              <q-list subheader two-line flat>
+                <q-item-label>Textliche Einstellungen</q-item-label>
 
-                  <!-- Title -->
-                  <q-item>
-                    <q-item-section>
-                      <q-input
-                        :disable="surveyIsUneditable()"
-                        dense
-                        persistent-hint
-                        outlined
-                        hint="Titel der Umfrage. Wird angezeigt"
-                        v-model="oSurvey.title"
-                        label="Title"
-                        required
-                        :rules="required"
-                        :placeholder="oSurveyOld.title ? oSurveyOld.title : 'z.B.: &quot;Umfrage Mitarbeiterzufriedenheit&quot; '"
-                      />
-                    </q-item-section>
-                  </q-item>
+                <!-- Title -->
+                <q-item>
+                  <q-item-section>
+                    <q-input
+                      :disable="surveyIsUneditable()"
+                      dense
+                      persistent-hint
+                      outlined
+                      hint="Titel der Umfrage. Wird angezeigt"
+                      v-model="oSurvey.title"
+                      label="Title"
+                      required
+                      :rules="required"
+                      :placeholder="oSurveyOld.title ? oSurveyOld.title : 'z.B.: &quot;Umfrage Mitarbeiterzufriedenheit&quot; '"
+                    />
+                  </q-item-section>
+                </q-item>
 
-                  <!-- Author -->
-                  <q-item>
-                    <q-item-section>
-                      <q-input
-                        :disable="surveyIsUneditable()"
-                        dense
-                        persistent-hint
-                        outlined
-                        hint="Author in Textform. Wird angezeigt"
-                        :placeholder="oSurveyOld.author ? oSurveyOld.author : 'z.B.: &quot;Dr. Johannes Müller&quot; '"
-                        v-model="oSurvey.author"
-                        label="Autor"
-                        required
-                      />
-                    </q-item-section>
-                  </q-item>
+                <!-- Author -->
+                <q-item>
+                  <q-item-section>
+                    <q-input
+                      :disable="surveyIsUneditable()"
+                      dense
+                      persistent-hint
+                      outlined
+                      hint="Author in Textform. Wird angezeigt"
+                      :placeholder="oSurveyOld.author ? oSurveyOld.author : 'z.B.: &quot;Dr. Johannes Müller&quot; '"
+                      v-model="oSurvey.author"
+                      label="Autor"
+                      required
+                    />
+                  </q-item-section>
+                </q-item>
 
-                  <!-- Description Short -->
-                  <q-item>
-                    <q-item-section>
-                      <q-input
-                        :disable="surveyIsUneditable()"
-                        dense
-                        persistent-hint
-                        outlined
-                        hint="Kurze Beschreibung der Umfrage"
-                        v-model="oSurvey.desc_short"
-                        label="Kurzbeschreibung"
-                        required
-                      />
-                    </q-item-section>
-                  </q-item>
+                <!-- Description Short -->
+                <q-item>
+                  <q-item-section>
+                    <q-input
+                      :disable="surveyIsUneditable()"
+                      dense
+                      persistent-hint
+                      outlined
+                      hint="Kurze Beschreibung der Umfrage"
+                      v-model="oSurvey.desc_short"
+                      label="Kurzbeschreibung"
+                      required
+                    />
+                  </q-item-section>
+                </q-item>
 
-                  <!-- Description Long -->
-                  <q-item>
-                    <q-item-section>
-                      <q-input type="textarea"
-                        :disable="surveyIsUneditable()"
-                        outlined
-                        dense
-                        persistent-hint
-                        v-model="oSurvey.desc_long"
-                        hint="Lange Beschreibung der Umfrage"
-                        label="Langbeschreibung"
-                        required
-                      />
-                    </q-item-section>
-                  </q-item>
+                <!-- Description Long -->
+                <q-item>
+                  <q-item-section>
+                    <q-input
+                      type="textarea"
+                      :disable="surveyIsUneditable()"
+                      outlined
+                      dense
+                      persistent-hint
+                      v-model="oSurvey.desc_long"
+                      hint="Lange Beschreibung der Umfrage"
+                      label="Langbeschreibung"
+                      required
+                    />
+                  </q-item-section>
+                </q-item>
 
-                  <q-item-label>Konfigurations-Einstellungen</q-item-label>
+                <q-item-label>Konfigurations-Einstellungen</q-item-label>
 
-                  <q-item>
-                    <q-item-section side top>
-                      <q-checkbox
-                        :disable="surveyIsUneditable()"
-                        v-model="oSurvey.active"
-                        color="primary"
-                        :true-value="1"
-                        :false-value="0"
-                      />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>Aktiviert</q-item-label>
-                      <q-item-label caption>Ist diese Umfrage ausfüllbar (aktiviert) oder nicht ausfüllbar. Standard ist aktiviert.</q-item-label>
-                    </q-item-section>
-                  </q-item>
+                <q-item>
+                  <q-item-section side top>
+                    <q-checkbox
+                      :disable="surveyIsUneditable()"
+                      v-model="oSurvey.active"
+                      color="primary"
+                      :true-value="1"
+                      :false-value="0"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Aktiviert</q-item-label>
+                    <q-item-label
+                      caption
+                    >Ist diese Umfrage ausfüllbar (aktiviert) oder nicht ausfüllbar. Standard ist aktiviert.</q-item-label>
+                  </q-item-section>
+                </q-item>
 
-                  <q-item>
-                    <q-item-section side top>
-                      <q-checkbox
+                <q-item>
+                  <q-item-section side top>
+                    <q-checkbox
                       :disable="surveyIsUneditable()"
                       v-model="oSurvey.only_editable_by_creator"
                       color="primary"
-                      :true-value="1" :false-value="0"
-                      />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>Nur für Ersteller Editierbar</q-item-label>
-                      <q-item-label caption>Nur Sie selbst als Ersteller können diese Umfrage editieren. Im Standard sind Umfragen nur für Sie selbst editierbar</q-item-label>
-                    </q-item-section>
-                  </q-item>
+                      :true-value="1"
+                      :false-value="0"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Nur für Ersteller Editierbar</q-item-label>
+                    <q-item-label
+                      caption
+                    >Nur Sie selbst als Ersteller können diese Umfrage editieren. Im Standard sind Umfragen nur für Sie selbst editierbar</q-item-label>
+                  </q-item-section>
+                </q-item>
 
-                  <q-item>
-                    <q-item-section side top>
-                      <q-checkbox
+                <q-item>
+                  <q-item-section side top>
+                    <q-checkbox
                       :disable="surveyIsUneditable()"
                       v-model="oSurvey.is_public"
                       color="red"
                       :true-value="1"
                       :false-value="0"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Öffentlich</q-item-label>
+                    <q-item-label
+                      caption
+                    >Diese Umfrage ist öffentlich verfügbar. Im Standard sind Umfragen nicht öffentlich</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <template v-if="bEdit">
+                  <q-item>
+                    <q-item-section side top>
+                      <q-checkbox
+                        v-model="bExtendedSettings"
+                        :disabled="oSurvey.is_finished == 1 || oSurvey.is_canceled == 1"
+                        color="primary"
                       />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>Öffentlich</q-item-label>
-                      <q-item-label caption>Diese Umfrage ist öffentlich verfügbar. Im Standard sind Umfragen nicht öffentlich</q-item-label>
+                      <q-item-label>Erweiterte Einstellungen</q-item-label>
+                      <q-item-label caption>Zeige erweiterte Einstellungen</q-item-label>
                     </q-item-section>
                   </q-item>
 
-                  <template v-if="bEdit">
+                  <template v-if="bExtendedSettings">
                     <q-item>
                       <q-item-section side top>
                         <q-checkbox
-                        v-model="bExtendedSettings"
-                        :disabled="oSurvey.is_finished == 1 || oSurvey.is_canceled == 1"
-                        color="primary" />
+                          color="error"
+                          v-model="oSurvey.is_finished"
+                          :true-value="1"
+                          :false-value="0"
+                          :disable="surveyIsUneditable()"
+                        />
                       </q-item-section>
                       <q-item-section>
-                        <q-item-label>Erweiterte Einstellungen</q-item-label>
-                        <q-item-label caption>Zeige erweiterte Einstellungen</q-item-label>
+                        <q-item-label>Beendet</q-item-label>
+                        <q-item-label caption>Die Umfrage wurde Beendet. Nicht umkehrbar</q-item-label>
                       </q-item-section>
                     </q-item>
 
-                    <template v-if="bExtendedSettings">
-                      <q-item>
-                        <q-item-section side top>
-                          <q-checkbox
-                           color="error"
-                           v-model="oSurvey.is_finished"
-                           :true-value="1" :false-value="0"
-                           :disable="surveyIsUneditable()"
-                           />
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>Beendet</q-item-label>
-                          <q-item-label caption>Die Umfrage wurde Beendet. Nicht umkehrbar</q-item-label>
-                        </q-item-section>
-                      </q-item>
-
-                      <q-item>
-                        <q-item-section side top>
-                          <q-checkbox
+                    <q-item>
+                      <q-item-section side top>
+                        <q-checkbox
                           :disable="surveyIsUneditable()"
                           color="error"
                           v-model="oSurvey.is_canceled"
                           :true-value="1"
-                          :false-value="0" />
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>Abgebrochen</q-item-label>
-                          <q-item-label caption>Die Umfrage wurde abgebrochen. Nicht umkehrbar</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </template>
+                          :false-value="0"
+                        />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>Abgebrochen</q-item-label>
+                        <q-item-label caption>Die Umfrage wurde abgebrochen. Nicht umkehrbar</q-item-label>
+                      </q-item-section>
+                    </q-item>
                   </template>
+                </template>
 
-                  <q-item-label header>Datums-Einstellungen</q-item-label>
+                <q-item-label header>Datums-Einstellungen</q-item-label>
 
                 <!-- Dates-->
                 <q-item class="row q-gutter-md">
@@ -234,7 +258,11 @@
                               <template v-slot:prepend>
                                 <q-icon name="event_available" />
                               </template>
-                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                              <q-popup-proxy
+                                ref="qDateProxy"
+                                transition-show="scale"
+                                transition-hide="scale"
+                              >
                                 <q-date
                                   v-model="oSurvey.start_datetime"
                                   :events="events"
@@ -245,9 +273,15 @@
                                   :selected-items-text="getDatesDiffDays() + ' Tage Zeit'"
                                   color="secondary"
                                   header-color="primary"
-                                  mask="YYYY-MM-DD HH:mm:ss">
+                                  mask="YYYY-MM-DD HH:mm:ss"
+                                >
                                   <div class="row items-center justify-end q-gutter-sm">
-                                    <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
+                                    <q-btn
+                                      :label="$t('closer_button')"
+                                      color="primary"
+                                      flat
+                                      v-close-popup
+                                    />
                                   </div>
                                 </q-date>
                               </q-popup-proxy>
@@ -268,16 +302,26 @@
                               <template v-slot:prepend>
                                 <q-icon name="schedule" />
                               </template>
-                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                              <q-popup-proxy
+                                ref="qDateProxy"
+                                transition-show="scale"
+                                transition-hide="scale"
+                              >
                                 <q-time
                                   format24h
                                   v-model="oSurvey.start_datetime"
                                   :disable="surveyIsUneditable()"
                                   :options="getMinStartTime"
                                   mask="YYYY-MM-DD HH:mm:ss"
-                                  color="green">
+                                  color="green"
+                                >
                                   <div class="row items-center justify-end q-gutter-sm">
-                                    <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
+                                    <q-btn
+                                      :label="$t('closer_button')"
+                                      color="primary"
+                                      flat
+                                      v-close-popup
+                                    />
                                   </div>
                                 </q-time>
                               </q-popup-proxy>
@@ -299,7 +343,11 @@
                               <template v-slot:prepend>
                                 <q-icon name="event_busy" />
                               </template>
-                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                              <q-popup-proxy
+                                ref="qDateProxy"
+                                transition-show="scale"
+                                transition-hide="scale"
+                              >
                                 <q-date
                                   v-model="oSurvey.end_datetime"
                                   :events="events"
@@ -313,7 +361,12 @@
                                   mask="YYYY-MM-DD HH:mm:ss"
                                 >
                                   <div class="row items-center justify-end q-gutter-sm">
-                                    <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
+                                    <q-btn
+                                      :label="$t('closer_button')"
+                                      color="primary"
+                                      flat
+                                      v-close-popup
+                                    />
                                   </div>
                                 </q-date>
                               </q-popup-proxy>
@@ -333,7 +386,11 @@
                               <template v-slot:prepend>
                                 <q-icon name="timelapse" />
                               </template>
-                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                              <q-popup-proxy
+                                ref="qDateProxy"
+                                transition-show="scale"
+                                transition-hide="scale"
+                              >
                                 <q-time
                                   format24h
                                   v-model="oSurvey.end_datetime"
@@ -343,7 +400,12 @@
                                   :options="getMaxEndTime"
                                 >
                                   <div class="row items-center justify-end q-gutter-sm">
-                                    <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
+                                    <q-btn
+                                      :label="$t('closer_button')"
+                                      color="primary"
+                                      flat
+                                      v-close-popup
+                                    />
                                   </div>
                                 </q-time>
                               </q-popup-proxy>
@@ -360,11 +422,18 @@
                               text-color="white"
                               size="8"
                             >
-                              <q-btn slot="avatar" disable flat round readonly unelevated icon="timer" />
+                              <q-btn
+                                slot="avatar"
+                                disable
+                                flat
+                                round
+                                readonly
+                                unelevated
+                                icon="timer"
+                              />
                             </q-chat-message>
                           </div>
                         </div>
-
                       </q-card-section>
                     </q-card>
                   </div>
@@ -380,7 +449,6 @@
                     />
                   </div>
                 </q-item>
-
               </q-list>
             </q-tab-panel>
 
@@ -390,57 +458,96 @@
                 <q-item>
                   <q-item-section>
                     <!-- No Select Toolbar -->
-                    <q-toolbar class="coha--toolbar" v-if="selected.length <= 0"  :flat="sSearch == ''" floating min-height="85px" height="auto">
-                        <!-- <v-switch class="mt-6 mr-6" v-model="bTableDense"  color="primary"></v-switch> -->
-                        <div class="flex-grow-1"></div>
-                        <q-input style="max-width: 400px;" v-model="sSearch" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outlined/>
-                        <q-input v-model="pagination.rowsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
+                    <q-toolbar
+                      class="coha--toolbar"
+                      v-if="selected.length <= 0"
+                      :flat="sSearch == ''"
+                      floating
+                      min-height="85px"
+                      height="auto"
+                    >
+                      <!-- <v-switch class="mt-6 mr-6" v-model="bTableDense"  color="primary"></v-switch> -->
+                      <div class="flex-grow-1"></div>
+                      <q-input
+                        style="max-width: 400px;"
+                        v-model="sSearch"
+                        :label="$t('Search')"
+                        autocomplete="off"
+                        append-icon="search"
+                        hide-details
+                        outlined
+                      />
+                      <q-input
+                        v-model="pagination.rowsPerPage"
+                        number
+                        type="number"
+                        hide-details
+                        style="max-width: 150px;"
+                        label="Zeilen pro Seite"
+                        class="ml-5"
+                        outlined
+                      />
                     </q-toolbar>
 
-                    <q-toolbar class="coha--toolbar" v-else :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
+                    <q-toolbar
+                      class="coha--toolbar"
+                      v-else
+                      :flat="sSearch == ''"
+                      color="primary"
+                      dark
+                      floating
+                      min-height="85px"
+                      height="auto"
+                    >
                       <q-menu right offset-y>
                         <template v-slot:activator="{ on:menuedit }">
                           <q-btn text rounded v-on="{ ...menuedit }">
-                            <q-icon left>mdi-pencil</q-icon> {{ selected.length + ' ' + $t('edit') }}
+                            <q-icon left>mdi-pencil</q-icon>
+                            {{ selected.length + ' ' + $t('edit') }}
                           </q-btn>
                         </template>
                         <q-list>
-                          <q-item @click="duplicateSelectedQuestions()">
-                            Duplizieren
-                          </q-item>
-                          <q-item @click="bDeleteQuestionDialog = true">
-                            Löschen
-                          </q-item>
+                          <q-item @click="duplicateSelectedQuestions()">Duplizieren</q-item>
+                          <q-item @click="bDeleteQuestionDialog = true">Löschen</q-item>
                         </q-list>
                       </q-menu>
                       <q-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <q-btn @click="moveSelectedUp()" icon text rounded v-on="on">
-                              <q-icon>mdi-chevron-up</q-icon>
-                            </q-btn>
-                          </template>
-                          <span>Position Hoch</span>
+                        <template v-slot:activator="{ on }">
+                          <q-btn @click="moveSelectedUp()" icon text rounded v-on="on">
+                            <q-icon>mdi-chevron-up</q-icon>
+                          </q-btn>
+                        </template>
+                        <span>Position Hoch</span>
                       </q-tooltip>
                       <q-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <q-btn @click="moveSelectedDown()" icon text rounded v-on="on">
-                              <q-icon icon="chevron-down" />
-                            </q-btn>
-                          </template>
-                          <span>Position Runter</span>
+                        <template v-slot:activator="{ on }">
+                          <q-btn @click="moveSelectedDown()" icon text rounded v-on="on">
+                            <q-icon icon="chevron-down" />
+                          </q-btn>
+                        </template>
+                        <span>Position Runter</span>
                       </q-tooltip>
                       <!-- <div class="flex-grow-1"></div> -->
                     </q-toolbar>
 
                     <!-- Delete - Dialog -->
-                    <q-dialog v-model="bDeleteQuestionDialog" max-width="500" dark content-class="naked dark centered">
+                    <q-dialog
+                      v-model="bDeleteQuestionDialog"
+                      max-width="500"
+                      dark
+                      content-class="naked dark centered"
+                    >
                       <h2 class="display-2">Fragen Löschen?</h2>
                       <p>Möchten Sie {{ selected.length }} Fragen löschen?</p>
                       <v-container fluid>
                         <div class="row" align="center">
                           <div class="col text-center" cols="12" sm="12">
                             <q-btn depressed @click="bDeleteQuestionDialog = false" outlined>Abbruch</q-btn>
-                            <q-btn depressed @click.prevent="deleteQuestions(selected)" color="error">Löschen</q-btn>
+                            <q-btn
+                              depressed
+                              @click.prevent="deleteQuestions(selected)"
+                              color="error"
+                            >Löschen</q-btn>
                           </div>
                         </div>
                       </v-container>
@@ -451,24 +558,19 @@
                       :columns="headers"
                       :data="oSurvey.questions"
                       dense
-
                       multi-sort
                       selection="multiple"
-
                       show-select
                       :selected.sync="selected"
                       show-expand
                       :expanded.sync="expanded"
-
                       :search="sSearch"
                       :sort-by="['order']"
                       :sort-desc="[false]"
-
                       :pagination.sync="pagination"
                       :footer-props="{
                         showFirstLastPage: true,
                       }"
-
                       class="my-data-table f-height questions-table"
                     >
                       <template v-slot:body="props">
@@ -480,9 +582,17 @@
 
                           <q-td key="order" :props="props">
                             <div style="white-space: nowrap;">
-                              <q-icon name="mdi-arrow-up" x-small @click="moveUp(props.row, oSurvey.questions)" />
+                              <q-icon
+                                name="mdi-arrow-up"
+                                x-small
+                                @click="moveUp(props.row, oSurvey.questions)"
+                              />
                               {{ props.row.order }}
-                              <q-icon name="mdi-arrow-down" x-small @click="moveDown(props.row, oSurvey.questions)" />
+                              <q-icon
+                                name="mdi-arrow-down"
+                                x-small
+                                @click="moveDown(props.row, oSurvey.questions)"
+                              />
                             </div>
                           </q-td>
 
@@ -553,11 +663,19 @@
                           </q-td>
 
                           <q-td key="is_skippable" :props="props">
-                            <q-checkbox v-model="props.row.is_skippable" :true-value="1" :false-value="0" />
+                            <q-checkbox
+                              v-model="props.row.is_skippable"
+                              :true-value="1"
+                              :false-value="0"
+                            />
                           </q-td>
 
                           <q-td key="is_commentable" :props="props">
-                            <q-checkbox v-model="props.row.is_commentable" :true-value="1" :false-value="0" />
+                            <q-checkbox
+                              v-model="props.row.is_commentable"
+                              :true-value="1"
+                              :false-value="0"
+                            />
                           </q-td>
 
                           <q-td key="min_options" :props="props">
@@ -608,7 +726,13 @@
                           </q-td>
 
                           <q-td key="expand" :props="props">
-                            <q-btn dense round flat :icon="props.expand ? 'arrow_drop_up' : 'arrow_drop_down'" @click="props.expand = !props.expand" />
+                            <q-btn
+                              dense
+                              round
+                              flat
+                              :icon="props.expand ? 'arrow_drop_up' : 'arrow_drop_down'"
+                              @click="props.expand = !props.expand"
+                            />
                           </q-td>
                         </q-tr>
 
@@ -620,11 +744,11 @@
                                 <td colspan="100%">
                                   <div class="row">
                                     <div class="col" xl="12" sm="12" xs="12">
-                                      <br>
+                                      <br />
                                       <q-list subheader two-line flat>
-                                        <q-item-label header>
-                                          Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}
-                                        </q-item-label>
+                                        <q-item-label
+                                          header
+                                        >Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}</q-item-label>
                                         <q-item>
                                           <q-item-section side top>
                                             <q-checkbox
@@ -655,9 +779,9 @@
                                             >
                                               <template v-slot:append>
                                                 <q-icon :name="help_icon">
-                                                  <q-tooltip self="center middle">
-                                                    Titel der Frage. Wird am größten Angezeigt
-                                                  </q-tooltip>
+                                                  <q-tooltip
+                                                    self="center middle"
+                                                  >Titel der Frage. Wird am größten Angezeigt</q-tooltip>
                                                 </q-icon>
                                               </template>
                                             </q-input>
@@ -668,7 +792,6 @@
                                           <q-item-section>
                                             <q-input
                                               :disable="surveyIsUneditable()"
-
                                               dense
                                               persistent-hint
                                               outlined
@@ -679,9 +802,9 @@
                                             >
                                               <template v-slot:append>
                                                 <q-icon :name="help_icon">
-                                                  <q-tooltip self="center middle">
-                                                    Subtitel / Untertitel der Frage. Wird unter Titel angezeigt
-                                                  </q-tooltip>
+                                                  <q-tooltip
+                                                    self="center middle"
+                                                  >Subtitel / Untertitel der Frage. Wird unter Titel angezeigt</q-tooltip>
                                                 </q-icon>
                                               </template>
                                             </q-input>
@@ -703,15 +826,14 @@
                                             >
                                               <template v-slot:append>
                                                 <q-icon :name="help_icon">
-                                                  <q-tooltip self="center middle">
-                                                    Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt.
-                                                  </q-tooltip>
+                                                  <q-tooltip
+                                                    self="center middle"
+                                                  >Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt.</q-tooltip>
                                                 </q-icon>
                                               </template>
                                             </q-input>
                                           </q-item-section>
                                         </q-item>
-
                                       </q-list>
 
                                       <q-list subheader two-line flat>
@@ -722,7 +844,6 @@
                                             <q-checkbox
                                               v-model="props.row.is_commentable"
                                               :disable="surveyIsUneditable()"
-
                                               color="primary"
                                               :true-value="1"
                                               :false-value="0"
@@ -742,7 +863,7 @@
                                                 color="primary"
                                                 :true-value="1"
                                                 :false-value="0"
-                                                />
+                                              />
                                             </q-item-section>
                                             <q-item-section>
                                               <q-item-label>Kommentar ist erforderlich</q-item-label>
@@ -756,7 +877,8 @@
                                                 :disable="surveyIsUneditable()"
                                                 color="primary"
                                                 :true-value="1"
-                                                :false-value="0" />
+                                                :false-value="0"
+                                              />
                                             </q-item-section>
                                             <q-item-section>
                                               <q-item-label>Kommentar ist eine Nummer</q-item-label>
@@ -778,163 +900,185 @@
                                               >
                                                 <template v-slot:append>
                                                   <q-icon :name="help_icon">
-                                                    <q-tooltip self="center middle">
-                                                      Wieviele einzelne Zeichen darf ein Kommentar maximal haben?
-                                                    </q-tooltip>
+                                                    <q-tooltip
+                                                      self="center middle"
+                                                    >Wieviele einzelne Zeichen darf ein Kommentar maximal haben?</q-tooltip>
                                                   </q-icon>
                                                 </template>
                                               </q-input>
                                             </q-item-section>
                                           </q-item>
                                         </template>
-
+                                      </q-list>
+                                      <q-list subheader two-line flat>
+                                        <q-item-label header>Frage-Optionen</q-item-label>
+                                        <q-item>
+                                          <q-item-section>
+                                            <div class="row">
+                                              <div class="col" xl="3" md="3" sm="6" xs="12">
+                                                <q-input
+                                                  :disable="surveyIsUneditable()"
+                                                  dense
+                                                  persistent-hint
+                                                  outlined
+                                                  hint="Minimal wählbare Optionen"
+                                                  placeholder="1 - 255"
+                                                  type="number"
+                                                  v-model="props.row.min_options"
+                                                  :max="parseInt(props.row.max_options)"
+                                                  label="Minimale Optionen"
+                                                  required
+                                                />
+                                              </div>
+                                              <div class="col" xl="3" md="3" sm="6" xs="12">
+                                                <q-input
+                                                  :disable="surveyIsUneditable()"
+                                                  dense
+                                                  persistent-hint
+                                                  outlined
+                                                  hint="Maximale wählbare Optionen"
+                                                  placeholder="1 - 255"
+                                                  type="number"
+                                                  :min="parseInt(props.row.min_options)"
+                                                  v-model="props.row.max_options"
+                                                  label="Maximale Optionen"
+                                                  required
+                                                />
+                                              </div>
+                                            </div>
+                                          </q-item-section>
+                                        </q-item>
                                       </q-list>
 
-                                      <q-list subheader two-line flat>
-                                        <q-item-label header>
-                                          Frage-Optionen
-                                        </q-item-label>
+                                      <!-- Selected Toolbar -->
+                                      <q-toolbar
+                                        class="coha--toolbar"
+                                        v-if="aSelectedOptions && aSelectedOptions.length"
+                                        :flat="sSearch == ''"
+                                        color="primary"
+                                        dark
+                                        floating
+                                        min-height="85px"
+                                        height="auto"
+                                      >
+                                        <q-btn
+                                          v-if="aSelectedOptions && aSelectedOptions.length"
+                                          @click="bDeleteOptionDialog = true"
+                                          depressed
+                                          color="red"
+                                          dark
+                                        >
+                                          <q-icon left>mdi-delete</q-icon>&nbsp;
+                                          Ausgewählte Optionen Löschen
+                                        </q-btn>
+                                      </q-toolbar>
 
-                                          <q-item>
-                                            <q-item-section>
-                                              <div class="row">
-                                                <div class="col" xl="3" md="3" sm="6" xs="12">
-                                                  <q-input
-                                                    :disable="surveyIsUneditable()"
-                                                    dense
-                                                    persistent-hint
-                                                    outlined
-                                                    hint="Minimal wählbare Optionen"
-                                                    placeholder="1 - 255"
-                                                    type="number"
-                                                    v-model="props.row.min_options"
-                                                    :max="parseInt(props.row.max_options)"
-                                                    label="Minimale Optionen"
-                                                    required
-                                                  />
-                                                </div>
-                                                <div class="col" xl="3" md="3" sm="6" xs="12">
-                                                  <q-input
-                                                    :disable="surveyIsUneditable()"
-                                                    dense
-                                                    persistent-hint
-                                                    outlined
-                                                    hint="Maximale wählbare Optionen"
-                                                    placeholder="1 - 255"
-                                                    type="number"
-                                                    :min="parseInt(props.row.min_options)"
-                                                    v-model="props.row.max_options"
-                                                    label="Maximale Optionen"
-                                                    required
-                                                  />
-                                                </div>
-                                              </div>
-                                            </q-item-section>
-                                          </q-item>
-                                        </q-list>
+                                      <!-- No Selected Toolbar -->
+                                      <q-toolbar
+                                        v-else
+                                        class="coha--toolbar"
+                                        :flat="sSearch == ''"
+                                        floating
+                                        min-height="85px"
+                                        height="auto"
+                                      >
+                                        <div class="flex-grow-1"></div>
+                                        <q-input
+                                          v-model="iOptionsPerPage"
+                                          number
+                                          type="number"
+                                          hide-details
+                                          style="max-width: 150px;"
+                                          label="Zeilen pro Seite"
+                                          class="ml-5"
+                                          outlined
+                                        />
+                                      </q-toolbar>
 
-
-                                        <!-- Selected Toolbar -->
-                                        <q-toolbar class="coha--toolbar" v-if="aSelectedOptions && aSelectedOptions.length" :flat="sSearch == ''" color="primary"  dark floating min-height="85px" height="auto">
-                                          <q-btn
-                                            v-if="aSelectedOptions && aSelectedOptions.length"
-                                            @click="bDeleteOptionDialog = true"
-                                            depressed
-                                            color="red"
-                                            dark
-                                          >
-                                            <q-icon left>mdi-delete</q-icon>&nbsp;
-                                            Ausgewählte Optionen Löschen
-                                          </q-btn>
-
-                                        </q-toolbar>
-
-                                        <!-- No Selected Toolbar -->
-                                        <q-toolbar v-else class="coha--toolbar" :flat="sSearch == ''" floating min-height="85px" height="auto">
-                                          <div class="flex-grow-1"></div>
-                                          <q-input v-model="iOptionsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outlined />
-                                        </q-toolbar>
-
-                                        <q-table
-                                          :headers="aOptionHeaders"
-
-                                          v-model="aSelectedOptions"
-                                          :items="props.row.options"
-
-                                          dense
-                                          multi-sort
-                                          show-select
-
-                                          :items-per-page="parseInt(iOptionsPerPage)"
-                                          :sort-by="['order']"
-                                          :sort-desc="[false]"
-                                          :footer-props="{
+                                      <q-table
+                                        :headers="aOptionHeaders"
+                                        v-model="aSelectedOptions"
+                                        :items="props.row.options"
+                                        dense
+                                        multi-sort
+                                        show-select
+                                        :items-per-page="parseInt(iOptionsPerPage)"
+                                        :sort-by="['order']"
+                                        :sort-desc="[false]"
+                                        :footer-props="{
                                             showFirstLastPage: true,
                                           }"
-                                        >
-
-                                          <template v-slot:item.value="props">
-                                            <v-edit-dialog :return-value.sync="props.item.value">
-                                              {{ props.item.value }}
-                                              <template v-slot:input>
-                                                <q-input
-                                                  v-model="props.item.value"
-                                                  label="Edit"
-                                                  type="number"
-                                                />
-                                              </template>
-                                            </v-edit-dialog>
-                                          </template>
-
-                                          <template v-slot:item.title="props">
-                                            <q-popup-edit v-model="props.item.title">
-                                              {{ props.item.title }}
+                                      >
+                                        <template v-slot:item.value="props">
+                                          <v-edit-dialog :return-value.sync="props.item.value">
+                                            {{ props.item.value }}
+                                            <template v-slot:input>
                                               <q-input
-                                                v-model="props.item.title"
+                                                v-model="props.item.value"
+                                                label="Edit"
+                                                type="number"
+                                              />
+                                            </template>
+                                          </v-edit-dialog>
+                                        </template>
+
+                                        <template v-slot:item.title="props">
+                                          <q-popup-edit v-model="props.item.title">
+                                            {{ props.item.title }}
+                                            <q-input
+                                              v-model="props.item.title"
+                                              label="Edit"
+                                              counter
+                                            />
+                                          </q-popup-edit>
+                                        </template>
+
+                                        <template v-slot:item.subtitle="props">
+                                          <v-edit-dialog :return-value.sync="props.item.subtitle">
+                                            {{ props.item.subtitle }}
+                                            <template v-slot:input>
+                                              <q-input
+                                                v-model="props.item.subtitle"
                                                 label="Edit"
                                                 counter
                                               />
-                                            </q-popup-edit>
-                                          </template>
+                                            </template>
+                                          </v-edit-dialog>
+                                        </template>
 
-                                          <template v-slot:item.subtitle="props">
-                                            <v-edit-dialog :return-value.sync="props.item.subtitle">
-                                              {{ props.item.subtitle }}
-                                              <template v-slot:input>
-                                                <q-input
-                                                  v-model="props.item.subtitle"
-                                                  label="Edit"
-                                                  counter
-                                                />
-                                              </template>
-                                            </v-edit-dialog>
-                                          </template>
+                                        <template v-slot:item.description="props">
+                                          <v-edit-dialog
+                                            :return-value.sync="props.item.description"
+                                          >
+                                            {{ props.item.description }}
+                                            <template v-slot:input>
+                                              <q-input
+                                                v-model="props.item.description"
+                                                label="Edit"
+                                                counter
+                                              />
+                                            </template>
+                                          </v-edit-dialog>
+                                        </template>
 
-                                          <template v-slot:item.description="props">
-                                            <v-edit-dialog :return-value.sync="props.item.description">
-                                              {{ props.item.description }}
-                                              <template v-slot:input>
-                                                <q-input
-                                                  v-model="props.item.description"
-                                                  label="Edit"
-                                                  counter
-                                                />
-                                              </template>
-                                            </v-edit-dialog>
-                                          </template>
-
-                                          <template v-slot:item.order="props">
-                                            <div style="white-space: nowrap;">
-                                              <q-icon @click="moveUp(props.item, item.options)" x-small>mdi-arrow-up</q-icon>
-                                                {{ props.item.order }}
-                                              <q-icon @click="moveDown(props.item, item.options)" x-small>mdi-arrow-down</q-icon>
-                                            </div>
-                                          </template>
-                                          <template v-slot:item.color="props">
-
-                                            <q-dialog v-model="props.item.dialog" max-width="290">
-                                              <template v-slot:activator="{ on }">
-                                                <div><q-btn
+                                        <template v-slot:item.order="props">
+                                          <div style="white-space: nowrap;">
+                                            <q-icon
+                                              @click="moveUp(props.item, item.options)"
+                                              x-small
+                                            >mdi-arrow-up</q-icon>
+                                            {{ props.item.order }}
+                                            <q-icon
+                                              @click="moveDown(props.item, item.options)"
+                                              x-small
+                                            >mdi-arrow-down</q-icon>
+                                          </div>
+                                        </template>
+                                        <template v-slot:item.color="props">
+                                          <q-dialog v-model="props.item.dialog" max-width="290">
+                                            <template v-slot:activator="{ on }">
+                                              <div>
+                                                <q-btn
                                                   v-on="on"
                                                   small
                                                   depressed
@@ -943,283 +1087,278 @@
                                                   :color="props.item.color"
                                                 >
                                                   <q-icon dark>mdi-palette</q-icon>
-                                                </q-btn></div>
-                                                <div>{{ props.item.color }}</div>
-                                              </template>
-                                              <q-card>
-                                                <q-card-section>Farbe auswählen</q-card-section>
-                                                <q-card-section>
-                                                  <q-btn block small :color="props.item.color">{{ props.item.color }}</q-btn>
-                                                  <template v-for="oColor in aAllOptionColors">
-                                                    <div style="margin-top: 5px;" v-bind:key="oColor.title" >
-                                                      <q-btn block small :color="oColor.hex" @click="props.item.color = oColor.hex">{{ oColor.title }}</q-btn>
-                                                    </div>
-                                                  </template>
-                                                </q-card-section>
-                                                <v-color-picker
-                                                  mode="rgba"
-                                                  value="#666666"
-                                                  v-model="props.item.color"
-                                                  flat
-                                                ></v-color-picker>
-                                                <q-card-section>
-                                                  <q-btn @click="props.item.dialog = false">Übernehmen und schließen</q-btn>
-                                                </q-card-section>
-                                              </q-card>
-                                            </q-dialog>
-                                          </template>
-                                        </q-table>
-                                          <q-btn @click="addNewOption(props.item)">
-                                            <q-icon name="plus_one" left />
-                                            Neue Option hinzufügen
-                                          </q-btn>&nbsp;
-                                          <q-btn color="primary" @click="duplicateLastOption(item)">
-                                            <q-icon name="control_point_duplicate" left />
-                                            Letzte Option duplizieren
-                                          </q-btn>
-
-                                          <!-- Delete - Dialog -->
-                                          <q-dialog v-model="bDeleteOptionDialog" max-width="500" dark content-class="naked dark centered">
-                                            <h2 class="display-2">Optionen Löschen?</h2>
-                                            <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
-                                            <v-container fluid>
-                                              <div class="row" align="center">
-                                                <div class="col text-center" cols="12" sm="12">
-                                                  <q-btn depressed @click="bDeleteOptionDialog = false" outlined>Abbruch</q-btn>
-                                                  <q-btn depressed @click.prevent="deleteOptions(item, aSelectedOptions)" color="error">Löschen</q-btn>
-                                                </div>
+                                                </q-btn>
                                               </div>
-                                            </v-container>
+                                              <div>{{ props.item.color }}</div>
+                                            </template>
+                                            <q-card>
+                                              <q-card-section>Farbe auswählen</q-card-section>
+                                              <q-card-section>
+                                                <q-btn
+                                                  block
+                                                  small
+                                                  :color="props.item.color"
+                                                >{{ props.item.color }}</q-btn>
+                                                <template v-for="oColor in aAllOptionColors">
+                                                  <div
+                                                    style="margin-top: 5px;"
+                                                    v-bind:key="oColor.title"
+                                                  >
+                                                    <q-btn
+                                                      block
+                                                      small
+                                                      :color="oColor.hex"
+                                                      @click="props.item.color = oColor.hex"
+                                                    >{{ oColor.title }}</q-btn>
+                                                  </div>
+                                                </template>
+                                              </q-card-section>
+                                              <v-color-picker
+                                                mode="rgba"
+                                                value="#666666"
+                                                v-model="props.item.color"
+                                                flat
+                                              ></v-color-picker>
+                                              <q-card-section>
+                                                <q-btn
+                                                  @click="props.item.dialog = false"
+                                                >Übernehmen und schließen</q-btn>
+                                              </q-card-section>
+                                            </q-card>
                                           </q-dialog>
+                                        </template>
+                                      </q-table>
+                                      <q-btn @click="addNewOption(props.item)">
+                                        <q-icon name="plus_one" left />Neue Option hinzufügen
+                                      </q-btn>&nbsp;
+                                      <q-btn color="primary" @click="duplicateLastOption(item)">
+                                        <q-icon name="control_point_duplicate" left />Letzte Option duplizieren
+                                      </q-btn>
+
+                                      <!-- Delete - Dialog -->
+                                      <q-dialog
+                                        v-model="bDeleteOptionDialog"
+                                        max-width="500"
+                                        dark
+                                        content-class="naked dark centered"
+                                      >
+                                        <h2 class="display-2">Optionen Löschen?</h2>
+                                        <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
+                                        <v-container fluid>
+                                          <div class="row" align="center">
+                                            <div class="col text-center" cols="12" sm="12">
+                                              <q-btn
+                                                depressed
+                                                @click="bDeleteOptionDialog = false"
+                                                outlined
+                                              >Abbruch</q-btn>
+                                              <q-btn
+                                                depressed
+                                                @click.prevent="deleteOptions(item, aSelectedOptions)"
+                                                color="error"
+                                              >Löschen</q-btn>
+                                            </div>
+                                          </div>
+                                        </v-container>
+                                      </q-dialog>
                                     </div>
                                   </div>
                                 </td>
                               </template>
-
                             </div>
                           </q-td>
                         </q-tr>
                       </template>
-
                     </q-table>
                   </q-item-section>
                 </q-item>
 
                 <q-item>
                   <q-btn @click="addNewQuestion()">
-                    <q-icon name="plus_one" left />
-                    Neue Frage hinzufügen
-                  </q-btn>
-                  &nbsp; &nbsp;
-                  <q-btn @click="duplicateLastQuestion()" color="primary" :disabled="oSurvey.questions.length <= 0">
-                    <q-icon name="control_point_duplicate" left />
-                    Letzte Frage duplizieren
+                    <q-icon name="plus_one" left />Neue Frage hinzufügen
+                  </q-btn>&nbsp; &nbsp;
+                  <q-btn
+                    @click="duplicateLastQuestion()"
+                    color="primary"
+                    :disabled="oSurvey.questions.length <= 0"
+                  >
+                    <q-icon name="control_point_duplicate" left />Letzte Frage duplizieren
                   </q-btn>
                 </q-item>
 
                 <q-item></q-item>
 
-
                 <q-separator />
-
               </q-list>
             </q-tab-panel>
 
             <!-- Gruppeneinstellungen -->
             <q-tab-panel name="gruppen">
-              <q-list subheader two-line flat >
-                  <q-item-label>Gruppen</q-item-label>
+              <q-list subheader two-line flat>
+                <q-item-label>Gruppen</q-item-label>
 
-                  <!-- Title -->
-                  <q-item>
-                    <q-item-section>
-                      <v-select
-                        v-model="oSurvey.groups"
-                        :items="user.groups_moderating"
-                        label="Gruppen Auswählen"
-                        chips
-                        multiple
-                        return-object
-                        item-text="name"
-                        :disable="surveyIsUneditable()"
-                      >
-                      </v-select>
-                    </q-item-section>
-                  </q-item>
+                <!-- Title -->
+                <q-item>
+                  <q-item-section>
+                    <v-select
+                      v-model="oSurvey.groups"
+                      :items="user.groups_moderating"
+                      label="Gruppen Auswählen"
+                      chips
+                      multiple
+                      return-object
+                      item-text="name"
+                      :disable="surveyIsUneditable()"
+                    ></v-select>
+                  </q-item-section>
+                </q-item>
               </q-list>
-
-
             </q-tab-panel>
           </q-tab-panels>
 
           <q-list>
-              <q-item>
-                  <q-input v-model="oSurvey.title" required :rules="required" style="display: none;"/>
+            <q-item>
+              <q-input v-model="oSurvey.title" required :rules="required" style="display: none;" />
 
-                  <q-btn
-                    color="grey"
-                    dark
-                    class="mr-4"
-                  >Zurück</q-btn>
-                  <q-btn
-                    color="green"
-                    type="submit"
-                    @click="updateSurvey()"
-                    class="mr-4 white--text"
-                    v-if="surveyIsEditable()"
-                    :disabled="surveyFormIsInvalid()"
-                  >Umfrage Speichern {{ isUnsaved() ? '*' : undefined }}</q-btn>
+              <q-btn color="grey" dark class="mr-4">Zurück</q-btn>
+              <q-btn
+                color="green"
+                type="submit"
+                @click="updateSurvey()"
+                class="mr-4 white--text"
+                v-if="surveyIsEditable()"
+                :disabled="surveyFormIsInvalid()"
+              >Umfrage Speichern {{ isUnsaved() ? '*' : undefined }}</q-btn>
 
-                  <!-- Save as FAB -->
-                  <q-page-sticky
-                      bottom
-                      right
-                      :open-on-hover="true"
+              <!-- Save as FAB -->
+              <q-page-sticky bottom right :open-on-hover="true" v-model="bFabButtonInner" fixed>
+                <template v-slot:activator v-slot:extension>
+                  <q-page-sticky>
+                    <q-btn
+                      v-show="isUnsaved()"
                       v-model="bFabButtonInner"
-                      fixed
-                  >
-
-                      <template v-slot:activator v-slot:extension>
-                          <q-page-sticky>
-                            <q-btn
-                              v-show="isUnsaved()"
-                              v-model="bFabButtonInner"
-                              color="success"
-                              dark
-                              fab
-                              type="submit"
-                              @click="updateSurvey()"
-                              :icon="bFabButtonInner ? 'mdi-content-save' : false"
-                            >
-                            </q-btn>
-                          </q-page-sticky>
-                      </template>
-                      <q-btn
-                        fab
-                        dark
-                        small
-                        color="warning"
-                        icon="mdi-restore"
-                      />
+                      color="success"
+                      dark
+                      fab
+                      type="submit"
+                      @click="updateSurvey()"
+                      :icon="bFabButtonInner ? 'mdi-content-save' : false"
+                    ></q-btn>
                   </q-page-sticky>
-                </q-item>
+                </template>
+                <q-btn fab dark small color="warning" icon="mdi-restore" />
+              </q-page-sticky>
+            </q-item>
           </q-list>
-
-
-
         </q-form>
       </template>
     </div>
 
-
     <!-- Dialog Loading -->
     <q-dialog
       v-model="bIsLoading"
-      max-width="500" dark content-class="naked dark centered"
+      max-width="500"
+      dark
+      content-class="naked dark centered"
       persistent
     >
       <q-circular-progress indeterminate />
       <div>{{ $t('loading.text') }}</div>
     </q-dialog>
-
-
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-import { mapGetters } from 'vuex'
-import moment from 'moment'
-
+import axios from "axios";
+import { mapGetters } from "vuex";
+import moment from "moment";
 
 export default {
-
-  data () {
+  data() {
     return {
-
       // Icons
-      help_icon: 'help_outline',
+      help_icon: "help_outline",
 
       // Timeing
-      range: '',
-      min: '',
-      max: '',
+      range: "",
+      min: "",
+      max: "",
 
       // FAB
       bFabButtonInner: false,
 
       // Questions
       bDeleteQuestionDialog: false,
-      sSearch: '',
+      sSearch: "",
       pagination: {
-        sortBy: 'order',
+        sortBy: "order",
         descending: false,
         page: 1,
         rowsPerPage: 100
       },
       headers: [
         {
-          label: 'Reihenfolge',
-          align: 'left',
-          name: 'order',
-          field: 'order',
+          label: "Reihenfolge",
+          align: "left",
+          name: "order",
+          field: "order",
           sortable: true
         },
         {
-          label: 'Title',
-          align: 'left',
-          name: 'title',
-          field: 'title',
+          label: "Title",
+          align: "left",
+          name: "title",
+          field: "title",
           sortable: true
         },
         {
-          label: 'Untertitel',
-          align: 'left',
-          name: 'subtitle',
-          field: 'subtitle',
+          label: "Untertitel",
+          align: "left",
+          name: "subtitle",
+          field: "subtitle",
           sortable: true
         },
         {
-          label: 'Beschreibung',
-          align: 'left',
-          name: 'description',
-          field: 'description',
+          label: "Beschreibung",
+          align: "left",
+          name: "description",
+          field: "description",
           sortable: true
         },
         {
-          label: 'Überspringbar',
+          label: "Überspringbar",
           align: null,
-          name: 'is_skippable',
-          field: 'is_skippable',
+          name: "is_skippable",
+          field: "is_skippable",
           sortable: true
         },
         {
-          label: 'Kommentierbar',
+          label: "Kommentierbar",
           align: null,
-          name: 'is_commentable',
-          field: 'is_commentable',
+          name: "is_commentable",
+          field: "is_commentable",
           sortable: true
         },
         {
-          label: 'Mind. Optionen',
+          label: "Mind. Optionen",
           align: null,
-          name: 'min_options',
-          field: 'min_options',
+          name: "min_options",
+          field: "min_options",
           sortable: true
         },
         {
-          label: 'Max Optionen',
+          label: "Max Optionen",
           align: null,
-          name: 'max_options',
-          field: 'max_options',
+          name: "max_options",
+          field: "max_options",
           sortable: true
         },
         {
-          label: '',
+          label: "",
           align: null,
-          name: 'expand',
-          field: 'expand',
-          sortable: false,
+          name: "expand",
+          field: "expand",
+          sortable: false
         }
       ],
       selected: [],
@@ -1227,44 +1366,44 @@ export default {
 
       // Options
       aOptionHeaders: [
-        { text: '', value: 'data-table-select' },
+        { text: "", value: "data-table-select" },
         {
-          text: 'Reihenfolge',
-          align: 'left',
-          value: 'order'
+          text: "Reihenfolge",
+          align: "left",
+          value: "order"
         },
         {
-          text: 'Technischer Wert',
-          align: 'left',
-          value: 'value'
+          text: "Technischer Wert",
+          align: "left",
+          value: "value"
         },
         {
-          text: 'Title',
-          align: 'left',
-          value: 'title'
+          text: "Title",
+          align: "left",
+          value: "title"
         },
         {
-          text: 'Untertitel',
-          align: 'left',
-          value: 'subtitle'
+          text: "Untertitel",
+          align: "left",
+          value: "subtitle"
         },
         {
-          text: 'Beschreibung',
-          align: 'left',
-          value: 'description'
+          text: "Beschreibung",
+          align: "left",
+          value: "description"
         },
         {
-          text: 'Color',
-          align: 'center',
-          value: 'color'
+          text: "Color",
+          align: "center",
+          value: "color"
         }
       ],
       bDeleteOptionDialog: false,
       iOptionsPerPage: 50,
 
       // To Delete
-      aDeleteQuestionsIds:  [],
-      aDeleteOptionsIds:    [],
+      aDeleteQuestionsIds: [],
+      aDeleteOptionsIds: [],
 
       // Options
       aSelectedOptions: [],
@@ -1273,24 +1412,22 @@ export default {
       bIsLoading: false,
 
       // Tabs
-      active_tab: 'basis',
+      active_tab: "basis",
 
       // Back Route
-      oBackRoute: { name: 'backend.surveys' },
+      oBackRoute: { name: "backend.surveys" },
       bCreate: false,
       bEdit: false,
       bExtendedSettings: false,
 
       // Form
       valid: true,
-      required: [
-        v => !!v || this.$t('required'),
-      ],
+      required: [v => !!v || this.$t("required")],
 
       // Dates and Times
-      oTimes : {
-        sStartTime: '',
-        sEndTime: '',
+      oTimes: {
+        sStartTime: "",
+        sEndTime: ""
       },
 
       // Today
@@ -1305,39 +1442,36 @@ export default {
       // sEndDate: '', // this.getEndDate(),
 
       // Surveys
-      oSurvey : null,
+      oSurvey: null,
       oSurveyOld: null,
 
       // All Question Option Colors
       aAllOptionColors: [
         {
-          title: 'Grey',
-          hex: '#C6C6C6',
+          title: "Grey",
+          hex: "#C6C6C6"
         },
         {
-          title: 'Green',
-          hex: '#6CAE75',
+          title: "Green",
+          hex: "#6CAE75"
         },
         {
-          title: 'Red',
-          hex: '#D09786',
+          title: "Red",
+          hex: "#D09786"
         }
-      ],
-
+      ]
     };
   },
 
   computed: {
     ...mapGetters({
-      user: 'auth/user',
-      surveyAllowed: 'surveys/surveyAllowed'
-    }),
+      user: "auth/user",
+      surveyAllowed: "surveys/surveyAllowed"
+    })
   },
 
-
   watch: {
-    surveyAllowed(promise)
-    {
+    surveyAllowed(promise) {
       // save Promise result in local state
       this.oSurvey = this.copyObject(promise);
       this.oSurveyOld = this.copyObject(promise);
@@ -1349,7 +1483,7 @@ export default {
       // this.oTimes.sEndTime   = this.oSurvey.end_datetime.substr(11, 5);
 
       // If Something inside bExtendedSettings is active
-      if(this.oSurvey.is_finished || this.oSurvey.is_canceled) {
+      if (this.oSurvey.is_finished || this.oSurvey.is_canceled) {
         this.bExtendedSettings = true;
       }
 
@@ -1357,7 +1491,7 @@ export default {
       this.reorderQuestions();
     },
 
-    'oSurvey': {
+    oSurvey: {
       handler() {
         // console.log('oSurvey Changed');
         // this.$refs.form.validate();
@@ -1365,19 +1499,18 @@ export default {
       deep: true
     },
 
-    'aDates': {
+    aDates: {
       handler() {
         // this.updateDatetimes();
       }
     },
 
-    'oTimes': {
+    oTimes: {
       handler() {
         // this.updateDatetimes();
       },
       deep: true
-    },
-
+    }
   },
 
   created: function() {
@@ -1385,41 +1518,36 @@ export default {
     var params = route.params;
     var id = parseInt(params.id);
 
-    if (params.id == 'create')
-    {
+    if (params.id == "create") {
       this.startCreateMode();
-    }
-    else if (typeof id == "number")
-    {
-      this.$store.dispatch('surveys/fetchSurveyAllowed', id)
+    } else if (typeof id == "number") {
+      this.$store.dispatch("surveys/fetchSurveyAllowed", id);
       this.startEditMode();
-    }
-    else
-    {
+    } else {
       this.$router.push(this.oBackRoute);
     }
 
     // Check Tab for Hash
     this.checkTabForHash();
-
   },
 
   methods: {
-
     save() {
-        this.$q.notify({
-          message: this.$t('attribute_changed'),
-          color: 'primary',
-          timeout: 3000,
-        })
+      this.$q.notify({
+        message: this.$t("attribute_changed"),
+        color: "primary",
+        timeout: 3000
+      });
     },
 
-    orderedOptions: function (options) {
-      return options.sort((a, b) => (a.order > b.order) ? 1 : -1);
+    orderedOptions: function(options) {
+      return options.sort((a, b) => (a.order > b.order ? 1 : -1));
     },
 
     getStartDate() {
-      return moment().format().substr(0, 10);
+      return moment()
+        .format()
+        .substr(0, 10);
     },
 
     // getEndDate() {
@@ -1431,7 +1559,7 @@ export default {
       for (var i in oQuestions) {
         if (oQuestions.hasOwnProperty(i)) {
           var oQuestion = oQuestions[i];
-          oQuestion.order = parseInt(i)+1;
+          oQuestion.order = parseInt(i) + 1;
         }
       }
     },
@@ -1441,7 +1569,7 @@ export default {
       for (var i in oOptions) {
         if (oOptions.hasOwnProperty(i)) {
           var oOption = oOptions[i];
-          oOption.order = parseInt(i)+1;
+          oOption.order = parseInt(i) + 1;
         }
       }
     },
@@ -1449,37 +1577,39 @@ export default {
     events(d) {
       var entry = moment(d).format("YYYY-MM-DD");
       var start = moment(this.oSurvey.start_datetime).format("YYYY-MM-DD");
-      var end   = moment(this.oSurvey.end_datetime).format("YYYY-MM-DD");
+      var end = moment(this.oSurvey.end_datetime).format("YYYY-MM-DD");
 
-      return (entry >= start && entry <= end);
+      return entry >= start && entry <= end;
     },
 
     eventColor(d) {
       var entry = moment(d).format("YYYY-MM-DD");
       var start = moment(this.oSurvey.start_datetime).format("YYYY-MM-DD");
-      var end   = moment(this.oSurvey.end_datetime).format("YYYY-MM-DD");
+      var end = moment(this.oSurvey.end_datetime).format("YYYY-MM-DD");
 
       switch (entry) {
         case end:
-          return 'red'
+          return "red";
           break;
 
         case start:
-          return 'green'
+          return "green";
           break;
 
         default:
-          return 'primary'
+          return "primary";
           break;
       }
-
     },
-
 
     deleteQuestions(selected) {
       // Delete Them from Arrays
-      this.oSurvey.questions    = this.oSurvey.questions.filter(function(x) { return selected.indexOf(x) < 0 });
-      this.oSurveyOld.questions = this.oSurveyOld.questions.filter(function(x) { return selected.indexOf(x) < 0 });
+      this.oSurvey.questions = this.oSurvey.questions.filter(function(x) {
+        return selected.indexOf(x) < 0;
+      });
+      this.oSurveyOld.questions = this.oSurveyOld.questions.filter(function(x) {
+        return selected.indexOf(x) < 0;
+      });
 
       // Push into delete_questions
       this.aDeleteQuestionsIds = this.getIdsFromObject(
@@ -1498,12 +1628,12 @@ export default {
 
     deleteOptions(question, selected) {
       // Delete Them from Arrays
-      question.options = question.options.filter(function(x) { return selected.indexOf(x) < 0 });
+      question.options = question.options.filter(function(x) {
+        return selected.indexOf(x) < 0;
+      });
 
       // Push into delete_questions
-      this.aDeleteOptionsIds = this.getIdsFromObject(
-        this.copyObject(selected)
-      );
+      this.aDeleteOptionsIds = this.getIdsFromObject(this.copyObject(selected));
 
       // Empty Selected
       this.aSelectedOptions = [];
@@ -1515,44 +1645,38 @@ export default {
       this.bDeleteOptionDialog = false;
     },
 
-    move (oMovingElement, aList, iDir) {
-      var key1 = this.getPositionByOrder( oMovingElement.order , aList);
+    move(oMovingElement, aList, iDir) {
+      var key1 = this.getPositionByOrder(oMovingElement.order, aList);
       var key2 = key1 + iDir;
       console.log(key1, key2);
       var oElement1 = oMovingElement;
       var oElement2 = aList[key2];
 
-      if(oElement2) {
+      if (oElement2) {
         var iTmp = parseInt(oElement1.order);
 
         oElement1.order = parseInt(oElement2.order);
         oElement2.order = parseInt(iTmp);
       }
 
-      aList.sort((a, b) => (a.order > b.order) ? 1 : -1);
+      aList.sort((a, b) => (a.order > b.order ? 1 : -1));
     },
 
-    sortSelectedByOrder () {
-      this.selected.sort((a, b) => (a.order > b.order) ? 1 : -1);
+    sortSelectedByOrder() {
+      this.selected.sort((a, b) => (a.order > b.order ? 1 : -1));
     },
 
-    moveSelectedUp () {
+    moveSelectedUp() {
       this.sortSelectedByOrder();
       for (var i = 0; i < this.selected.length; i++) {
-        this.moveUp(
-          this.selected[i],
-          this.oSurvey.questions
-        );
+        this.moveUp(this.selected[i], this.oSurvey.questions);
       }
     },
 
     moveSelectedDown() {
       this.sortSelectedByOrder();
-      for (var i = this.selected.length-1; i >= 0; i--) {
-        this.moveDown(
-          this.selected[i],
-          this.oSurvey.questions
-        );
+      for (var i = this.selected.length - 1; i >= 0; i--) {
+        this.moveDown(this.selected[i], this.oSurvey.questions);
       }
     },
 
@@ -1565,34 +1689,45 @@ export default {
     },
 
     getPositionById(oItem, oObject) {
-      return oObject.map(function(x) {return x.id; }).indexOf(oItem.id)
+      return oObject
+        .map(function(x) {
+          return x.id;
+        })
+        .indexOf(oItem.id);
     },
 
     getPositionByOrder(iOrder, oObject) {
-      return oObject.map(function(x) {return x.order; }).indexOf(iOrder)
+      return oObject
+        .map(function(x) {
+          return x.order;
+        })
+        .indexOf(iOrder);
     },
 
     getRandomId() {
       return parseInt(Date.now() + Math.random() * 1000);
     },
 
-    addOption (o, question) {
+    addOption(o, question) {
       var aO = question.options;
-      o.order = aO.length+1;
+      o.order = aO.length + 1;
       aO.push(o);
       return o;
     },
 
     addNewOption(question) {
       console.log(question);
-      return this.addOption({
-        id: this.getRandomId(),
-        color: '#C6C6C6'
-      }, question);
+      return this.addOption(
+        {
+          id: this.getRandomId(),
+          color: "#C6C6C6"
+        },
+        question
+      );
     },
 
     duplicateOption(option, question) {
-      if(question && option) {
+      if (question && option) {
         var oNewOption = this.copyObject(option);
 
         // Delete oNewOption.id;
@@ -1607,14 +1742,12 @@ export default {
       this.duplicateOption(oLast, question);
     },
 
-
-
     // QUESTIONS
     addQuestion(q) {
       var aQ = this.oSurvey.questions;
 
       // Increment one order-point up
-      q.order = aQ.length+1;
+      q.order = aQ.length + 1;
       q.is_new = true;
 
       // Push to other Questions
@@ -1627,14 +1760,14 @@ export default {
     addNewQuestion() {
       return this.addQuestion({
         id: this.getRandomId(),
-        options: [],
+        options: []
       });
     },
 
     duplicateQuestion(question) {
       var aQ = this.oSurvey.questions;
 
-      if(question) {
+      if (question) {
         var oNewQ = this.copyObject(question);
 
         // Delete oNewQ.id;
@@ -1652,9 +1785,7 @@ export default {
     duplicateSelectedQuestions() {
       var aNewSelected = [];
       this.selected.forEach(question => {
-        aNewSelected.push(
-          this.duplicateQuestion(question)
-        );
+        aNewSelected.push(this.duplicateQuestion(question));
       });
       this.selected = aNewSelected;
       console.log(aNewSelected);
@@ -1671,9 +1802,9 @@ export default {
     },
 
     checkTabForHash() {
-      if(window.location.hash) {
+      if (window.location.hash) {
         var tab = window.location.hash.substr(1);
-        tab ? this.active_tab = tab : undefined
+        tab ? (this.active_tab = tab) : undefined;
       }
     },
 
@@ -1682,7 +1813,9 @@ export default {
     },
 
     getIdsFromObject(obj) {
-      return obj.map(function(e) {return e.id;});
+      return obj.map(function(e) {
+        return e.id;
+      });
     },
 
     surveyFormIsInvalid() {
@@ -1690,81 +1823,86 @@ export default {
     },
 
     surveyIsEditable() {
-      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate ? true : false;
+      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate
+        ? true
+        : false;
     },
 
     surveyIsUneditable() {
-      return !this.surveyIsEditable()
+      return !this.surveyIsEditable();
     },
 
     getMaxEndDate(date) {
-      return this.getMinMaxDate(date, 'end')
+      return this.getMinMaxDate(date, "end");
     },
 
-    getMinStartDate (date) {
-      return this.getMinMaxDate(date, 'start')
+    getMinStartDate(date) {
+      return this.getMinMaxDate(date, "start");
     },
 
     getMinMaxDate(date, type) {
-      var d1 = this.getDate(date)
-      var active = this.oSurvey.active
+      var d1 = this.getDate(date);
+      var active = this.oSurvey.active;
 
       switch (type) {
-        case 'start':
+        case "start":
           if (this.oSurvey.end_datetime) {
-            var end = this.getDate(this.oSurvey.end_datetime)
-            return d1 <= end && (active ? this.sTodayDate <= d1 : true)
+            var end = this.getDate(this.oSurvey.end_datetime);
+            return d1 <= end && (active ? this.sTodayDate <= d1 : true);
           }
-          break
+          break;
 
-        case 'end':
-          var start = this.getDate(this.oSurvey.start_datetime)
-          return d1 >= start
-          break
+        case "end":
+          var start = this.getDate(this.oSurvey.start_datetime);
+          return d1 >= start;
+          break;
       }
 
-      return (active ? this.sTodayDate <= d1 : true);
+      return active ? this.sTodayDate <= d1 : true;
     },
 
-    getDate (ts) {
-      return moment(ts).format('YYYY-MM-DD');
+    getDate(ts) {
+      return moment(ts).format("YYYY-MM-DD");
     },
 
-    getMinStartTime (hr, min, sec) {
-      return this.getMinMaxTime(hr,min,sec, 'start');
+    getMinStartTime(hr, min, sec) {
+      return this.getMinMaxTime(hr, min, sec, "start");
     },
 
-    getMaxEndTime (hr, min, sec) {
-      return this.getMinMaxTime(hr,min,sec, 'end');
+    getMaxEndTime(hr, min, sec) {
+      return this.getMinMaxTime(hr, min, sec, "end");
     },
 
-    getMinMaxTime (hr, min, sec, type) {
+    getMinMaxTime(hr, min, sec, type) {
       if (this.oSurvey.start_datetime && this.oSurvey.end_datetime) {
-        var startDate = this.getDate(this.oSurvey.start_datetime)
-        var endDate   = this.getDate(this.oSurvey.end_datetime)
+        var startDate = this.getDate(this.oSurvey.start_datetime);
+        var endDate = this.getDate(this.oSurvey.end_datetime);
         if (startDate == endDate) {
-          var endDatetime   = moment(this.oSurvey.end_datetime    ).format("YYYY-MM-DD HH:mm:ss")
-          var startDatetime = moment(this.oSurvey.start_datetime  ).format("YYYY-MM-DD HH:mm:ss")
+          var endDatetime = moment(this.oSurvey.end_datetime).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
+          var startDatetime = moment(this.oSurvey.start_datetime).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
 
           // SelTime
-          var selTime       = moment(this.oSurvey.start_datetime).toDate();
-          if(hr) selTime.setHours(hr);
-          if(min) selTime.setMinutes(min);
-          if(sec) selTime.setSeconds(sec);
+          var selTime = moment(this.oSurvey.start_datetime).toDate();
+          if (hr) selTime.setHours(hr);
+          if (min) selTime.setMinutes(min);
+          if (sec) selTime.setSeconds(sec);
 
           // Format again
           selTime = moment(selTime).format("YYYY-MM-DD HH:mm:ss");
 
           switch (type) {
-            case 'start':
+            case "start":
               return endDatetime > selTime;
               break;
 
-            case 'end':
+            case "end":
               return startDatetime < selTime;
               break;
           }
-
         }
       }
 
@@ -1772,7 +1910,11 @@ export default {
     },
 
     getDiffDatetime() {
-      if(!this.oSurvey || !this.oSurvey.start_datetime || !this.oSurvey.end_datetime) {
+      if (
+        !this.oSurvey ||
+        !this.oSurvey.start_datetime ||
+        !this.oSurvey.end_datetime
+      ) {
         return 0;
       }
 
@@ -1787,56 +1929,55 @@ export default {
       var iDays = Math.floor(delta / 86400);
 
       switch (true) {
-        case (iDays > 14):
-          return 'positive'
+        case iDays > 14:
+          return "positive";
           break;
 
-        case (iDays > 7):
-          return 'grey'
+        case iDays > 7:
+          return "grey";
           break;
 
-        case (iDays > 3):
-          return 'warning'
+        case iDays > 3:
+          return "warning";
           break;
 
         default:
-          return 'negative';
+          return "negative";
           break;
       }
 
-      return 'grey';
-
+      return "grey";
     },
 
     getDiffDatetimeLabel() {
       // get total seconds between the times
       var delta = this.getDiffDatetime();
 
-      if(!delta) return '';
+      if (!delta) return "";
 
       // calculate (and subtract) whole days
       var iDays = Math.floor(delta / 86400);
-      var sDays = '';
+      var sDays = "";
       delta -= iDays * 86400;
-      if(iDays) sDays = iDays + ' '+ this.$t('days') + ' ';
+      if (iDays) sDays = iDays + " " + this.$t("days") + " ";
 
       // calculate (and subtract) whole hours
       var iHours = Math.floor(delta / 3600) % 24;
-      var sHours = '';
+      var sHours = "";
       delta -= iHours * 3600;
-      if(iHours) sHours = iHours + ' '+ this.$t('hours') + ' ';
+      if (iHours) sHours = iHours + " " + this.$t("hours") + " ";
 
       // calculate (and subtract) whole minutes
       var iMinutes = Math.floor(delta / 60) % 60;
-      var sMinutes = '';
+      var sMinutes = "";
       delta -= iMinutes * 60;
-      if(iMinutes) sMinutes = iMinutes + ' '+ this.$t('minutes') + ' ';
+      if (iMinutes) sMinutes = iMinutes + " " + this.$t("minutes") + " ";
 
       return sDays + sHours + sMinutes;
     },
 
     isSameDay(dates) {
-      if(dates && dates[0] == dates[1]) {
+      if (dates && dates[0] == dates[1]) {
         return true;
       }
       return false;
@@ -1884,7 +2025,10 @@ export default {
     // },
 
     getDatesDiffDays() {
-      return this.getDiffDays(this.oSurvey.start_datetime, this.oSurvey.end_datetime);
+      return this.getDiffDays(
+        this.oSurvey.start_datetime,
+        this.oSurvey.end_datetime
+      );
     },
 
     getDiffDays(d1, d2) {
@@ -1893,16 +2037,16 @@ export default {
       var diff_in_time = date2.getTime() - date1.getTime();
       var diff_in_days = diff_in_time / (1000 * 3600 * 24);
 
-      return (Math.abs(diff_in_days) + 1) .toString();
+      return (Math.abs(diff_in_days) + 1).toString();
     },
 
     formatDate(sDate) {
-      var locale = '';
+      var locale = "";
       var dDate = new Date(sDate);
 
       switch (this._i18n.locale) {
-        case 'de':
-          locale = 'de-DE';
+        case "de":
+          locale = "de-DE";
           break;
 
         default:
@@ -1910,35 +2054,35 @@ export default {
           break;
       }
 
-      if(sDate && dDate) {
+      if (sDate && dDate) {
         return dDate.toLocaleDateString(locale);
       }
     },
 
     formatTime(sDate) {
-      return sDate ? sDate.substr(11,5) + ' Uhr' : '';
+      return sDate ? sDate.substr(11, 5) + " Uhr" : "";
     },
 
     showSnackbarError: function(text) {
       var _this = this;
       _this.$q.notify({
         message: _this.$t(text),
-        color: 'red',
-        position: 'top-right',
-        actions: [{ icon: 'close', color: 'white' }],
-        timeout: 6000,
-      })
+        color: "red",
+        position: "top-right",
+        actions: [{ icon: "close", color: "white" }],
+        timeout: 6000
+      });
     },
 
     showSnackbarSuccess: function(text) {
       var _this = this;
       _this.$q.notify({
         message: _this.$t(text),
-        color: 'green',
-        position: 'top-right',
-        actions: [{ icon: 'close', color: 'white' }],
-        timeout: 3000,
-      })
+        color: "green",
+        position: "top-right",
+        actions: [{ icon: "close", color: "white" }],
+        timeout: 3000
+      });
     },
 
     startEditMode: function() {
@@ -1956,36 +2100,36 @@ export default {
         questions: []
       };
 
-      if(!this.oSurvey) this.oSurvey = this.copyObject(tmp);
-      if(!this.oSurveyOld) this.oSurveyOld = this.copyObject(tmp);
+      if (!this.oSurvey) this.oSurvey = this.copyObject(tmp);
+      if (!this.oSurveyOld) this.oSurveyOld = this.copyObject(tmp);
     },
 
     copyObject(obj) {
-      if(typeof obj != 'undefined') {
+      if (typeof obj != "undefined") {
         var copy = JSON.parse(JSON.stringify(obj));
-        if(copy) return copy
+        if (copy) return copy;
       }
     },
 
     isSaved() {
-        var bReturn = true;
-        var itemL = this.copyObject(this.oSurvey);
-        var itemR = this.copyObject(this.oSurveyOld);
+      var bReturn = true;
+      var itemL = this.copyObject(this.oSurvey);
+      var itemR = this.copyObject(this.oSurveyOld);
 
-        if(itemL && itemR) {
-            // Differences
-            if(JSON.stringify(itemR) != JSON.stringify(itemL)) {
-                // console.log(JSON.stringify(itemR), JSON.stringify(itemL));
-                bReturn = false;
-            } else {
-                bReturn = true;
-            }
+      if (itemL && itemR) {
+        // Differences
+        if (JSON.stringify(itemR) != JSON.stringify(itemL)) {
+          // console.log(JSON.stringify(itemR), JSON.stringify(itemL));
+          bReturn = false;
+        } else {
+          bReturn = true;
         }
-        return bReturn;
+      }
+      return bReturn;
     },
 
     isUnsaved() {
-        return !this.isSaved();
+      return !this.isSaved();
     },
 
     updateSurvey: function() {
@@ -1993,59 +2137,59 @@ export default {
       this.bIsLoading = true;
 
       // Update Users
-      this.$store.dispatch('surveys/updateSurvey', {
-        survey: _t.oSurvey,
-        delete_questions_ids: _t.aDeleteQuestionsIds,
-        delete_options_ids: _t.aDeleteOptionsIds,
-      }).then(function(e) {
-        // Success
-        if(!e || !e.response || !e.response.data || !e.response.data.error) {
-          _t.showSnackbarSuccess(_t.$t('data_saved'));
-          _t.oSurvey = _t.copyObject(e.data);
-          _t.oSurveyOld = _t.copyObject(e.data);
+      this.$store
+        .dispatch("surveys/updateSurvey", {
+          survey: _t.oSurvey,
+          delete_questions_ids: _t.aDeleteQuestionsIds,
+          delete_options_ids: _t.aDeleteOptionsIds
+        })
+        .then(function(e) {
+          // Success
+          if (!e || !e.response || !e.response.data || !e.response.data.error) {
+            _t.showSnackbarSuccess(_t.$t("data_saved"));
+            _t.oSurvey = _t.copyObject(e.data);
+            _t.oSurveyOld = _t.copyObject(e.data);
 
-          if(_t.bCreate) {
-            _t.$router.push({
-              name: 'backend.survey',
-              params: {
-                id: _t.oSurvey.id
-              }
-            });
+            if (_t.bCreate) {
+              _t.$router.push({
+                name: "backend.survey",
+                params: {
+                  id: _t.oSurvey.id
+                }
+              });
+            }
+
+            _t.aDeleteQuestionsIds = [];
+            _t.aDeleteOptionsIds = [];
+
+            _t.startEditMode();
+          }
+          _t.bIsLoading = false;
+        })
+        .catch(function(e) {
+          console.log(e);
+          // Error
+          if (e.reponse && e.reponse.data && e.response.data.error) {
+            var errText = "";
+            for (var e in e.response.data.error) {
+              errText += ": " + err[e];
+            }
           }
 
-          _t.aDeleteQuestionsIds = [];
-          _t.aDeleteOptionsIds = [];
-
-          _t.startEditMode();
-
-        }
-        _t.bIsLoading = false;
-      }).catch(function(e) {
-        console.log(e);
-        // Error
-        if(e.reponse && e.reponse.data && e.response.data.error)
-        {
-          var errText = '';
-          for (var e in e.response.data.error) {
-            errText += ': ' + err[e];
-          }
-        }
-
-        _t.showSnackbarError(_t.$t('data_unsaved') + "<br />" + errText);
-        _t.bIsLoading = false;
-      });
+          _t.showSnackbarError(_t.$t("data_unsaved") + "<br />" + errText);
+          _t.bIsLoading = false;
+        });
     }
   }
-
-}
+};
 </script>
 
 <style lang="scss">
 // Display Events as Long Stripes
 .q-date__event {
-    width: 37px;
-    border-radius: 0;
-    bottom: 1px;
-    height: 4px;
+  width: 37px;
+  border-radius: 0;
+  bottom: 1px;
+  height: 4px;
 }
 </style>
