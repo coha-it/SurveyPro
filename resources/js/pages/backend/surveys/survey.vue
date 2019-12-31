@@ -469,7 +469,7 @@
                         showFirstLastPage: true,
                       }"
 
-                      class="my-data-table f-height"
+                      class="my-data-table f-height questions-table"
                     >
                       <template v-slot:body="props">
                         <q-tr :props="props">
@@ -622,9 +622,9 @@
                                     <div class="col" xl="12" sm="12" xs="12">
                                       <br>
                                       <q-list subheader two-line flat>
-                                        <q-item>
-                                          <q-item-label>Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}</q-item-label>
-                                        </q-item>
+                                        <q-item-label header>
+                                          Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}
+                                        </q-item-label>
                                         <q-item>
                                           <q-item-section side top>
                                             <q-checkbox
@@ -672,12 +672,19 @@
                                               dense
                                               persistent-hint
                                               outlined
-                                              hint="Subtitel / Untertitel der Frage. Wird unter Titel angezeigt"
                                               placeholder="z.B.: 'Wie fanden Sie diese Umfrage?' "
                                               v-model="props.row.subtitle"
                                               label="Untertitel"
                                               required
-                                            />
+                                            >
+                                              <template v-slot:append>
+                                                <q-icon :name="help_icon">
+                                                  <q-tooltip self="center middle">
+                                                    Subtitel / Untertitel der Frage. Wird unter Titel angezeigt
+                                                  </q-tooltip>
+                                                </q-icon>
+                                              </template>
+                                            </q-input>
                                           </q-item-section>
                                         </q-item>
 
@@ -690,11 +697,18 @@
                                               dense
                                               persistent-hint
                                               outlined
-                                              hint="Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt."
                                               placeholder="z.B.: 'Bewerten Sie diese Umfrage bitte mit 0 (negativ) bis 10 (positiv) Punkten' "
                                               label="Beschreibung"
                                               required
-                                            />
+                                            >
+                                              <template v-slot:append>
+                                                <q-icon :name="help_icon">
+                                                  <q-tooltip self="center middle">
+                                                    Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt.
+                                                  </q-tooltip>
+                                                </q-icon>
+                                              </template>
+                                            </q-input>
                                           </q-item-section>
                                         </q-item>
 
@@ -716,7 +730,6 @@
                                           </q-item-section>
                                           <q-item-section>
                                             <q-item-label>Kommentierbar</q-item-label>
-                                            <q-item-label caption>Ist diese Frage kommentierbar</q-item-label>
                                           </q-item-section>
                                         </q-item>
 
@@ -733,7 +746,6 @@
                                             </q-item-section>
                                             <q-item-section>
                                               <q-item-label>Kommentar ist erforderlich</q-item-label>
-                                              <q-item-label caption>Ist ein Kommentar erforderlich</q-item-label>
                                             </q-item-section>
                                           </q-item>
 
@@ -748,7 +760,6 @@
                                             </q-item-section>
                                             <q-item-section>
                                               <q-item-label>Kommentar ist eine Nummer</q-item-label>
-                                              <q-item-label caption>Wenn der Kommentar eine Nummer sein soll</q-item-label>
                                             </q-item-section>
                                           </q-item>
 
@@ -759,18 +770,30 @@
                                                 dense
                                                 persistent-hint
                                                 outlined
-                                                hint="Kommentar: Maximale Zeichen"
                                                 placeholder="1 - 255"
                                                 type="number"
                                                 v-model="props.row.comment_max_signs"
-                                                label="Maximale Zeichen"
+                                                label="Kommentar: Maximale Zeichen"
                                                 required
-                                              />
+                                              >
+                                                <template v-slot:append>
+                                                  <q-icon :name="help_icon">
+                                                    <q-tooltip self="center middle">
+                                                      Wieviele einzelne Zeichen darf ein Kommentar maximal haben?
+                                                    </q-tooltip>
+                                                  </q-icon>
+                                                </template>
+                                              </q-input>
                                             </q-item-section>
                                           </q-item>
                                         </template>
 
-                                        <q-item-label>Einstellungen: Optionen</q-item-label>
+                                      </q-list>
+
+                                      <q-list subheader two-line flat>
+                                        <q-item-label header>
+                                          Frage-Optionen
+                                        </q-item-label>
 
                                           <q-item>
                                             <q-item-section>
@@ -946,8 +969,8 @@
                                             </q-dialog>
                                           </template>
                                         </q-table>
-                                          <q-btn @click="addNewOption(item)">
-                                            <q-icon name="mdi-plus_one" left />
+                                          <q-btn @click="addNewOption(props.item)">
+                                            <q-icon name="plus_one" left />
                                             Neue Option hinzufügen
                                           </q-btn>&nbsp;
                                           <q-btn color="primary" @click="duplicateLastOption(item)">
@@ -1553,7 +1576,7 @@ export default {
       return parseInt(Date.now() + Math.random() * 1000);
     },
 
-    addOption(o, question) {
+    addOption (o, question) {
       var aO = question.options;
       o.order = aO.length+1;
       aO.push(o);
@@ -1561,6 +1584,7 @@ export default {
     },
 
     addNewOption(question) {
+      console.log(question);
       return this.addOption({
         id: this.getRandomId(),
         color: '#C6C6C6'

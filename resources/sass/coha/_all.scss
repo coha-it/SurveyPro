@@ -409,6 +409,18 @@ select {
   max-height: inherit;
 }
 
+// Questions Table
+.questions-table {
+
+    table {
+        tr {
+            td {
+                white-space: normal;
+            }
+        }
+    }
+}
+
 .expandable-row {
   td {
     &:before {
