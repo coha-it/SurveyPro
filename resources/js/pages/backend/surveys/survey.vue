@@ -21,6 +21,8 @@
           <!-- Basic Settings -->
           <q-tabs
             v-model="active_tab"
+            :disable="surveyIsUneditable()"
+
             fixed-tabs
             icons-and-text
             align="justify"
@@ -45,7 +47,7 @@
                   <q-item>
                     <q-item-section>
                       <q-input
-                        :disabled="surveyIsUneditable()"
+                        :disable="surveyIsUneditable()"
                         dense
                         persistent-hint
                         outlined
@@ -63,7 +65,7 @@
                   <q-item>
                     <q-item-section>
                       <q-input
-                        :disabled="surveyIsUneditable()"
+                        :disable="surveyIsUneditable()"
                         dense
                         persistent-hint
                         outlined
@@ -80,7 +82,7 @@
                   <q-item>
                     <q-item-section>
                       <q-input
-                        :disabled="surveyIsUneditable()"
+                        :disable="surveyIsUneditable()"
                         dense
                         persistent-hint
                         outlined
@@ -96,7 +98,7 @@
                   <q-item>
                     <q-item-section>
                       <q-input type="textarea"
-                        :disabled="surveyIsUneditable()"
+                        :disable="surveyIsUneditable()"
                         outlined
                         dense
                         persistent-hint
@@ -113,8 +115,8 @@
                   <q-item>
                     <q-item-section side top>
                       <q-checkbox
-                        :disabled="surveyIsUneditable()"
-                         v-model="oSurvey.active"
+                        :disable="surveyIsUneditable()"
+                        v-model="oSurvey.active"
                         color="primary"
                         :true-value="1"
                         :false-value="0"
@@ -129,7 +131,7 @@
                   <q-item>
                     <q-item-section side top>
                       <q-checkbox
-                      :disabled="surveyIsUneditable()"
+                      :disable="surveyIsUneditable()"
                       v-model="oSurvey.only_editable_by_creator"
                       color="primary"
                       :true-value="1" :false-value="0"
@@ -144,7 +146,7 @@
                   <q-item>
                     <q-item-section side top>
                       <q-checkbox
-                      :disabled="surveyIsUneditable()"
+                      :disable="surveyIsUneditable()"
                       v-model="oSurvey.is_public"
                       color="red"
                       :true-value="1"
@@ -178,7 +180,7 @@
                            color="error"
                            v-model="oSurvey.is_finished"
                            :true-value="1" :false-value="0"
-                           :disabled="surveyIsUneditable()"
+                           :disable="surveyIsUneditable()"
                            />
                         </q-item-section>
                         <q-item-section>
@@ -190,7 +192,7 @@
                       <q-item>
                         <q-item-section side top>
                           <q-checkbox
-                          :disabled="surveyIsUneditable()"
+                          :disable="surveyIsUneditable()"
                           color="error"
                           v-model="oSurvey.is_canceled"
                           :true-value="1"
@@ -221,6 +223,7 @@
                           <div class="col col-12 col-sm-6 col-md-6">
                             <q-input
                               :value="formatDate(oSurvey.start_datetime)"
+                              :disable="surveyIsUneditable()"
                               label="Beginnt am"
                               placeholder="Bitte auswählen"
                               readonly
@@ -233,9 +236,11 @@
                               </template>
                               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                                 <q-date
-                                  :disabled="surveyIsUneditable()"
-                                  required
                                   v-model="oSurvey.start_datetime"
+                                  :events="events"
+                                  :event-color="eventColor"
+                                  :disable="surveyIsUneditable()"
+                                  required
                                   :options="getMinStartDate"
                                   :selected-items-text="getDatesDiffDays() + ' Tage Zeit'"
                                   color="secondary"
@@ -252,6 +257,7 @@
                             <q-input
                               v-if="oSurvey.start_datetime"
                               :value="formatTime(oSurvey.start_datetime)"
+                              :disable="surveyIsUneditable()"
                               label="Beginnt um"
                               placeholder="Bitte auswählen"
                               readonly
@@ -266,9 +272,10 @@
                                 <q-time
                                   format24h
                                   v-model="oSurvey.start_datetime"
+                                  :disable="surveyIsUneditable()"
                                   :options="getMinStartTime"
                                   mask="YYYY-MM-DD HH:mm:ss"
-                                  color="purple">
+                                  color="green">
                                   <div class="row items-center justify-end q-gutter-sm">
                                     <q-btn :label="$t('closer_button')" color="primary" flat v-close-popup />
                                   </div>
@@ -282,6 +289,7 @@
                           <div class="col col-12 col-sm-6 col-md-6">
                             <q-input
                               :value="formatDate(oSurvey.end_datetime)"
+                              :disable="surveyIsUneditable()"
                               label="Endet am"
                               readonly
                               :rules="required"
@@ -294,11 +302,13 @@
                               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                                 <q-date
                                   v-model="oSurvey.end_datetime"
-                                  :disabled="surveyIsUneditable()"
+                                  :events="events"
+                                  :event-color="eventColor"
+                                  :disable="surveyIsUneditable()"
                                   required
                                   :options="getMaxEndDate"
                                   range
-                                  color="secondary"
+                                  color="grey"
                                   header-color="primary"
                                   mask="YYYY-MM-DD HH:mm:ss"
                                 >
@@ -312,6 +322,7 @@
                           <div class="col col-12 col-sm-6 col-md-6">
                             <q-input
                               :value="formatTime(oSurvey.end_datetime)"
+                              :disable="surveyIsUneditable()"
                               label="Endet um"
                               readonly
                               :rules="required"
@@ -326,8 +337,9 @@
                                 <q-time
                                   format24h
                                   v-model="oSurvey.end_datetime"
+                                  :disable="surveyIsUneditable()"
                                   mask="YYYY-MM-DD HH:mm:ss"
-                                  color="purple"
+                                  color="grey"
                                   :options="getMaxEndTime"
                                 >
                                   <div class="row items-center justify-end q-gutter-sm">
@@ -457,7 +469,7 @@
                         showFirstLastPage: true,
                       }"
 
-                      class="my-data-table"
+                      class="my-data-table f-height"
                     >
                       <template v-slot:body="props">
                         <q-tr :props="props">
@@ -608,13 +620,20 @@
                                 <td colspan="100%">
                                   <div class="row">
                                     <div class="col" xl="12" sm="12" xs="12">
-                                      <h3>Frage-Einstellungen #{{ props.row.id }}</h3>
-                                        <!-- <q-card-section>Einstellungen zur {{ props.row.order }}. Frage</q-card-section> -->
+                                      <br>
                                       <q-list subheader two-line flat>
-                                        <q-item-label>Allgemeine Frage-Einstellungen</q-item-label>
                                         <q-item>
-                                          <q-item-section>
-                                            <q-checkbox v-model="props.row.is_skippable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
+                                          <q-item-label>Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}</q-item-label>
+                                        </q-item>
+                                        <q-item>
+                                          <q-item-section side top>
+                                            <q-checkbox
+                                              v-model="props.row.is_skippable"
+                                              :disable="surveyIsUneditable()"
+                                              color="primary"
+                                              :true-value="1"
+                                              :false-value="0"
+                                            />
                                           </q-item-section>
                                           <q-item-section>
                                             <q-item-label>Überspringbar</q-item-label>
@@ -625,23 +644,31 @@
                                         <q-item>
                                           <q-item-section>
                                             <q-input
-                                              :disabled="surveyIsUneditable()"
+                                              v-model="props.row.title"
+                                              :disable="surveyIsUneditable()"
                                               dense
                                               persistent-hint
                                               outlined
-                                              hint="Titel der Frage. Wird am größten Angezeigt"
                                               placeholder="z.B.: 'Fazit zur Umfrage' "
-                                              v-model="props.row.title"
                                               label="Titel"
                                               required
-                                            />
+                                            >
+                                              <template v-slot:append>
+                                                <q-icon :name="help_icon">
+                                                  <q-tooltip self="center middle">
+                                                    Titel der Frage. Wird am größten Angezeigt
+                                                  </q-tooltip>
+                                                </q-icon>
+                                              </template>
+                                            </q-input>
                                           </q-item-section>
                                         </q-item>
 
                                         <q-item>
                                           <q-item-section>
                                             <q-input
-                                              :disabled="surveyIsUneditable()"
+                                              :disable="surveyIsUneditable()"
+
                                               dense
                                               persistent-hint
                                               outlined
@@ -656,25 +683,36 @@
 
                                         <q-item>
                                           <q-item-section>
-                                            <q-input type="textarea"
-                                              :disabled="surveyIsUneditable()"
+                                            <q-input
+                                              v-model="props.row.description"
+                                              type="textarea"
+                                              :disable="surveyIsUneditable()"
                                               dense
                                               persistent-hint
                                               outlined
                                               hint="Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt."
                                               placeholder="z.B.: 'Bewerten Sie diese Umfrage bitte mit 0 (negativ) bis 10 (positiv) Punkten' "
-                                              v-model="props.row.description"
                                               label="Beschreibung"
                                               required
                                             />
                                           </q-item-section>
                                         </q-item>
 
-                                        <q-item-label>Kommentar-Einstellungen</q-item-label>
+                                      </q-list>
+
+                                      <q-list subheader two-line flat>
+                                        <q-item-label header>Kommentar-Einstellungen</q-item-label>
 
                                         <q-item>
-                                          <q-item-section>
-                                            <q-checkbox v-model="props.row.is_commentable" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
+                                          <q-item-section side top>
+                                            <q-checkbox
+                                              v-model="props.row.is_commentable"
+                                              :disable="surveyIsUneditable()"
+
+                                              color="primary"
+                                              :true-value="1"
+                                              :false-value="0"
+                                            />
                                           </q-item-section>
                                           <q-item-section>
                                             <q-item-label>Kommentierbar</q-item-label>
@@ -684,8 +722,14 @@
 
                                         <template v-if="props.row.is_commentable || true">
                                           <q-item>
-                                            <q-item-section>
-                                              <q-checkbox v-model="props.row.comment_is_required" :disabled="surveyIsUneditable() && props.row.is_commentable" color="primary" :true-value="1" :false-value="0" />
+                                            <q-item-section side top>
+                                              <q-checkbox
+                                                v-model="props.row.comment_is_required"
+                                                :disable="surveyIsUneditable() && props.row.is_commentable"
+                                                color="primary"
+                                                :true-value="1"
+                                                :false-value="0"
+                                                />
                                             </q-item-section>
                                             <q-item-section>
                                               <q-item-label>Kommentar ist erforderlich</q-item-label>
@@ -694,8 +738,13 @@
                                           </q-item>
 
                                           <q-item>
-                                            <q-item-section>
-                                              <q-checkbox v-model="props.row.comment_is_number" :disabled="surveyIsUneditable()" color="primary" :true-value="1" :false-value="0" />
+                                            <q-item-section side top>
+                                              <q-checkbox
+                                                v-model="props.row.comment_is_number"
+                                                :disable="surveyIsUneditable()"
+                                                color="primary"
+                                                :true-value="1"
+                                                :false-value="0" />
                                             </q-item-section>
                                             <q-item-section>
                                               <q-item-label>Kommentar ist eine Nummer</q-item-label>
@@ -706,7 +755,7 @@
                                           <q-item>
                                             <q-item-section>
                                               <q-input
-                                                :disabled="surveyIsUneditable()"
+                                                :disable="surveyIsUneditable()"
                                                 dense
                                                 persistent-hint
                                                 outlined
@@ -728,7 +777,7 @@
                                               <div class="row">
                                                 <div class="col" xl="3" md="3" sm="6" xs="12">
                                                   <q-input
-                                                    :disabled="surveyIsUneditable()"
+                                                    :disable="surveyIsUneditable()"
                                                     dense
                                                     persistent-hint
                                                     outlined
@@ -743,7 +792,7 @@
                                                 </div>
                                                 <div class="col" xl="3" md="3" sm="6" xs="12">
                                                   <q-input
-                                                    :disabled="surveyIsUneditable()"
+                                                    :disable="surveyIsUneditable()"
                                                     dense
                                                     persistent-hint
                                                     outlined
@@ -969,7 +1018,7 @@
                         multiple
                         return-object
                         item-text="name"
-                        :disabled="surveyIsUneditable()"
+                        :disable="surveyIsUneditable()"
                       >
                       </v-select>
                     </q-item-section>
@@ -1064,6 +1113,9 @@ export default {
 
   data () {
     return {
+
+      // Icons
+      help_icon: 'help_outline',
 
       // Timeing
       range: '',
@@ -1440,7 +1492,7 @@ export default {
       this.bDeleteOptionDialog = false;
     },
 
-    move(oMovingElement, aList, iDir) {
+    move (oMovingElement, aList, iDir) {
       var key1 = this.getPositionByOrder( oMovingElement.order , aList);
       var key2 = key1 + iDir;
       console.log(key1, key2);
@@ -1457,11 +1509,11 @@ export default {
       aList.sort((a, b) => (a.order > b.order) ? 1 : -1);
     },
 
-    sortSelectedByOrder() {
+    sortSelectedByOrder () {
       this.selected.sort((a, b) => (a.order > b.order) ? 1 : -1);
     },
 
-    moveSelectedUp() {
+    moveSelectedUp () {
       this.sortSelectedByOrder();
       for (var i = 0; i < this.selected.length; i++) {
         this.moveUp(
@@ -1614,63 +1666,61 @@ export default {
     },
 
     surveyIsEditable() {
-      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate;
+      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate ? true : false;
     },
 
     surveyIsUneditable() {
-      return !this.surveyIsEditable();
+      return !this.surveyIsEditable()
     },
 
     getMaxEndDate(date) {
-      return this.getMinMaxDate(date, 'end');
+      return this.getMinMaxDate(date, 'end')
     },
 
     getMinStartDate (date) {
-      return this.getMinMaxDate(date, 'start');
+      return this.getMinMaxDate(date, 'start')
     },
 
     getMinMaxDate(date, type) {
-      var d1 = this.getDate(date);
-      var active = this.oSurvey.active;
+      var d1 = this.getDate(date)
+      var active = this.oSurvey.active
 
       switch (type) {
         case 'start':
-          if(this.oSurvey.end_datetime) {
-            var end = this.getDate(this.oSurvey.end_datetime);
-            return d1 < end && (active ? this.sTodayDate <= d1  : true)
+          if (this.oSurvey.end_datetime) {
+            var end = this.getDate(this.oSurvey.end_datetime)
+            return d1 <= end && (active ? this.sTodayDate <= d1 : true)
           }
-          break;
+          break
 
         case 'end':
-          var start = this.getDate(this.oSurvey.start_datetime);
+          var start = this.getDate(this.oSurvey.start_datetime)
           return d1 >= start
-          break;
+          break
       }
 
       return (active ? this.sTodayDate <= d1 : true);
     },
 
-    getDate(ts) {
+    getDate (ts) {
       return moment(ts).format('YYYY-MM-DD');
     },
 
-    getMinStartTime(hr, min, sec) {
+    getMinStartTime (hr, min, sec) {
       return this.getMinMaxTime(hr,min,sec, 'start');
     },
 
-    getMaxEndTime(hr, min, sec) {
+    getMaxEndTime (hr, min, sec) {
       return this.getMinMaxTime(hr,min,sec, 'end');
     },
 
-    getMinMaxTime(hr, min, sec, type) {
-      if(this.oSurvey.start_datetime && this.oSurvey.end_datetime)
-      {
-        var startDate = this.getDate(this.oSurvey.start_datetime);
-        var endDate   = this.getDate(this.oSurvey.end_datetime);
-        if(startDate == endDate)
-        {
-          var endDatetime   = moment(this.oSurvey.end_datetime    ).format("YYYY-MM-DD HH:mm:ss");
-          var startDatetime = moment(this.oSurvey.start_datetime  ).format("YYYY-MM-DD HH:mm:ss");
+    getMinMaxTime (hr, min, sec, type) {
+      if (this.oSurvey.start_datetime && this.oSurvey.end_datetime) {
+        var startDate = this.getDate(this.oSurvey.start_datetime)
+        var endDate   = this.getDate(this.oSurvey.end_datetime)
+        if (startDate == endDate) {
+          var endDatetime   = moment(this.oSurvey.end_datetime    ).format("YYYY-MM-DD HH:mm:ss")
+          var startDatetime = moment(this.oSurvey.start_datetime  ).format("YYYY-MM-DD HH:mm:ss")
 
           // SelTime
           var selTime       = moment(this.oSurvey.start_datetime).toDate();
@@ -1965,3 +2015,13 @@ export default {
 
 }
 </script>
+
+<style lang="scss">
+// Display Events as Long Stripes
+.q-date__event {
+    width: 37px;
+    border-radius: 0;
+    bottom: 1px;
+    height: 4px;
+}
+</style>

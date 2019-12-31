@@ -390,6 +390,7 @@ select {
     position: sticky !important;
     background-color: #fff;
     // z-index: 102;
+    z-index: 105;
   }
 
   th:last-child,
@@ -401,6 +402,11 @@ select {
   td:first-child{
     left: 0;
   }
+}
+
+// Full Height Table
+.q-table__container.f-height .q-table__middle {
+  max-height: inherit;
 }
 
 .expandable-row {
