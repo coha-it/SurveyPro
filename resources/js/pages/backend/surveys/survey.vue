@@ -13,6 +13,49 @@
         class="small ml-auto my-auto"
         :label="$t('Back to surveys')"
       />
+
+                <UserDataModal
+                  sEditText="Gruppen Bearbeiten"
+                  sCreateText="Neue Gruppe erstellen"
+                  sInputLabel="Gruppenname"
+                  sInputLabel2="Gruppenbeschreibung Öffentlich"
+                  sInputLabel3="Gruppenbeschreibung für Moderatoren"
+                  p_sModel="group"
+                  :p_oModels="user.groups_moderating"
+                  :p_aHeaders="[
+                    {
+                      name: 'id',
+                      label: this.$t('id'),
+                      field: 'id',
+                    },
+                    {
+                      name: 'name',
+                      label: this.$t('name'),
+                      field: 'name',
+                    },
+                    {
+                      name: 'description_public',
+                      label: this.$t('description_public'),
+                      field: 'description_public',
+                    },
+                    {
+                      name: 'description_mods',
+                      label: this.$t('description_mods'),
+                      field: 'description_mods',
+                    },
+                    {
+                      name: 'updated_at',
+                      label: this.$t('updated_at'),
+                      field: 'updated_at',
+                    },
+                    {
+                      name: 'created_at',
+                      label: this.$t('created_at'),
+                      field: 'created_at',
+                    }
+                  ]"
+                />
+
       <br />
       <br />
     </template>
@@ -442,7 +485,6 @@
 
                   <div class="col col-12 col-sm-6 col-md-6">
                     <q-date
-
                       :events="events"
                       :event-color="eventColor"
                       :options="events"
@@ -462,17 +504,17 @@
                   <q-item-section>
                     <!-- No Select Toolbar -->
                     <q-toolbar
-                      class="coha--toolbar"
                       v-if="selected.length <= 0"
+                      class="coha--toolbar"
                       :flat="sSearch == ''"
                       floating
-                      min-height="85px"
+                      style="min-height:100px"
                       height="auto"
                     >
                       <div class="flex-grow-1"></div>
                       <q-input
-                        style="max-width: 400px;"
                         v-model="sSearch"
+                        style="max-width: 400px;"
                         :label="$t('Search')"
                         autocomplete="off"
                         append-icon="search"
@@ -492,44 +534,54 @@
                     </q-toolbar>
 
                     <q-toolbar
-                      class="coha--toolbar"
                       v-else
+                      class="coha--toolbar bg-primary text-white"
                       :flat="sSearch == ''"
                       color="primary"
                       dark
                       floating
-                      min-height="85px"
+                      style="min-height:100px"
                       height="auto"
                     >
-                      <q-menu right offset-y>
-                        <template v-slot:activator="{ on:menuedit }">
-                          <q-btn text rounded v-on="{ ...menuedit }">
-                            <q-icon left>mdi-pencil</q-icon>
-                            {{ selected.length + ' ' + $t('edit') }}
-                          </q-btn>
-                        </template>
-                        <q-list>
-                          <q-item @click="duplicateSelectedQuestions()">Duplizieren</q-item>
-                          <q-item @click="bDeleteQuestionDialog = true">Löschen</q-item>
-                        </q-list>
-                      </q-menu>
-                      <q-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <q-btn @click="moveSelectedUp()" icon text rounded v-on="on">
-                            <q-icon>mdi-chevron-up</q-icon>
-                          </q-btn>
-                        </template>
-                        <span>Position Hoch</span>
-                      </q-tooltip>
-                      <q-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <q-btn @click="moveSelectedDown()" icon text rounded v-on="on">
-                            <q-icon icon="chevron-down" />
-                          </q-btn>
-                        </template>
-                        <span>Position Runter</span>
-                      </q-tooltip>
-                      <!-- <div class="flex-grow-1"></div> -->
+                      <q-btn :label="selected.length + ' ' + $t('edit')" unelevated rounded icon="mdi-pencil" v-on="{ ...menuedit }">
+                        <q-menu right offset-y>
+                          <q-list style="min-width: 100px">
+                            <q-item v-close-popup clickable @click="duplicateSelectedQuestions()">
+                              <q-item-section side>
+                                <q-icon name="control_point_duplicate" />
+                              </q-item-section>
+                              <q-item-section>
+                                Duplizieren
+                              </q-item-section>
+                            </q-item>
+                            <q-item v-close-popup clickable @click="bDeleteQuestionDialog = true">
+                              <q-item-section side>
+                                <q-icon name="delete" />
+                              </q-item-section>
+                              <q-item-section>
+                                Löschen
+                              </q-item-section>
+                            </q-item>
+                            <q-item clickable @click="moveSelectedUp()">
+                              <q-item-section side>
+                                <q-icon name="arrow_drop_up" />
+                              </q-item-section>
+                              <q-item-section>
+                                Position Hoch
+                              </q-item-section>
+                            </q-item>
+                            <q-item clickable @click="moveSelectedDown()">
+                              <q-item-section side>
+                                <q-icon name="arrow_drop_down" />
+                              </q-item-section>
+                              <q-item-section>
+                                Position Runter
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
+                        </q-menu>
+                      </q-btn>
+                      <div class="flex-grow-1"></div>
                     </q-toolbar>
 
                     <!-- Delete - Dialog -->
@@ -547,8 +599,8 @@
                             <q-btn depressed @click="bDeleteQuestionDialog = false" outlined>Abbruch</q-btn>
                             <q-btn
                               depressed
-                              @click.prevent="deleteQuestions(selected)"
                               color="error"
+                              @click.prevent="deleteQuestions(selected)"
                             >Löschen</q-btn>
                           </div>
                         </div>
@@ -732,7 +784,7 @@
                               dense
                               round
                               flat
-                              :icon="props.expand ? 'arrow_drop_up' : 'arrow_drop_down'"
+                              :icon="questionIsExpanded(props.row.id) ? 'arrow_drop_up' : 'arrow_drop_down'"
                               @click="expandQuestion(props)"
                             />
                           </q-td>
@@ -744,14 +796,14 @@
                           <q-td colspan="100%">
                             <div class="text-left">
                               <template v-if="props.row">
-                                <td colspan="100%">
+                                <div colspan="100%" style="display: contents; display: initial">
+                                  <br>
                                   <div class="row">
                                     <div class="col" xl="12" sm="12" xs="12">
-                                      <br />
                                       <q-list subheader two-line flat>
-                                        <q-item-label
-                                          header
-                                        >Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}</q-item-label>
+                                        <q-item-label header>
+                                          Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}
+                                        </q-item-label>
                                         <q-item>
                                           <q-item-section side top>
                                             <q-checkbox
@@ -764,7 +816,9 @@
                                           </q-item-section>
                                           <q-item-section>
                                             <q-item-label>Überspringbar</q-item-label>
-                                            <q-item-label caption>Ist diese Frage überspringbar</q-item-label>
+                                            <q-item-label caption>
+                                              Ist diese Frage überspringbar
+                                            </q-item-label>
                                           </q-item-section>
                                         </q-item>
 
@@ -794,20 +848,20 @@
                                         <q-item>
                                           <q-item-section>
                                             <q-input
+                                              v-model="props.row.subtitle"
                                               :disable="surveyIsUneditable()"
                                               dense
                                               persistent-hint
                                               outlined
                                               placeholder="z.B.: 'Wie fanden Sie diese Umfrage?' "
-                                              v-model="props.row.subtitle"
                                               label="Untertitel"
                                               required
                                             >
                                               <template v-slot:append>
                                                 <q-icon :name="help_icon">
-                                                  <q-tooltip
-                                                    self="center middle"
-                                                  >Subtitel / Untertitel der Frage. Wird unter Titel angezeigt</q-tooltip>
+                                                  <q-tooltip self="center middle">
+                                                    Subtitel / Untertitel der Frage. Wird unter Titel angezeigt
+                                                  </q-tooltip>
                                                 </q-icon>
                                               </template>
                                             </q-input>
@@ -829,16 +883,18 @@
                                             >
                                               <template v-slot:append>
                                                 <q-icon :name="help_icon">
-                                                  <q-tooltip
-                                                    self="center middle"
-                                                  >Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt.</q-tooltip>
+                                                  <q-tooltip self="center middle">
+                                                    Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt.
+                                                  </q-tooltip>
                                                 </q-icon>
                                               </template>
                                             </q-input>
                                           </q-item-section>
                                         </q-item>
                                       </q-list>
+                                    </div>
 
+                                    <div class="col" xl="12" sm="12" xs="12">
                                       <q-list subheader two-line flat>
                                         <q-item-label header>Kommentar-Einstellungen</q-item-label>
 
@@ -891,13 +947,13 @@
                                           <q-item>
                                             <q-item-section>
                                               <q-input
+                                                v-model="props.row.comment_max_signs"
                                                 :disable="surveyIsUneditable()"
                                                 dense
                                                 persistent-hint
                                                 outlined
                                                 placeholder="1 - 255"
                                                 type="number"
-                                                v-model="props.row.comment_max_signs"
                                                 label="Kommentar: Maximale Zeichen"
                                                 required
                                               >
@@ -920,21 +976,28 @@
                                             <div class="row">
                                               <div class="col" xl="3" md="3" sm="6" xs="12">
                                                 <q-input
+                                                  v-model="props.row.min_options"
                                                   :disable="surveyIsUneditable()"
                                                   dense
-                                                  persistent-hint
                                                   outlined
-                                                  hint="Minimal wählbare Optionen"
                                                   placeholder="1 - 255"
                                                   type="number"
-                                                  v-model="props.row.min_options"
                                                   :max="parseInt(props.row.max_options)"
                                                   label="Minimale Optionen"
                                                   required
-                                                />
+                                                >
+                                                  <template v-slot:append>
+                                                    <q-icon :name="help_icon">
+                                                      <q-tooltip
+                                                        self="center middle"
+                                                      >Minimal wählbare Optionen</q-tooltip>
+                                                    </q-icon>
+                                                  </template>
+                                                </q-input>
                                               </div>
                                               <div class="col" xl="3" md="3" sm="6" xs="12">
                                                 <q-input
+                                                  v-model="props.row.max_options"
                                                   :disable="surveyIsUneditable()"
                                                   dense
                                                   persistent-hint
@@ -943,7 +1006,6 @@
                                                   placeholder="1 - 255"
                                                   type="number"
                                                   :min="parseInt(props.row.min_options)"
-                                                  v-model="props.row.max_options"
                                                   label="Maximale Optionen"
                                                   required
                                                 />
@@ -951,208 +1013,204 @@
                                             </div>
                                           </q-item-section>
                                         </q-item>
-                                      </q-list>
-
-                                      <!-- Selected Toolbar -->
-                                      <q-toolbar
-                                        class="coha--toolbar"
-                                        v-if="aSelectedOptions && aSelectedOptions.length"
-                                        :flat="sSearch == ''"
-                                        color="primary"
-                                        dark
-                                        floating
-                                        min-height="85px"
-                                        height="auto">
-                                        <q-btn
-                                          v-if="aSelectedOptions && aSelectedOptions.length"
-                                          depressed
-                                          color="red"
-                                          dark
-                                          @click="bDeleteOptionDialog = true"
-                                        >
-                                          <q-icon name="delete" left />&nbsp;
-                                          Ausgewählte Optionen Löschen
-                                        </q-btn>
-                                      </q-toolbar>
-
-                                      <!-- No Selected Toolbar -->
-                                      <q-toolbar
-                                        v-else
-                                        class="coha--toolbar"
-                                        :flat="sSearch == ''"
-                                        floating
-                                        min-height="85px"
-                                        height="auto">
-                                        <div class="flex-grow-1"></div>
-                                        <q-input
-                                          v-model="iOptionsPerPage"
-                                          number
-                                          type="number"
-                                          hide-details
-                                          style="max-width: 150px;"
-                                          label="Zeilen pro Seite"
-                                          class="ml-5"
-                                          outlined
-                                        />
-                                      </q-toolbar>
-
-                                      <q-table
-                                        :headers="aOptionHeaders"
-                                        v-model="aSelectedOptions"
-                                        :items="props.row.options"
-                                        dense
-                                        multi-sort
-                                        show-select
-                                        :items-per-page="parseInt(iOptionsPerPage)"
-                                        :sort-by="['order']"
-                                        :sort-desc="[false]"
-                                        :footer-props="{
-                                          showFirstLastPage: true,
-                                        }"
-                                      >
-
-                                        <template v-slot:item.value="props">
-                                          <q-popup-edit v-model="props.item.value">
-                                            {{ props.item.value }}
-                                            <q-input
-                                              v-model="props.item.value"
-                                              label="Edit"
-                                              counter
-                                            />
-                                          </q-popup-edit>
-                                        </template>
-
-                                        <template v-slot:item.title="props">
-                                          <q-popup-edit v-model="props.item.title">
-                                            {{ props.item.title }}
-                                            <q-input
-                                              v-model="props.item.title"
-                                              label="Edit"
-                                              counter
-                                            />
-                                          </q-popup-edit>
-                                        </template>
-
-                                        <template v-slot:item.subtitle="props">
-                                          <q-popup-edit v-model="props.item.subtitle">
-                                            {{ props.item.subtitle }}
-                                            <q-input
-                                              v-model="props.item.subtitle"
-                                              label="Edit"
-                                              counter
-                                            />
-                                          </q-popup-edit>
-                                        </template>
-
-                                        <template v-slot:item.description="props">
-                                          <q-popup-edit v-model="props.item.description">
-                                            {{ props.item.description }}
-                                            <q-input
-                                              v-model="props.item.description"
-                                              label="Edit"
-                                              counter
-                                            />
-                                          </q-popup-edit>
-                                        </template>
-
-                                        <template v-slot:item.order="props">
-                                          <div style="white-space: nowrap;">
-                                            <q-icon @click="moveUp(props.item, item.options)" name="arrow-up" x-small />
-                                            {{ props.item.order }}
-                                            <q-icon @click="moveDown(props.item, item.options)" x-small name="arrow-down" />
-                                          </div>
-                                        </template>
-                                        <template v-slot:item.color="props">
-                                          <q-dialog v-model="props.item.dialog" max-width="290">
-                                            <template v-slot:activator="{ on }">
-                                              <div>
-                                                <q-btn small
-                                                  depressed
-                                                  fab
-                                                  dark
-                                                  :color="props.item.color"
-                                                  v-on="on"
-                                                >
-                                                  <q-icon dark>mdi-palette</q-icon>
-                                                </q-btn>
-                                              </div>
-                                              <div>{{ props.item.color }}</div>
-                                            </template>
-                                            <q-card>
-                                              <q-card-section>Farbe auswählen</q-card-section>
-                                              <q-card-section>
+                                        <q-item>
+                                          <q-item-section>
+                                            <!-- -->
+                                            <template>
+                                              <!-- Selected Toolbar -->
+                                              <q-toolbar
+                                                v-if="aSelectedOptions && aSelectedOptions.length"
+                                                class="coha--toolbar"
+                                                :flat="sSearch == ''"
+                                                color="primary"
+                                                dark
+                                                floating
+                                                min-height="85px"
+                                                height="auto">
                                                 <q-btn
-                                                  block
-                                                  small
-                                                  :color="props.item.color"
-                                                >{{ props.item.color }}</q-btn>
-                                                <template v-for="oColor in aAllOptionColors">
-                                                  <div
-                                                    style="margin-top: 5px;"
-                                                    v-bind:key="oColor.title"
-                                                  >
-                                                    <q-btn
-                                                      block
-                                                      small
-                                                      :color="oColor.hex"
-                                                      @click="props.item.color = oColor.hex"
-                                                    >{{ oColor.title }}</q-btn>
+                                                  v-if="aSelectedOptions && aSelectedOptions.length"
+                                                  depressed
+                                                  color="red"
+                                                  dark
+                                                  @click="bDeleteOptionDialog = true"
+                                                >
+                                                  <q-icon name="delete" left />&nbsp;
+                                                  Ausgewählte Optionen Löschen
+                                                </q-btn>
+                                              </q-toolbar>
+
+                                              <!-- No Selected Toolbar -->
+                                              <q-toolbar
+                                                v-else
+                                                class="coha--toolbar"
+                                                :flat="sSearch == ''"
+                                                floating
+                                                min-height="85px"
+                                                height="auto">
+                                                <div class="flex-grow-1"></div>
+                                              </q-toolbar>
+
+                                              <q-table
+                                                v-model="aSelectedOptions"
+                                                :columns="aOptionHeaders"
+                                                :data="props.row.options"
+                                                dense
+                                                multi-sort
+                                                selection="multiple"
+                                                :items-per-page="parseInt(iOptionsPerPage)"
+                                                :sort-by="['order']"
+                                                :sort-desc="[false]"
+                                                :footer-props="{
+                                                  showFirstLastPage: true,
+                                                }"
+                                                class="my-data-table f-height options-table"
+                                                >
+                                                <template v-slot:item.value="props">
+                                                  <q-popup-edit v-model="props.item.value">
+                                                    {{ props.item.value }}
+                                                    <q-input
+                                                      v-model="props.item.value"
+                                                      label="Edit"
+                                                      counter
+                                                    />
+                                                  </q-popup-edit>
+                                                </template>
+
+                                                <template v-slot:item.title="props">
+                                                  <q-popup-edit v-model="props.item.title">
+                                                    {{ props.item.title }}
+                                                    <q-input
+                                                      v-model="props.item.title"
+                                                      label="Edit"
+                                                      counter
+                                                    />
+                                                  </q-popup-edit>
+                                                </template>
+
+                                                <template v-slot:item.subtitle="props">
+                                                  <q-popup-edit v-model="props.item.subtitle">
+                                                    {{ props.item.subtitle }}
+                                                    <q-input
+                                                      v-model="props.item.subtitle"
+                                                      label="Edit"
+                                                      counter
+                                                    />
+                                                  </q-popup-edit>
+                                                </template>
+
+                                                <template v-slot:item.description="props">
+                                                  <q-popup-edit v-model="props.item.description">
+                                                    {{ props.item.description }}
+                                                    <q-input
+                                                      v-model="props.item.description"
+                                                      label="Edit"
+                                                      counter
+                                                    />
+                                                  </q-popup-edit>
+                                                </template>
+
+                                                <template v-slot:item.order="props">
+                                                  <div style="white-space: nowrap;">
+                                                    <q-icon name="arrow-up" x-small @click="moveUp(props.item, item.options)" />
+                                                    {{ props.item.order }}
+                                                    <q-icon x-small name="arrow-down" @click="moveDown(props.item, item.options)" />
                                                   </div>
                                                 </template>
-                                              </q-card-section>
-                                              <!-- <v-color-picker
-                                                v-model="props.item.color"
-                                                mode="rgba"
-                                                value="#666666"
-                                                flat
-                                              ></v-color-picker> -->
-                                              <q-card-section>
-                                                <q-btn
-                                                  @click="props.item.dialog = false"
-                                                >Übernehmen und schließen</q-btn>
-                                              </q-card-section>
-                                            </q-card>
-                                          </q-dialog>
-                                        </template>
-                                      </q-table>
-                                      <q-btn
-                                        label="Neue Option hinzufügen"
-                                        icon="plus_one"
-                                        @click="addNewOption(item)"
-                                      />&nbsp;
-                                      <q-btn color="primary" @click="duplicateLastOption(item)">
-                                        <q-icon name="control_point_duplicate" left />Letzte Option duplizieren
-                                      </q-btn>
+                                                <template v-slot:item.color="props">
+                                                  <q-dialog v-model="props.item.dialog" max-width="290">
+                                                    <template v-slot:activator="{ on }">
+                                                      <div>
+                                                        <q-btn
+                                                          :color="props.item.color"
+                                                          small
+                                                          depressed
+                                                          fab
+                                                          dark
+                                                          v-on="on"
+                                                        >
+                                                          <q-icon name="palette" dark />
+                                                        </q-btn>
+                                                      </div>
+                                                      <div>{{ props.item.color }}</div>
+                                                    </template>
+                                                    <q-card>
+                                                      <q-card-section>Farbe auswählen</q-card-section>
+                                                      <q-card-section>
+                                                        <q-btn
+                                                          block
+                                                          small
+                                                          :color="props.item.color"
+                                                        >{{ props.item.color }}</q-btn>
+                                                        <template v-for="oColor in aAllOptionColors">
+                                                          <div
+                                                            style="margin-top: 5px;"
+                                                            v-bind:key="oColor.title"
+                                                          >
+                                                            <q-btn
+                                                              block
+                                                              small
+                                                              :color="oColor.hex"
+                                                              @click="props.item.color = oColor.hex"
+                                                            >{{ oColor.title }}</q-btn>
+                                                          </div>
+                                                        </template>
+                                                      </q-card-section>
+                                                      <!-- <v-color-picker
+                                                        v-model="props.item.color"
+                                                        mode="rgba"
+                                                        value="#666666"
+                                                        flat
+                                                      ></v-color-picker> -->
+                                                      <q-card-section>
+                                                        <q-btn @click="props.item.dialog = false">Übernehmen und schließen</q-btn>
+                                                      </q-card-section>
+                                                    </q-card>
+                                                  </q-dialog>
+                                                </template>
+                                              </q-table>
+                                              <q-btn
+                                                label="Neue Option hinzufügen"
+                                                icon="plus_one"
+                                                @click="addNewOption(props.row)"
+                                              />&nbsp;
+                                              <q-btn color="primary" @click="duplicateLastOption(item)">
+                                                <q-icon name="control_point_duplicate" left />Letzte Option duplizieren
+                                              </q-btn>
 
-                                      <!-- Delete - Dialog -->
-                                      <q-dialog
-                                        v-model="bDeleteOptionDialog"
-                                        max-width="500"
-                                        dark
-                                        content-class="naked dark centered"
-                                      >
-                                        <h2 class="display-2">Optionen Löschen?</h2>
-                                        <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
-                                        <div class="container fluid">
-                                          <div class="row" align="center">
-                                            <div class="col text-center" cols="12" sm="12">
-                                              <q-btn
-                                                depressed
-                                                @click="bDeleteOptionDialog = false"
-                                                outlined
-                                              >Abbruch</q-btn>
-                                              <q-btn
-                                                depressed
-                                                @click.prevent="deleteOptions(item, aSelectedOptions)"
-                                                color="error"
-                                              >Löschen</q-btn>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </q-dialog>
+                                              <!-- Delete - Dialog -->
+                                              <q-dialog
+                                                v-model="bDeleteOptionDialog"
+                                                max-width="500"
+                                                dark
+                                                content-class="naked dark centered"
+                                                >
+                                                <h2 class="display-2">Optionen Löschen?</h2>
+                                                <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
+                                                <div class="container fluid">
+                                                  <div class="row" align="center">
+                                                    <div class="col text-center" cols="12" sm="12">
+                                                      <q-btn
+                                                        depressed
+                                                        outlined
+                                                        @click="bDeleteOptionDialog = false"
+                                                      >Abbruch</q-btn>
+                                                      <q-btn
+                                                        depressed
+                                                        color="error"
+                                                        @click.prevent="deleteOptions(item, aSelectedOptions)"
+                                                      >Löschen</q-btn>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </q-dialog>
+                                            </template>
+                                          </q-item-section>
+
+                                        </q-item>
+                                      </q-list>
                                     </div>
                                   </div>
-                                </td>
+                                </div>
                               </template>
                             </div>
                           </q-td>
@@ -1163,19 +1221,16 @@
                 </q-item>
 
                 <q-item>
-                  <q-btn @click="addNewQuestion()">
-                    <q-icon name="plus_one" left />Neue Frage hinzufügen
-                  </q-btn>&nbsp; &nbsp;
+                  <q-btn name="Neue Frage hinzufügen" icon="plus_one" @click="addNewQuestion()" />&nbsp; &nbsp;
                   <q-btn
-                    @click="duplicateLastQuestion()"
-                    color="primary"
                     :disabled="oSurvey.questions.length <= 0"
+                    color="primary"
+                    @click="duplicateLastQuestion()"
                   >
-                    <q-icon name="control_point_duplicate" left />Letzte Frage duplizieren
+                    <q-icon name="control_point_duplicate" left />
+                    Letzte Frage duplizieren
                   </q-btn>
                 </q-item>
-
-                <q-item></q-item>
 
                 <q-separator />
               </q-list>
@@ -1191,14 +1246,41 @@
                   <q-item-section>
                     <q-select
                       v-model="oSurvey.groups"
-                      :items="user.groups_moderating"
+                      :options="aFilteredGroups"
+                      option-value="id"
+                      option-label="name"
                       label="Gruppen Auswählen"
-                      chips
+                      outlined
+                      dense
+                      options-dense
+                      use-input
+                      fill-input
+                      input-debounce="0"
+                      use-chips
+                      stack-label
                       multiple
                       return-object
-                      item-text="name"
                       :disable="surveyIsUneditable()"
-                      />
+                      @filter="filterGroups"
+                    >
+                      <template v-slot:option="scope">
+                        <q-item
+                          v-if="!findById(oSurvey.groups, scope.opt.id)"
+                          v-bind="scope.itemProps"
+                          v-on="scope.itemEvents"
+                        >
+                          <q-item-section avatar>
+                            <q-icon name="group" />
+                          </q-item-section>
+                          <q-item-section>
+                            <q-item-label v-html="scope.opt.name" />
+                            <q-item-label caption>
+                              {{ scope.opt.description_public }}
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -1258,11 +1340,17 @@
 </template>
 
 <script>
-import axios from "axios";
-import { mapGetters } from "vuex";
-import moment from "moment";
+import axios from "axios"
+import { mapGetters } from "vuex"
+import moment from "moment"
+import UserDataModal from '~/components/BackendUserDataModal'
 
 export default {
+
+  components: {
+    UserDataModal
+  },
+
   data() {
     return {
 
@@ -1357,38 +1445,54 @@ export default {
       selected: [],
       expanded: [],
 
+      // Groups
+      aFilteredGroups: [],
+
       // Options
       aOptionHeaders: [
-        { text: '', value: 'data-table-select' },
         {
-          text: 'Reihenfolge',
+          label: '',
+          name: 'select',
+          field: 'select',
+          value: 'select',
           align: 'left',
-          value: 'order'
+          sortable: false
         },
         {
-          text: 'Technischer Wert',
-          align: 'left',
-          value: 'value'
+          label: 'Reihenfolge',
+          name: 'order',
+          field: 'order',
+          align: 'left'
         },
         {
-          text: 'Title',
-          align: 'left',
-          value: 'title'
+          label: 'Technischer Wert',
+          name: 'value',
+          field: 'value',
+          align: 'left'
         },
         {
-          text: 'Untertitel',
-          align: 'left',
-          value: 'subtitle'
+          label: 'Title',
+          name: 'title',
+          field: 'title',
+          align: 'left'
         },
         {
-          text: 'Beschreibung',
-          align: 'left',
-          value: 'description'
+          label: 'Untertitel',
+          name: 'subtitle',
+          field: 'subtitle',
+          align: 'left'
         },
         {
-          text: 'Color',
-          align: 'center',
-          value: 'color'
+          label: 'Beschreibung',
+          name: 'description',
+          field: 'description',
+          align: 'left'
+        },
+        {
+          label: 'Color',
+          name: 'color',
+          field: 'color',
+          align: 'center'
         }
       ],
       bDeleteOptionDialog: false,
@@ -1537,6 +1641,19 @@ export default {
   },
 
   methods: {
+
+    findById (arr, id) {
+      return arr.find(x => x.id === id)
+    },
+
+    filterGroups (val, update, abort) {
+      this.aFilteredGroups = this.user.groups_moderating
+      update(() => {
+        const needle = val.toLowerCase()
+        this.aFilteredGroups = this.user.groups_moderating.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+
     questionIsExpanded (id) {
       return this.questions_extended.find(e => e == id)
     },
@@ -1739,14 +1856,13 @@ export default {
     },
 
     addNewOption (question) {
-      console.log('jooooo', question)
       return this.addOption(
         {
           id: this.getRandomId(),
           color: "#C6C6C6"
         },
         question
-      );
+      )
     },
 
     duplicateOption (option, question) {

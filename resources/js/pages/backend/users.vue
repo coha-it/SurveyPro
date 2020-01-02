@@ -1169,7 +1169,7 @@ export default {
             return arr.findIndex(x => x.id === item.id);
         },
 
-        findById(arr, id) {
+        findById (arr, id) {
             return arr.find(x => x.id === id);
         },
 

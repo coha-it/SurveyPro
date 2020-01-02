@@ -2,23 +2,48 @@
     <div>
         <h1>Groups</h1>
 
+            <UserDataModal
+                sEditText="Gruppen Bearbeiten"
+                sCreateText="Neue Gruppe erstellen"
+                sInputLabel="Gruppenname"
+                sInputLabel2="Gruppenbeschreibung Öffentlich"
+                sInputLabel3="Gruppenbeschreibung für Moderatoren"
+                p_sModel="group"
+                :p_oModels="user.groups_moderating"
+                :p_aHeaders="[
+                    {
+                      name: 'id',
+                      label: this.$t('id'),
+                      field: 'id',
+                    },
+                    {
+                      name: 'name',
+                      label: this.$t('name'),
+                      field: 'name',
+                    },
+                    {
+                      name: 'description_public',
+                      label: this.$t('description_public'),
+                      field: 'description_public',
+                    },
+                    {
+                      name: 'description_mods',
+                      label: this.$t('description_mods'),
+                      field: 'description_mods',
+                    },
+                    {
+                      name: 'updated_at',
+                      label: this.$t('updated_at'),
+                      field: 'updated_at',
+                    },
+                    {
+                      name: 'created_at',
+                      label: this.$t('created_at'),
+                      field: 'created_at',
+                    }
+                ]"
+              />
 
-        <UserDataModal 
-            sEditText="Gruppen Bearbeiten"
-            sCreateText="Neue Gruppe erstellen" 
-            sInputLabel="Gruppenname"
-            sInputLabel2="Gruppenbeschreibung Öffentlich"
-            sInputLabel3="Gruppenbeschreibung für Moderatoren"
-            p_sModel="group"
-            :p_oModels="user.groups_moderating"
-            :p_aHeaders="[
-                { text: this.$t('id'), value: 'id' },
-                { text: this.$t('name'), value: 'name' },
-                { text: this.$t('description_public'), value: 'description_public' },
-                { text: this.$t('description_mods'), value: 'description_mods' },
-                { text: this.$t('updated_at'), value: 'updated_at'},
-                { text: this.$t('created_at'), value: 'created_at'}
-            ]" />
 
 
         <br><br>
@@ -44,8 +69,8 @@
             :headers="headers"
             :items="oGroup.users"
             v-model="selected"
-            show-select 
-            multi-sort 
+            show-select
+            multi-sort
             :footer-props="{
                 showFirstLastPage: true,
             }"
@@ -90,9 +115,9 @@ export default {
                     align: 'left',
                     value: 'id',
                 },
-                { 
-                    text: 'PAN', 
-                    value: 'pan.pan', 
+                {
+                    text: 'PAN',
+                    value: 'pan.pan',
                 },
                 { text: 'groups', value: 'groups'},
                 { text: 'company', value: 'company'},
@@ -101,7 +126,7 @@ export default {
                 { text: 'updated_at', value: 'updated_at'},
                 { text: 'created_at', value: 'created_at'},
                 { text: 'Actions', value: 'action', sortable: false },
-        ], 
+        ],
     }),
 
     methods: {
