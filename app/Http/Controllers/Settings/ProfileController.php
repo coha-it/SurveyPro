@@ -25,15 +25,15 @@ class ProfileController extends Controller
 
         if($request->newsletter === false) {
             $user->newsletter()->delete();
-        } 
+        }
         else if($request->newsletter === true) {
             $user->newsletter()->updateOrCreate([
                 'user_id' => $request->user()->id
             ]);
-        } 
+        }
 
         // Update!
-        $user->update($request->only('email', 'newsletter'));
+        $user->update($request->toArray());
 
         // Return User!
         return $user->getSelfWithRelations();
