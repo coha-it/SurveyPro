@@ -6,7 +6,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { mapActions } from 'vuex'
+// import { mapActions } from 'vuex'
 import { loadMessages } from '~/plugins/i18n'
 
 export default {
@@ -14,8 +14,8 @@ export default {
   computed: {
     ...mapGetters({
       locale: 'lang/locale',
-      locales: 'lang/locales',
-    }),
+      locales: 'lang/locales'
+    })
   },
 
   methods: {
@@ -29,15 +29,15 @@ export default {
     show () {
       this.$q.bottomSheet({
         message: 'Sprache auswählen',
-        actions: this.aLocaleOptions,
+        actions: this.aLocaleOptions
       }).onOk(action => {
-        this.setLocale(action.id);
+        this.setLocale(action.id)
       }).onCancel(() => {
         // console.log('Dismissed')
       }).onDismiss(() => {
         // console.log('I am triggered on both OK and Cancel')
       })
-    },
+    }
   },
 
   data () {
@@ -46,19 +46,17 @@ export default {
       dialog: false,
       localeRadio: 'de',
       aLocaleOptions: [],
-      sheet: false,
+      sheet: false
     }
   },
 
-  mounted() {
-    var _t = this;
-
-    if(this.locale) {
-      this.localeRadio = this.locale;
+  mounted () {
+    if (this.locale) {
+      this.localeRadio = this.locale
 
       for (var element in this.locales) {
         this.aLocaleOptions.push({
-          label: _t.$t(element),
+          label: this.$t(element),
           id: element
         })
       }

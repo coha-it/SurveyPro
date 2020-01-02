@@ -1,21 +1,20 @@
 <template>
   <div class="coha-app--view">
     <q-layout view="hHh LpR lFf">
-
-      <Navigation ref="childRef" @navigationStateChanged="navigationStateChanged"  />
+      <Navigation ref="childRef" @navigationStateChanged="navigationStateChanged" />
 
       <q-page-container>
-        <q-page padding>
-          <div class="container" fluid>
+        <q-page>
+          <div class="main-body container" fluid>
             <div class="main-layout">
               <child />
             </div>
           </div>
+          <Footer />
         </q-page>
       </q-page-container>
 
       <NavigationBottomBar @toggle-navigation="toggleNavigation" />
-
     </q-layout>
   </div>
 </template>
@@ -23,6 +22,7 @@
 <script>
 import Navigation from '~/components/Navigation'
 import NavigationBottomBar from '~/components/NavigationBottomBar'
+import Footer from '~/components/AppViewFooter'
 
 export default {
   middlware: 'auth',
@@ -30,7 +30,8 @@ export default {
 
   components: {
     Navigation,
-    NavigationBottomBar
+    NavigationBottomBar,
+    Footer
   },
 
   data () {
@@ -64,4 +65,5 @@ export default {
     max-width: 1580px;
   }
 }
+
 </style>

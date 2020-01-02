@@ -16,9 +16,26 @@
 
 // Coha Print Content
 .coha--print {
-    
+
     .element {
-        
+
     }
 }
 
+// PRINT
+@media print {
+  // nav,
+  // .v-application--wrap,
+  // .q-toolbar{
+  //     display: none !important;
+  // }
+
+  // .coha--print,
+  // .q-dialog__inner,
+  // .q-dialog,
+  // .q-dialog__inner--maximized>div
+  //  {
+  //     position: inherit;
+  // }
+
+}

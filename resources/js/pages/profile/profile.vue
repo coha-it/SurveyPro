@@ -16,9 +16,9 @@
       <p>{{ $t('your_info') }}</p>
 
       <!-- Form -->
-      <v-form @submit.prevent="update" @keydown="form.onKeydown($event)" style="max-width: 550px;">
-        <v-container>
-          <v-row>
+      <q-form @submit.prevent="update" @keydown="form.onKeydown($event)" style="max-width: 550px;">
+        <div class="container">
+          <div class="row">
             <v-col cols="12" sm="12" md="12" class="pa-0">
 
               <v-checkbox
@@ -27,34 +27,31 @@
               ></v-checkbox>
 
               <!-- Email -->
-              <v-text-field 
-                v-model="form.email" 
-                :label="$t('email_label')" 
-                color='black' 
-                :error="form.errors.has('email')" 
-                type="email" 
-                name="email" 
-                required 
+              <v-text-field
+                v-model="form.email"
+                :label="$t('email_label')"
+                color='black'
+                :error="form.errors.has('email')"
+                type="email"
+                name="email"
+                required
                 ref="email"
                 style="max-width: 350px;"
               ></v-text-field>
             </v-col>
-          </v-row>
+          </div>
 
-          <v-row>
+          <div class="row">
             <v-col cols="12" sm="12" md="12" class="pa-0">
               <!-- Submit Button -->
               <v-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('update') }}</v-btn>
             </v-col>
-          </v-row>
+          </div>
 
           <br><br><br>
 
-          <v-row align="center" style="max-width: 350px;">
-            <v-col cols="12" sm="12" md="12" class="pa-0">
-
-
-
+          <div class="row" align="center" style="max-width: 350px;">
+            <div class="pa-0 col col-12 col-sm-12 col-md-12">
 
               <!-- Companies -->
               <br>
@@ -64,7 +61,7 @@
               <br>
 
               <!-- Companies Combobox -->
-              <Combobox 
+              <Combobox
                 create_text="profile.company.create"
                 p_sInputLabel="profile.company.choose"
                 :p_oModel="company"
@@ -73,7 +70,7 @@
                 :p_oUser="user"
                 />
 
-              <Combobox 
+              <Combobox
                 create_text="profile.company.create"
                 p_sInputLabel="profile.department.choose"
                 p_sModel="department"
@@ -82,7 +79,7 @@
                 :p_oUser="user"
                 />
 
-              <Combobox 
+              <Combobox
                 create_text="profile.location.create"
                 p_sInputLabel="profile.location.choose"
                 p_sModel="location"
@@ -91,14 +88,12 @@
                 :p_oUser="user"
                 />
 
-            </v-col>
+            </div>
 
-          </v-row>
+          </div>
 
-
-
-        </v-container>
-      </v-form>
+        </div>
+      </q-form>
     </template>
 
   </div>

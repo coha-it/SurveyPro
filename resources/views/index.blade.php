@@ -17,7 +17,7 @@ $config = [
   <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons|Raleway:400,700|Roboto+Mono&display=swap'>
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="{{ mix('dist/css/app.css') }}">
+  <link rel="stylesheet" href="{{ mix('/dist/css/app.css') }}">
 </head>
 <body>
   <div id="app"></div>
@@ -28,6 +28,6 @@ $config = [
   </script>
 
   {{-- Load the application scripts --}}
-  <script src="{{ mix('dist/js/app.js') }}"></script>
+  <script src="{{ mix('/dist/js/app.js') }}"></script>
 </body>
 </html>

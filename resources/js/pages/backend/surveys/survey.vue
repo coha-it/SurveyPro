@@ -265,6 +265,7 @@
                               >
                                 <q-date
                                   v-model="oSurvey.start_datetime"
+
                                   :events="events"
                                   :event-color="eventColor"
                                   :disable="surveyIsUneditable()"
@@ -350,6 +351,7 @@
                               >
                                 <q-date
                                   v-model="oSurvey.end_datetime"
+
                                   :events="events"
                                   :event-color="eventColor"
                                   :disable="surveyIsUneditable()"
@@ -440,6 +442,7 @@
 
                   <div class="col col-12 col-sm-6 col-md-6">
                     <q-date
+
                       :events="events"
                       :event-color="eventColor"
                       :options="events"
@@ -466,7 +469,6 @@
                       min-height="85px"
                       height="auto"
                     >
-                      <!-- <v-switch class="mt-6 mr-6" v-model="bTableDense"  color="primary"></v-switch> -->
                       <div class="flex-grow-1"></div>
                       <q-input
                         style="max-width: 400px;"
@@ -539,7 +541,7 @@
                     >
                       <h2 class="display-2">Fragen Löschen?</h2>
                       <p>Möchten Sie {{ selected.length }} Fragen löschen?</p>
-                      <v-container fluid>
+                      <div class="container fluid">
                         <div class="row" align="center">
                           <div class="col text-center" cols="12" sm="12">
                             <q-btn depressed @click="bDeleteQuestionDialog = false" outlined>Abbruch</q-btn>
@@ -550,7 +552,7 @@
                             >Löschen</q-btn>
                           </div>
                         </div>
-                      </v-container>
+                      </div>
                     </q-dialog>
 
                     <q-table
@@ -731,13 +733,14 @@
                               round
                               flat
                               :icon="props.expand ? 'arrow_drop_up' : 'arrow_drop_down'"
-                              @click="props.expand = !props.expand"
+                              @click="expandQuestion(props)"
                             />
                           </q-td>
                         </q-tr>
 
                         <!-- Expandable Area -->
-                        <q-tr v-show="props.expand" :props="props" class="expandable-row">
+                        <!-- v-show="props.expand" -->
+                        <q-tr v-show="questionIsExpanded(props.row.id)" :props="props" class="expandable-row">
                           <q-td colspan="100%">
                             <div class="text-left">
                               <template v-if="props.row">
@@ -779,9 +782,9 @@
                                             >
                                               <template v-slot:append>
                                                 <q-icon :name="help_icon">
-                                                  <q-tooltip
-                                                    self="center middle"
-                                                  >Titel der Frage. Wird am größten Angezeigt</q-tooltip>
+                                                  <q-tooltip self="center middle">
+                                                    Titel der Frage. Wird am größten angezeigt!
+                                                  </q-tooltip>
                                                 </q-icon>
                                               </template>
                                             </q-input>
@@ -959,16 +962,15 @@
                                         dark
                                         floating
                                         min-height="85px"
-                                        height="auto"
-                                      >
+                                        height="auto">
                                         <q-btn
                                           v-if="aSelectedOptions && aSelectedOptions.length"
-                                          @click="bDeleteOptionDialog = true"
                                           depressed
                                           color="red"
                                           dark
+                                          @click="bDeleteOptionDialog = true"
                                         >
-                                          <q-icon left>mdi-delete</q-icon>&nbsp;
+                                          <q-icon name="delete" left />&nbsp;
                                           Ausgewählte Optionen Löschen
                                         </q-btn>
                                       </q-toolbar>
@@ -980,8 +982,7 @@
                                         :flat="sSearch == ''"
                                         floating
                                         min-height="85px"
-                                        height="auto"
-                                      >
+                                        height="auto">
                                         <div class="flex-grow-1"></div>
                                         <q-input
                                           v-model="iOptionsPerPage"
@@ -1006,20 +1007,19 @@
                                         :sort-by="['order']"
                                         :sort-desc="[false]"
                                         :footer-props="{
-                                            showFirstLastPage: true,
-                                          }"
+                                          showFirstLastPage: true,
+                                        }"
                                       >
+
                                         <template v-slot:item.value="props">
-                                          <v-edit-dialog :return-value.sync="props.item.value">
+                                          <q-popup-edit v-model="props.item.value">
                                             {{ props.item.value }}
-                                            <template v-slot:input>
-                                              <q-input
-                                                v-model="props.item.value"
-                                                label="Edit"
-                                                type="number"
-                                              />
-                                            </template>
-                                          </v-edit-dialog>
+                                            <q-input
+                                              v-model="props.item.value"
+                                              label="Edit"
+                                              counter
+                                            />
+                                          </q-popup-edit>
                                         </template>
 
                                         <template v-slot:item.title="props">
@@ -1034,57 +1034,44 @@
                                         </template>
 
                                         <template v-slot:item.subtitle="props">
-                                          <v-edit-dialog :return-value.sync="props.item.subtitle">
+                                          <q-popup-edit v-model="props.item.subtitle">
                                             {{ props.item.subtitle }}
-                                            <template v-slot:input>
-                                              <q-input
-                                                v-model="props.item.subtitle"
-                                                label="Edit"
-                                                counter
-                                              />
-                                            </template>
-                                          </v-edit-dialog>
+                                            <q-input
+                                              v-model="props.item.subtitle"
+                                              label="Edit"
+                                              counter
+                                            />
+                                          </q-popup-edit>
                                         </template>
 
                                         <template v-slot:item.description="props">
-                                          <v-edit-dialog
-                                            :return-value.sync="props.item.description"
-                                          >
+                                          <q-popup-edit v-model="props.item.description">
                                             {{ props.item.description }}
-                                            <template v-slot:input>
-                                              <q-input
-                                                v-model="props.item.description"
-                                                label="Edit"
-                                                counter
-                                              />
-                                            </template>
-                                          </v-edit-dialog>
+                                            <q-input
+                                              v-model="props.item.description"
+                                              label="Edit"
+                                              counter
+                                            />
+                                          </q-popup-edit>
                                         </template>
 
                                         <template v-slot:item.order="props">
                                           <div style="white-space: nowrap;">
-                                            <q-icon
-                                              @click="moveUp(props.item, item.options)"
-                                              x-small
-                                            >mdi-arrow-up</q-icon>
+                                            <q-icon @click="moveUp(props.item, item.options)" name="arrow-up" x-small />
                                             {{ props.item.order }}
-                                            <q-icon
-                                              @click="moveDown(props.item, item.options)"
-                                              x-small
-                                            >mdi-arrow-down</q-icon>
+                                            <q-icon @click="moveDown(props.item, item.options)" x-small name="arrow-down" />
                                           </div>
                                         </template>
                                         <template v-slot:item.color="props">
                                           <q-dialog v-model="props.item.dialog" max-width="290">
                                             <template v-slot:activator="{ on }">
                                               <div>
-                                                <q-btn
-                                                  v-on="on"
-                                                  small
+                                                <q-btn small
                                                   depressed
                                                   fab
                                                   dark
                                                   :color="props.item.color"
+                                                  v-on="on"
                                                 >
                                                   <q-icon dark>mdi-palette</q-icon>
                                                 </q-btn>
@@ -1113,12 +1100,12 @@
                                                   </div>
                                                 </template>
                                               </q-card-section>
-                                              <v-color-picker
+                                              <!-- <v-color-picker
+                                                v-model="props.item.color"
                                                 mode="rgba"
                                                 value="#666666"
-                                                v-model="props.item.color"
                                                 flat
-                                              ></v-color-picker>
+                                              ></v-color-picker> -->
                                               <q-card-section>
                                                 <q-btn
                                                   @click="props.item.dialog = false"
@@ -1128,9 +1115,11 @@
                                           </q-dialog>
                                         </template>
                                       </q-table>
-                                      <q-btn @click="addNewOption(props.item)">
-                                        <q-icon name="plus_one" left />Neue Option hinzufügen
-                                      </q-btn>&nbsp;
+                                      <q-btn
+                                        label="Neue Option hinzufügen"
+                                        icon="plus_one"
+                                        @click="addNewOption(item)"
+                                      />&nbsp;
                                       <q-btn color="primary" @click="duplicateLastOption(item)">
                                         <q-icon name="control_point_duplicate" left />Letzte Option duplizieren
                                       </q-btn>
@@ -1144,7 +1133,7 @@
                                       >
                                         <h2 class="display-2">Optionen Löschen?</h2>
                                         <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
-                                        <v-container fluid>
+                                        <div class="container fluid">
                                           <div class="row" align="center">
                                             <div class="col text-center" cols="12" sm="12">
                                               <q-btn
@@ -1159,7 +1148,7 @@
                                               >Löschen</q-btn>
                                             </div>
                                           </div>
-                                        </v-container>
+                                        </div>
                                       </q-dialog>
                                     </div>
                                   </div>
@@ -1200,7 +1189,7 @@
                 <!-- Title -->
                 <q-item>
                   <q-item-section>
-                    <v-select
+                    <q-select
                       v-model="oSurvey.groups"
                       :items="user.groups_moderating"
                       label="Gruppen Auswählen"
@@ -1209,7 +1198,7 @@
                       return-object
                       item-text="name"
                       :disable="surveyIsUneditable()"
-                    ></v-select>
+                      />
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -1276,88 +1265,92 @@ import moment from "moment";
 export default {
   data() {
     return {
+
+      // Questions Extended (local storage)
+      questions_extended: [],
+
       // Icons
-      help_icon: "help_outline",
+      help_icon: 'help_outline',
 
       // Timeing
-      range: "",
-      min: "",
-      max: "",
+      range: '',
+      min: '',
+      max: '',
 
       // FAB
       bFabButtonInner: false,
 
       // Questions
       bDeleteQuestionDialog: false,
-      sSearch: "",
+      sSearch: '',
       pagination: {
-        sortBy: "order",
+        sortBy: 'order',
         descending: false,
         page: 1,
         rowsPerPage: 100
       },
       headers: [
         {
-          label: "Reihenfolge",
-          align: "left",
-          name: "order",
-          field: "order",
+          label: 'Reihenfolge',
+          align: 'left',
+          name: 'order',
+          field: 'order',
           sortable: true
         },
         {
-          label: "Title",
-          align: "left",
-          name: "title",
-          field: "title",
+          label: 'Title',
+          align: 'left',
+          name: 'title',
+          field: 'title',
           sortable: true
         },
         {
-          label: "Untertitel",
-          align: "left",
-          name: "subtitle",
-          field: "subtitle",
+          label: 'Untertitel',
+          align: 'left',
+          name: 'subtitle',
+          field: 'subtitle',
           sortable: true
         },
         {
-          label: "Beschreibung",
-          align: "left",
-          name: "description",
-          field: "description",
+          label: 'Beschreibung',
+          align: 'left',
+          name: 'description',
+          field: 'description',
           sortable: true
         },
         {
-          label: "Überspringbar",
+          label: 'Überspringbar',
+          name: 'is_skippable',
+          field: 'is_skippable',
           align: null,
-          name: "is_skippable",
-          field: "is_skippable",
           sortable: true
         },
         {
-          label: "Kommentierbar",
+          label: 'Kommentierbar',
+          name: 'is_commentable',
+          field: 'is_commentable',
           align: null,
-          name: "is_commentable",
-          field: "is_commentable",
           sortable: true
         },
         {
-          label: "Mind. Optionen",
+          label: 'Mind. Optionen',
+          name: 'min_options',
+          field: 'min_options',
           align: null,
-          name: "min_options",
-          field: "min_options",
           sortable: true
         },
         {
-          label: "Max Optionen",
+          label: 'Max Optionen',
+          name: 'max_options',
+          field: 'max_options',
           align: null,
-          name: "max_options",
-          field: "max_options",
           sortable: true
         },
         {
-          label: "",
+          label: '',
+          name: 'expand',
+          field: 'expand',
           align: null,
-          name: "expand",
-          field: "expand",
           sortable: false
         }
       ],
@@ -1366,36 +1359,36 @@ export default {
 
       // Options
       aOptionHeaders: [
-        { text: "", value: "data-table-select" },
+        { text: '', value: 'data-table-select' },
         {
-          text: "Reihenfolge",
-          align: "left",
-          value: "order"
+          text: 'Reihenfolge',
+          align: 'left',
+          value: 'order'
         },
         {
-          text: "Technischer Wert",
-          align: "left",
-          value: "value"
+          text: 'Technischer Wert',
+          align: 'left',
+          value: 'value'
         },
         {
-          text: "Title",
-          align: "left",
-          value: "title"
+          text: 'Title',
+          align: 'left',
+          value: 'title'
         },
         {
-          text: "Untertitel",
-          align: "left",
-          value: "subtitle"
+          text: 'Untertitel',
+          align: 'left',
+          value: 'subtitle'
         },
         {
-          text: "Beschreibung",
-          align: "left",
-          value: "description"
+          text: 'Beschreibung',
+          align: 'left',
+          value: 'description'
         },
         {
-          text: "Color",
-          align: "center",
-          value: "color"
+          text: 'Color',
+          align: 'center',
+          value: 'color'
         }
       ],
       bDeleteOptionDialog: false,
@@ -1412,28 +1405,28 @@ export default {
       bIsLoading: false,
 
       // Tabs
-      active_tab: "basis",
+      active_tab: 'basis',
 
       // Back Route
-      oBackRoute: { name: "backend.surveys" },
+      oBackRoute: { name: 'backend.surveys' },
       bCreate: false,
       bEdit: false,
       bExtendedSettings: false,
 
       // Form
       valid: true,
-      required: [v => !!v || this.$t("required")],
+      required: [v => !!v || this.$t('required')],
 
       // Dates and Times
       oTimes: {
-        sStartTime: "",
-        sEndTime: ""
+        sStartTime: '',
+        sEndTime: ''
       },
 
       // Today
-      sTodayDate: moment().format("YYYY-MM-DD"),
-      sTodayTime: moment().format("HH:mm:ss"),
-      sTodayDatetime: moment().format("YYYY-MM-DD HH:mm:ss"),
+      sTodayDate: moment().format('YYYY-MM-DD'),
+      sTodayTime: moment().format('HH:mm:ss'),
+      sTodayDatetime: moment().format('YYYY-MM-DD HH:mm:ss'),
 
       // Tmps Start
       // sStartDate: '', // this.getStartDate(),
@@ -1448,16 +1441,16 @@ export default {
       // All Question Option Colors
       aAllOptionColors: [
         {
-          title: "Grey",
-          hex: "#C6C6C6"
+          title: 'Grey',
+          hex: '#C6C6C6'
         },
         {
-          title: "Green",
-          hex: "#6CAE75"
+          title: 'Green',
+          hex: '#6CAE75'
         },
         {
-          title: "Red",
-          hex: "#D09786"
+          title: 'Red',
+          hex: '#D09786'
         }
       ]
     };
@@ -1465,16 +1458,16 @@ export default {
 
   computed: {
     ...mapGetters({
-      user: "auth/user",
-      surveyAllowed: "surveys/surveyAllowed"
+      user: 'auth/user',
+      surveyAllowed: 'surveys/surveyAllowed'
     })
   },
 
   watch: {
-    surveyAllowed(promise) {
+    surveyAllowed (promise) {
       // save Promise result in local state
-      this.oSurvey = this.copyObject(promise);
-      this.oSurveyOld = this.copyObject(promise);
+      this.oSurvey = this.copyObject(promise)
+      this.oSurveyOld = this.copyObject(promise)
 
       // Go
       // if(this.oSurvey.start_datetime)  this.aDates[0] = this.oSurvey.start_datetime.substr(0, 10);
@@ -1484,15 +1477,15 @@ export default {
 
       // If Something inside bExtendedSettings is active
       if (this.oSurvey.is_finished || this.oSurvey.is_canceled) {
-        this.bExtendedSettings = true;
+        this.bExtendedSettings = true
       }
 
       // Go Through it and reorder it!
-      this.reorderQuestions();
+      this.reorderQuestions()
     },
 
     oSurvey: {
-      handler() {
+      handler () {
         // console.log('oSurvey Changed');
         // this.$refs.form.validate();
       },
@@ -1500,223 +1493,253 @@ export default {
     },
 
     aDates: {
-      handler() {
+      handler () {
         // this.updateDatetimes();
       }
     },
 
     oTimes: {
-      handler() {
+      handler () {
         // this.updateDatetimes();
+      },
+      deep: true
+    },
+
+    questions_extended: {
+      handler: function (val) {
+        localStorage.sQuestionsExtended = JSON.stringify(val)
       },
       deep: true
     }
   },
 
-  created: function() {
-    var route = this.$route;
-    var params = route.params;
-    var id = parseInt(params.id);
+  created: function () {
+    var route = this.$route
+    var params = route.params
+    var id = parseInt(params.id)
 
-    if (params.id == "create") {
-      this.startCreateMode();
-    } else if (typeof id == "number") {
-      this.$store.dispatch("surveys/fetchSurveyAllowed", id);
-      this.startEditMode();
+    if (params.id == 'create') {
+      this.startCreateMode()
+    } else if (typeof id == 'number') {
+      this.$store.dispatch('surveys/fetchSurveyAllowed', id)
+      this.startEditMode()
     } else {
-      this.$router.push(this.oBackRoute);
+      this.$router.push(this.oBackRoute)
     }
 
     // Check Tab for Hash
-    this.checkTabForHash();
+    this.checkTabForHash()
+  },
+
+  mounted () {
+    var sQe = localStorage.sQuestionsExtended
+    this.questions_extended = (sQe ? JSON.parse(sQe) : [])
   },
 
   methods: {
-    save() {
+    questionIsExpanded (id) {
+      return this.questions_extended.find(e => e == id)
+    },
+
+    expandQuestion (question) {
+      // TMP arr
+      var arr = this.questions_extended
+      var id = question.row.id.toString()
+
+      if (arr.includes(id)) {
+        // Unexpand!
+        arr = arr.filter(e => e !== id)
+      } else {
+        // Expand!
+        arr.push(id)
+      }
+
+      this.questions_extended = arr // Set new Array
+    },
+
+    save () {
       this.$q.notify({
-        message: this.$t("attribute_changed"),
-        color: "primary",
+        message: this.$t('attribute_changed'),
+        color: 'primary',
         timeout: 3000
-      });
+      })
     },
 
-    orderedOptions: function(options) {
-      return options.sort((a, b) => (a.order > b.order ? 1 : -1));
+    orderedOptions: function (options) {
+      return options.sort((a, b) => (a.order > b.order ? 1 : -1))
     },
 
-    getStartDate() {
+    getStartDate () {
       return moment()
         .format()
-        .substr(0, 10);
+        .substr(0, 10)
     },
 
     // getEndDate() {
     //   return moment(moment() + 5).format().substr(0, 10)
     // },
 
-    reorderQuestions() {
-      var oQuestions = this.oSurvey.questions;
+    reorderQuestions () {
+      var oQuestions = this.oSurvey.questions
       for (var i in oQuestions) {
         if (oQuestions.hasOwnProperty(i)) {
-          var oQuestion = oQuestions[i];
-          oQuestion.order = parseInt(i) + 1;
+          var oQuestion = oQuestions[i]
+          oQuestion.order = parseInt(i) + 1
         }
       }
     },
 
-    reorderOptions(question) {
-      var oOptions = question.options;
+    reorderOptions (question) {
+      var oOptions = question.options
       for (var i in oOptions) {
         if (oOptions.hasOwnProperty(i)) {
-          var oOption = oOptions[i];
-          oOption.order = parseInt(i) + 1;
+          var oOption = oOptions[i]
+          oOption.order = parseInt(i) + 1
         }
       }
     },
 
-    events(d) {
-      var entry = moment(d).format("YYYY-MM-DD");
-      var start = moment(this.oSurvey.start_datetime).format("YYYY-MM-DD");
-      var end = moment(this.oSurvey.end_datetime).format("YYYY-MM-DD");
+    events (d) {
+      var entry = moment(d).format('YYYY-MM-DD')
+      var start = moment(this.oSurvey.start_datetime).format('YYYY-MM-DD')
+      var end = moment(this.oSurvey.end_datetime).format('YYYY-MM-DD')
 
-      return entry >= start && entry <= end;
+      return entry >= start && entry <= end
     },
 
-    eventColor(d) {
-      var entry = moment(d).format("YYYY-MM-DD");
-      var start = moment(this.oSurvey.start_datetime).format("YYYY-MM-DD");
-      var end = moment(this.oSurvey.end_datetime).format("YYYY-MM-DD");
+    eventColor (d) {
+      var entry = moment(d).format('YYYY-MM-DD')
+      var start = moment(this.oSurvey.start_datetime).format('YYYY-MM-DD')
+      var end = moment(this.oSurvey.end_datetime).format('YYYY-MM-DD')
 
       switch (entry) {
         case end:
-          return "red";
-          break;
+          return 'red'
 
         case start:
-          return "green";
-          break;
+          return 'green'
 
         default:
-          return "primary";
-          break;
+          return 'primary'
       }
     },
 
-    deleteQuestions(selected) {
+    deleteQuestions (selected) {
       // Delete Them from Arrays
-      this.oSurvey.questions = this.oSurvey.questions.filter(function(x) {
-        return selected.indexOf(x) < 0;
-      });
-      this.oSurveyOld.questions = this.oSurveyOld.questions.filter(function(x) {
-        return selected.indexOf(x) < 0;
-      });
+      this.oSurvey.questions = this.oSurvey.questions.filter(function (x) {
+        return selected.indexOf(x) < 0
+      })
+
+      this.oSurveyOld.questions = this.oSurveyOld.questions.filter(function (x) {
+        return selected.indexOf(x) < 0
+      })
 
       // Push into delete_questions
       this.aDeleteQuestionsIds = this.getIdsFromObject(
         this.copyObject(selected)
-      );
+      )
 
       // Empty Selected
-      this.selected = [];
+      this.selected = []
 
       // Reorder Questions
-      this.reorderQuestions();
+      this.reorderQuestions()
 
       // Close Dialog
-      this.bDeleteQuestionDialog = false;
+      this.bDeleteQuestionDialog = false
     },
 
-    deleteOptions(question, selected) {
+    deleteOptions (question, selected) {
       // Delete Them from Arrays
-      question.options = question.options.filter(function(x) {
-        return selected.indexOf(x) < 0;
-      });
+      question.options = question.options.filter(function (x) {
+        return selected.indexOf(x) < 0
+      })
 
       // Push into delete_questions
-      this.aDeleteOptionsIds = this.getIdsFromObject(this.copyObject(selected));
+      this.aDeleteOptionsIds = this.getIdsFromObject(this.copyObject(selected))
 
       // Empty Selected
-      this.aSelectedOptions = [];
+      this.aSelectedOptions = []
 
       // Reorder Questions
-      this.reorderOptions(question);
+      this.reorderOptions(question)
 
       // Close Dialog
-      this.bDeleteOptionDialog = false;
+      this.bDeleteOptionDialog = false
     },
 
-    move(oMovingElement, aList, iDir) {
-      var key1 = this.getPositionByOrder(oMovingElement.order, aList);
-      var key2 = key1 + iDir;
-      console.log(key1, key2);
-      var oElement1 = oMovingElement;
-      var oElement2 = aList[key2];
+    move (oMovingElement, aList, iDir) {
+      var key1 = this.getPositionByOrder(oMovingElement.order, aList)
+      var key2 = key1 + iDir
+      console.log(key1, key2)
+      var oElement1 = oMovingElement
+      var oElement2 = aList[key2]
 
       if (oElement2) {
-        var iTmp = parseInt(oElement1.order);
+        var iTmp = parseInt(oElement1.order)
 
-        oElement1.order = parseInt(oElement2.order);
-        oElement2.order = parseInt(iTmp);
+        oElement1.order = parseInt(oElement2.order)
+        oElement2.order = parseInt(iTmp)
       }
 
-      aList.sort((a, b) => (a.order > b.order ? 1 : -1));
+      aList.sort((a, b) => (a.order > b.order ? 1 : -1))
     },
 
-    sortSelectedByOrder() {
-      this.selected.sort((a, b) => (a.order > b.order ? 1 : -1));
+    sortSelectedByOrder () {
+      this.selected.sort((a, b) => (a.order > b.order ? 1 : -1))
     },
 
-    moveSelectedUp() {
+    moveSelectedUp () {
       this.sortSelectedByOrder();
       for (var i = 0; i < this.selected.length; i++) {
-        this.moveUp(this.selected[i], this.oSurvey.questions);
+        this.moveUp(this.selected[i], this.oSurvey.questions)
       }
     },
 
-    moveSelectedDown() {
+    moveSelectedDown () {
       this.sortSelectedByOrder();
       for (var i = this.selected.length - 1; i >= 0; i--) {
-        this.moveDown(this.selected[i], this.oSurvey.questions);
+        this.moveDown(this.selected[i], this.oSurvey.questions)
       }
     },
 
-    moveUp(oElement1, aList) {
-      this.move(oElement1, aList, -1);
+    moveUp (oElement1, aList) {
+      this.move(oElement1, aList, -1)
     },
 
     moveDown(oElement1, aList) {
-      this.move(oElement1, aList, 1);
+      this.move(oElement1, aList, 1)
     },
 
     getPositionById(oItem, oObject) {
       return oObject
-        .map(function(x) {
-          return x.id;
+        .map(function (x) {
+          return x.id
         })
-        .indexOf(oItem.id);
+        .indexOf(oItem.id)
     },
 
-    getPositionByOrder(iOrder, oObject) {
+    getPositionByOrder (iOrder, oObject) {
       return oObject
-        .map(function(x) {
-          return x.order;
+        .map(function (x) {
+          return x.order
         })
-        .indexOf(iOrder);
+        .indexOf(iOrder)
     },
 
-    getRandomId() {
-      return parseInt(Date.now() + Math.random() * 1000);
+    getRandomId () {
+      return parseInt(Date.now() + Math.random() * 1000)
     },
 
-    addOption(o, question) {
-      var aO = question.options;
-      o.order = aO.length + 1;
-      aO.push(o);
-      return o;
+    addOption (o, question) {
+      var aO = question.options
+      o.order = aO.length + 1
+      aO.push(o)
+      return o
     },
 
-    addNewOption(question) {
-      console.log(question);
+    addNewOption (question) {
+      console.log('jooooo', question)
       return this.addOption(
         {
           id: this.getRandomId(),
@@ -1726,7 +1749,7 @@ export default {
       );
     },
 
-    duplicateOption(option, question) {
+    duplicateOption (option, question) {
       if (question && option) {
         var oNewOption = this.copyObject(option);
 
@@ -1743,210 +1766,199 @@ export default {
     },
 
     // QUESTIONS
-    addQuestion(q) {
+    addQuestion (q) {
       var aQ = this.oSurvey.questions;
 
       // Increment one order-point up
-      q.order = aQ.length + 1;
-      q.is_new = true;
+      q.order = aQ.length + 1
+      q.is_new = true
 
       // Push to other Questions
-      aQ.push(q);
+      aQ.push(q)
 
       // Return Question
-      return q;
+      return q
     },
 
-    addNewQuestion() {
+    addNewQuestion () {
       return this.addQuestion({
         id: this.getRandomId(),
         options: []
-      });
+      })
     },
 
-    duplicateQuestion(question) {
-      var aQ = this.oSurvey.questions;
-
+    duplicateQuestion (question) {
       if (question) {
-        var oNewQ = this.copyObject(question);
+        var oNewQ = this.copyObject(question)
 
         // Delete oNewQ.id;
-        oNewQ.id = this.getRandomId();
+        oNewQ.id = this.getRandomId()
 
         // Delete oNewQ.options.id
         oNewQ.options.forEach(option => {
-          option.question_id = oNewQ.id;
+          option.question_id = oNewQ.id
         });
 
-        return this.addQuestion(oNewQ);
+        return this.addQuestion(oNewQ)
       }
     },
 
-    duplicateSelectedQuestions() {
-      var aNewSelected = [];
+    duplicateSelectedQuestions () {
+      var aNewSelected = []
       this.selected.forEach(question => {
-        aNewSelected.push(this.duplicateQuestion(question));
+        aNewSelected.push(this.duplicateQuestion(question))
       });
-      this.selected = aNewSelected;
-      console.log(aNewSelected);
+      this.selected = aNewSelected
+      console.log(aNewSelected)
     },
 
-    duplicateLastQuestion() {
-      var aQ = this.oSurvey.questions;
-      var oLastQ = aQ[aQ.length - 1];
-      this.duplicateQuestion(oLastQ);
+    duplicateLastQuestion () {
+      var aQ = this.oSurvey.questions
+      var oLastQ = aQ[aQ.length - 1]
+      this.duplicateQuestion(oLastQ)
     },
 
-    changeTab(num) {
-      window.location.hash = num;
+    changeTab (num) {
+      window.location.hash = num
     },
 
-    checkTabForHash() {
+    checkTabForHash () {
       if (window.location.hash) {
-        var tab = window.location.hash.substr(1);
-        tab ? (this.active_tab = tab) : undefined;
+        var tab = window.location.hash.substr(1)
+        tab ? (this.active_tab = tab) : undefined
       }
     },
 
-    surveyFormIsValid() {
-      return this.valid ? true : false;
+    surveyFormIsValid () {
+      return this.valid
     },
 
-    getIdsFromObject(obj) {
-      return obj.map(function(e) {
-        return e.id;
-      });
+    getIdsFromObject (obj) {
+      return obj.map(function (e) {
+        return e.id
+      })
     },
 
-    surveyFormIsInvalid() {
-      return !this.surveyFormIsValid();
+    surveyFormIsInvalid () {
+      return !this.surveyFormIsValid()
     },
 
-    surveyIsEditable() {
+    surveyIsEditable () {
       return (this.oSurvey.is_editable && this.bEdit) || this.bCreate
-        ? true
-        : false;
     },
 
-    surveyIsUneditable() {
-      return !this.surveyIsEditable();
+    surveyIsUneditable () {
+      return !this.surveyIsEditable()
     },
 
-    getMaxEndDate(date) {
-      return this.getMinMaxDate(date, "end");
+    getMaxEndDate (date) {
+      return this.getMinMaxDate(date, 'end')
     },
 
-    getMinStartDate(date) {
-      return this.getMinMaxDate(date, "start");
+    getMinStartDate (date) {
+      return this.getMinMaxDate(date, 'start')
     },
 
-    getMinMaxDate(date, type) {
-      var d1 = this.getDate(date);
-      var active = this.oSurvey.active;
+    getMinMaxDate (date, type) {
+      var d1 = this.getDate(date)
+      var active = this.oSurvey.active
 
       switch (type) {
-        case "start":
+        case 'start':
           if (this.oSurvey.end_datetime) {
-            var end = this.getDate(this.oSurvey.end_datetime);
-            return d1 <= end && (active ? this.sTodayDate <= d1 : true);
+            var end = this.getDate(this.oSurvey.end_datetime)
+            return d1 <= end && (active ? this.sTodayDate <= d1 : true)
           }
-          break;
+          break
 
-        case "end":
-          var start = this.getDate(this.oSurvey.start_datetime);
-          return d1 >= start;
-          break;
+        case 'end':
+          var start = this.getDate(this.oSurvey.start_datetime)
+          return d1 >= start
       }
 
-      return active ? this.sTodayDate <= d1 : true;
+      return active ? this.sTodayDate <= d1 : true
     },
 
-    getDate(ts) {
-      return moment(ts).format("YYYY-MM-DD");
+    getDate (ts) {
+      return moment(ts).format('YYYY-MM-DD')
     },
 
-    getMinStartTime(hr, min, sec) {
-      return this.getMinMaxTime(hr, min, sec, "start");
+    getMinStartTime (hr, min, sec) {
+      return this.getMinMaxTime(hr, min, sec, 'start')
     },
 
-    getMaxEndTime(hr, min, sec) {
-      return this.getMinMaxTime(hr, min, sec, "end");
+    getMaxEndTime (hr, min, sec) {
+      return this.getMinMaxTime(hr, min, sec, 'end')
     },
 
-    getMinMaxTime(hr, min, sec, type) {
+    getMinMaxTime (hr, min, sec, type) {
       if (this.oSurvey.start_datetime && this.oSurvey.end_datetime) {
-        var startDate = this.getDate(this.oSurvey.start_datetime);
-        var endDate = this.getDate(this.oSurvey.end_datetime);
+        var startDate = this.getDate(this.oSurvey.start_datetime)
+        var endDate = this.getDate(this.oSurvey.end_datetime)
         if (startDate == endDate) {
           var endDatetime = moment(this.oSurvey.end_datetime).format(
-            "YYYY-MM-DD HH:mm:ss"
-          );
+            'YYYY-MM-DD HH:mm:ss'
+          )
           var startDatetime = moment(this.oSurvey.start_datetime).format(
-            "YYYY-MM-DD HH:mm:ss"
-          );
+            'YYYY-MM-DD HH:mm:ss'
+          )
 
           // SelTime
-          var selTime = moment(this.oSurvey.start_datetime).toDate();
-          if (hr) selTime.setHours(hr);
-          if (min) selTime.setMinutes(min);
-          if (sec) selTime.setSeconds(sec);
+          var selTime = moment(this.oSurvey.start_datetime).toDate()
+          if (hr) selTime.setHours(hr)
+          if (min) selTime.setMinutes(min)
+          if (sec) selTime.setSeconds(sec)
 
           // Format again
-          selTime = moment(selTime).format("YYYY-MM-DD HH:mm:ss");
+          selTime = moment(selTime).format('YYYY-MM-DD HH:mm:ss')
 
           switch (type) {
-            case "start":
-              return endDatetime > selTime;
-              break;
+            case 'start':
+              return endDatetime > selTime
 
-            case "end":
-              return startDatetime < selTime;
-              break;
+            case 'end':
+              return startDatetime < selTime
           }
         }
       }
 
-      return true;
+      return true
     },
 
-    getDiffDatetime() {
+    getDiffDatetime () {
       if (
         !this.oSurvey ||
         !this.oSurvey.start_datetime ||
         !this.oSurvey.end_datetime
       ) {
-        return 0;
+        return 0
       }
 
-      var t1 = moment(this.oSurvey.start_datetime);
-      var t2 = moment(this.oSurvey.end_datetime);
+      var t1 = moment(this.oSurvey.start_datetime)
+      var t2 = moment(this.oSurvey.end_datetime)
 
-      return Math.abs(t1 - t2) / 1000;
+      return Math.abs(t1 - t2) / 1000
     },
 
-    getDiffDatetimeColor() {
-      var delta = this.getDiffDatetime();
-      var iDays = Math.floor(delta / 86400);
+    getDiffDatetimeColor () {
+      var delta = this.getDiffDatetime()
+      var iDays = Math.floor(delta / 86400)
 
       switch (true) {
         case iDays > 14:
-          return "positive";
-          break;
+          return 'positive'
 
         case iDays > 7:
-          return "grey";
-          break;
+          return 'grey'
 
         case iDays > 3:
-          return "warning";
-          break;
+          return 'warning'
 
         default:
-          return "negative";
-          break;
+          return 'negative'
       }
 
-      return "grey";
+      return 'grey'
     },
 
     getDiffDatetimeLabel() {

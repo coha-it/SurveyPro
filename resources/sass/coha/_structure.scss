@@ -1,0 +1,17 @@
+html body {
+  font-family: Roboto;
+  color: #425D64;
+  // padding: 4px 4px 0;
+  font-size: 16px;
+  background-color: #fafafa;
+}
+
+// Page and Header
+.q-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-body {
+  flex: auto;
+}

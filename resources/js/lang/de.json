@@ -166,5 +166,11 @@
     "title": "Titel",
     "subtitle": "Untertitel",
     "description": "Beschreibung",
-    "Back to surveys": "Zurück zu den Umfragen"
+    "Back to surveys": "Zurück zu den Umfragen",
+    "max_options": "Maximale Optionen",
+    "min_options": "Minimale Optionen",
+    "de": "Deutsch",
+    "en": "Englisch",
+    "es": "Spanisch",
+    "zh-CN": "Chinesisch"
   }
