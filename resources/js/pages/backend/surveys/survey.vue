@@ -81,14 +81,14 @@
             indicator-color="white"
             class="bg-primary text-white shadow-2"
           >
-            <q-tab @click="changeTab('basis')" name="basis" label="Basis" icon="settings" />
+            <q-tab name="basis" label="Basis" icon="settings" @click="changeTab('basis')" />
             <q-tab
-              @click="changeTab('fragen')"
               name="fragen"
               label="Fragen"
               icon="question_answer"
+              @click="changeTab('fragen')"
             />
-            <q-tab @click="changeTab('gruppen')" name="gruppen" label="Gruppen" icon="group" />
+            <q-tab name="gruppen" label="Gruppen" icon="group" @click="changeTab('gruppen')" />
           </q-tabs>
 
           <q-separator />
@@ -1000,19 +1000,32 @@
                                                   v-model="props.row.max_options"
                                                   :disable="surveyIsUneditable()"
                                                   dense
-                                                  persistent-hint
                                                   outlined
-                                                  hint="Maximale wählbare Optionen"
                                                   placeholder="1 - 255"
                                                   type="number"
                                                   :min="parseInt(props.row.min_options)"
                                                   label="Maximale Optionen"
                                                   required
-                                                />
+                                                >
+                                                <template v-slot:append>
+                                                    <q-icon :name="help_icon">
+                                                      <q-tooltip
+                                                        self="center middle"
+                                                      >Maximale wählbare Optionen</q-tooltip>
+                                                    </q-icon>
+                                                  </template>
+                                                </q-input>
                                               </div>
                                             </div>
                                           </q-item-section>
                                         </q-item>
+                                      </q-list>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col" xl="12" sm="12" xs="12">
+                                      <q-list subheader two-line flat>
+                                        <q-item-label header>Optionen:</q-item-label>
                                         <q-item>
                                           <q-item-section>
                                             <!-- -->
@@ -1026,17 +1039,43 @@
                                                 dark
                                                 floating
                                                 min-height="85px"
-                                                height="auto">
-                                                <q-btn
-                                                  v-if="aSelectedOptions && aSelectedOptions.length"
-                                                  depressed
-                                                  color="red"
-                                                  dark
-                                                  @click="bDeleteOptionDialog = true"
-                                                >
-                                                  <q-icon name="delete" left />&nbsp;
-                                                  Ausgewählte Optionen Löschen
-                                                </q-btn>
+                                                height="auto"
+                                              >
+                                                <span>
+                                                  <q-btn label="Löschen" icon="delete" flat rounded unelevated />
+                                                  <q-popup-edit
+                                                    single-line
+                                                    persistent
+                                                    :cover="false"
+                                                    self="center left"
+                                                    anchor="center right"
+                                                    :offset="[5, 0]"
+                                                    @save="save(option.row)"
+                                                    value="1"
+                                                  >
+                                                    <div class="row" align="center">
+                                                      <div class="col text-center" cols="12" sm="12">
+                                                        Möchten Sie wirklich {{ aSelectedOptions.length }} Optionen löschen?
+                                                        <q-btn
+                                                          v-close-popup
+                                                          depressed
+                                                          color="grey"
+                                                          outlined
+                                                          flat
+                                                          size="sm"
+                                                        >Abbruch</q-btn>
+                                                        <q-btn
+                                                          v-close-popup
+                                                          depressed
+                                                          flat
+                                                          color="red"
+                                                          size="sm"
+                                                          @click="deleteOptions(aSelectedOptions)"
+                                                        >Löschen</q-btn>
+                                                      </div>
+                                                    </div>
+                                                  </q-popup-edit>
+                                                </span>
                                               </q-toolbar>
 
                                               <!-- No Selected Toolbar -->
@@ -1052,11 +1091,14 @@
 
                                               <q-table
                                                 v-model="aSelectedOptions"
+                                                :selected.sync="aSelectedOptions"
                                                 :columns="aOptionHeaders"
                                                 :data="props.row.options"
                                                 dense
                                                 multi-sort
+                                                show-select
                                                 selection="multiple"
+                                                :search="sOptionSearch"
                                                 :items-per-page="parseInt(iOptionsPerPage)"
                                                 :sort-by="['order']"
                                                 :sort-desc="[false]"
@@ -1064,145 +1106,254 @@
                                                   showFirstLastPage: true,
                                                 }"
                                                 class="my-data-table f-height options-table"
-                                                >
-                                                <template v-slot:item.value="props">
-                                                  <q-popup-edit v-model="props.item.value">
-                                                    {{ props.item.value }}
-                                                    <q-input
-                                                      v-model="props.item.value"
-                                                      label="Edit"
-                                                      counter
-                                                    />
-                                                  </q-popup-edit>
+                                              >
+                                                <template v-slot:header-cell-order="props">
+                                                  <q-th :props="props">
+                                                    <span>{{ props.col.label }}</span>
+                                                    <q-icon name="sort" size="1.5em" />
+                                                  </q-th>
                                                 </template>
 
-                                                <template v-slot:item.title="props">
-                                                  <q-popup-edit v-model="props.item.title">
-                                                    {{ props.item.title }}
-                                                    <q-input
-                                                      v-model="props.item.title"
-                                                      label="Edit"
-                                                      counter
-                                                    />
-                                                  </q-popup-edit>
+                                                <template v-slot:header-cell-title="props">
+                                                  <q-th :props="props">
+                                                    {{ props.col.label }}
+                                                    <q-icon name="title" size="1.5em" />
+                                                  </q-th>
                                                 </template>
 
-                                                <template v-slot:item.subtitle="props">
-                                                  <q-popup-edit v-model="props.item.subtitle">
-                                                    {{ props.item.subtitle }}
-                                                    <q-input
-                                                      v-model="props.item.subtitle"
-                                                      label="Edit"
-                                                      counter
-                                                    />
-                                                  </q-popup-edit>
+                                                <template v-slot:header-cell-subtitle="props">
+                                                  <q-th :props="props">
+                                                    {{ props.col.label }}
+                                                    <q-icon name="text_fields" size="1.5em" />
+                                                  </q-th>
                                                 </template>
 
-                                                <template v-slot:item.description="props">
-                                                  <q-popup-edit v-model="props.item.description">
-                                                    {{ props.item.description }}
-                                                    <q-input
-                                                      v-model="props.item.description"
-                                                      label="Edit"
-                                                      counter
-                                                    />
-                                                  </q-popup-edit>
+                                                <template v-slot:header-cell-description="props">
+                                                  <q-th :props="props">
+                                                    <span>{{ props.col.label }}</span>
+                                                    <q-icon name="message_text" size="1.5em" style="display: inline-block" />
+                                                  </q-th>
                                                 </template>
 
-                                                <template v-slot:item.order="props">
-                                                  <div style="white-space: nowrap;">
-                                                    <q-icon name="arrow-up" x-small @click="moveUp(props.item, item.options)" />
-                                                    {{ props.item.order }}
-                                                    <q-icon x-small name="arrow-down" @click="moveDown(props.item, item.options)" />
-                                                  </div>
+                                                <template v-slot:header-cell-color="props">
+                                                  <q-th :props="props">
+                                                    {{ props.col.label }}
+                                                    <q-icon name="format_color_fill" size="1.5em" />
+                                                  </q-th>
                                                 </template>
-                                                <template v-slot:item.color="props">
-                                                  <q-dialog v-model="props.item.dialog" max-width="290">
-                                                    <template v-slot:activator="{ on }">
-                                                      <div>
-                                                        <q-btn
-                                                          :color="props.item.color"
-                                                          small
-                                                          depressed
-                                                          fab
-                                                          dark
-                                                          v-on="on"
-                                                        >
-                                                          <q-icon name="palette" dark />
-                                                        </q-btn>
+
+                                                <template v-slot:header-cell-value="props">
+                                                  <q-th :props="props">
+                                                    {{ props.col.label }}
+                                                    <q-icon name="perm_data_setting" size="1.5em">
+                                                      <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+                                                        <strong>{{ props.col.label }}</strong> <br>
+                                                        (Definiert wieviel die Option gewerted wird.<br>
+                                                        Beispiele für Werte wären bei Mittelmäßig 0, <br>
+                                                        bei etwas schlechter -4 und bei sehr gut 8)
+                                                      </q-tooltip>
+                                                    </q-icon>
+                                                  </q-th>
+                                                </template>
+
+                                                <!-- Body Slots -->
+                                                <template v-slot:body="option">
+                                                  <q-tr :props="option">
+                                                    <!-- Selected -->
+                                                    <q-td>
+                                                      <q-checkbox v-model="option.selected" dense />
+                                                    </q-td>
+
+                                                    <!-- Order -->
+                                                    <q-td>
+                                                      <div style="white-space: nowrap;">
+                                                        <!-- <q-icon name="mdi-arrow-up" x-small @click="moveUp(props.item, item.options)" /> -->
+                                                        <q-icon name="mdi-arrow-up" x-small @click="moveUp(option.row, props.row.options)" />
+                                                        {{ option.row.order }}
+                                                        <q-icon name="mdi-arrow-down" x-small @click="moveDown(option.row, props.row.options)" />
                                                       </div>
-                                                      <div>{{ props.item.color }}</div>
-                                                    </template>
-                                                    <q-card>
-                                                      <q-card-section>Farbe auswählen</q-card-section>
-                                                      <q-card-section>
-                                                        <q-btn
-                                                          block
-                                                          small
-                                                          :color="props.item.color"
-                                                        >{{ props.item.color }}</q-btn>
-                                                        <template v-for="oColor in aAllOptionColors">
-                                                          <div
-                                                            style="margin-top: 5px;"
-                                                            v-bind:key="oColor.title"
-                                                          >
+                                                    </q-td>
+
+                                                    <!-- Value -->
+                                                    <q-td>
+                                                      {{ option.row.value }}
+                                                      <q-popup-edit
+                                                        v-model="option.row.value"
+                                                        buttons
+                                                        single-line
+                                                        persistent
+                                                        :cover="false"
+                                                        self="center left"
+                                                        anchor="center right"
+                                                        :offset="[5, 0]"
+                                                        @save="save(option.row)"
+                                                      >
+                                                        <q-input
+                                                          v-model="option.row.value"
+                                                          :label="$t('value')"
+                                                          autofocus
+                                                          type="number"
+                                                        />
+                                                      </q-popup-edit>
+                                                    </q-td>
+
+                                                    <!-- Title -->
+                                                    <q-td>
+                                                      {{ option.row.title }}
+                                                      <q-popup-edit
+                                                        v-model="option.row.title"
+                                                        buttons
+                                                        single-line
+                                                        persistent
+                                                        :cover="false"
+                                                        self="center left"
+                                                        anchor="center right"
+                                                        :offset="[5, 0]"
+                                                        @save="save(option.row)"
+                                                      >
+                                                        <q-input
+                                                          v-model="option.row.title"
+                                                          :label="$t('title')"
+                                                          autofocus
+                                                        />
+                                                      </q-popup-edit>
+                                                    </q-td>
+
+                                                    <!-- Subtitle -->
+                                                    <q-td>
+                                                      {{ option.row.subtitle }}
+                                                      <q-popup-edit
+                                                        v-model="option.row.subtitle"
+                                                        buttons
+                                                        single-line
+                                                        persistent
+                                                        :cover="false"
+                                                        self="center left"
+                                                        anchor="center right"
+                                                        :offset="[5, 0]"
+                                                        @save="save(option.row)"
+                                                      >
+                                                        <q-input
+                                                          v-model="option.row.subtitle"
+                                                          :label="$t('subtitle')"
+                                                          autofocus
+                                                        />
+                                                      </q-popup-edit>
+                                                    </q-td>
+
+                                                    <!-- Description -->
+                                                    <q-td>
+                                                      {{ option.row.description }}
+                                                      <q-popup-edit
+                                                        v-model="option.row.description"
+                                                        buttons
+                                                        single-line
+                                                        persistent
+                                                        :cover="false"
+                                                        self="center left"
+                                                        anchor="center right"
+                                                        :offset="[5, 0]"
+                                                        @save="save(option.row)"
+                                                      >
+                                                        <q-input
+                                                          v-model="option.row.description"
+                                                          :label="$t('description')"
+                                                          autofocus
+                                                          type="textarea"
+                                                        />
+                                                      </q-popup-edit>
+                                                    </q-td>
+
+                                                    <!-- Color -->
+                                                    <q-td>
+                                                      <q-btn
+                                                        class="c-code-text text-white"
+                                                        icon-right="colorize"
+                                                        unelevated
+                                                        rounded
+                                                        size="md"
+                                                        :style="'text-transform: uppercase; background-color: ' + option.row.color"
+                                                      >
+                                                        {{ option.row.color }}&nbsp;
+                                                        <q-popup-proxy transition-show="scale" transition-hide="scale">
+                                                          <q-color
+                                                            v-model="option.row.color"
+                                                            :palette="colorPalette"
+                                                            default-view="palette"
+                                                          />
+                                                        </q-popup-proxy>
+                                                      </q-btn>
+                                                    </q-td>
+
+                                                    <!-- Actions -->
+                                                    <q-td>
+                                                      <!-- Delete - Dialog -->
+                                                      <q-btn
+                                                        unelevated
+                                                        rounded
+                                                        outlined
+                                                        color="red"
+                                                        dark
+                                                        icon="delete"
+                                                        size="sm"
+                                                      />
+                                                      <q-popup-edit
+                                                        value="1"
+                                                        single-line
+                                                        persistent
+                                                        :cover="false"
+                                                        self="center left"
+                                                        anchor="center right"
+                                                        :offset="[5, 0]"
+                                                        @save="save(option.row)"
+                                                      >
+                                                        <div class="row" align="center">
+                                                          <div class="col text-center" cols="12" sm="12">
+                                                            Möchten Sie diese Option löschen?
                                                             <q-btn
-                                                              block
-                                                              small
-                                                              :color="oColor.hex"
-                                                              @click="props.item.color = oColor.hex"
-                                                            >{{ oColor.title }}</q-btn>
+                                                              v-close-popup
+                                                              depressed
+                                                              color="grey"
+                                                              outlined
+                                                              size="sm"
+                                                            >Abbruch</q-btn>
+                                                            <q-btn
+                                                              v-close-popup
+                                                              depressed
+                                                              color="red"
+                                                              size="sm"
+                                                              @click.prevent="deleteOption(option.row, props.row)"
+                                                            >Löschen</q-btn>
                                                           </div>
-                                                        </template>
-                                                      </q-card-section>
-                                                      <!-- <v-color-picker
-                                                        v-model="props.item.color"
-                                                        mode="rgba"
-                                                        value="#666666"
-                                                        flat
-                                                      ></v-color-picker> -->
-                                                      <q-card-section>
-                                                        <q-btn @click="props.item.dialog = false">Übernehmen und schließen</q-btn>
-                                                      </q-card-section>
-                                                    </q-card>
-                                                  </q-dialog>
+                                                        </div>
+                                                      </q-popup-edit>
+
+                                                    </q-td>
+                                                  </q-tr>
+                                                </template>
+                                                <template v-slot:bottom>
+                                                  <q-btn
+                                                    label="Neue Option hinzufügen"
+                                                    color="primary"
+                                                    icon="plus_one"
+                                                    unelevated
+                                                    rounded
+                                                    outline
+                                                    @click="addNewOption(props.row)"
+                                                  />
+                                                  &nbsp;
+                                                  &nbsp;
+                                                  <q-btn
+                                                    label="Letzte Option duplizieren"
+                                                    color="primary"
+                                                    icon="control_point_duplicate"
+                                                    unelevated
+                                                    rounded
+                                                    outlined
+                                                    @click="duplicateLastOption(item)"
+                                                  />
                                                 </template>
                                               </q-table>
-                                              <q-btn
-                                                label="Neue Option hinzufügen"
-                                                icon="plus_one"
-                                                @click="addNewOption(props.row)"
-                                              />&nbsp;
-                                              <q-btn color="primary" @click="duplicateLastOption(item)">
-                                                <q-icon name="control_point_duplicate" left />Letzte Option duplizieren
-                                              </q-btn>
-
-                                              <!-- Delete - Dialog -->
-                                              <q-dialog
-                                                v-model="bDeleteOptionDialog"
-                                                max-width="500"
-                                                dark
-                                                content-class="naked dark centered"
-                                                >
-                                                <h2 class="display-2">Optionen Löschen?</h2>
-                                                <p>Möchten Sie {{ aSelectedOptions.length }} Optionen löschen?</p>
-                                                <div class="container fluid">
-                                                  <div class="row" align="center">
-                                                    <div class="col text-center" cols="12" sm="12">
-                                                      <q-btn
-                                                        depressed
-                                                        outlined
-                                                        @click="bDeleteOptionDialog = false"
-                                                      >Abbruch</q-btn>
-                                                      <q-btn
-                                                        depressed
-                                                        color="error"
-                                                        @click.prevent="deleteOptions(item, aSelectedOptions)"
-                                                      >Löschen</q-btn>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </q-dialog>
                                             </template>
                                           </q-item-section>
 
@@ -1295,14 +1446,14 @@
               <q-btn
                 color="green"
                 type="submit"
-                @click="updateSurvey()"
                 class="mr-4 white--text"
                 v-if="surveyIsEditable()"
                 :disabled="surveyFormIsInvalid()"
+                @click="updateSurvey"
               >Umfrage Speichern {{ isUnsaved() ? '*' : undefined }}</q-btn>
 
               <!-- Save as FAB -->
-              <q-page-sticky bottom right :open-on-hover="true" v-model="bFabButtonInner" fixed>
+              <!-- <q-page-sticky bottom right :open-on-hover="true" v-model="bFabButtonInner" fixed>
                 <template v-slot:activator v-slot:extension>
                   <q-page-sticky>
                     <q-btn
@@ -1318,6 +1469,13 @@
                   </q-page-sticky>
                 </template>
                 <q-btn fab dark small color="warning" icon="mdi-restore" />
+              </q-page-sticky> -->
+
+              <q-page-sticky position="bottom-right" :offset="[18, 18]" style="z-index: 999">
+                <q-btn v-show="isUnsaved()" fab icon="mdi-content-save" color="green" size="md" @click="updateSurvey" />
+                <q-fab icon="arrow_drop_up" direction="up" color="grey">
+                  <q-fab-action fab dark small color="warning" icon="mdi-restore" @click="restoreSurvey" />
+                </q-fab>
               </q-page-sticky>
             </q-item>
           </q-list>
@@ -1351,8 +1509,25 @@ export default {
     UserDataModal
   },
 
-  data() {
+  data () {
     return {
+
+      // Colors
+      colorPalette: [
+        '#55a559', // GREEN (success - positive)
+        '#dc6161', // RED (error)
+        '#cf6035', // red
+        '#E6BE72', // warning
+        '#cfae35', // orange
+        '#D9B801',
+        '#C6C6C6', // info
+        '#019A9D', '#B2028A',
+        '#2A0449', '#019A9D',
+        '#54656C', // primary
+        '#9AC0C9', // secondary
+        '#fafafa', // background
+        '#E8D03E', // accent
+      ],
 
       // Questions Extended (local storage)
       questions_extended: [],
@@ -1449,54 +1624,59 @@ export default {
       aFilteredGroups: [],
 
       // Options
+      sOptionSearch: '',
+      bDeleteOptionDialog: false,
+      iOptionsPerPage: 50,
       aOptionHeaders: [
-        {
-          label: '',
-          name: 'select',
-          field: 'select',
-          value: 'select',
-          align: 'left',
-          sortable: false
-        },
         {
           label: 'Reihenfolge',
           name: 'order',
           field: 'order',
-          align: 'left'
+          align: 'left',
+          sortable: true
         },
         {
           label: 'Technischer Wert',
           name: 'value',
           field: 'value',
-          align: 'left'
+          align: 'left',
+          sortable: true
         },
         {
           label: 'Title',
           name: 'title',
           field: 'title',
-          align: 'left'
+          align: 'left',
+          sortable: true
         },
         {
           label: 'Untertitel',
           name: 'subtitle',
           field: 'subtitle',
-          align: 'left'
+          align: 'left',
+          sortable: true
         },
         {
           label: 'Beschreibung',
           name: 'description',
           field: 'description',
-          align: 'left'
+          align: 'left',
+          sortable: true
         },
         {
-          label: 'Color',
+          label: 'Farbe',
           name: 'color',
           field: 'color',
-          align: 'center'
+          align: 'left',
+          sortable: true
+        },
+        {
+          label: 'Aktionen',
+          name: 'actions',
+          field: 'actions',
+          align: 'right'
         }
       ],
-      bDeleteOptionDialog: false,
-      iOptionsPerPage: 50,
 
       // To Delete
       aDeleteQuestionsIds: [],
@@ -1557,7 +1737,7 @@ export default {
           hex: '#D09786'
         }
       ]
-    };
+    }
   },
 
   computed: {
@@ -1633,14 +1813,40 @@ export default {
 
     // Check Tab for Hash
     this.checkTabForHash()
+
+    // // Check Router
+    // this.routerCheckLeaving()
   },
 
   mounted () {
     var sQe = localStorage.sQuestionsExtended
     this.questions_extended = (sQe ? JSON.parse(sQe) : [])
+
+    // // Warn before leaving
+    // this.checkWarnings()
   },
 
   methods: {
+
+    routerCheckLeaving () {
+      this.$router.beforeEach((to, from, next) => {
+        // ...
+        if (from.name != to.name) {
+          console.log('LEAVING?!?!?!?')
+          return this.checkWarnings(null)
+        }
+      })
+    },
+
+    checkWarnings (e) {
+      // Warn before leaving
+      window.addEventListener('beforeunload', function (e) {
+        var confirmationMessage = 'Unsafed Changes!';
+
+        (e || window.event).returnValue = confirmationMessage
+        return confirmationMessage
+      })
+    },
 
     findById (arr, id) {
       return arr.find(x => x.id === id)
@@ -1677,6 +1883,7 @@ export default {
     save () {
       this.$q.notify({
         message: this.$t('attribute_changed'),
+        position: 'top-right',
         color: 'primary',
         timeout: 3000
       })
@@ -1766,20 +1973,30 @@ export default {
       this.bDeleteQuestionDialog = false
     },
 
-    deleteOptions (question, selected) {
-      // Delete Them from Arrays
-      question.options = question.options.filter(function (x) {
-        return selected.indexOf(x) < 0
-      })
+    deleteOption (option, question) {
+      // Get Option's Position inside Question
+      var pos = this.getPositionById(option, question.options)
+
+      // Remove from Question-Options
+      question.options.splice(pos, 1)
 
       // Push into delete_questions
-      this.aDeleteOptionsIds = this.getIdsFromObject(this.copyObject(selected))
-
-      // Empty Selected
-      this.aSelectedOptions = []
+      this.aDeleteOptionsIds.push(option.id)
 
       // Reorder Questions
       this.reorderOptions(question)
+    },
+
+    deleteOptions (aSelecteds) {
+      for (const i in aSelecteds) {
+        var oSelected = aSelecteds[i]
+        var oQuestion = this.findById(this.oSurvey.questions, oSelected.question_id)
+
+        this.deleteOption(oSelected, oQuestion)
+      }
+
+      // Empty Selected
+      this.aSelectedOptions = []
 
       // Close Dialog
       this.bDeleteOptionDialog = false
@@ -1788,7 +2005,6 @@ export default {
     move (oMovingElement, aList, iDir) {
       var key1 = this.getPositionByOrder(oMovingElement.order, aList)
       var key2 = key1 + iDir
-      console.log(key1, key2)
       var oElement1 = oMovingElement
       var oElement2 = aList[key2]
 
@@ -1820,15 +2036,16 @@ export default {
       }
     },
 
-    moveUp (oElement1, aList) {
-      this.move(oElement1, aList, -1)
+    moveUp (oElem, aList) {
+      console.log(oElem, aList)
+      this.move(oElem, aList, -1)
     },
 
-    moveDown(oElement1, aList) {
-      this.move(oElement1, aList, 1)
+    moveDown (oElem, aList) {
+      this.move(oElem, aList, 1)
     },
 
-    getPositionById(oItem, oObject) {
+    getPositionById (oItem, oObject) {
       return oObject
         .map(function (x) {
           return x.id
@@ -1859,7 +2076,8 @@ export default {
       return this.addOption(
         {
           id: this.getRandomId(),
-          color: "#C6C6C6"
+          question_id: question.id,
+          color: '#C6C6C6'
         },
         question
       )
@@ -1941,7 +2159,7 @@ export default {
     checkTabForHash () {
       if (window.location.hash) {
         var tab = window.location.hash.substr(1)
-        tab ? (this.active_tab = tab) : undefined
+        if (tab) this.active_tab = tab
       }
     },
 
@@ -2169,128 +2387,130 @@ export default {
     },
 
     formatDate(sDate) {
-      var locale = "";
+      var locale = '';
       var dDate = new Date(sDate);
 
       switch (this._i18n.locale) {
-        case "de":
-          locale = "de-DE";
-          break;
+        case 'de':
+          locale = 'de-DE'
+          break
 
         default:
-          locale = this._i18n.fallbackLocale;
-          break;
+          locale = this._i18n.fallbackLocale
+          break
       }
 
       if (sDate && dDate) {
-        return dDate.toLocaleDateString(locale);
+        return dDate.toLocaleDateString(locale)
       }
     },
 
     formatTime(sDate) {
-      return sDate ? sDate.substr(11, 5) + " Uhr" : "";
+      return sDate ? sDate.substr(11, 5) + ' Uhr' : ''
     },
 
-    showSnackbarError: function(text) {
-      var _this = this;
+    showSnackbarError: function (text) {
+      var _this = this
       _this.$q.notify({
         message: _this.$t(text),
-        color: "red",
-        position: "top-right",
-        actions: [{ icon: "close", color: "white" }],
+        color: 'red',
+        position: 'top-right',
+        actions: [{ icon: 'close', color: 'white' }],
         timeout: 6000
-      });
+      })
     },
 
-    showSnackbarSuccess: function(text) {
-      var _this = this;
+    showSnackbarSuccess: function (text) {
+      var _this = this
       _this.$q.notify({
         message: _this.$t(text),
-        color: "green",
-        position: "top-right",
-        actions: [{ icon: "close", color: "white" }],
+        color: 'green',
+        position: 'top-right',
+        actions: [{ icon: 'close', color: 'white' }],
         timeout: 3000
-      });
+      })
     },
 
-    startEditMode: function() {
-      this.bCreate = false;
-      this.bEdit = true;
+    startEditMode: function () {
+      this.bCreate = false
+      this.bEdit = true
     },
 
-    startCreateMode: function() {
-      this.bCreate = true;
-      this.bEdit = false;
+    startCreateMode: function () {
+      this.bCreate = true
+      this.bEdit = false
 
       var tmp = {
         active: 1,
         only_editable_by_creator: 1,
         questions: []
-      };
+      }
 
-      if (!this.oSurvey) this.oSurvey = this.copyObject(tmp);
-      if (!this.oSurveyOld) this.oSurveyOld = this.copyObject(tmp);
+      if (!this.oSurvey) this.oSurvey = this.copyObject(tmp)
+      if (!this.oSurveyOld) this.oSurveyOld = this.copyObject(tmp)
     },
 
-    copyObject(obj) {
+    copyObject (obj) {
       if (typeof obj != "undefined") {
         var copy = JSON.parse(JSON.stringify(obj));
         if (copy) return copy;
       }
     },
 
-    isSaved() {
-      var bReturn = true;
-      var itemL = this.copyObject(this.oSurvey);
-      var itemR = this.copyObject(this.oSurveyOld);
+    isSaved () {
+      var bReturn = true
+      var itemL = this.copyObject(this.oSurvey)
+      var itemR = this.copyObject(this.oSurveyOld)
 
       if (itemL && itemR) {
         // Differences
         if (JSON.stringify(itemR) != JSON.stringify(itemL)) {
           // console.log(JSON.stringify(itemR), JSON.stringify(itemL));
-          bReturn = false;
+          bReturn = false
         } else {
-          bReturn = true;
+          bReturn = true
         }
       }
-      return bReturn;
+      return bReturn
     },
 
-    isUnsaved() {
-      return !this.isSaved();
+    isUnsaved () {
+      return !this.isSaved()
     },
 
-    updateSurvey: function() {
-      var _t = this;
-      this.bIsLoading = true;
+    restoreSurvey: function () {
+      this.oSurvey = this.copyObject(this.oSurveyOld)
+    },
+
+    updateSurvey: function () {
+      var _t = this
+      this.bIsLoading = true
 
       // Update Users
       this.$store
-        .dispatch("surveys/updateSurvey", {
+        .dispatch('surveys/updateSurvey', {
           survey: _t.oSurvey,
           delete_questions_ids: _t.aDeleteQuestionsIds,
           delete_options_ids: _t.aDeleteOptionsIds
         })
-        .then(function(e) {
+        .then(function (e) {
           // Success
           if (!e || !e.response || !e.response.data || !e.response.data.error) {
-            _t.showSnackbarSuccess(_t.$t("data_saved"));
-            _t.oSurvey = _t.copyObject(e.data);
-            _t.oSurveyOld = _t.copyObject(e.data);
+            _t.showSnackbarSuccess(_t.$t('data_saved'))
+            _t.oSurvey = _t.copyObject(e.data)
+            _t.oSurveyOld = _t.copyObject(e.data)
 
             if (_t.bCreate) {
               _t.$router.push({
-                name: "backend.survey",
+                name: 'backend.survey',
                 params: {
                   id: _t.oSurvey.id
                 }
-              });
+              })
             }
-
-            _t.aDeleteQuestionsIds = [];
-            _t.aDeleteOptionsIds = [];
-
-            _t.startEditMode();
+            _t.aDeleteQuestionsIds = []
+            _t.aDeleteOptionsIds = []
+            _t.startEditMode()
           }
           _t.bIsLoading = false;
         })

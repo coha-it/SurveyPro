@@ -172,5 +172,7 @@
     "de": "Deutsch",
     "en": "Englisch",
     "es": "Spanisch",
-    "zh-CN": "Chinesisch"
-  }
+    "zh-CN": "Chinesisch",
+    "description_mods": "Beschreibung Moderatoren",
+    "description_public": "Beschreibung Öffentlich"
+}
