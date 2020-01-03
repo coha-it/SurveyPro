@@ -15,3 +15,19 @@ html body {
 .main-body {
   flex: auto;
 }
+
+.nav-flex {
+  .scroll {
+    & > div {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      & > div {
+        &:first-of-type {
+          flex: auto;
+        }
+      }
+    }
+  }
+}

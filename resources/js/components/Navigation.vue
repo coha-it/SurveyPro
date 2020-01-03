@@ -1,8 +1,8 @@
 <template>
     <q-drawer show-if-above v-model="bLeft" side="left" bordered @input="callToggleNavigation">
       <!-- drawer content -->
-      <q-scroll-area class="fit">
-
+      <q-scroll-area class="fit nav-flex">
+            <div style="flex: auto">
               <q-item>
                 <q-item-section top thumbnail class="q-ml-none">
                     <img :src="'/storage/corporate-happiness-gmbh.svg'" />
@@ -42,7 +42,7 @@
                 </q-item>
 
               </q-list>
-
+            </div>
 
             <!-- Bottom of Sidenav -->
             <div style="position: sticky; bottom: 0;" class="q-pa-sm bg-white">
@@ -50,7 +50,6 @@
               <q-btn block outline depressed :label="$t('logout.btn')" color="grey" @click="logoutDialog = true" class="full-width" />
             <!-- </q-footer> -->
             </div>
-
       </q-scroll-area>
       <q-dialog v-model="logoutDialog">
           <q-card>
