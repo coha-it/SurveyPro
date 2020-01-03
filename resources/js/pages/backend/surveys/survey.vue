@@ -1105,6 +1105,7 @@
                                                 :footer-props="{
                                                   showFirstLastPage: true,
                                                 }"
+                                                :pagination.sync="oOptionsPagination"
                                                 class="my-data-table f-height options-table"
                                               >
                                                 <template v-slot:header-cell-order="props">
@@ -1331,27 +1332,29 @@
                                                     </q-td>
                                                   </q-tr>
                                                 </template>
-                                                <template v-slot:bottom>
-                                                  <q-btn
-                                                    label="Neue Option hinzufügen"
-                                                    color="primary"
-                                                    icon="plus_one"
-                                                    unelevated
-                                                    rounded
-                                                    outline
-                                                    @click="addNewOption(props.row)"
-                                                  />
-                                                  &nbsp;
-                                                  &nbsp;
-                                                  <q-btn
-                                                    label="Letzte Option duplizieren"
-                                                    color="primary"
-                                                    icon="control_point_duplicate"
-                                                    unelevated
-                                                    rounded
-                                                    outlined
-                                                    @click="duplicateLastOption(item)"
-                                                  />
+                                                <template v-slot:bottom-row>
+                                                  <q-td colspan="100%">
+                                                    <q-btn
+                                                      label="Neue Option hinzufügen"
+                                                      color="primary"
+                                                      icon="plus_one"
+                                                      unelevated
+                                                      rounded
+                                                      outline
+                                                      @click="addNewOption(props.row)"
+                                                    />
+                                                    &nbsp;
+                                                    &nbsp;
+                                                    <q-btn
+                                                      label="Letzte Option duplizieren"
+                                                      color="primary"
+                                                      icon="control_point_duplicate"
+                                                      unelevated
+                                                      rounded
+                                                      outlined
+                                                      @click="duplicateLastOption(props.row)"
+                                                    />
+                                                  </q-td>
                                                 </template>
                                               </q-table>
                                             </template>
@@ -1627,6 +1630,9 @@ export default {
       sOptionSearch: '',
       bDeleteOptionDialog: false,
       iOptionsPerPage: 50,
+      oOptionsPagination: {
+        rowsPerPage: 100
+      },
       aOptionHeaders: [
         {
           label: 'Reihenfolge',
