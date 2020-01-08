@@ -1025,6 +1025,52 @@
                                             </div>
                                           </q-item-section>
                                         </q-item>
+                                        <q-item>
+                                          <q-item-section>
+                                            <q-select
+                                              v-model="props.row.format"
+                                              outlined
+                                              :options="question_formats"
+                                              option-value="id"
+                                              option-label="label"
+                                              label="Darstellungs-Format (für Frage-Optionen)"
+                                              emit-value
+                                              map-options
+                                              required
+                                            >
+                                              <!-- <template v-slot:selected>
+                                                Ausgewählt:
+                                                <q-chip
+                                                  v-if="props.row.id"
+                                                  dense
+                                                  square
+                                                  color="white"
+                                                  text-color="primary"
+                                                  class="q-my-none q-ml-xs q-mr-none"
+                                                >
+                                                  <q-avatar color="primary" text-color="white" :icon="props.row.icon" />
+                                                  {{ props.row.label }}
+                                                </q-chip>
+                                                <q-badge v-else>Bitte auswählen</q-badge>
+                                              </template> -->
+
+                                              <template v-slot:option="scope">
+                                                <q-item
+                                                  v-bind="scope.itemProps"
+                                                  v-on="scope.itemEvents"
+                                                >
+                                                  <q-item-section avatar>
+                                                    <q-icon :name="scope.opt.icon" />
+                                                  </q-item-section>
+                                                  <q-item-section>
+                                                    <q-item-label v-html="scope.opt.label" />
+                                                    <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+                                                  </q-item-section>
+                                                </q-item>
+                                              </template>
+                                            </q-select>
+                                          </q-item-section>
+                                        </q-item>
                                       </q-list>
                                     </div>
                                   </div>
@@ -1553,6 +1599,43 @@ export default {
 
       // Questions Extended (local storage)
       questions_extended: [],
+
+      // Question Formats
+      question_formats: [
+        {
+          label: 'Slider Horizontal "slider"',
+          id: 'slider',
+          description: 'Slider 10er Horizontal',
+          fixed_options: 1,
+          icon: 'swap_horiz'
+        },
+        {
+          label: 'Slider Vertikal "slider_vert"',
+          id: 'slider_vert',
+          description: 'Slider 10er Vertikal',
+          fixed_options: 1,
+          icon: 'swap_vert'
+        },
+        {
+          label: 'Dropdown-Feld "dropdown"',
+          id: 'dropdown',
+          description: 'Dropdown Field',
+          fixed_options: 1,
+          icon: 'arrow_drop_down_circle'
+        },
+        {
+          label: 'Checkboxes / Kontrollkästchen "checkboxes"',
+          id: 'checkboxes',
+          description: 'Checkboxes / Select-Fields',
+          icon: 'check_box'
+        },
+        {
+          label: 'Nur Text "text_only"',
+          id: 'text_only',
+          description: 'Nur Text "text_only"',
+          icon: 'textsms'
+        }
+      ],
 
       // Icons
       help_icon: 'help_outline',
