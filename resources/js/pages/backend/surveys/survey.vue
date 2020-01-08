@@ -805,7 +805,7 @@
                                 <div colspan="100%" style="display: contents; display: initial">
                                   <br>
                                   <div class="row">
-                                    <div class="col" xl="12" sm="12" xs="12">
+                                    <div class="col col-12 col-sm-6 col-md-6">
                                       <q-list subheader two-line flat>
                                         <q-item-label header>
                                           Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}
@@ -906,7 +906,7 @@
                                       </q-list>
                                     </div>
 
-                                    <div class="col" xl="12" sm="12" xs="12">
+                                    <div class="col col-12 col-sm-6 col-md-6">
                                       <q-list subheader two-line flat>
                                         <q-item-label header>Kommentar-Einstellungen</q-item-label>
 
