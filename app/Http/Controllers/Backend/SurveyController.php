@@ -80,7 +80,7 @@ class SurveyController extends Controller
         }
     }
 
-    public function updateOrCreateQuestions($survey, $reqQuestions)
+    public function updateOrCreateQuestions($self, $survey, $reqQuestions)
     {
         // Go Through all Requested Questions
         foreach ($reqQuestions as $i => $reqQuestion)
@@ -94,6 +94,7 @@ class SurveyController extends Controller
 
             if($bIsNew) {
                 unset($tmp['id']);
+                $tmp['created_by'] = $self->id;
                 $question = $survey->questions()->updateOrCreate($tmp);
             }
             else {
@@ -125,7 +126,7 @@ class SurveyController extends Controller
         $this->connectSurveyAndGroups($self, $survey, $reqSurvey['groups'] ?? []);
 
         // UpdateOrCreate the questions (and options)
-        $this->updateOrCreateQuestions($survey, $reqSurvey['questions'] ?? []);
+        $this->updateOrCreateQuestions($self, $survey, $reqSurvey['questions'] ?? []);
 
         // Try to Delete some Questions Options
         $this->deleteQuestionOptions($survey, $request);

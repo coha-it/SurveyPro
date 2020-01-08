@@ -172,8 +172,8 @@
                 <q-item>
                   <q-item-section side top>
                     <q-checkbox
-                      :disable="surveyIsUneditable()"
                       v-model="oSurvey.active"
+                      :disable="surveyIsUneditable()"
                       color="primary"
                       :true-value="1"
                       :false-value="0"
@@ -190,8 +190,8 @@
                 <q-item>
                   <q-item-section side top>
                     <q-checkbox
-                      :disable="surveyIsUneditable()"
                       v-model="oSurvey.only_editable_by_creator"
+                      :disable="surveyIsUneditable()"
                       color="primary"
                       :true-value="1"
                       :false-value="0"
@@ -208,8 +208,8 @@
                 <q-item>
                   <q-item-section side top>
                     <q-checkbox
-                      :disable="surveyIsUneditable()"
                       v-model="oSurvey.is_public"
+                      :disable="surveyIsUneditable()"
                       color="red"
                       :true-value="1"
                       :false-value="0"
@@ -230,6 +230,8 @@
                         v-model="bExtendedSettings"
                         :disabled="oSurvey.is_finished == 1 || oSurvey.is_canceled == 1"
                         color="primary"
+                        :true-value="1"
+                        :false-value="0"
                       />
                     </q-item-section>
                     <q-item-section>
@@ -242,8 +244,8 @@
                     <q-item>
                       <q-item-section side top>
                         <q-checkbox
-                          color="error"
                           v-model="oSurvey.is_finished"
+                          color="error"
                           :true-value="1"
                           :false-value="0"
                           :disable="surveyIsUneditable()"
@@ -258,9 +260,9 @@
                     <q-item>
                       <q-item-section side top>
                         <q-checkbox
+                          v-model="oSurvey.is_canceled"
                           :disable="surveyIsUneditable()"
                           color="error"
-                          v-model="oSurvey.is_canceled"
                           :true-value="1"
                           :false-value="0"
                         />
@@ -424,7 +426,6 @@
                               label="Endet um"
                               readonly
                               :rules="required"
-                              disabled
                               icon="schedule"
                               standout
                             >
@@ -631,7 +632,12 @@
                         <q-tr :props="props">
                           <!-- Selected -->
                           <q-td>
-                            <q-checkbox v-model="props.selected" dense />
+                            <q-checkbox
+                              v-model="props.selected"
+                              dense
+                              :true-value="1"
+                              :false-value="0"
+                            />
                           </q-td>
 
                           <q-td key="order" :props="props">
@@ -918,7 +924,7 @@
                                             <q-item-section side top>
                                               <q-checkbox
                                                 v-model="props.row.comment_is_required"
-                                                :disable="surveyIsUneditable() && props.row.is_commentable"
+                                                :disable="(surveyIsUneditable() && props.row.is_commentable) ? true : false"
                                                 color="primary"
                                                 :true-value="1"
                                                 :false-value="0"
@@ -1039,8 +1045,7 @@
                                                 dark
                                                 floating
                                                 min-height="85px"
-                                                height="auto"
-                                              >
+                                                height="auto">
                                                 <span>
                                                   <q-btn label="Löschen" icon="delete" flat rounded unelevated />
                                                   <q-popup-edit
@@ -1086,6 +1091,7 @@
                                                 floating
                                                 min-height="85px"
                                                 height="auto">
+
                                                 <div class="flex-grow-1"></div>
                                               </q-toolbar>
 
@@ -1162,7 +1168,12 @@
                                                   <q-tr :props="option">
                                                     <!-- Selected -->
                                                     <q-td>
-                                                      <q-checkbox v-model="option.selected" dense />
+                                                      <q-checkbox
+                                                        v-model="option.selected"
+                                                        dense
+                                                        :true-value="1"
+                                                        :false-value="0"
+                                                      />
                                                     </q-td>
 
                                                     <!-- Order -->
@@ -1375,7 +1386,7 @@
                 </q-item>
 
                 <q-item>
-                  <q-btn name="Neue Frage hinzufügen" icon="plus_one" @click="addNewQuestion()" />&nbsp; &nbsp;
+                  <q-btn label="Neue Frage hinzufügen" icon="plus_one" @click="addNewQuestion()" />&nbsp; &nbsp;
                   <q-btn
                     :disabled="oSurvey.questions.length <= 0"
                     color="primary"
@@ -1475,7 +1486,15 @@
               </q-page-sticky> -->
 
               <q-page-sticky position="bottom-right" :offset="[18, 18]" style="z-index: 999">
-                <q-btn v-show="isUnsaved()" fab icon="mdi-content-save" color="green" size="md" @click="updateSurvey" />
+                <q-btn
+                  v-show="isUnsaved()"
+                  :disable="surveyIsUneditable()"
+                  fab
+                  icon="mdi-content-save"
+                  color="green"
+                  size="md"
+                  @click="updateSurvey"
+                />
                 <q-fab icon="arrow_drop_up" direction="up" color="grey">
                   <q-fab-action fab dark small color="warning" icon="mdi-restore" @click="restoreSurvey" />
                 </q-fab>
@@ -2100,7 +2119,7 @@ export default {
       }
     },
 
-    duplicateLastOption(question) {
+    duplicateLastOption (question) {
       var oLast = question.options[question.options.length - 1];
       this.duplicateOption(oLast, question);
     },
@@ -2184,11 +2203,11 @@ export default {
     },
 
     surveyIsEditable () {
-      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate
+      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate ? true : false
     },
 
     surveyIsUneditable () {
-      return !this.surveyIsEditable()
+      return !this.surveyIsEditable() ? true : false
     },
 
     getMaxEndDate (date) {
@@ -2521,7 +2540,7 @@ export default {
           _t.bIsLoading = false;
         })
         .catch(function(e) {
-          console.log(e);
+          console.log(e)
           // Error
           if (e.reponse && e.reponse.data && e.response.data.error) {
             var errText = "";
@@ -2530,9 +2549,9 @@ export default {
             }
           }
 
-          _t.showSnackbarError(_t.$t("data_unsaved") + "<br />" + errText);
-          _t.bIsLoading = false;
-        });
+          _t.showSnackbarError(_t.$t('data_unsaved') + '<br />' + errText);
+          _t.bIsLoading = false
+        })
     }
   }
 };
