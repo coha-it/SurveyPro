@@ -811,6 +811,12 @@
                                           Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}
                                         </q-item-label>
                                         <q-item>
+                                          <q-item-section>
+                                            <q-btn color="primary" label="Vorlage laden" @click="askLoadPreset(props.row)" />
+                                          </q-item-section>
+                                        </q-item>
+
+                                        <q-item>
                                           <q-item-section side top>
                                             <q-checkbox
                                               v-model="props.row.is_skippable"
@@ -1038,21 +1044,20 @@
                                               map-options
                                               required
                                             >
-                                              <!-- <template v-slot:selected>
-                                                Ausgewählt:
-                                                <q-chip
-                                                  v-if="props.row.id"
-                                                  dense
-                                                  square
-                                                  color="white"
-                                                  text-color="primary"
-                                                  class="q-my-none q-ml-xs q-mr-none"
+                                              <template v-slot:selected-item="scope">
+                                                <q-item
+                                                  v-bind="scope.itemProps"
+                                                  v-on="scope.itemEvents"
                                                 >
-                                                  <q-avatar color="primary" text-color="white" :icon="props.row.icon" />
-                                                  {{ props.row.label }}
-                                                </q-chip>
-                                                <q-badge v-else>Bitte auswählen</q-badge>
-                                              </template> -->
+                                                  <q-item-section avatar>
+                                                    <q-icon :name="scope.opt.icon" />
+                                                  </q-item-section>
+                                                  <q-item-section>
+                                                    <q-item-label v-html="scope.opt.label" />
+                                                    <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+                                                  </q-item-section>
+                                                </q-item>
+                                              </template>
 
                                               <template v-slot:option="scope">
                                                 <q-item
@@ -1600,6 +1605,122 @@ export default {
       // Questions Extended (local storage)
       questions_extended: [],
 
+      // Question Presets
+      question_presets: [
+        {
+          label: 'Auswählen',
+          readonly: true,
+          disable: true,
+          value: '',
+          id: '',
+          color: 'secondary'
+        },
+        {
+          label: 'Schulnoten (6 bis 1)',
+          value: 'school_notes',
+          id: 'school_notes',
+          load: function(_t, question) {
+            // Load School-Notes Preset:
+            var aNotes = '6 6+ 5- 5 5+ 4- 4 4+ 3- 3 3+ 2- 2 2+ 1- 1'.split(' ')
+            console.log(aNotes)
+          }
+        },
+        {
+          label: '10er Slider',
+          value: 'slider_ten',
+          id: 'slider_ten',
+          load: function(_t, question) {
+            for (let i = 1; i <= 10; i++) {
+              var c = '#C6C6C6',
+                  v = 0,
+                  t = i,
+                  s = '',
+                  d = ''
+
+              switch (i) {
+                case 1:
+                  c = '#cf6035'
+                  s = 'Trifft nicht zu'
+                  d = 'Trifft eher nicht zu'
+                  v = -4
+                  break;
+
+                case 2:
+                  c = '#cf6035'
+                  v = -3
+                  break;
+
+                case 3:
+                  c = '#cf8c36'
+                  v = -2
+                  break;
+
+                case 4:
+                  v = -1
+                  break;
+
+                case 5:
+                  v = 0
+                  break;
+
+                case 6:
+                  v = 1
+                  break;
+
+                case 7:
+                  c = '#7ea680'
+                  v = 2
+                  break;
+
+                case 8:
+                  c = '#55a559'
+                  v = 3
+                  break;
+
+                case 9:
+                  c = '#55a559'
+                  v = 4
+                  break;
+
+                case 10:
+                  c = '#55a559'
+                  v = 5
+                  break;
+
+                default:
+                  break;
+              }
+
+              _t.addOption({
+                id: _t.getRandomId(),
+                question_id: question.id,
+                title: t,
+                value: v,
+                color: c,
+                subtitle: s,
+                description: d
+              }, question)
+            }
+          }
+        },
+        {
+          label: '3er Slider',
+          value: 'slider_three',
+          id: 'slider_three',
+          load: function(_t, question) {
+            console.log(question)
+          }
+        },
+        {
+          label: 'Ja / Nein',
+          value: 'yes_or_no',
+          id: 'yes_or_no',
+          load: function(_t, question) {
+            console.log(question)
+          }
+        }
+      ],
+
       // Question Formats
       question_formats: [
         {
@@ -1935,6 +2056,37 @@ export default {
   },
 
   methods: {
+    askLoadPreset (question) {
+      console.log(question)
+      this.$q.dialog({
+        title: 'Frage-Vorlage Laden',
+        message: 'Vorsicht: für die Frage #' + question.id + ' "'+ question.title +'" werden alle Einstellungen überschrieben',
+        options: {
+          type: 'radio',
+          model: 'opt1',
+          // inline: true
+          items: this.question_presets
+        },
+        cancel: true,
+        persistent: false
+      }).onOk(selected => {
+        // Get specific Presets
+        var preset = this.findById(this.question_presets, selected)
+
+        // If Preset Exists
+        if(preset && preset.load) {
+          // Do Basic for Presets
+          this.deleteOptions(question.options)
+
+          // Load Preset into Question
+          preset.load(this, question)
+        }
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
+    },
 
     routerCheckLeaving () {
       this.$router.beforeEach((to, from, next) => {
@@ -2081,26 +2233,37 @@ export default {
       this.bDeleteQuestionDialog = false
     },
 
-    deleteOption (option, question) {
-      // Get Option's Position inside Question
-      var pos = this.getPositionById(option, question.options)
-
-      // Remove from Question-Options
-      question.options.splice(pos, 1)
-
-      // Push into delete_questions
-      this.aDeleteOptionsIds.push(option.id)
-
-      // Reorder Questions
-      this.reorderOptions(question)
+    deleteOption (o, q) {
+      this.deleteOptionBackend(o)
+      this.deleteOptionFrontend(o, q)
     },
 
-    deleteOptions (aSelecteds) {
-      for (const i in aSelecteds) {
-        var oSelected = aSelecteds[i]
-        var oQuestion = this.findById(this.oSurvey.questions, oSelected.question_id)
+    deleteOptionBackend (option) {
+      // Push into delete_questions
+      this.aDeleteOptionsIds.push(option.id)
+    },
 
-        this.deleteOption(oSelected, oQuestion)
+    deleteOptionFrontend (option, question) {
+      var pos = this.getPositionById(option, question.options) // Get Option's Position inside Question
+      question.options.splice(pos, 1) // Remove from Question-Options
+      this.reorderOptions(question) // Reorder Options
+    },
+
+    deleteOptions (aOptions) {
+      // Vars
+      var aQs = this.oSurvey.questions
+
+      // Delete for Request
+      for (const i in aOptions) {
+        var o = aOptions[i]
+        this.deleteOptionBackend(o)
+      }
+
+      // Delete for Frontend
+      for (var i = aOptions.length-1; i >= 0; i--) {
+        var o = aOptions[i]
+        var q = this.findById(aQs, o.question_id)
+        this.deleteOptionFrontend(o, q)
       }
 
       // Empty Selected
@@ -2173,11 +2336,11 @@ export default {
       return parseInt(Date.now() + Math.random() * 1000)
     },
 
-    addOption (o, question) {
+    addOption (option, question) {
       var aO = question.options
-      o.order = aO.length + 1
-      aO.push(o)
-      return o
+      option.order = aO.length + 1
+      aO.push(option)
+      return option
     },
 
     addNewOption (question) {
