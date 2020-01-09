@@ -25,22 +25,25 @@
 
               <br>
 
-              <q-list v-for="(cat, key) in sidenav" v-bind:key="key">
+              <q-list
+                v-for="(cat, key) in sidenav"
+                v-bind:key="key"
+              >
+                <template v-if="(cat.hide_for_pan && user.pan && user.pan.pan) ? false : true">
+                  <template v-if="cat.title">
+                    <q-separator spaced />
+                    <q-item-label header>Verwaltung</q-item-label>
+                  </template>
 
-                <template v-if="cat.title">
-                  <q-separator spaced />
-                  <q-item-label header>List Header</q-item-label>
+                  <q-item color="red" exact :to="item.route" v-for="item in cat.pages" :key="item.title" clickable v-ripple>
+                    <q-item-section avatar>
+                      <q-icon :name="item.icon" />
+                    </q-item-section>
+                    <q-item-section>
+                      {{ $t( item.title) }}
+                    </q-item-section>
+                  </q-item>
                 </template>
-
-                <q-item color="red" exact :to="item.route" v-for="item in cat.pages" :key="item.title" clickable v-ripple>
-                  <q-item-section avatar>
-                    <q-icon :name="item.icon" />
-                  </q-item-section>
-                  <q-item-section>
-                    {{ $t( item.title) }}
-                  </q-item-section>
-                </q-item>
-
               </q-list>
             </div>
 

@@ -33,6 +33,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('/user', 'User\UserController@self');
 
+    // Get Surveys for Filling Users
+    // Route::get('surveys/allowed', 'Survey');
+
+    // Only Email Users
     Route::group(['middleware' => ['auth.user.email' ] ], function() {
         Route::patch('settings/profile', 'Settings\ProfileController@update');
         Route::patch('settings/password', 'Settings\PasswordController@update');
@@ -57,10 +61,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::patch('location/update', 'User\UserController@updateLocation');
 
         // Groups
-        Route::get('groups-moderating', 'Backend\GroupController@getGroupsModerating'); // Moderating Groups
-        Route::get('get-group', 'Backend\GroupController@getGroup'); // Get Group Content
-        Route::post('group/create', 'Backend\GroupController@createGroup');
-        Route::patch('group/update', 'Backend\GroupController@updateGroup');
+        Route::get('groups-moderating', 'Backend\BackendGroupController@getGroupsModerating'); // Moderating Groups
+        Route::get('get-group', 'Backend\BackendGroupController@getGroup'); // Get Group Content
+        Route::post('group/create', 'Backend\BackendGroupController@createGroup');
+        Route::patch('group/update', 'Backend\BackendGroupController@updateGroup');
 
         // Get Users
         Route::get('users-created', 'Backend\BackendController@getCreatedUsers'); // Created Users
@@ -69,8 +73,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('get-random-pan', 'Backend\BackendController@getRandomPan');
 
         // Update Users Groups
-        Route::post('add-user-to-group', 'Backend\GroupController@addUserToGroup');
-        Route::post('remove-user-from-group', 'Backend\GroupController@removeUserFromGroup');
+        Route::post('add-user-to-group', 'Backend\BackendGroupController@addUserToGroup');
+        Route::post('remove-user-from-group', 'Backend\BackendGroupController@removeUserFromGroup');
 
         // Change User(s)
         Route::patch('update-created-users', 'Backend\BackendController@updateCreatedUsers');
@@ -81,16 +85,16 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['middleware' => ['auth.user.can_create_surveys'], 'prefix' => 'backend' ], function()
         {
             // Get Survey(s)
-            Route::get('surveys-allowed', 'Backend\SurveyController@getAllowedSurveys');
-            Route::get('survey-allowed',  'Backend\SurveyController@getAllowedSurvey')->name('backend.survey');
+            Route::get('surveys-allowed', 'Backend\BackendSurveyController@getAllowedSurveys');
+            Route::get('survey-allowed',  'Backend\BackendSurveyController@getAllowedSurvey')->name('backend.survey');
 
             // Change Surveys
-            Route::patch('update-allowed-survey', 'Backend\SurveyController@tryUpdateAllowedSurvey');
-            Route::patch('delete-allowed-survey', 'Backend\SurveyController@deleteSurvey');
-            Route::post('create-survey', 'Backend\SurveyController@createUsers');
+            Route::patch('update-allowed-survey', 'Backend\BackendSurveyController@tryUpdateAllowedSurvey');
+            Route::patch('delete-allowed-survey', 'Backend\BackendSurveyController@deleteSurvey');
+            Route::post('create-survey', 'Backend\BackendSurveyController@createUsers');
 
             // Delete Questions
-            Route::patch('delete-questions', 'Backend\SurveyController@deleteQuestions');
+            Route::patch('delete-questions', 'Backend\BackendSurveyController@deleteQuestions');
         });
     });
 });

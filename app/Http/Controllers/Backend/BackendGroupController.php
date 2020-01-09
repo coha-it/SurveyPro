@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\User as User;
 use App\Group as Group;
 
-class GroupController extends Controller
+class BackendGroupController extends Controller
 {
 
     /**
@@ -19,8 +19,8 @@ class GroupController extends Controller
     public function __construct()
     {
         $this->middleware([
-            'auth', 
-            'auth.user.email', 
+            'auth',
+            'auth.user.email',
             'auth.user.can_create_users'
         ]);
     }
@@ -36,7 +36,7 @@ class GroupController extends Controller
             'id' => 'required|int'
         ]);
 
-        
+
         $group = $request->user()->groupsModerating->find($request->id);
         $response = $group->toArray();
         $response['users'] = $group->users;
@@ -44,7 +44,7 @@ class GroupController extends Controller
         return $response;
     }
 
-    public function createGroup(Request $request) 
+    public function createGroup(Request $request)
     {
         $request->validate([
             'item' => 'required',
@@ -61,7 +61,7 @@ class GroupController extends Controller
         ]);
 
         $g->moderators()->sync([
-            $self->id => [    
+            $self->id => [
                 'is_mod' => 1,
                 'is_member' => 0
             ],

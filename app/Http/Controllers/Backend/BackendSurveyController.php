@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Survey as Survey;
 use App\Question as Question;
 
-class SurveyController extends Controller
+class BackendSurveyController extends Controller
 {
     /**
      * Create a new controller instance.

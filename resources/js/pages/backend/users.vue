@@ -508,7 +508,7 @@
                                                             <div v-bind:key="group.id">
                                                               <q-item>
                                                                 <q-item-section top avatar>
-                                                                  <q-avatar color="primary" text-color="white" icon="account-multiple" />
+                                                                  <q-avatar color="primary" text-color="white" icon="mdi-account-multiple" />
                                                                 </q-item-section>
 
                                                                 <q-item-section>
@@ -559,7 +559,7 @@
                                                             <div v-bind:key="group.id">
                                                               <q-item :disabled="alreadyInGroups(group, props.row.groups)">
                                                                 <q-item-section top avatar>
-                                                                  <q-avatar color="primary" text-color="white" icon="account-multiple-plus" />
+                                                                  <q-avatar color="primary" text-color="white" icon="mdi-account-multiple-plus" />
                                                                 </q-item-section>
 
                                                                 <q-item-section>
