@@ -783,6 +783,13 @@
                             </q-popup-edit>
                           </q-td>
 
+                          <!-- ID -->
+                          <q-td auto-width>
+                            <span>
+                              <small style="word-break: break-all">{{ props.row.id }}</small>
+                            </span>
+                          </q-td>
+
                           <q-td key="expand" :props="props">
                             <q-btn
                               dense
@@ -1325,31 +1332,41 @@
 
                                                     <!-- Color -->
                                                     <q-td>
-                                                      <q-btn
-                                                        class="c-code-text text-white"
-                                                        icon-right="colorize"
-                                                        unelevated
-                                                        rounded
-                                                        size="md"
-                                                        :style="'text-transform: uppercase; background-color: ' + option.row.color"
-                                                      >
-                                                        {{ option.row.color }}&nbsp;
-                                                        <q-popup-proxy transition-show="scale" transition-hide="scale">
-                                                          <q-color
-                                                            v-model="option.row.color"
-                                                            :palette="colorPalette"
-                                                            default-view="palette"
-                                                          />
-                                                        </q-popup-proxy>
-                                                      </q-btn>
+      <q-btn
+        class="c-code-text"
+        unelevated
+        rounded
+        size="md"
+        :style="'text-transform: uppercase; background-color: ' + option.row.color"
+      >
+        <span :class="getNegativeColor(option.row.color)">
+          {{  option.row.color || 'no color'  }}
+        </span>
+        <q-popup-proxy transition-show="scale" transition-hide="scale">
+          <q-color
+            v-model="option.row.color"
+            :palette="colorPalette"
+            default-view="palette"
+          />
+        </q-popup-proxy>
+      </q-btn>
+      <q-btn size="sm" icon="clear" rounded flat round @click="option.row.color = ''" />
+
+                                                    </q-td>
+
+                                                    <!-- ID -->
+                                                    <q-td auto-width>
+                                                      <span>
+                                                        <small style="word-break: break-all">{{ option.row.id }}</small>
+                                                      </span>
                                                     </q-td>
 
                                                     <!-- Actions -->
-                                                    <q-td>
+                                                    <q-td auto-width>
                                                       <!-- Delete - Dialog -->
                                                       <q-btn
                                                         unelevated
-                                                        rounded
+                                                        round
                                                         outlined
                                                         color="red"
                                                         dark
@@ -1622,10 +1639,17 @@ export default {
           }
         },
         {
-          label: '10er Slider',
+          label: '1 bis 10 Slider',
           value: 'slider_ten',
           id: 'slider_ten',
           load: function(_t, question) {
+
+            // Change Question
+            question.format = 'slider'
+            question.min_options = 1
+            question.max_options = 1
+
+            // Change Options
             for (let i = 1; i <= 10; i++) {
               var c = '#C6C6C6',
                   v = 0,
@@ -1694,7 +1718,64 @@ export default {
                 value: v,
                 color: c,
                 subtitle: s,
-                description: d
+                description: d,
+              }, question)
+            }
+          }
+        },
+        {
+          label: '1 bis 5 Slider',
+          value: 'slider_five',
+          id: 'slider_five',
+          load: function(_t, question) {
+
+            // Change Question
+            question.format = 'slider'
+            question.min_options = 1
+            question.max_options = 1
+
+            // Change Options
+            for (let i = 1; i <= 5; i++) {
+              var c = '#C6C6C6',
+                  v = 0,
+                  t = i,
+                  s = '',
+                  d = ''
+
+              switch (i) {
+                case 1:
+                  c = '#cf8c36'
+                  v = -2
+                  break;
+
+                case 2:
+                  v = -1
+                  break;
+
+                case 3:
+                  v = 0
+                  break;
+
+                case 4:
+                  v = 1
+                  break;
+
+                case 5:
+                  v = 2
+                  break;
+
+                default:
+                  break;
+              }
+
+              _t.addOption({
+                id: _t.getRandomId(),
+                question_id: question.id,
+                title: t,
+                value: v,
+                color: c,
+                subtitle: s,
+                description: d,
               }, question)
             }
           }
@@ -1807,28 +1888,35 @@ export default {
           label: 'Überspringbar',
           name: 'is_skippable',
           field: 'is_skippable',
-          align: null,
+          align: 'center',
           sortable: true
         },
         {
           label: 'Kommentierbar',
           name: 'is_commentable',
           field: 'is_commentable',
-          align: null,
+          align: 'center',
           sortable: true
         },
         {
           label: 'Mind. Optionen',
           name: 'min_options',
           field: 'min_options',
-          align: null,
+          align: 'center',
           sortable: true
         },
         {
           label: 'Max Optionen',
           name: 'max_options',
           field: 'max_options',
-          align: null,
+          align: 'center',
+          sortable: true
+        },
+        {
+          label: 'ID',
+          name: 'id',
+          field: 'id',
+          align: 'center',
           sortable: true
         },
         {
@@ -1895,6 +1983,13 @@ export default {
           name: 'color',
           field: 'color',
           align: 'left',
+          sortable: true
+        },
+        {
+          label: 'ID',
+          name: 'id',
+          field: 'id',
+          align: 'center',
           sortable: true
         },
         {
@@ -2054,6 +2149,66 @@ export default {
   },
 
   methods: {
+
+    getNegativeColor (color) {
+      if( this.isDark(color)) {
+        return 'text-white'
+      }
+      return 'text-black'
+    },
+
+    isLight (color) {
+      return this.lightOrDark(color) == 'light'
+    },
+
+    isDark (color) {
+      return this.lightOrDark(color) == 'dark'
+    },
+
+    lightOrDark (color) {
+
+      if(!color) return
+
+        // Variables for red, green, blue values
+        var r, g, b, hsp;
+
+        // Check the format of the color, HEX or RGB?
+        if (color.match(/^rgb/)) {
+
+            // If HEX --> store the red, green, blue values in separate variables
+            color = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
+
+            r = color[1];
+            g = color[2];
+            b = color[3];
+        }
+        else {
+
+            // If RGB --> Convert it to HEX: http://gist.github.com/983661
+            color = +("0x" + color.slice(1).replace(
+            color.length < 5 && /./g, '$&$&'));
+
+            r = color >> 16;
+            g = color >> 8 & 255;
+            b = color & 255;
+        }
+
+        // HSP (Highly Sensitive Poo) equation from http://alienryderflex.com/hsp.html
+        hsp = Math.sqrt(
+        0.299 * (r * r) +
+        0.587 * (g * g) +
+        0.114 * (b * b)
+        );
+
+        // Using the HSP value, determine whether the color is light or dark
+        if (hsp>127.5) {
+          return 'light';
+        }
+        else {
+          return 'dark';
+        }
+    },
+
     askLoadPreset (question) {
       console.log(question)
       this.$q.dialog({
@@ -2185,8 +2340,9 @@ export default {
       var entry = moment(d).format('YYYY-MM-DD')
       var start = moment(this.oSurvey.start_datetime).format('YYYY-MM-DD')
       var end = moment(this.oSurvey.end_datetime).format('YYYY-MM-DD')
+      var today = moment(this.sTodayDate).format('YYYY-MM-DD')
 
-      return entry >= start && entry <= end
+      return (entry >= start && entry <= end) || entry == today
     },
 
     eventColor (d) {
@@ -2346,7 +2502,7 @@ export default {
         {
           id: this.getRandomId(),
           question_id: question.id,
-          color: '#C6C6C6'
+          color: ''
         },
         question
       )
@@ -2808,5 +2964,9 @@ export default {
   border-radius: 0;
   bottom: 1px;
   height: 4px;
+}
+
+.q-date__today .q-date__event {
+  display: none;
 }
 </style>

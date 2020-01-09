@@ -73,6 +73,7 @@
   &:not(.sorted),
   &.sort-desc {
     background-color: red;
+    background-color: var(--q-color-error);
     color: #fff;
   }
 }

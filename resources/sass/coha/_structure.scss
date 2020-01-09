@@ -16,18 +16,18 @@ html body {
   flex: auto;
 }
 
-.nav-flex {
-  .scroll {
-    & > div {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+// .nav-flex {
+//   .scroll {
+//     & > div {
+//       display: flex;
+//       flex-direction: column;
+//       height: 100%;
 
-      & > div {
-        &:first-of-type {
-          flex: auto;
-        }
-      }
-    }
-  }
-}
+//       & > div {
+//         &:first-of-type {
+//           flex: auto;
+//         }
+//       }
+//     }
+//   }
+// }
