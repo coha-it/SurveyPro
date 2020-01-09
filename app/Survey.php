@@ -45,7 +45,8 @@ class Survey extends Model
      */
     protected $appends = [
         'url_full',
-        'is_editable'
+        'is_editable',
+        'is_fillable'
     ];
 
     // Attributes
@@ -58,6 +59,17 @@ class Survey extends Model
     {
         return $this->isEditable();
     }
+
+    // Only if the Survey is Fillable
+    // + If Its in current Process
+    // + If it is not already finished
+    public function getIsFillableAttribute() {
+        return
+            $this->isInProcess() &&
+            $this->isUnfinished();
+    }
+
+
 
     // Methods
     public function isEditable() {

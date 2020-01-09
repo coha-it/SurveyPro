@@ -260,7 +260,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
 
     /**
-     * Get the company record associated with the user.
+     * Get all the Allowed Surveys
      */
     public function allowedSurveys()
     {
@@ -272,6 +272,14 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
                 $this->groupSurveys()
             )
         ;
+    }
+
+    /**
+     * Get all the Fillable Surveys
+     */
+    public function fillableSurveys()
+    {
+        return $this->allowedSurveys()->where('is_fillable', true);
     }
 
     /**

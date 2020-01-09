@@ -2065,7 +2065,7 @@ export default {
   computed: {
     ...mapGetters({
       user: 'auth/user',
-      surveyAllowed: 'surveys/surveyAllowed'
+      surveyAllowed: 'surveys/backendSurveyAllowed'
     })
   },
 
@@ -2127,7 +2127,7 @@ export default {
     if (params.id == 'create') {
       this.startCreateMode()
     } else if (typeof id == 'number') {
-      this.$store.dispatch('surveys/fetchSurveyAllowed', id)
+      this.$store.dispatch('surveys/fetchBackendSurveyAllowed', id)
       this.startEditMode()
     } else {
       this.$router.push(this.oBackRoute)

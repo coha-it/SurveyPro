@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers;
 
-use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Survey as Survey;
-use App\Question as Question;
+
 
 class SurveyController extends Controller
 {
@@ -22,10 +20,19 @@ class SurveyController extends Controller
         ]);
     }
 
-    // // Get the Allowed Surveys
-    // public function getAllowedSurveys(Request $request) {
-    //     return $request->user()->allowedSurveys()->toJson();
-    // }
+    // Get the Allowed Surveys
+    public function getAllowedSurveys(Request $request) {
+        return json_encode(
+            $request->user()->allowedSurveys()->toArray()
+        );
+    }
+
+    // Get the Fillable Surveys
+    public function getFillableSurveys(Request $request) {
+        return json_encode(
+            $request->user()->fillableSurveys()->toArray()
+        );
+    }
 
     // // Get the Allowed Survey
     // public function getAllowedSurvey(Request $request) {

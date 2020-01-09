@@ -151,12 +151,12 @@ export default {
   computed: {
     ...mapGetters({
       user: 'auth/user',
-      surveysAllowed: 'surveys/surveysAllowed',
+      surveysAllowed: 'surveys/backendSurveysAllowed'
     })
   },
 
   created: function () {
-    this.$store.dispatch('surveys/fetchSurveysAllowed')
+    this.$store.dispatch('surveys/fetchBackendSurveysAllowed')
   }
 }
 

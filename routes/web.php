@@ -11,9 +11,8 @@
 |
 */
 
-Route::get('allowed-surveys', function() {
-    dd(Auth()->user()->allowedSurveys());
-});
+Route::get('allowed-surveys', 'SurveyController@getAllowedSurveys');
+Route::get('fillable-surveys', 'SurveyController@getFillableSurveys');
 
 Route::group(['middleware' => 'auth.user.admin'], function () {
     // // Test 2
