@@ -67,3 +67,12 @@
     }
   }
 }
+
+// Sort
+.should-be-sorted {
+  &:not(.sorted),
+  &.sort-desc {
+    background-color: red;
+    color: #fff;
+  }
+}

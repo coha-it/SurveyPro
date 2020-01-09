@@ -544,7 +544,7 @@
                       style="min-height:100px"
                       height="auto"
                     >
-                      <q-btn :label="selected.length + ' ' + $t('edit')" unelevated rounded icon="mdi-pencil" v-on="{ ...menuedit }">
+                      <q-btn :label="selected.length + ' ' + $t('edit')" unelevated rounded icon="mdi-pencil">
                         <q-menu right offset-y>
                           <q-list style="min-width: 100px">
                             <q-item v-close-popup clickable @click="duplicateSelectedQuestions()">
@@ -631,12 +631,10 @@
                       <template v-slot:body="props">
                         <q-tr :props="props">
                           <!-- Selected -->
-                          <q-td>
+                          <q-td auto-width>
                             <q-checkbox
                               v-model="props.selected"
                               dense
-                              :true-value="1"
-                              :false-value="0"
                             />
                           </q-td>
 
@@ -1166,7 +1164,7 @@
                                                 class="my-data-table f-height options-table"
                                               >
                                                 <template v-slot:header-cell-order="props">
-                                                  <q-th :props="props">
+                                                  <q-th :props="props" class="should-be-sorted">
                                                     <span>{{ props.col.label }}</span>
                                                     <q-icon name="sort" size="1.5em" />
                                                   </q-th>
@@ -1218,12 +1216,10 @@
                                                 <template v-slot:body="option">
                                                   <q-tr :props="option">
                                                     <!-- Selected -->
-                                                    <q-td>
+                                                    <q-td auto-width>
                                                       <q-checkbox
                                                         v-model="option.selected"
                                                         dense
-                                                        :true-value="1"
-                                                        :false-value="0"
                                                       />
                                                     </q-td>
 
@@ -1854,7 +1850,9 @@ export default {
       bDeleteOptionDialog: false,
       iOptionsPerPage: 50,
       oOptionsPagination: {
-        rowsPerPage: 100
+        rowsPerPage: 100,
+        sortBy: 'order',
+        descending: false,
       },
       aOptionHeaders: [
         {
