@@ -239,7 +239,28 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
 
     /**
-     * Get the company record associated with the user.
+     * Get Surveys where User is a Member
+     */
+    public function memberingSurveys()
+    {
+        return Survey::
+            join('survey_group',      'surveys.id',             '=', 'survey_group.survey_id')->
+            join('groups',            'groups.id',              '=', 'survey_group.group_id')->
+            join('group_user',        'group_user.group_id',    '=', 'groups.id')->
+            where('group_user.is_member', '=', 1)->
+            select(
+                'surveys.*',
+                'groups.id AS group_id',
+                'survey_group.survey_id AS survey_id',
+                'group_user.group_id'
+            )->
+            get()-> // Hols dir
+            unique('survey_id') // Eindeutige IDs
+        ;
+    }
+
+    /**
+     * Get the Surveys inside the Group
      */
     public function groupSurveys()
     {
@@ -279,7 +300,15 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function fillableSurveys()
     {
-        return $this->allowedSurveys()->where('is_fillable', true);
+        return $this->memberingSurveys()->where('is_fillable', true);
+    }
+
+    /**
+     * Get the Fillable Survey
+     */
+    public function fillableSurvey($id)
+    {
+        return $this->fillableSurveys()->find($id)->getSelfWithQuestions();
     }
 
     /**

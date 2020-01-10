@@ -68,6 +68,13 @@
   }
 }
 
+.q-table {
+  td, th {
+    /* don't shorten cell contents */
+    white-space: normal !important;
+  }
+}
+
 // Sort
 .should-be-sorted {
   &:not(.sorted),

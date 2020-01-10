@@ -33,8 +33,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('/user', 'User\UserController@self');
 
-    // Get all surveys allowed for the user
-    Route::get('surveys-allowed', 'SurveyController@getAllowedSurveys');
+    // Get all users surveys which he is membering
+    Route::get('surveys-membering', 'SurveyController@getMemberingSurveys');
+    Route::get('survey-fillable', 'SurveyController@getFillableSurvey');
 
     // Only Email Users
     Route::group(['middleware' => ['auth.user.email' ] ], function() {

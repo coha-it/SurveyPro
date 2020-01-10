@@ -28,8 +28,10 @@ export default [
       { path: '/home', name: 'home', component: page('home.vue'), meta: { title: 'home' } },
       { path: '/faq', name: 'faq', component: page('faq.vue'), meta: { title: 'FAQ' } },
 
-      // Account Settings
+      // Surveys
       { path: '/surveys', name: 'surveys', component: page('surveys/surveys.vue') },
+
+      // Account Settings
       { path: '/profile', name: 'profile', component: page('profile/profile.vue'), meta: { title: 'profile.title' } }
 
       // Old Settings
@@ -43,6 +45,15 @@ export default [
       // }
 
     ]
+  },
+
+  {
+    path: '/survey/:id',
+    name: 'survey',
+    component: page('surveys/survey.vue'),
+    meta: {
+      middleware: 'auth'
+    }
   },
 
   // Managment / Verwaltung

@@ -37,8 +37,7 @@
 </template>
 
 <script>
-
-import AuthPanel from '~/components/AuthPanel';
+import AuthPanel from '~/components/AuthPanel'
 
 export default {
 
@@ -47,12 +46,7 @@ export default {
 
   components: {
     AuthPanel
-  },
-
-  // This was causing Theme-Problems
-  // metaInfo () {
-  //   return { title: this.$t('authentificate_title') }
-  // },
+  }
 
 }
 </script>

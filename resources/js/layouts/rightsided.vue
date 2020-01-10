@@ -25,7 +25,7 @@
 
 <script>
 
-import Footer from "~/components/FooterGuest";
+import Footer from '~/components/FooterGuest'
 
 export default {
 
@@ -35,9 +35,9 @@ export default {
     Footer
   },
 
-  data() {
+  data () {
     return {
-        backgroundImage: 'url(/storage/student-2.jpg)'
+      backgroundImage: 'url(/storage/student-2.jpg)'
     }
   },
 

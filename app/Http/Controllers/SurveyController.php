@@ -27,10 +27,17 @@ class SurveyController extends Controller
         );
     }
 
-    // Get the Fillable Surveys
-    public function getFillableSurveys(Request $request) {
+    // Get the Membering Surveys
+    public function getMemberingSurveys(Request $request) {
         return json_encode(
-            $request->user()->fillableSurveys()->toArray()
+            $request->user()->memberingSurveys()
+        );
+    }
+
+    // Get the Membering and Fillable Surveys
+    public function getFillableSurvey(Request $request) {
+        return json_encode(
+            $request->user()->fillableSurvey($request->id)
         );
     }
 

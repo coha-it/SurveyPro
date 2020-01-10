@@ -1,36 +1,44 @@
 <template>
-  <div class="welcome-layout">
-    <div class="top-right links">
-      <template v-if="authenticated">
-        <router-link :to="{ name: 'home' }">
-          {{ $t('home') }}
-        </router-link>
-      </template>
-      <template v-else>
-        <router-link :to="{ name: 'auth' }">
-          {{ $t('entry') }}
-        </router-link>
-      </template>
-    </div>
-
-    <div class="text-center">
-      <div class="title">
-        {{ title }}
+  <div>
+    <div class="welcome-layout">
+      <div class="top-right links">
+        <template v-if="authenticated">
+          <router-link :to="{ name: 'home' }">
+            {{ $t('home') }}
+          </router-link>
+        </template>
+        <template v-else>
+          <router-link :to="{ name: 'auth' }">
+            {{ $t('entry') }}
+          </router-link>
+        </template>
       </div>
 
-      <div class="links">
-        <a>Mitarbeiter-Befragungen Online</a>
+      <div class="text-center">
+        <div class="title">
+          {{ title }}
+        </div>
+
+        <div class="links">
+          <a>Mitarbeiter-Befragungen Online</a>
+        </div>
       </div>
     </div>
+    <Footer />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import Footer from '~/components/FooterGuest'
 
 export default {
   layout: 'naked',
   middleware: 'guest',
+
+  components: {
+    Footer
+  },
 
   // This was causing Theme-Problems
   // metaInfo () {

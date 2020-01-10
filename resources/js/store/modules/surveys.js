@@ -3,16 +3,16 @@ import * as types from '../mutation-types'
 
 // state
 export const state = {
-  surveysAllowed: null,
-  surveyAllowed: null,
+  surveysMembering: null,
+  surveyFillable: null,
   backendSurveysAllowed: null,
   backendSurveyAllowed: null
 }
 
 // getters
 export const getters = {
-  surveysAllowed: state => state.surveysAllowed,
-  surveyAllowed: state => state.surveysAllowed,
+  surveysMembering: state => state.surveysMembering,
+  surveyFillable: state => state.surveyFillable,
   backendSurveysAllowed: state => state.backendSurveysAllowed,
   backendSurveyAllowed: state => state.backendSurveyAllowed
 }
@@ -20,12 +20,12 @@ export const getters = {
 // mutations
 export const mutations = {
 
-  [types.FETCH_SURVEYS_ALLOWED_SUCCESS] (state, { surveysAllowed }) {
-    state.surveysAllowed = surveysAllowed
+  [types.FETCH_SURVEYS_MEMBERING_SUCCESS] (state, { surveysMembering }) {
+    state.surveysMembering = surveysMembering
   },
 
-  [types.FETCH_SURVEY_ALLOWED_SUCCESS] (state, { surveyAllowed }) {
-    state.surveysAllowed = surveyAllowed
+  [types.FETCH_SURVEY_FILLABLE_SUCCESS] (state, { surveyFillable }) {
+    state.surveyFillable = surveyFillable
   },
 
   [types.FETCH_BACKEND_SURVEYS_ALLOWED_SUCCESS] (state, { backendSurveysAllowed }) {
@@ -41,21 +41,21 @@ export const mutations = {
 export const actions = {
 
   // Frontend Surveys
-  async fetchSurveysAllowed ({ commit }) {
+  async fetchSurveysMembering ({ commit }) {
     try {
-      const { data } = await axios.get('/api/surveys-allowed')
-      commit(types.FETCH_SURVEYS_ALLOWED_SUCCESS, { surveysAllowed: data })
+      const { data } = await axios.get('/api/surveys-membering')
+      commit(types.FETCH_SURVEYS_MEMBERING_SUCCESS, { surveysMembering: data })
     } catch (e) {
-      commit(types.FETCH_SURVEYS_ALLOWED_FAILURE)
+      commit(types.FETCH_SURVEYS_MEMBERING_FAILURE)
     }
   },
 
-  async fetchSurveyAllowed ({ commit }) {
+  async fetchSurveyFillable ({ commit }, id) {
     try {
-      const { data } = await axios.get('/api/survey-allowed')
-      commit(types.FETCH_SURVEY_ALLOWED_SUCCESS, { surveyAllowed: data })
+      const { data } = await axios.get('/api/survey-fillable', { params: { id: id } })
+      commit(types.FETCH_SURVEY_FILLABLE_SUCCESS, { surveyFillable: data })
     } catch (e) {
-      commit(types.FETCH_SURVEY_ALLOWED_FAILURE)
+      commit(types.FETCH_SURVEY_FILLABLE_FAILURE)
     }
   },
 
@@ -71,7 +71,7 @@ export const actions = {
 
   async fetchBackendSurveyAllowed ({ commit }, id) {
     try {
-      const { data } = await axios.get('/api/backend/survey-allowed', { params: { id: id } } )
+      const { data } = await axios.get('/api/backend/survey-allowed', { params: { id: id } })
       commit(types.FETCH_BACKEND_SURVEY_ALLOWED_SUCCESS, { backendSurveyAllowed: data })
     } catch (e) {
       commit(types.FETCH_BACKEND_SURVEY_ALLOWED_FAILURE)

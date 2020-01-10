@@ -46,7 +46,11 @@ class Survey extends Model
     protected $appends = [
         'url_full',
         'is_editable',
-        'is_fillable'
+        'is_fillable',
+        'has_started',
+        'has_ended',
+        'is_expired',
+        'question_count'
     ];
 
     // Attributes
@@ -55,9 +59,29 @@ class Survey extends Model
         return route('backend.survey', ['id' => $this->id]);
     }
 
+    public function getIsExpiredAttribute()
+    {
+        return $this->isExpired();
+    }
+
     public function getIsEditableAttribute()
     {
         return $this->isEditable();
+    }
+
+    public function getQuestionCountAttribute()
+    {
+        return $this->questions()->count();
+    }
+
+    public function getHasStartedAttribute()
+    {
+        return $this->hasStarted();
+    }
+
+    public function getHasEndedAttribute()
+    {
+        return $this->hasEnded();
     }
 
     // Only if the Survey is Fillable
@@ -66,10 +90,9 @@ class Survey extends Model
     public function getIsFillableAttribute() {
         return
             $this->isInProcess() &&
+            $this->isUnexpired() &&
             $this->isUnfinished();
     }
-
-
 
     // Methods
     public function isEditable() {
@@ -79,10 +102,29 @@ class Survey extends Model
             $this->isNotInProcess();
     }
 
+    public function hasStarted() {
+        return now()->toDateTimeString() > $this->start_datetime;
+    }
+
+    public function hasEnded() {
+        return now()->toDateTimeString() > $this->end_datetime;
+    }
+
+    public function isUnexpired() {
+        return !$this->isExpired();
+    }
+
+    public function isExpired() {
+        return
+            $this->hasStarted() &&
+            $this->hasEnded();
+    }
+
     public function isInProcess() {
         return
             $this->active &&
-            now()->toDateTimeString() > $this->start_datetime;
+            now()->toDateTimeString() > $this->start_datetime &&
+            now()->toDateTimeString() < $this->end_datetime;
     }
 
     public function isNotInProcess() {
@@ -110,6 +152,11 @@ class Survey extends Model
     public function getSelfWithRelations()
     {
         return $this->with(['groups', 'questions'])->find($this->id);
+    }
+
+    public function getSelfWithQuestions()
+    {
+        return $this->with(['questions'])->find($this->id);
     }
 
     /**
