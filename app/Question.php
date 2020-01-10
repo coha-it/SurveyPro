@@ -35,12 +35,20 @@ class Question extends Model
         return $this->belongsTo('App\Survey');
     }
 
-    // Survey
+    public function awnser()
+    {
+        return $this->hasOne('App\Awnser');
+    }
+
     public function options()
     {
         return $this->hasMany('App\QuestionOption');
     }
 
+    public function question_options()
+    {
+        return $this->hasMany('App\QuestionOption');
+    }
 
     public function delete()
     {

@@ -14,6 +14,32 @@
 Route::get('allowed-surveys', 'SurveyController@getAllowedSurveys');
 Route::get('fillable-surveys', 'SurveyController@getFillableSurveys');
 
+
+Route::get('awnsers-1', function () {
+    dd(
+        Auth()->user()->fillableSurveys()->find(22) // find survey
+        ->questions->find(108) // Find question
+        ->question_options->find(141) // Find Options
+        ->awnser_options->find(1) // Find Awnser Options
+        ->awnser->toArray()
+    );
+});
+
+Route::get('create-awnser-1', function () {
+        $aw = Auth()->user()->fillableSurveys()->find(22) // find survey
+        ->questions->find(109) // Find question
+        ->awnser()->updateOrCreate([
+            'user_id' => Auth()->user()->id
+        ]);
+
+        $aw->awnser_options()->updateOrCreate([
+            'option_id' => 138
+        ]);
+
+        // ->question_options->find(141) // Find Options
+
+});
+
 Route::group(['middleware' => 'auth.user.admin'], function () {
     // // Test 2
     // Route::get('test', function() {

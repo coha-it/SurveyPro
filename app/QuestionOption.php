@@ -24,9 +24,18 @@ class QuestionOption extends Model
      */
     protected $guarded = ['id'];
 
-    // Survey
     public function question()
     {
         return $this->belongsTo('App\Question');
+    }
+
+    public function awnser()
+    {
+        return $this->belongsTo('App\Awnser', 'awnser_options');
+    }
+
+    public function awnser_option()
+    {
+        return $this->hasMany('App\AwnserOption', 'option_id');
     }
 }

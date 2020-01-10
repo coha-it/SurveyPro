@@ -1,0 +1,72 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Awnser extends Model
+{
+    use SoftDeletes;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'awnsers';
+    protected $dates = ['deleted_at'];
+    // protected $with = ['options'];
+
+    /**
+     * The attributes that are not mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
+
+    /**
+     * Relations
+     */
+
+    // Survey
+    public function survey()
+    {
+        return $this->belongsTo('App\Survey');
+    }
+
+    // Survey
+    public function user()
+    {
+        return $this->hasOne('App\User');
+    }
+
+    /**
+     * Question
+     */
+    public function question()
+    {
+        return $this->hasOne('App\Question');
+    }
+
+    /**
+     * Question
+     */
+    public function awnser_options()
+    {
+        return $this->hasMany('App\AwnserOption');
+    }
+
+
+    // public function delete()
+    // {
+    //     // delete all related selected options
+    //     foreach ($this->options as $option) {
+    //         $option->delete();
+    //     }
+
+    //     // delete the question
+    //     return parent::delete();
+    // }
+
+}
