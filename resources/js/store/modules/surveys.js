@@ -86,6 +86,14 @@ export const actions = {
     axios.post('/api/backend/remove-survey-from-group', payload)
   },
 
+  updateOrCreateAwnser ({ commit }, payload) {
+    try {
+      return axios.post('/api/update-or-create-awnser', payload)
+    } catch (e) {
+      return e
+    }
+  },
+
   createSurvey ({ commit }, payload) {
     try {
       return axios.post('/api/backend/create-survey', payload)

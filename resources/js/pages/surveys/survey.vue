@@ -18,11 +18,52 @@
     <!-- Questions -->
     <div v-else-if="oSurvey">
       Questions hier ey
-      <q-btn label="back" :to="hashes.overview" />
-      <template v-for="question in oSurvey.questions">
+      <q-btn label="overview" :to="hashes.overview" />
+      <template v-for="(question, i) in oSurvey.questions">
         <!-- Single Question here -->
         <div v-if="questionIsViewed(question)" v-bind:key="question.id">
-        {{ question }}
+          <div>{{ question.title }}</div>
+          <div>{{ question.subtitle }}</div>
+          <div>{{ question.description }}</div>
+
+          <!-- if checkboxes -->
+          <template v-if="question.format == 'checkboxes'">
+            <div
+              v-for="option in question.options"
+              v-bind:key="option.id"
+              :value="option.id"
+              @click="toggleAwnserOption(question, option)"
+            >
+              <q-icon :name="findSelectedOption(question, option) ? 'check_box' : 'check_box_outline_blank'" />
+              {{ option.title }}
+            </div>
+            <!-- question.users_awnser.awnser_options -->
+          </template>
+          <div class="code">{{ question }}</div>
+
+          <q-input v-if="question.users_awnser" v-model="question.users_awnser.comment" label="Kommentar" />
+
+          <!-- Before question Button -->
+          <q-btn
+            :disable="!beforeQuestionRoute(oSurvey.questions, question)"
+            :to="beforeQuestionRoute(oSurvey.questions, question)"
+            icon="arrow_left"
+          />
+
+          <q-btn
+            :label="getSubmitLabel(oSurvey, question)"
+            :disable="questionIsNotSubmittable(question) ? true : false"
+            color="primary"
+            @click="updateOrCreateAwnser(oSurvey, question)"
+          />
+
+          <!-- Next question Button -->
+          <q-btn
+            :disable="!nextQuestionRoute(oSurvey.questions, question)"
+            :to="nextQuestionRoute(oSurvey.questions, question)"
+            icon="arrow_right"
+          />
+
         </div>
 
       </template>
@@ -43,7 +84,176 @@ export default {
         question: '#q-',
         overview: '#overview'
       },
-      oSurvey: null,
+      oSurvey: null
+    }
+  },
+
+  methods: {
+    updateOrCreateAwnser (survey, question) {
+      const _t = this
+      console.log(question)
+
+      // Update Users
+      this.$store
+        .dispatch('surveys/updateOrCreateAwnser', {
+          survey_id: question.survey_id,
+          question_id: question.id,
+          awnser: question.users_awnser
+        })
+        .then(function (e) {
+          // Success
+          if (!e || !e.response || !e.response.data || !e.response.data.error) {
+            // _t.showSnackbarSuccess(_t.$t('data_saved'))
+            console.log('data saved')
+
+            // Update in Model
+            question.users_awnser = _t.copyObject(e.data)
+          }
+        })
+        .catch(function (e) {
+          console.log(e)
+          // Error
+          if (e.reponse && e.reponse.data && e.response.data.error) {
+            var errText = ''
+            var err = e.response.data.error
+            for (var i in err) {
+              errText += ': ' + err[i]
+            }
+            console.log('data UNsaved')
+            // _t.showSnackbarError(_t.$t('data_unsaved') + '<br />' + errText)
+          }
+        })
+    },
+
+    questionIsSubmittable (q) {
+      // Skippable
+      const skp = q.is_skippable
+      if (skp) return true
+
+      // Options Available
+      if (q && q.users_awnser && q.users_awnser.awnser_options) {
+        // Not Skippable
+        const len = q.users_awnser.awnser_options.length
+        const min = q.min_options <= len
+        const max = q.max_options >= len      
+
+        return min && max
+      }
+
+      return false
+    },
+    questionIsNotSubmittable (q) {
+      return !this.questionIsSubmittable(q)
+    },
+    getSubmitLabel (oSurvey, question) {
+      // If is not Skippable
+      if (question.is_skippable === 0) {
+        // If Min Options is smaller or equal the current options
+        return 'übernehmen'
+      } else {
+        // Is Skippable
+        return 'Überspringen'
+      }
+    },
+    toggleAwnserOption (oQuestion, oOption) {
+      var oAwnser = this.findOrCreateAwnser(oQuestion)
+      var aAwOpts = oAwnser.awnser_options
+      var oSelOpt = this.findSelectedOption(oQuestion, oOption)
+
+      // Already Selected
+      if (oSelOpt) {
+        // So remove!
+        var iPos = this.getPositionById(oSelOpt, aAwOpts)
+        if (aAwOpts[iPos]) {
+          // Remove
+          aAwOpts.splice(iPos, 1)
+        }
+      } else {
+        // Not Selected
+        // So Add!
+        var obj = this.copyObject(oOption)
+
+        aAwOpts.push(obj)
+      }
+    },
+    findOrCreateAwnser (oQuestion) {
+      if (!oQuestion.users_awnser) {
+        oQuestion.users_awnser = {
+          question_id: oQuestion.id,
+          awnser_options: []
+        }
+      }
+      return oQuestion.users_awnser
+    },
+    findSelectedOption (question, option) {
+      if (question && question.users_awnser && question.users_awnser.awnser_options) {
+        return this.findByKey(
+          question.users_awnser.awnser_options,
+          option.id,
+          'id'
+        )
+      }
+    },
+    questionRoute (qs, q, dir) {
+      var iCurPos = this.getPositionById(q, qs)
+      var iNewPos = iCurPos + dir
+      var eNew = qs[iNewPos]
+      if (eNew) return this.getQuestionHash(eNew)
+    },
+    beforeQuestionRoute (qs, q) {
+      return this.questionRoute(qs, q, -1)
+    },
+    nextQuestionRoute (qs, q) {
+      return this.questionRoute(qs, q, +1)
+    },
+    copyObject (obj) {
+      if (typeof obj !== 'undefined') {
+        var copy = JSON.parse(JSON.stringify(obj))
+        if (copy) return copy
+      }
+    },
+    findByKey (arr, id, key) {
+      return arr.find(x => x[key] === id)
+    },
+    findById (arr, id) {
+      return arr.find(x => x.id === id)
+    },
+    getPositionById (item, arr) {
+      return arr
+        .map(function (x) {
+          return x.id
+        })
+        .indexOf(item.id)
+    },
+    getPositionByKey (oItem, oObject, sKey) {
+      return oObject
+        .map(function (x) {
+          return x[sKey]
+        })
+        .indexOf(oItem[sKey])
+    },
+    changedHash (hash) {
+      var h = hash || window.location.hash
+      // var id = h.split('#')[1]
+
+      switch (h) {
+        case h === '':
+        case h === '#':
+          window.location.hash = this.hashes.overview
+          break
+      }
+    },
+    getOverviewHash () {
+      return this.hashes.overview
+    },
+    getQuestionHash (question) {
+      return this.hashes.question + question.id
+    },
+    questionIsViewed (q) {
+      return this.getQuestionHash(q) === this.$route.hash
+    },
+    overviewIsViewed () {
+      return this.$route.hash == this.hashes.overview
     }
   },
 
@@ -70,41 +280,6 @@ export default {
       user: 'auth/user',
       surveyFillable: 'surveys/surveyFillable'
     })
-  },
-
-  methods: {
-    copyObject (obj) {
-      if (typeof obj != "undefined") {
-        var copy = JSON.parse(JSON.stringify(obj));
-        if (copy) return copy;
-      }
-    },
-    findById (arr, id) {
-      return arr.find(x => x.id === id)
-    },
-    changedHash (hash) {
-      var h = hash || window.location.hash
-      var id = h.split('#')[1]
-
-      switch (h) {
-        case h === '':
-        case h === '#':
-          window.location.hash = this.hashes.overview
-          break;
-      }
-    },
-    getOverviewHash () {
-      return this.hashes.overview
-    },
-    getQuestionHash (question) {
-      return this.hashes.question + question.id
-    },
-    questionIsViewed (q) {
-      return this.getQuestionHash(q) === this.$route.hash
-    },
-    overviewIsViewed () {
-      return this.$route.hash == this.hashes.overview
-    }
   }
 
 }

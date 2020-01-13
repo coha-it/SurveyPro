@@ -41,6 +41,50 @@ class SurveyController extends Controller
         );
     }
 
+    public function updateOrCreateAwnser($question, $request) {
+        // If requested Awnser was found
+        $reqAw              = $request->awnser;
+        $reqAw['user_id']   = Auth()->user()->id;
+
+        unset($reqAw['awnser_options']); // Remove Useless
+
+        // Update Or Create
+        return $question->usersAwnser()->updateOrCreate(
+            ['id' => $reqAw['id'] ?? 0],
+            $reqAw
+        );
+    }
+
+    public function reconnectWithOptions($awnser, $request) {
+        $awnser->awnser_options()->sync(
+            array_column(
+                $request->awnser['awnser_options'],
+                'id'
+            )
+        );
+    }
+
+    public function httpUpdateOrCreateAwnser(Request $request) {
+        // Validate Data
+        $request->validate([
+            'survey_id' => 'required',
+            'question_id' => 'required',
+            'awnser' => 'required'
+        ]);
+
+        // Find Variables like self or Survey
+        $self       = $request->user();
+        $survey     = $self->fillableSurvey($request->survey_id);
+        $question   = $survey->question($request->question_id);
+        
+        // Create and De-/Re- Connect
+        $awnser = $this->updateOrCreateAwnser($question, $request); // Update Awnser        
+        $this->reconnectWithOptions($awnser, $request); // Connect selected Options with Awnser's Options
+
+        // Variables
+        return $awnser->toJson();
+    }
+
     // // Get the Allowed Survey
     // public function getAllowedSurvey(Request $request) {
     //     // Validate

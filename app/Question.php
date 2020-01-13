@@ -35,9 +35,19 @@ class Question extends Model
         return $this->belongsTo('App\Survey');
     }
 
-    public function awnser()
+    public function awnsers()
     {
-        return $this->hasOne('App\Awnser');
+        return $this->hasMany('App\Awnser');
+    }
+    
+    public function usersAwnser()
+    {
+        return $this
+                ->hasOne('App\Awnser')
+                ->where(
+                    'user_id', 
+                    Auth()->user()->id
+                );
     }
 
     public function options()

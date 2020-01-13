@@ -156,7 +156,16 @@ class Survey extends Model
 
     public function getSelfWithQuestions()
     {
-        return $this->with(['questions'])->find($this->id);
+        return $this
+                ->with(['questions'])
+                ->find($this->id);
+    }
+
+    public function getSelfWithQuestionsAndUsersAwnser()
+    {
+        return $this
+                ->with(['questions', 'questions.usersAwnser'])
+                ->find($this->id);
     }
 
     /**
@@ -176,11 +185,20 @@ class Survey extends Model
     }
 
     /**
-     * Get the Creator record associated with the Survey.
+     * Get the Questions
      */
     public function questions()
     {
         return $this->hasMany('App\Question')->orderBy('order');
     }
+
+    /**
+     * Get the Questions
+     */
+    public function question($id)
+    {
+        return $this->questions()->find($id);
+    }
+
 
 }

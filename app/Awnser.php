@@ -16,7 +16,7 @@ class Awnser extends Model
      */
     protected $table = 'awnsers';
     protected $dates = ['deleted_at'];
-    // protected $with = ['options'];
+    protected $with = ['awnser_options'];
 
     /**
      * The attributes that are not mass assignable.
@@ -52,9 +52,14 @@ class Awnser extends Model
     /**
      * Question
      */
+    // public function awnser_options()
+    // {
+    //     return $this->hasMany('App\AwnserOption');
+    // }
+
     public function awnser_options()
     {
-        return $this->hasMany('App\AwnserOption');
+        return $this->belongsToMany('App\QuestionOption', 'awnser_options', 'awnser_id', 'option_id');
     }
 
 

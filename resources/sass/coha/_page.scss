@@ -15,3 +15,13 @@ a {
 .q-field {
   font-size: 16px;
 }
+
+.code {
+  white-space: pre-wrap;
+  font-family: consolas;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.25;
+  max-height: 25vh;
+  overflow: scroll;
+}

@@ -16,8 +16,8 @@ class CreateAwnserTable extends Migration
         Schema::create('awnsers', function (Blueprint $table) {
             // IDs
             $table->bigIncrements('id');
-            $table->bigInteger('user_id')->unsigned()->index();
             $table->bigInteger('question_id')->unsigned()->index();
+            $table->bigInteger('user_id')->unsigned()->index();
 
             // Timestamps
             $table->timestamps();
@@ -26,8 +26,8 @@ class CreateAwnserTable extends Migration
 
         Schema::table('awnsers', function (Blueprint $table) {
             // Connect Foreign Keys
-            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('question_id')->references('id')->on('questions');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

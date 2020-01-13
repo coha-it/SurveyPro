@@ -2,57 +2,55 @@
   <div>
     <div style="max-width: 400px">
       <div class="row q-gutter-md">
-          <q-card
-            v-for="oSurvey in aSurveys"
-            v-bind:key="oSurvey.id"
-            :id="'survey-'+oSurvey.id"
-            class="col col-12 col-xs-12 col-xl-12"
-            clickable
-            flat
-            bordered
-            ripple
-            :disabled="!oSurvey.is_fillable"
-          >
-            <q-card-section>
-              <div class="text-subtitle2">
-                <template v-if="oSurvey.author">
-                  Von {{ oSurvey.author }}
-                </template>
-                <q-badge
-                  outline
-                  :color="getBadgeColor(oSurvey)"
-                  :label="getBadgeLabel(oSurvey)"
-                  style="float:right"
-                />
+        <q-card
+          v-for="oSurvey in aSurveys"
+          :id="'survey-'+oSurvey.id"
+          v-bind:key="oSurvey.id"
+          class="col col-12 col-xs-12 col-xl-12"
+          clickable
+          flat
+          bordered
+          ripple
+          :disabled="!oSurvey.is_fillable"
+        >
+          <q-card-section>
+            <div class="text-subtitle2">
+              <template v-if="oSurvey.author">
+                Von {{ oSurvey.author }}
+              </template>
+              <q-badge
+                outline
+                :color="getBadgeColor(oSurvey)"
+                :label="getBadgeLabel(oSurvey)"
+                style="float:right"
+              />
+            </div>
+            <router-link :to="'survey/'+oSurvey.id + '#overview'">
+              <div class="text-h6 text-black">{{ oSurvey.title || 'Umfrage #'+oSurvey.id }}</div>
+            </router-link>
+
+            <div class="row justify-center full-height full-width text-center  items-center">
+              <div class="col col-4">
+                <q-linear-progress rounded size="8px" :value="0" color="green" />
               </div>
-              <router-link :to="'survey/'+oSurvey.id + '#overview'">
-                <div class="text-h6 text-black">{{ oSurvey.title }}</div>
-              </router-link>
-
-
-              <div class="row justify-center full-height full-width text-center  items-center">
-                <div class="col col-4">
-                  <q-linear-progress rounded size="8px" :value="0" color="green" />
-                </div>
-                <div class="col col-8 text-left q-pl-sm">
-                  <small class="text-caption">
-                    {{ '0 von '+ oSurvey.question_count +' Fragen beantwortet' }}
-                  </small>
-                </div>
+              <div class="col col-8 text-left q-pl-sm">
+                <small class="text-caption">
+                  {{ '0 von '+ oSurvey.question_count +' Fragen beantwortet' }}
+                </small>
               </div>
-            </q-card-section>
+            </div>
+          </q-card-section>
 
-            <q-card-section>
-              <div>{{ oSurvey.desc_short }}</div>
-              <div class="text-right text-grey text-caption">
-                Startet am {{ fhd(oSurvey.start_datetime) }} um {{ fht(oSurvey.start_datetime) }}<br>
-                Endet um {{ fhd(oSurvey.end_datetime) }} um {{ fht(oSurvey.end_datetime) }}<br>
-              </div>
-            </q-card-section>
-
-          </q-card>
-        </div>
+          <q-card-section>
+            <div>{{ oSurvey.desc_short }}</div>
+            <div class="text-right text-grey text-caption">
+              Startet am {{ fhd(oSurvey.start_datetime) }} um {{ fht(oSurvey.start_datetime) }}<br>
+              Endet um {{ fhd(oSurvey.end_datetime) }} um {{ fht(oSurvey.end_datetime) }}<br>
+            </div>
+          </q-card-section>
+        </q-card>
       </div>
+    </div>
   </div>
 </template>
 

@@ -308,7 +308,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function fillableSurvey($id)
     {
-        return $this->fillableSurveys()->find($id)->getSelfWithQuestions();
+        return $this->fillableSurveys()->find($id)->getSelfWithQuestionsAndUsersAwnser();
     }
 
     /**

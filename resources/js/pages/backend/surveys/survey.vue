@@ -2937,9 +2937,9 @@ export default {
             _t.aDeleteOptionsIds = []
             _t.startEditMode()
           }
-          _t.bIsLoading = false;
+          _t.bIsLoading = false
         })
-        .catch(function(e) {
+        .catch(function (e) {
           console.log(e)
           // Error
           if (e.reponse && e.reponse.data && e.response.data.error) {
