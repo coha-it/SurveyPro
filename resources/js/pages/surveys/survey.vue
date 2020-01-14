@@ -117,6 +117,12 @@ export default {
   methods: {
     getProgressClasses (survey, question) {
       var r = ''
+      var viewedQ = this.getViewedQuestion(survey)
+
+      // Get Viewed Question
+      if      (question.order < viewedQ.order) r += ' passed '
+      else if (question.order > viewedQ.order) r += ' away '
+      else r += ' current '
 
       // If Question is Awnsered
       if (question.users_awnser) r += ' awnsered '
@@ -287,6 +293,10 @@ export default {
     questionIsViewed (q) {
       return this.getQuestionHash(q) === this.$route.hash
     },
+    getViewedQuestion (oSurvey) {
+      var _t = this;
+      return oSurvey.questions.find(q => _t.questionIsViewed(q))
+    },
     overviewIsViewed () {
       return this.$route.hash == this.hashes.overview
     }
@@ -331,9 +341,10 @@ export default {
   align-items: center;
   justify-content: space-evenly;
   align-self: normal;
+
   span {
     height: 9px;
-    background: grey;
+    background: #6f6f6f;
     display: inline-block;
     width: 100%;
     border-radius: 10px;
@@ -342,5 +353,8 @@ export default {
   .awnsered {
     background-color: var(--q-color-positive);
   }
+  .away { opacity: .3; }
+  .current { opacity: 1; }
+  .passed { opacity: 1; }
 }
 </style>
