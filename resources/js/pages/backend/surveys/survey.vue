@@ -1350,7 +1350,7 @@
           />
         </q-popup-proxy>
       </q-btn>
-      <q-btn size="sm" icon="clear" rounded flat round @click="option.row.color = ''" />
+      <q-btn v-if="option.row.color" size="sm" icon="clear" rounded flat round @click="option.row.color = ''" />
 
                                                     </q-td>
 

@@ -17,7 +17,15 @@
 
     <!-- Questions -->
     <div v-else-if="oSurvey">
-      Questions hier ey
+      <!-- Progress -->
+      <div class="survey-progress-wrapper">
+        <span
+          v-for="question in oSurvey.questions"
+          v-bind:key="question.id"
+          :class="getProgressClasses(oSurvey, question)"
+        ></span>
+      </div>
+
       <q-btn label="overview" :to="hashes.overview" />
       <template v-for="(question, i) in oSurvey.questions">
         <!-- Single Question here -->
@@ -28,17 +36,37 @@
 
           <!-- if checkboxes -->
           <template v-if="question.format == 'checkboxes'">
-            <div
+            <q-item
+              tag="label"
+              v-ripple
               v-for="option in question.options"
               v-bind:key="option.id"
               :value="option.id"
-              @click="toggleAwnserOption(question, option)"
             >
-              <q-icon :name="findSelectedOption(question, option) ? 'check_box' : 'check_box_outline_blank'" />
-              {{ option.title }}
-            </div>
+              <q-item-section avatar top>
+                <q-checkbox
+                  :value="findSelectedOption(question, option) ? true : false"
+                  v-on:click.native="toggleAwnserOption(question, option)"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ option.title }}</q-item-label>
+                <q-item-label caption>
+                  {{ option.subtitle }}
+                  {{ option.description }}
+                </q-item-label>
+              </q-item-section>
+
+            </q-item>
             <!-- question.users_awnser.awnser_options -->
           </template>
+
+          <!-- If Else Slider -->
+          <template v-else-if="question.format == 'slider'">
+            slider
+          </template>
+
+          <!-- Debug -->
           <div class="code">{{ question }}</div>
 
           <q-input v-if="question.users_awnser" v-model="question.users_awnser.comment" label="Kommentar" />
@@ -63,9 +91,7 @@
             :to="nextQuestionRoute(oSurvey.questions, question)"
             icon="arrow_right"
           />
-
         </div>
-
       </template>
     </div>
   </div>
@@ -89,6 +115,14 @@ export default {
   },
 
   methods: {
+    getProgressClasses (survey, question) {
+      var r = ''
+
+      // If Question is Awnsered
+      if (question.users_awnser) r += ' awnsered '
+
+      return r
+    },
     updateOrCreateAwnser (survey, question) {
       const _t = this
       console.log(question)
@@ -135,7 +169,7 @@ export default {
         // Not Skippable
         const len = q.users_awnser.awnser_options.length
         const min = q.min_options <= len
-        const max = q.max_options >= len      
+        const max = q.max_options >= len
 
         return min && max
       }
@@ -156,6 +190,7 @@ export default {
       }
     },
     toggleAwnserOption (oQuestion, oOption) {
+      console.log('jo toggle!')
       var oAwnser = this.findOrCreateAwnser(oQuestion)
       var aAwOpts = oAwnser.awnser_options
       var oSelOpt = this.findSelectedOption(oQuestion, oOption)
@@ -288,5 +323,24 @@ export default {
 <style lang="scss">
 .progress {
   display: none;
+}
+
+.survey-progress-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  align-self: normal;
+  span {
+    height: 9px;
+    background: grey;
+    display: inline-block;
+    width: 100%;
+    border-radius: 10px;
+    margin: 3px;
+  }
+  .awnsered {
+    background-color: var(--q-color-positive);
+  }
 }
 </style>

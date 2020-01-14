@@ -45,7 +45,6 @@ class SurveyController extends Controller
         // If requested Awnser was found
         $reqAw              = $request->awnser;
         $reqAw['user_id']   = Auth()->user()->id;
-
         unset($reqAw['awnser_options']); // Remove Useless
 
         // Update Or Create
@@ -76,13 +75,15 @@ class SurveyController extends Controller
         $self       = $request->user();
         $survey     = $self->fillableSurvey($request->survey_id);
         $question   = $survey->question($request->question_id);
-        
+
+        // Update or Create the Awnser
+        $awnser = $this->updateOrCreateAwnser($question, $request); // Update Awnser
+
         // Create and De-/Re- Connect
-        $awnser = $this->updateOrCreateAwnser($question, $request); // Update Awnser        
         $this->reconnectWithOptions($awnser, $request); // Connect selected Options with Awnser's Options
 
         // Variables
-        return $awnser->toJson();
+        return $question->usersAwnser()->find($awnser->id)->toJson();
     }
 
     // // Get the Allowed Survey
