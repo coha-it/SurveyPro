@@ -25,3 +25,22 @@ a {
   max-height: 25vh;
   overflow: scroll;
 }
+
+.coha--rating-slider {
+  max-width: 350px;
+  margin: 0 auto;
+
+  .q-slider__track-container {
+    margin-top: -3px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 5px;
+  }
+
+  .q-slider__track-markers {
+    opacity: .15;
+    :after {
+      height: 100%
+    }
+  }
+}

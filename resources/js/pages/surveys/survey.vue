@@ -19,11 +19,13 @@
     <div v-else-if="oSurvey">
       <!-- Progress -->
       <div class="survey-progress-wrapper">
-        <span
-          v-for="question in oSurvey.questions"
-          v-bind:key="question.id"
-          :class="getProgressClasses(oSurvey, question)"
-        >&nbsp;</span>
+        <router-link
+            v-for="question in oSurvey.questions"
+            v-bind:key="question.id"
+            :to="getQuestionHash(question)"
+            :class="getProgressClasses(oSurvey, question)"
+        >
+        </router-link>
       </div>
 
       <q-btn label="overview" :to="hashes.overview" />
@@ -70,7 +72,6 @@
               </q-item-section>
 
             </q-item>
-            <!-- question.users_awnser.awnser_options -->
           </template>
 
           <!-- If Else Slider -->
@@ -82,10 +83,19 @@
               :step="1"
               label
               :label-value="getSliderLabel(question)"
+              :style="'color:'+getSliderColor(question)"
+              :label-text-color="getSliderTextColor(question)"
               @change="sliderChange"
               label-always
-              color="red"
+              markers
+              class="coha--rating-slider"
             />
+            <template v-if="questionHasAwnsers(question)">
+              {{ firstAwnser(question).title }}
+              {{ firstAwnser(question).subtitle }}
+              {{ firstAwnser(question).description }}
+              <!-- {{ firstAwnser(question) }} -->
+            </template>
           </template>
 
           <!-- Debug -->
@@ -137,15 +147,22 @@ export default {
     }
   },
   methods: {
-    getSelectedSliderOptionOrder (question) {
+    questionHasAwnsers (question) {
+      return this.firstAwnser(question) ? true : false
+    },
+    firstAwnser (question) {
       if (
         question &&
         question.users_awnser &&
         question.users_awnser.awnser_options)
       {
-        return question.users_awnser.awnser_options[0].order
+        return question.users_awnser.awnser_options[0]
       }
       return 0
+    },
+    getSelectedSliderOptionOrder (question) {
+      var o = this.firstAwnser(question)
+      return (o.order) ? o.order : null
     },
     getFirstQuestionOption (question) {
       return Math.min.apply(Math, question.options.map(option => option.order))
@@ -160,18 +177,19 @@ export default {
       this.toggleAwnserOptionSingle(question, option)
     },
     getSliderLabel (question) {
-      if (
-        question &&
-        question.users_awnser &&
-        question.users_awnser.awnser_options)
-      {
-        var title = question.users_awnser.awnser_options[0].title
-        return title
-      }
-      return ''
+      var o = this.firstAwnser(question)
+      return (o.title) ? o.title : null
+    },
+    getSliderColor (question) {
+      var o = this.firstAwnser(question)
+      return (o.color) ? o.color : ''
+    },
+    getSliderTextColor (question) {
+      var o = this.firstAwnser(question)
+      return (o.color && this.isLight(o.color)) ? 'black' : 'white'
     },
     getProgressClasses (survey, question) {
-      var r = ''
+      var r = ' progress '
       var viewedQ = this.getViewedQuestion(survey)
 
       // Get Viewed Question
@@ -369,7 +387,63 @@ export default {
     },
     overviewIsViewed () {
       return this.$route.hash == this.hashes.overview
-    }
+    },
+
+
+
+    getNegativeColor (color) {
+      if (this.isDark(color)) {
+        return 'text-white'
+      }
+      return 'text-black'
+    },
+
+    isLight (color) {
+      return this.lightOrDark(color) === 'light'
+    },
+
+    isDark (color) {
+      return this.lightOrDark(color) === 'dark'
+    },
+
+    lightOrDark (color) {
+      if (!color) return
+
+      // Variables for red, green, blue values
+      var r, g, b, hsp
+
+      // Check the format of the color, HEX or RGB?
+      if (color.match(/^rgb/)) {
+        // If HEX --> store the red, green, blue values in separate variables
+        color = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/)
+
+        r = color[1]
+        g = color[2]
+        b = color[3]
+      } else {
+        // If RGB --> Convert it to HEX: http://gist.github.com/983661
+        color = +('0x' + color.slice(1).replace(color.length < 5 && /./g, '$&$&'))
+
+        r = color >> 16
+        g = color >> 8 & 255
+        b = color & 255
+      }
+
+      // HSP (Highly Sensitive Poo) equation from http://alienryderflex.com/hsp.html
+      hsp = Math.sqrt(
+        0.299 * (r * r) +
+        0.587 * (g * g) +
+        0.114 * (b * b)
+      )
+
+      // Using the HSP value, determine whether the color is light or dark
+      // if (hsp > 127.5) {
+      if (hsp > 197.5) {
+        return 'light'
+      } else {
+        return 'dark'
+      }
+    },
   },
 
   watch: {
@@ -412,19 +486,20 @@ export default {
   justify-content: space-evenly;
   align-self: normal;
 
-  span {
+  .progress {
     height: 9px;
     background: #6f6f6f;
     display: inline-block;
     width: 100%;
     border-radius: 10px;
     margin: 3px;
+    &.awnsered {
+      background-color: var(--q-color-positive);
+    }
+    &.away { opacity: .3; }
+    &.current { opacity: 1; }
+    &.passed { opacity: 1; }
   }
-  .awnsered {
-    background-color: var(--q-color-positive);
-  }
-  .away { opacity: .3; }
-  .current { opacity: 1; }
-  .passed { opacity: 1; }
+
 }
 </style>
