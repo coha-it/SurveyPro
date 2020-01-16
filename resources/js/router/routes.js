@@ -74,11 +74,11 @@ export default [
       }, {
         path: 'surveys',
         name: 'backend.surveys',
-        component: page('backend/surveys/surveys.vue')
+        component: page('backend/surveys/backend_surveys.vue')
       }, {
         path: 'survey/:id',
         name: 'backend.survey',
-        component: page('backend/surveys/survey.vue')
+        component: page('backend/surveys/backend_survey.vue')
       }, {
         path: 'statistics',
         name: 'backend.statistics',

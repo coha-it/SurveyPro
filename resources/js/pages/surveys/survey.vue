@@ -1,133 +1,187 @@
 <template>
-  <div>
+  <div v-if="oSurvey">
     <!-- Overview -->
-    <div v-if="overviewIsViewed()">
-      Overview<br>
-
-      Question List
-
-      <ul v-if="oSurvey">
+    <template v-if="overviewIsViewed()">
+      <h2>Overview - Question List</h2>
+      <ul>
         <li v-for="question in oSurvey.questions" v-bind:key="question.id">
           <router-link :to="getQuestionHash(question)">
             {{ question.title }}
           </router-link>
         </li>
       </ul>
-    </div>
+    </template>
 
     <!-- Questions -->
-    <div v-else-if="oSurvey">
-      <!-- Progress -->
-      <div class="survey-progress-wrapper">
-        <router-link
-            v-for="question in oSurvey.questions"
-            v-bind:key="question.id"
-            :to="getQuestionHash(question)"
-            :class="getProgressClasses(oSurvey, question)"
-        >
-        </router-link>
-      </div>
+    <template v-else>
+      <q-layout view="hHr lpr fFr">
+        <q-header class="bg-white text-primary">
+          <q-toolbar>
+            <!-- Progress -->
+            <div class="survey-progress-wrapper">
+              <router-link
+                v-for="question in oSurvey.questions"
+                v-bind:key="question.id"
+                :to="getQuestionHash(question)"
+                :class="getProgressClasses(oSurvey, question)"
+              />
+              <!-- :to="getQuestionHash(question)" -->
+              <!-- question.users_awnser -->
+            </div>
+          </q-toolbar>
+        </q-header>
+        <q-page-container>
+          <q-page class="q-pa-md">
+            <!-- The Question -->
+            <!-- Single Question here -->
+            <div v-if="questionIsViewed(question)" v-bind:key="question.id">
+              <div>{{ question.title }}</div>
+              <div>{{ question.subtitle }}</div>
+              <div>{{ question.description }}</div>
 
-      <q-btn label="overview" :to="hashes.overview" />
+              <!-- if checkboxes -->
+              <template v-if="question.format == 'checkboxes'">
+                <q-item
+                  tag="label"
+                  v-ripple
+                  v-for="option in question.options"
+                  v-bind:key="option.id"
+                  :value="option.id"
+                >
+                  <q-item-section avatar top>
+                    <!-- Multiple -->
+                    <q-checkbox
+                      v-if="question.max_options > 1"
+                      v-on:click.native="toggleAwnserOption(question, option)"
+                      :value="findSelectedOption(question, option) ? true : false"
+                    />
+                    <!-- Single -->
+                    <q-radio
+                      v-else
+                      :value="findSelectedOptionId(question, option)"
+                      :val="option.id"
+                      selected
+                      v-on:click.native="toggleAwnserOptionSingle(question, option)"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ option.title }}</q-item-label>
+                    <q-item-label caption>
+                      {{ option.subtitle }}
+                      {{ option.description }}
+                    </q-item-label>
+                  </q-item-section>
 
-      <!-- All Questions -->
-      <template v-for="question in oSurvey.questions">
-        <!-- Single Question here -->
-        <div v-if="questionIsViewed(question)" v-bind:key="question.id">
-          <div>{{ question.title }}</div>
-          <div>{{ question.subtitle }}</div>
-          <div>{{ question.description }}</div>
+                </q-item>
+              </template>
 
-          <!-- if checkboxes -->
-          <template v-if="question.format == 'checkboxes'">
-            <q-item
-              tag="label"
-              v-ripple
-              v-for="option in question.options"
-              v-bind:key="option.id"
-              :value="option.id"
-            >
-              <q-item-section avatar top>
-                <!-- Multiple -->
-                <q-checkbox
-                  v-if="question.max_options > 1"
-                  v-on:click.native="toggleAwnserOption(question, option)"
-                  :value="findSelectedOption(question, option) ? true : false"
+              <!-- If Else Slider -->
+              <template v-else-if="question.format == 'slider'">
+                <q-slider
+                  :value="getSelectedSliderOptionOrder(question)"
+                  :min="getFirstQuestionOption(question)"
+                  :max="getLastQuestionOption(question)"
+                  :step="1"
+                  label
+                  :label-value="getSliderLabel(question)"
+                  :style="'color:'+getSliderColor(question)"
+                  :label-text-color="getSliderTextColor(question)"
+                  class="coha--rating-slider"
+                  label-always
+                  markers
+                  @change="sliderChange"
+                  @mousedown.native="sliderInput"
                 />
-                <!-- Single -->
-                <q-radio
-                  v-else
-                  :value="findSelectedOptionId(question, option)"
-                  :val="option.id"
-                  selected
-                  v-on:click.native="toggleAwnserOptionSingle(question, option)"
-                />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ option.title }}</q-item-label>
-                <q-item-label caption>
-                  {{ option.subtitle }}
-                  {{ option.description }}
-                </q-item-label>
-              </q-item-section>
+                <template v-if="questionHasAwnsers(question)">
+                  {{ firstAwnser(question).title }}
+                  {{ firstAwnser(question).subtitle }}
+                  {{ firstAwnser(question).description }}
+                  <!-- {{ firstAwnser(question) }} -->
+                </template>
+              </template>
 
-            </q-item>
-          </template>
+              <!-- Debug -->
+              <div v-if="false" class="code">{{ question }}</div>
 
-          <!-- If Else Slider -->
-          <template v-else-if="question.format == 'slider'">
-            <q-slider
-              :value="getSelectedSliderOptionOrder(question)"
-              :min="getFirstQuestionOption(question)"
-              :max="getLastQuestionOption(question)"
-              :step="1"
-              label
-              :label-value="getSliderLabel(question)"
-              :style="'color:'+getSliderColor(question)"
-              :label-text-color="getSliderTextColor(question)"
-              class="coha--rating-slider"
-              label-always
-              markers
-              @change="sliderChange"
-              @mousedown.native="sliderInput"
-            />
-            <template v-if="questionHasAwnsers(question)">
-              {{ firstAwnser(question).title }}
-              {{ firstAwnser(question).subtitle }}
-              {{ firstAwnser(question).description }}
-              <!-- {{ firstAwnser(question) }} -->
+              <div class="comment-wrapper" style="text-align: center">
+                <template v-if="question.users_awnser">
+                  <q-btn
+                    :label="question.users_awnser.comment == '' ? 'Kommentar hinzufügen' : 'Kommentar bearbeiten'"
+                    icon="chat"
+                    size="md"
+                    flat
+                    rounded
+                    color="grey"
+                    @click.native="question_dialog = true"
+                  />
+                 <q-dialog
+                    v-model="question_dialog"
+                    persistent
+                  >
+                    <q-card style="min-width: 350px">
+                      <q-card-section>
+                        <div class="text-h6">Kommentar:</div>
+                      </q-card-section>
+
+                      <q-card-section class="q-pt-none">
+                        <q-input dense v-model="question.users_awnser.comment" autofocus @keyup.enter="question_dialog = false" />
+                      </q-card-section>
+
+                      <q-card-actions align="right" class="text-primary">
+                        <q-btn flat label="Übernehmen" v-close-popup />
+                      </q-card-actions>
+                    </q-card>
+                  </q-dialog>
+                </template>
+                <template v-else>
+                  <q-btn
+                    label="Kommentar hinzufügen"
+                    icon="chat"
+                    size="md"
+                    flat
+                    rounded
+                    color="grey"
+                    @click="findOrCreateAwnser(question); question_dialog = true"
+                  />
+                </template>
+              </div>
+
+              <q-input v-if="question.users_awnser" v-model="question.users_awnser.comment" label="Kommentar" />
+              <q-input v-else label="Kommentar" @click="findOrCreateAwnser(question)" />
+
+              <!-- Before question Button -->
+              <q-btn
+                :disable="!beforeQuestionRoute(question)"
+                :to="beforeQuestionRoute(question)"
+                icon="arrow_left"
+              />
+
+              <!-- Next question Button -->
+              <q-btn
+                :disable="!nextQuestionRoute(question)"
+                :to="nextQuestionRoute(question)"
+                icon="arrow_right"
+              />
+            </div>
+          </q-page>
+        </q-page-container>
+        <q-footer bordered class="bg-white text-primary">
+          <q-toolbar>
+            <q-btn flat icon="keyboard_arrow_left" :to="hashes.overview" />
+            <template v-if="question">
+              <q-btn
+                :label="getSubmitLabel(question)"
+                :disable="questionIsNotSubmittable(question) ? true : false"
+                color="primary"
+                class="full-width"
+                @click="updateOrCreateAwnser(question)"
+              />
             </template>
-          </template>
-
-          <!-- Debug -->
-          <div class="code">{{ question }}</div>
-
-          <q-input v-if="question.users_awnser" v-model="question.users_awnser.comment" label="Kommentar" />
-          <q-input v-else label="Kommentar" @click="findOrCreateAwnser(question)" />
-
-          <!-- Before question Button -->
-          <q-btn
-            :disable="!beforeQuestionRoute(oSurvey.questions, question)"
-            :to="beforeQuestionRoute(oSurvey.questions, question)"
-            icon="arrow_left"
-          />
-
-          <q-btn
-            :label="getSubmitLabel(oSurvey, question)"
-            :disable="questionIsNotSubmittable(question) ? true : false"
-            color="primary"
-            @click="updateOrCreateAwnser(oSurvey, question)"
-          />
-
-          <!-- Next question Button -->
-          <q-btn
-            :disable="!nextQuestionRoute(oSurvey.questions, question)"
-            :to="nextQuestionRoute(oSurvey.questions, question)"
-            icon="arrow_right"
-          />
-        </div>
-      </template>
-    </div>
+            <q-btn flat icon="keyboard_arrow_down" :to="{ path: $store.state.route.from.fullPath }" />
+          </q-toolbar>
+        </q-footer>
+      </q-layout>
+    </template>
   </div>
 </template>
 
@@ -144,7 +198,9 @@ export default {
         question: '#q-',
         overview: '#overview'
       },
-      oSurvey: null
+      oSurvey: null,
+      question: null,
+      question_dialog: false
     }
   },
   methods: {
@@ -206,9 +262,8 @@ export default {
 
       return r
     },
-    updateOrCreateAwnser (survey, question) {
+    updateOrCreateAwnser (question) {
       const _t = this
-      console.log(question)
 
       // Update Users
       this.$store
@@ -225,6 +280,11 @@ export default {
 
             // Update in Model
             question.users_awnser = _t.copyObject(e.data)
+
+            // Next Question
+            _t.$router.push(
+              _t.nextQuestionRoute(question)
+            )
           }
         })
         .catch(function (e) {
@@ -262,7 +322,7 @@ export default {
     questionIsNotSubmittable (q) {
       return !this.questionIsSubmittable(q)
     },
-    getSubmitLabel (oSurvey, question) {
+    getSubmitLabel (question) {
       // If is not Skippable
       if (question.is_skippable === 0) {
         // If Min Options is smaller or equal the current options
@@ -327,17 +387,28 @@ export default {
       var option = this.findSelectedOption(question, option)
       if (option && option.id) return option.id
     },
-    questionRoute (qs, q, dir) {
+    questionRoute (q, dir) {
+      var nq = this.getQuestion(q, dir)
+      if (nq) return this.getQuestionHash(nq)
+    },
+    beforeQuestionRoute (q) {
+      return this.questionRoute(q, -1)
+    },
+    nextQuestionRoute (q) {
+      return this.questionRoute(q, +1)
+    },
+    getQuestion (q, dir) {
+      var qs = this.oSurvey.questions
       var iCurPos = this.getPositionById(q, qs)
       var iNewPos = iCurPos + dir
       var eNew = qs[iNewPos]
-      if (eNew) return this.getQuestionHash(eNew)
+      if (eNew) return eNew
     },
-    beforeQuestionRoute (qs, q) {
-      return this.questionRoute(qs, q, -1)
+    nextQuestion (q) {
+      return this.getQuestion(q, +1)
     },
-    nextQuestionRoute (qs, q) {
-      return this.questionRoute(qs, q, +1)
+    beforeQuestion (q) {
+      return this.getQuestion(q, -1)
     },
     copyObject (obj) {
       if (typeof obj !== 'undefined') {
@@ -453,10 +524,14 @@ export default {
   watch: {
     surveyFillable: function (promise) {
       this.oSurvey = this.copyObject(promise)
+      this.question = this.getViewedQuestion(this.oSurvey)
     },
     '$route.hash': function (current, before) {
       this.changedHash(current)
-    }
+      if(this.oSurvey) {
+        this.question = this.getViewedQuestion(this.oSurvey)
+      }
+    },
   },
 
   created: function () {
