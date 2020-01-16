@@ -14,6 +14,12 @@
 Route::get('allowed-surveys', 'SurveyController@getAllowedSurveys');
 Route::get('fillable-surveys', 'SurveyController@getFillableSurveys');
 
+Route::get('sendmail', function() {
+    Mail::send('welcome', [], function($message) {
+        $message->to('a.bachschmid@corporate-happiness.de')->subject('Ach halli hallo ich bin survey');
+    });
+});
+
 
 Route::get('awnsers-1', function () {
     dd(

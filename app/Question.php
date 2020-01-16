@@ -39,25 +39,25 @@ class Question extends Model
     {
         return $this->hasMany('App\Awnser');
     }
-    
+
     public function usersAwnser()
     {
         return $this
                 ->hasOne('App\Awnser')
                 ->where(
-                    'user_id', 
+                    'user_id',
                     Auth()->user()->id
                 );
     }
 
     public function options()
     {
-        return $this->hasMany('App\QuestionOption');
+        return $this->hasMany('App\QuestionOption')->orderBy('order');
     }
 
     public function question_options()
     {
-        return $this->hasMany('App\QuestionOption');
+        return $this->hasMany('App\QuestionOption')->orderBy('order');
     }
 
     public function delete()

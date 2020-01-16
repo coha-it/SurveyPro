@@ -23,11 +23,13 @@
           v-for="question in oSurvey.questions"
           v-bind:key="question.id"
           :class="getProgressClasses(oSurvey, question)"
-        ></span>
+        >&nbsp;</span>
       </div>
 
       <q-btn label="overview" :to="hashes.overview" />
-      <template v-for="(question, i) in oSurvey.questions">
+
+      <!-- All Questions -->
+      <template v-for="question in oSurvey.questions">
         <!-- Single Question here -->
         <div v-if="questionIsViewed(question)" v-bind:key="question.id">
           <div>{{ question.title }}</div>
@@ -44,9 +46,19 @@
               :value="option.id"
             >
               <q-item-section avatar top>
+                <!-- Multiple -->
                 <q-checkbox
-                  :value="findSelectedOption(question, option) ? true : false"
+                  v-if="question.max_options > 1"
                   v-on:click.native="toggleAwnserOption(question, option)"
+                  :value="findSelectedOption(question, option) ? true : false"
+                />
+                <!-- Single -->
+                <q-radio
+                  v-else
+                  :value="findSelectedOptionId(question, option)"
+                  :val="option.id"
+                  selected
+                  v-on:click.native="toggleAwnserOptionSingle(question, option)"
                 />
               </q-item-section>
               <q-item-section>
@@ -63,13 +75,24 @@
 
           <!-- If Else Slider -->
           <template v-else-if="question.format == 'slider'">
-            slider
+            <q-slider
+              :value="getSelectedSliderOptionOrder(question)"
+              :min="getFirstQuestionOption(question)"
+              :max="getLastQuestionOption(question)"
+              :step="1"
+              label
+              :label-value="getSliderLabel(question)"
+              @change="sliderChange"
+              label-always
+              color="red"
+            />
           </template>
 
           <!-- Debug -->
           <div class="code">{{ question }}</div>
 
           <q-input v-if="question.users_awnser" v-model="question.users_awnser.comment" label="Kommentar" />
+          <q-input v-else label="Kommentar" @click="findOrCreateAwnser(question)" />
 
           <!-- Before question Button -->
           <q-btn
@@ -113,8 +136,40 @@ export default {
       oSurvey: null
     }
   },
-
   methods: {
+    getSelectedSliderOptionOrder (question) {
+      if (
+        question &&
+        question.users_awnser &&
+        question.users_awnser.awnser_options)
+      {
+        return question.users_awnser.awnser_options[0].order
+      }
+      return 0
+    },
+    getFirstQuestionOption (question) {
+      return Math.min.apply(Math, question.options.map(option => option.order))
+    },
+    getLastQuestionOption (question) {
+      return Math.max.apply(Math, question.options.map(option => option.order))
+    },
+    sliderChange (order) {
+      var question = this.getViewedQuestion(this.oSurvey)
+      var option = this.findByKey(question.options, order, 'order')
+
+      this.toggleAwnserOptionSingle(question, option)
+    },
+    getSliderLabel (question) {
+      if (
+        question &&
+        question.users_awnser &&
+        question.users_awnser.awnser_options)
+      {
+        var title = question.users_awnser.awnser_options[0].title
+        return title
+      }
+      return ''
+    },
     getProgressClasses (survey, question) {
       var r = ''
       var viewedQ = this.getViewedQuestion(survey)
@@ -196,7 +251,6 @@ export default {
       }
     },
     toggleAwnserOption (oQuestion, oOption) {
-      console.log('jo toggle!')
       var oAwnser = this.findOrCreateAwnser(oQuestion)
       var aAwOpts = oAwnser.awnser_options
       var oSelOpt = this.findSelectedOption(oQuestion, oOption)
@@ -217,6 +271,18 @@ export default {
         aAwOpts.push(obj)
       }
     },
+    toggleAwnserOptionSingle (question, option) {
+      // Delete all Awnser Options
+      if (question &&
+          question.users_awnser &&
+          question.users_awnser.awnser_options)
+      {
+            question.users_awnser.awnser_options = []
+      }
+
+      // Select
+      this.toggleAwnserOption(question, option)
+    },
     findOrCreateAwnser (oQuestion) {
       if (!oQuestion.users_awnser) {
         oQuestion.users_awnser = {
@@ -234,6 +300,10 @@ export default {
           'id'
         )
       }
+    },
+    findSelectedOptionId (question, option) {
+      var option = this.findSelectedOption(question, option)
+      if (option && option.id) return option.id
     },
     questionRoute (qs, q, dir) {
       var iCurPos = this.getPositionById(q, qs)
