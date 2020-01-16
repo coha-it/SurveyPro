@@ -85,10 +85,11 @@
               :label-value="getSliderLabel(question)"
               :style="'color:'+getSliderColor(question)"
               :label-text-color="getSliderTextColor(question)"
-              @change="sliderChange"
+              class="coha--rating-slider"
               label-always
               markers
-              class="coha--rating-slider"
+              @change="sliderChange"
+              @mousedown.native="sliderInput"
             />
             <template v-if="questionHasAwnsers(question)">
               {{ firstAwnser(question).title }}
@@ -169,6 +170,9 @@ export default {
     },
     getLastQuestionOption (question) {
       return Math.max.apply(Math, question.options.map(option => option.order))
+    },
+    sliderInput (e) {
+      console.log(e)
     },
     sliderChange (order) {
       var question = this.getViewedQuestion(this.oSurvey)
