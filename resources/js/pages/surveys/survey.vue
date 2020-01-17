@@ -19,25 +19,31 @@
           <q-toolbar>
             <!-- Progress -->
             <div class="survey-progress-wrapper">
-              <router-link
-                v-for="question in oSurvey.questions"
-                v-bind:key="question.id"
-                :to="getQuestionHash(question)"
-                :class="getProgressClasses(oSurvey, question)"
-              />
-              <!-- :to="getQuestionHash(question)" -->
-              <!-- question.users_awnser -->
+              <template v-for="question in oSurvey.questions">
+                <router-link
+                  v-bind:key="question.id"
+                  :to="getQuestionHash(question)"
+                  :class="getProgressClasses(oSurvey, question)"
+                >
+                  <span class="inner">&nbsp;</span>
+                </router-link>
+                <!-- :to="getQuestionHash(question)" -->
+                <!-- question.users_awnser -->
+              </template>
             </div>
           </q-toolbar>
         </q-header>
         <q-page-container>
-          <q-page class="q-pa-md">
+          <q-page class="q-mb-xl">
             <!-- The Question -->
             <!-- Single Question here -->
             <div v-if="questionIsViewed(question)" v-bind:key="question.id">
-              <div>{{ question.title }}</div>
-              <div>{{ question.subtitle }}</div>
-              <div>{{ question.description }}</div>
+              <div class="q-mb-md q-pa-md">
+                <h1 class="text-black">{{ question.title }}</h1>
+                <div class="text-subtitle1 text-black">{{ question.subtitle }}</div>
+                <p class="text-body2">{{ question.description }}</p>
+              </div>
+
 
               <!-- if checkboxes -->
               <template v-if="question.format == 'checkboxes'">
@@ -146,28 +152,12 @@
                 </template>
               </div>
 
-              <q-input v-if="question.users_awnser" v-model="question.users_awnser.comment" label="Kommentar" />
-              <q-input v-else label="Kommentar" @click="findOrCreateAwnser(question)" />
-
-              <!-- Before question Button -->
-              <q-btn
-                :disable="!beforeQuestionRoute(question)"
-                :to="beforeQuestionRoute(question)"
-                icon="arrow_left"
-              />
-
-              <!-- Next question Button -->
-              <q-btn
-                :disable="!nextQuestionRoute(question)"
-                :to="nextQuestionRoute(question)"
-                icon="arrow_right"
-              />
             </div>
           </q-page>
         </q-page-container>
         <q-footer bordered class="bg-white text-primary">
           <q-toolbar>
-            <q-btn flat icon="keyboard_arrow_left" :to="hashes.overview" />
+            <q-btn flat icon="keyboard_arrow_left" :to="beforeQuestionRoute(question)" />
             <template v-if="question">
               <q-btn
                 :label="getSubmitLabel(question)"
@@ -177,7 +167,7 @@
                 @click="updateOrCreateAwnser(question)"
               />
             </template>
-            <q-btn flat icon="keyboard_arrow_down" :to="{ path: $store.state.route.from.fullPath }" />
+            <q-btn flat icon="keyboard_arrow_down" :to="hashes.overview" />
           </q-toolbar>
         </q-footer>
       </q-layout>
@@ -249,18 +239,19 @@ export default {
       return (o.color && this.isLight(o.color)) ? 'black' : 'white'
     },
     getProgressClasses (survey, question) {
-      var r = ' progress '
+      var r = ['progress']
       var viewedQ = this.getViewedQuestion(survey)
 
       // Get Viewed Question
-      if      (question.order < viewedQ.order) r += ' passed '
-      else if (question.order > viewedQ.order) r += ' away '
-      else r += ' current '
+      if      (question.order < viewedQ.order) r.push('passed')
+      else if (question.order > viewedQ.order) r.push('away')
+      else r.push('curr')
 
       // If Question is Awnsered
-      if (question.users_awnser) r += ' awnsered '
+      if (question.users_awnser) r.push('awnsered')
+      else r.push('unawnsered')
 
-      return r
+      return r.join(' ')
     },
     updateOrCreateAwnser (question) {
       const _t = this
@@ -461,10 +452,9 @@ export default {
       return oSurvey.questions.find(q => _t.questionIsViewed(q))
     },
     overviewIsViewed () {
-      return this.$route.hash == this.hashes.overview
+      const hash = this.$route.hash
+      return hash === this.hashes.overview || hash === ''
     },
-
-
 
     getNegativeColor (color) {
       if (this.isDark(color)) {
@@ -554,6 +544,19 @@ export default {
 </script>
 
 <style lang="scss">
+
+h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: .02em;
+  color: #000;
+}
+
+h2 {
+
+}
+
 .progress {
   display: none;
 }
@@ -566,18 +569,51 @@ export default {
   align-self: normal;
 
   .progress {
-    height: 9px;
-    background: #6f6f6f;
-    display: inline-block;
+    height: 100%;
+    display: inline-flex;
     width: 100%;
-    border-radius: 10px;
-    margin: 3px;
-    &.awnsered {
-      background-color: var(--q-color-positive);
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    .inner {
+      height: 9px;
+      background: #6f6f6f;
+      display: inline-block;
+      width: 100%;
+      border-radius: 10px;
+      margin: 3px;
+      transition: 200ms;
     }
-    &.away { opacity: .3; }
-    &.current { opacity: 1; }
-    &.passed { opacity: 1; }
+
+    &.awnsered {
+      .inner {
+        background-color: var(--q-color-positive);
+      }
+    }
+    &.away {
+      .inner {
+        opacity: .3;
+      }
+      &.unawnsered {
+        pointer-events: none;
+      }
+    }
+    &.curr {
+      .inner {
+        opacity: 1;
+      }
+      &.awnsered {
+        & + .progress {
+          pointer-events: all;
+        }
+      }
+    }
+    &.passed {
+      .inner {
+        opacity: 1;
+      }
+    }
+
   }
 
 }
