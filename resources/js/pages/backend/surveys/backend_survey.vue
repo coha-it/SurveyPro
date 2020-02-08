@@ -1632,7 +1632,7 @@ export default {
           label: 'Schulnoten (6 bis 1)',
           value: 'school_notes',
           id: 'school_notes',
-          load: function(_t, question) {
+          load: function (_t, question) {
             // Load School-Notes Preset:
             var aNotes = '6 6+ 5- 5 5+ 4- 4 4+ 3- 3 3+ 2- 2 2+ 1- 1'.split(' ')
             console.log(aNotes)
@@ -1642,7 +1642,7 @@ export default {
           label: '1 bis 10 Slider',
           value: 'slider_ten',
           id: 'slider_ten',
-          load: function(_t, question) {
+          load: function (_t, question) {
 
             // Change Question
             question.format = 'slider'
@@ -1651,11 +1651,11 @@ export default {
 
             // Change Options
             for (let i = 1; i <= 10; i++) {
-              var c = '#C6C6C6',
-                  v = 0,
-                  t = i,
-                  s = '',
-                  d = ''
+              var c = '#C6C6C6'
+              var v = 0
+              var t = i
+              var s = ''
+              var d = ''
 
               switch (i) {
                 case 1:
@@ -1663,52 +1663,52 @@ export default {
                   s = 'Trifft nicht zu'
                   d = 'Trifft eher nicht zu'
                   v = -4
-                  break;
+                  break
 
                 case 2:
                   c = '#cf6035'
                   v = -3
-                  break;
+                  break
 
                 case 3:
                   c = '#cf8c36'
                   v = -2
-                  break;
+                  break
 
                 case 4:
                   v = -1
-                  break;
+                  break
 
                 case 5:
                   v = 0
-                  break;
+                  break
 
                 case 6:
                   v = 1
-                  break;
+                  break
 
                 case 7:
                   c = '#7ea680'
                   v = 2
-                  break;
+                  break
 
                 case 8:
                   c = '#55a559'
                   v = 3
-                  break;
+                  break
 
                 case 9:
                   c = '#55a559'
                   v = 4
-                  break;
+                  break
 
                 case 10:
                   c = '#55a559'
                   v = 5
-                  break;
+                  break
 
                 default:
-                  break;
+                  break
               }
 
               _t.addOption({
@@ -1718,7 +1718,7 @@ export default {
                 value: v,
                 color: c,
                 subtitle: s,
-                description: d,
+                description: d
               }, question)
             }
           }
@@ -1727,7 +1727,7 @@ export default {
           label: '1 bis 5 Slider',
           value: 'slider_five',
           id: 'slider_five',
-          load: function(_t, question) {
+          load: function (_t, question) {
 
             // Change Question
             question.format = 'slider'
@@ -1736,36 +1736,36 @@ export default {
 
             // Change Options
             for (let i = 1; i <= 5; i++) {
-              var c = '#C6C6C6',
-                  v = 0,
-                  t = i,
-                  s = '',
-                  d = ''
+              var c = '#C6C6C6'
+              var v = 0
+              var t = i
+              var s = ''
+              var d = ''
 
               switch (i) {
                 case 1:
                   c = '#cf8c36'
                   v = -2
-                  break;
+                  break
 
                 case 2:
                   v = -1
-                  break;
+                  break
 
                 case 3:
                   v = 0
-                  break;
+                  break
 
                 case 4:
                   v = 1
-                  break;
+                  break
 
                 case 5:
                   v = 2
-                  break;
+                  break
 
                 default:
-                  break;
+                  break
               }
 
               _t.addOption({
@@ -1775,7 +1775,7 @@ export default {
                 value: v,
                 color: c,
                 subtitle: s,
-                description: d,
+                description: d
               }, question)
             }
           }
@@ -1784,7 +1784,7 @@ export default {
           label: '3er Slider',
           value: 'slider_three',
           id: 'slider_three',
-          load: function(_t, question) {
+          load: function (_t, question) {
             console.log(question)
           }
         },
@@ -1792,7 +1792,7 @@ export default {
           label: 'Ja / Nein',
           value: 'yes_or_no',
           id: 'yes_or_no',
-          load: function(_t, question) {
+          load: function (_t, question) {
             console.log(question)
           }
         }

@@ -151,7 +151,6 @@
                   />
                 </template>
               </div>
-
             </div>
           </q-page>
         </q-page-container>
