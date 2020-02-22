@@ -43,7 +43,7 @@ export default {
     }
   },
 
-  created: function() {
+  created: function () {
     this.updateViewportHeightOnResize();
   },
 
