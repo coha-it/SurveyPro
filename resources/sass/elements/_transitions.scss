@@ -35,6 +35,12 @@
   }
 }
 
+// page up
+.page-up-enter-active {  transition: all 2000ms ease;}
+.page-up-leave-active { transition: all 2000ms cubic-bezier(1.0, 0.5, 0.8, 1.0);}
+.page-up-enter,
+.page-up-leave-to {transform: rotate(90deg);}
+
 // Fade
 .fade-enter-active {  transition: all 200ms ease;}
 .fade-leave-active { transition: all 200ms cubic-bezier(1.0, 0.5, 0.8, 1.0);}

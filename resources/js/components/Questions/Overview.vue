@@ -11,22 +11,59 @@
       </q-toolbar>
     </q-header>
     <q-page-container class="bg-white">
-      <q-page class="q-mb-xl">
-        <div>
+      <q-page>
+        <div class="q-px-lg q-pb-lg">
           {{ oSurvey.desc_long || oSurvey.desc_short }}
         </div>
-        <ul>
-          <li v-for="question in oSurvey.questions" v-bind:key="question.id">
-            <router-link :to="getQuestionHash(question)">
-              {{ question.title }}
-            </router-link>
-          </li>
-        </ul>
+
+        <q-list class="q-px-sm">
+          <template v-for="question in oSurvey.questions">
+            <div :key="question.id">
+              <q-item
+                :to="getQuestionHash(question)"
+                :class="question.users_awnser ? 'bg-green-1' : ''"
+                :disable="questionIsUnselectable(question)"
+              >
+                <q-item-section>
+                  <q-item-label>{{ question.title }}</q-item-label>
+                  <q-item-label caption lines="2">{{ question.subtitle || question.description }}</q-item-label>
+                </q-item-section>
+
+                <q-item-section side top>
+                  <template v-if="question.users_awnser">
+                    <q-item-label caption>Beantwortet</q-item-label>
+                    <q-icon name="check" color="green" />
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-separator spaced inset />
+            </div>
+          </template>
+        </q-list>
       </q-page>
     </q-page-container>
     <q-footer bordered class="bg-white text-primary">
       <q-toolbar>
-        <q-btn flat icon="keyboard_arrow_left" :to="'/'" />
+        <q-btn flat icon="keyboard_arrow_down" :to="'/'" />
+        <q-btn
+          v-if="allQuestionsAwnsered()"
+          label="Umfrage abschließen"
+          color="primary"
+          class="full-width"
+        />
+        <q-btn
+          v-else-if="noQuestionsAwnsered()"
+          label="Umfrage Beginnen"
+          color="primary"
+          class="full-width"
+        />
+        <q-btn
+          v-else
+          label="Umfrage fortsetzen"
+          color="primary"
+          class="full-width"
+        />
+        <q-btn flat icon=" " readonly disabled />
       </q-toolbar>
     </q-footer>
   </q-layout>
@@ -39,6 +76,27 @@ export default {
     oSurvey: Object,
     getQuestionHash: Function,
     getOverviewHash: Function,
+    getProgressClasses: Function,
+  },
+
+  methods: {
+    questionIsSelectable: function (question) {
+      var arr = this.oSurvey.questions.filter(e => e.users_awnser)
+      var lastAwnseredQuestion = arr[arr.length - 1]
+      return question.order <= lastAwnseredQuestion.order + 1
+    },
+    questionIsUnselectable: function (question) {
+      return !this.questionIsSelectable(question)
+    },
+    countAwnseredQuestions: function () {
+      return this.oSurvey.questions.filter(e => e.users_awnser).length
+    },
+    allQuestionsAwnsered: function () {
+      return this.countAwnseredQuestions() === this.oSurvey.question_count
+    },
+    noQuestionsAwnsered: function () {
+      return this.countAwnseredQuestions() === 0
+    }
   }
 }
 </script>

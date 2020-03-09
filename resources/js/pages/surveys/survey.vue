@@ -67,6 +67,7 @@ export default {
     '$route.hash': function (current, before) {
       this.changedHash(current)
       if (this.oSurvey) {
+        // Set Transition
         this.setQuestionTransition()
 
         // Set New Question
@@ -196,10 +197,12 @@ export default {
       var oQuestionOld = this.question
       var oQuestionNew = this.getViewedQuestion(this.oSurvey)
 
-      var a = oQuestionOld.order
-      var b = oQuestionNew.order
+      if (oQuestionOld && oQuestionNew) {
+        var a = oQuestionOld.order
+        var b = oQuestionNew.order
 
-      this.question_transition = a < b ? 'fade-left' : 'fade-right'
+        this.question_transition = a < b ? 'fade-left' : 'fade-right'
+      }
     }
   },
 

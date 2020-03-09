@@ -153,7 +153,7 @@
         <q-btn flat icon="keyboard_arrow_left" :to="getOverviewHash()" />
         <template v-if="question">
           <q-btn
-            :label="getSubmitLabel(question)"
+            label="Antwort speichern"
             :disable="questionIsNotSubmittable(question) ? true : false"
             color="primary"
             class="full-width"
@@ -236,16 +236,6 @@ export default {
     questionIsNotSubmittable (q) {
       return !this.questionIsSubmittable(q)
     },
-    getSubmitLabel (question) {
-      // If is not Skippable
-      if (question.is_skippable === 0) {
-        // If Min Options is smaller or equal the current options
-        return 'übernehmen'
-      } else {
-        // Is Skippable
-        return 'Überspringen'
-      }
-    },
     getQuestion (q, dir) {
       var qs = this.oSurvey.questions
       var iCurPos = this.getPositionById(q, qs)
@@ -266,6 +256,7 @@ export default {
     questionRoute (q, dir) {
       var nq = this.getQuestion(q, dir)
       if (nq) return this.getQuestionHash(nq)
+      else return this.getOverviewHash()
     },
     beforeQuestionRoute (q) {
       return this.questionRoute(q, -1)
