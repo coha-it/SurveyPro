@@ -83,7 +83,7 @@ export default {
   middleware: 'guest',
   layout: 'rightsided',
   components: {
-      Back
+    Back
   },
 
   directives: {

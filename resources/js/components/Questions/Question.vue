@@ -20,7 +20,7 @@
     </q-header>
     <q-page-container>
       <q-page class="q-mb-xl">
-        <transition name="fade" mode="out-in">
+        <transition :name="question_transition" mode="out-in">
           <!-- The Question -->
           <!-- Single Question here -->
           <div v-if="questionIsViewed(question)" v-bind:key="question.id">
@@ -149,7 +149,8 @@
     </q-page-container>
     <q-footer bordered class="bg-white text-primary">
       <q-toolbar>
-        <q-btn flat icon="keyboard_arrow_left" :to="beforeQuestionRoute(question)" />
+        <!-- <q-btn flat icon="keyboard_arrow_left" :to="beforeQuestionRoute(question)" /> -->
+        <q-btn flat icon="keyboard_arrow_left" :to="getOverviewHash()" />
         <template v-if="question">
           <q-btn
             :label="getSubmitLabel(question)"
@@ -173,6 +174,7 @@ export default {
     question: Object,
     getViewedQuestion: Function,
     getQuestionHash: Function,
+    getOverviewHash: Function,
     questionIsViewed: Function,
     getPositionById: Function,
     findByKey: Function,
@@ -180,6 +182,7 @@ export default {
     isLight: Function,
     isDark: Function,
     lightOrDark: Function,
+    question_transition: String,
   },
 
   data () {

@@ -175,5 +175,6 @@
     "zh-CN": "Chinesisch",
     "description_mods": "Beschreibung Moderatoren",
     "description_public": "Beschreibung Öffentlich",
-    "Question": "Frage"
+    "Question": "Frage",
+    "From": "Von"
 }

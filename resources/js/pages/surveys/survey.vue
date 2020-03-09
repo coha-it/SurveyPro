@@ -1,30 +1,37 @@
 <template>
-  <div v-if="oSurvey">
-    <!-- Overview -->
-    <Overview
-      v-if="overviewIsViewed()"
-      :hashes="hashes"
-      :o-survey="oSurvey"
-      :get-question-hash="getQuestionHash"
-    />
+  <transition name="fade" mode="out-in">
+    <div :key="overviewIsViewed()">
+      <div v-if="oSurvey">
+        <!-- Overview -->
+        <Overview
+          v-if="overviewIsViewed()"
+          :hashes="hashes"
+          :o-survey="oSurvey"
+          :get-question-hash="getQuestionHash"
+          :get-overview-hash="getOverviewHash"
+        />
 
-    <!-- Questions -->
-    <Question
-      v-else
-      :hashes="hashes"
-      :o-survey="oSurvey"
-      :question="question"
-      :get-viewed-question="getViewedQuestion"
-      :get-question-hash="getQuestionHash"
-      :question-is-viewed="questionIsViewed"
-      :get-position-by-id="getPositionById"
-      :find-by-key="findByKey"
-      :copy-object="copyObject"
-      :is-light="isLight"
-      :is-dark="isDark"
-      :light-or-dark="lightOrDark"
-    />
-  </div>
+        <!-- Questions -->
+        <Question
+          v-else
+          :hashes="hashes"
+          :o-survey="oSurvey"
+          :question="question"
+          :get-viewed-question="getViewedQuestion"
+          :get-question-hash="getQuestionHash"
+          :get-overview-hash="getOverviewHash"
+          :question-is-viewed="questionIsViewed"
+          :get-position-by-id="getPositionById"
+          :find-by-key="findByKey"
+          :copy-object="copyObject"
+          :is-light="isLight"
+          :is-dark="isDark"
+          :light-or-dark="lightOrDark"
+          :question_transition="question_transition"
+        />
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -47,9 +54,27 @@ export default {
         question: '#q-',
         overview: '#overview'
       },
-      oSurvey: null
+      oSurvey: null,
+      question_transition: 'fade-left'
     }
   },
+
+  watch: {
+    surveyFillable: function (promise) {
+      this.oSurvey = this.copyObject(promise)
+      this.question = this.getViewedQuestion(this.oSurvey)
+    },
+    '$route.hash': function (current, before) {
+      this.changedHash(current)
+      if (this.oSurvey) {
+        this.setQuestionTransition()
+
+        // Set New Question
+        this.question = this.getViewedQuestion(this.oSurvey)
+      }
+    }
+  },
+
   methods: {
 
     nextQuestion (q) {
@@ -166,19 +191,16 @@ export default {
         return 'dark'
       }
     },
-  },
 
-  watch: {
-    surveyFillable: function (promise) {
-      this.oSurvey = this.copyObject(promise)
-      this.question = this.getViewedQuestion(this.oSurvey)
-    },
-    '$route.hash': function (current, before) {
-      this.changedHash(current)
-      if (this.oSurvey) {
-        this.question = this.getViewedQuestion(this.oSurvey)
-      }
-    },
+    setQuestionTransition: function () {
+      var oQuestionOld = this.question
+      var oQuestionNew = this.getViewedQuestion(this.oSurvey)
+
+      var a = oQuestionOld.order
+      var b = oQuestionNew.order
+
+      this.question_transition = a < b ? 'fade-left' : 'fade-right'
+    }
   },
 
   created: function () {
