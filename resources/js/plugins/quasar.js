@@ -17,6 +17,7 @@ colors.setBrand('background', '#fafafa')
 
 export default Vue.use(Quasar, {
   framework: {
+    iconSet: 'mdi-v4',
     config: {
       brand: {
         primary: 'red'

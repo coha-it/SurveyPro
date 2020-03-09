@@ -1,77 +1,77 @@
 <template>
-    <div class="rightsided-content coha--pan-wrapper">
-      <div class="inner-content">
-          <div class="container">
-            <div class="row items-center content-center">
-              <div class="col-12 col-sm-12 col-md12">
-                <Back :to="{ name:'auth' }" />
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-10 col-sm-10 col-md-10 self-center">
-                <h1>{{ $t('pan_title') }}</h1>
-                <p class="subtitle">{{ $t('pan_desc') }}</p>
-              </div>
-              <div class="col-2 col-sm-2 col-md-2 self-center">
-                <q-icon name="mdi-dialpad" size="xl"></q-icon>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                <q-form @submit.prevent="loginpan" @keydown="form.onKeydown($event)">
-                    <q-input
-                      v-model="form.pan"
-                      :standout="'text-white bg-primary'"
-                      :label="$t('PAN')"
-                      color='black'
-                      XXXerror="form.errors.has('pan')"
-                      type="text"
-                      name="pan"
-                      required
-                      ref="pan"
-                      :maxlength="pan_maxlength"
-                      autocomplete="off"
-                      v-mask="'XXX XXX'"
-                      v-on:input="changePan"
-                      persistent-hint
-                      class="big-input"
-                    >
-                      <template v-slot:hint>
-                        {{ getLengthHint(form.pan, pan_maxlength) }}
-                      </template>
-                    </q-input>
-
-                    <br>
-
-                    <q-input
-                      v-model="form.pin"
-                      :label="$t('PIN')"
-                      color='black'
-                      :standout="'text-white bg-primary'"
-                      XXXerror="form.errors.has('pin')"
-                      type="text"
-                      pattern="[0-9]*"
-                      name="pin"
-                      ref="pin"
-                      required
-                      autocomplete="off"
-                      :maxlength="pin_maxlength"
-                      v-mask="'####'"
-                      v-on:input="changePin"
-                      class="big-input"
-                      persistent-hint
-                    >
-                      <template v-slot:hint>
-                        {{ form.pin.length + ' / ' + (pin_maxlength) }}
-                      </template>
-                    </q-input><br>
-                    <q-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</q-btn>
-                </q-form>
-              </div>
-            </div>
+  <div class="rightsided-content coha--pan-wrapper">
+    <div class="inner-content">
+      <div class="container">
+        <div class="row items-center content-center">
+          <div class="col-12 col-sm-12 col-md12">
+            <Back :to="{ name:'auth' }" />
           </div>
         </div>
+        <div class="row">
+          <div class="col-10 col-sm-10 col-md-10 self-center">
+            <h1>{{ $t('pan_title') }}</h1>
+            <p class="subtitle">{{ $t('pan_desc') }}</p>
+          </div>
+          <div class="col-2 col-sm-2 col-md-2 self-center">
+            <q-icon name="mdi-dialpad" size="xl"></q-icon>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <q-form @submit.prevent="loginpan" @keydown="form.onKeydown($event)">
+              <q-input
+                v-model="form.pan"
+                :standout="'text-white bg-primary'"
+                :label="$t('PAN')"
+                color='black'
+                XXXerror="form.errors.has('pan')"
+                type="text"
+                name="pan"
+                required
+                ref="pan"
+                :maxlength="pan_maxlength"
+                autocomplete="off"
+                v-mask="'XXX XXX'"
+                v-on:input="changePan"
+                persistent-hint
+                class="big-input"
+              >
+                <template v-slot:hint>
+                  {{ getLengthHint(form.pan, pan_maxlength) }}
+                </template>
+              </q-input>
+
+              <br>
+
+              <q-input
+                ref="pin"
+                v-model="form.pin"
+                v-mask="'####'"
+                :label="$t('PIN')"
+                color="black"
+                :standout="'text-white bg-primary'"
+                :error="form.errors.has('pin') ? true : false"
+                type="text"
+                pattern="[0-9]*"
+                name="pin"
+                required
+                autocomplete="off"
+                :maxlength="pin_maxlength"
+                class="big-input secured"
+                persistent-hint
+                @input="changePin"
+              >
+                <template v-slot:hint>
+                  {{ form.pin.length + ' / ' + (pin_maxlength) }}
+                </template>
+              </q-input><br>
+              <q-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</q-btn>
+            </q-form>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
