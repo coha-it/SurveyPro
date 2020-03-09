@@ -153,7 +153,7 @@
         <q-btn flat icon="keyboard_arrow_left" :to="getOverviewHash()" />
         <template v-if="question">
           <q-btn
-            label="Antwort speichern"
+            :label="getQuestionLabel(question)"
             :disable="questionIsNotSubmittable(question) ? true : false"
             color="primary"
             class="full-width"
@@ -215,6 +215,10 @@ export default {
     },
     getQuestionPosition () {
       return this.getPositionById(this.question, this.oSurvey.questions) + 1
+    },
+    getQuestionLabel (question) {
+      var s = 'Antwort speichern'
+      return s
     },
     questionIsSubmittable (q) {
       // Skippable

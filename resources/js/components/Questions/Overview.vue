@@ -52,16 +52,12 @@
           class="full-width"
         />
         <q-btn
-          v-else-if="noQuestionsAwnsered()"
-          label="Umfrage Beginnen"
-          color="primary"
-          class="full-width"
-        />
-        <q-btn
           v-else
-          label="Umfrage fortsetzen"
+          :label="noQuestionsAwnsered() ? 'Umfrage Beginnen' : 'Umfrage fortsetzen'"
           color="primary"
           class="full-width"
+          :to="getSelectableQuestionHash()"
+          @click="getSelectableQuestion()"
         />
         <q-btn flat icon=" " readonly disabled />
       </q-toolbar>
@@ -80,10 +76,36 @@ export default {
   },
 
   methods: {
-    questionIsSelectable: function (question) {
+
+    getSelectableQuestionHash: function () {
+      return this.getQuestionHash(this.getSelectableQuestion())
+    },
+
+    getSelectableQuestion: function () {
+      var order = this.getLastAwnseredQuestion().order + 1
+      var selectableQ = this.oSurvey.questions.find(e => e.order === order)
+      if (this.noQuestionsAwnsered()) {
+        return this.getFirstQuestion()
+      }
+      return selectableQ
+    },
+
+    getFirstQuestion: function () {
+      return this.oSurvey.questions[0]
+    },
+
+    getLastAwnseredQuestion: function () {
       var arr = this.oSurvey.questions.filter(e => e.users_awnser)
-      var lastAwnseredQuestion = arr[arr.length - 1]
-      return question.order <= lastAwnseredQuestion.order + 1
+      if (arr.length) {
+        return arr[arr.length - 1]
+      }
+      return this.getFirstQuestion()
+    },
+    questionIsSelectable: function (question) {
+      if (this.noQuestionsAwnsered()) {
+        return this.getFirstQuestion().order === question.order
+      }
+      return question.order <= this.getLastAwnseredQuestion().order + 1
     },
     questionIsUnselectable: function (question) {
       return !this.questionIsSelectable(question)
