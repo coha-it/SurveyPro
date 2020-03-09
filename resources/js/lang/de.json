@@ -174,5 +174,6 @@
     "es": "Spanisch",
     "zh-CN": "Chinesisch",
     "description_mods": "Beschreibung Moderatoren",
-    "description_public": "Beschreibung Öffentlich"
+    "description_public": "Beschreibung Öffentlich",
+    "Question": "Frage"
 }
