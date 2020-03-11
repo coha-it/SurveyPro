@@ -1661,49 +1661,58 @@ export default {
                 case 1:
                   c = '#cf6035'
                   s = 'Trifft nicht zu'
-                  d = 'Trifft eher nicht zu'
                   v = -4
                   break
 
                 case 2:
                   c = '#cf6035'
+                  s = 'Trifft nicht zu'
                   v = -3
                   break
 
                 case 3:
                   c = '#cf8c36'
+                  s = 'Trifft weniger zu'
                   v = -2
                   break
 
                 case 4:
+                  s = 'Trifft weniger zu'
                   v = -1
                   break
 
                 case 5:
+                  s = 'Unentschlossen'
+                  d = '50 / 50'
                   v = 0
                   break
 
                 case 6:
+                  s = 'Trifft manchmal zu'
                   v = 1
                   break
 
                 case 7:
                   c = '#7ea680'
+                  s = 'Trifft manchmal zu'
                   v = 2
                   break
 
                 case 8:
                   c = '#55a559'
+                  s = 'Trifft eher zu'
                   v = 3
                   break
 
                 case 9:
                   c = '#55a559'
+                  s = 'Trifft absolut zu'
                   v = 4
                   break
 
                 case 10:
                   c = '#55a559'
+                  s = 'Trifft absolut zu'
                   v = 5
                   break
 
