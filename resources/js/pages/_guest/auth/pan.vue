@@ -20,21 +20,21 @@
           <div class="col-12">
             <q-form @submit.prevent="loginpan" @keydown="form.onKeydown($event)">
               <q-input
+                ref="pan"
                 v-model="form.pan"
+                v-mask="'XXX XXX'"
                 :standout="'text-white bg-primary'"
                 :label="$t('PAN')"
-                color='black'
-                XXXerror="form.errors.has('pan')"
+                color="black"
                 type="text"
                 name="pan"
-                required
-                ref="pan"
+                persistent-hint
+                input-class="big-input"
                 :maxlength="pan_maxlength"
                 autocomplete="off"
-                v-mask="'XXX XXX'"
-                v-on:input="changePan"
-                persistent-hint
-                class="big-input"
+                required
+                :error="form.errors.has('pan')"
+                @input="changePan"
               >
                 <template v-slot:hint>
                   {{ getLengthHint(form.pan, pan_maxlength) }}
@@ -57,7 +57,7 @@
                 required
                 autocomplete="off"
                 :maxlength="pin_maxlength"
-                class="big-input secured"
+                input-class="big-input secured"
                 persistent-hint
                 @input="changePin"
               >
@@ -65,7 +65,9 @@
                   {{ form.pin.length + ' / ' + (pin_maxlength) }}
                 </template>
               </q-input><br>
-              <q-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('login') }}</q-btn>
+              <q-btn color="primary" large block :loading="form.busy" type="submit">
+                {{ $t('login') }}
+              </q-btn>
             </q-form>
           </div>
         </div>
