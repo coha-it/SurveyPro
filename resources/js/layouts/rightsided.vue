@@ -37,7 +37,7 @@ export default {
 
   data () {
     return {
-      backgroundImage: 'url(/storage/student-2.jpg)'
+      backgroundImage: 'url(https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/student-2.jpg)'
     }
   },
 
