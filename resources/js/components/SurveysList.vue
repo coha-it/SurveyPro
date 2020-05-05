@@ -57,7 +57,7 @@
 <script>
 // import axios from 'axios'
 import { mapGetters } from 'vuex'
-import moment from 'moment'
+import moment from 'vue-moment'
 import _ from 'lodash'
 
 export default {
