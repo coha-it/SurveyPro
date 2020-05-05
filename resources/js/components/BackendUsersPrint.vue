@@ -30,7 +30,7 @@
           <div v-for="user in users" v-bind:key="user.id" class="element page-break" :class="colorfull ? '' : 'blackAndWhite'">
             <div class="inner">
 
-              <img class="logo" :src="'/storage/corporate-happiness-gmbh-logo-full' + ( (colorfull) ? '-white' : '') + '.svg' ">
+              <img class="logo" :src="'https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/corporate-happiness-gmbh-logo-full' + ( (colorfull) ? '-white' : '') + '.svg' ">
 
               <h3>Mitarbeiter-Befragung</h3>
               <p>

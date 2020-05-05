@@ -5,7 +5,7 @@
       <div style="flex: auto">
         <q-item>
           <q-item-section top thumbnail class="q-ml-none">
-            <img :src="'/storage/corporate-happiness-gmbh.svg'" />
+            <img src="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/corporate-happiness-gmbh.svg" />
           </q-item-section>
           <q-item-section>
             <q-item-label>
