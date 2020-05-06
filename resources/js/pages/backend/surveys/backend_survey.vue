@@ -1586,7 +1586,7 @@
 <script>
 // import axios from 'axios'
 import { mapGetters } from 'vuex'
-import moment from 'moment'
+// import moment from 'moment'
 import UserDataModal from '~/components/BackendUserDataModal'
 
 export default {
