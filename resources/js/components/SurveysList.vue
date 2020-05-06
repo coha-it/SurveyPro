@@ -57,15 +57,14 @@
 <script>
 // import axios from 'axios'
 import { mapGetters } from 'vuex'
-// import moment from 'moment'
+import VueMoment from 'vue-moment'
 import _ from 'lodash'
 
 export default {
   data () {
     return {
       sSearch: '',
-      aSurveys: [],
-      moment: moment
+      aSurveys: []
     }
   },
   computed: {
@@ -100,10 +99,10 @@ export default {
   },
   methods: {
     fhd: function (d) {
-      return moment(d).format('DD.MM.YYYY')
+      return VueMoment(d).format('DD.MM.YYYY')
     },
     fht: function (d) {
-      return moment(d).format('hh:mm')
+      return VueMoment(d).format('hh:mm')
     },
     getBadgeColor (oSurvey) {
       if (oSurvey.is_fillable) return 'green'

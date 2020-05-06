@@ -1586,7 +1586,7 @@
 <script>
 // import axios from 'axios'
 import { mapGetters } from 'vuex'
-// import moment from 'moment'
+import VueMoment from 'vue-moment'
 import UserDataModal from '~/components/BackendUserDataModal'
 
 export default {
@@ -1949,7 +1949,7 @@ export default {
       oOptionsPagination: {
         rowsPerPage: 100,
         sortBy: 'order',
-        descending: false,
+        descending: false
       },
       aOptionHeaders: [
         {
@@ -2039,9 +2039,9 @@ export default {
       },
 
       // Today
-      sTodayDate: moment().format('YYYY-MM-DD'),
-      sTodayTime: moment().format('HH:mm:ss'),
-      sTodayDatetime: moment().format('YYYY-MM-DD HH:mm:ss'),
+      sTodayDate: VueMoment().format('YYYY-MM-DD'),
+      sTodayTime: VueMoment().format('HH:mm:ss'),
+      sTodayDatetime: VueMoment().format('YYYY-MM-DD HH:mm:ss'),
 
       // Tmps Start
       // sStartDate: '', // this.getStartDate(),
@@ -2310,13 +2310,13 @@ export default {
     },
 
     getStartDate () {
-      return moment()
+      return VueMoment()
         .format()
         .substr(0, 10)
     },
 
     // getEndDate() {
-    //   return moment(moment() + 5).format().substr(0, 10)
+    //   return VueMoment(VueMoment() + 5).format().substr(0, 10)
     // },
 
     reorderQuestions () {
@@ -2340,18 +2340,18 @@ export default {
     },
 
     events (d) {
-      var entry = moment(d).format('YYYY-MM-DD')
-      var start = moment(this.oSurvey.start_datetime).format('YYYY-MM-DD')
-      var end = moment(this.oSurvey.end_datetime).format('YYYY-MM-DD')
-      var today = moment(this.sTodayDate).format('YYYY-MM-DD')
+      var entry = VueMoment(d).format('YYYY-MM-DD')
+      var start = VueMoment(this.oSurvey.start_datetime).format('YYYY-MM-DD')
+      var end = VueMoment(this.oSurvey.end_datetime).format('YYYY-MM-DD')
+      var today = VueMoment(this.sTodayDate).format('YYYY-MM-DD')
 
       return (entry >= start && entry <= end) || entry == today
     },
 
     eventColor (d) {
-      var entry = moment(d).format('YYYY-MM-DD')
-      var start = moment(this.oSurvey.start_datetime).format('YYYY-MM-DD')
-      var end = moment(this.oSurvey.end_datetime).format('YYYY-MM-DD')
+      var entry = VueMoment(d).format('YYYY-MM-DD')
+      var start = VueMoment(this.oSurvey.start_datetime).format('YYYY-MM-DD')
+      var end = VueMoment(this.oSurvey.end_datetime).format('YYYY-MM-DD')
 
       switch (entry) {
         case end:
@@ -2642,7 +2642,7 @@ export default {
     },
 
     getDate (ts) {
-      return moment(ts).format('YYYY-MM-DD')
+      return VueMoment(ts).format('YYYY-MM-DD')
     },
 
     getMinStartTime (hr, min, sec) {
@@ -2658,21 +2658,21 @@ export default {
         var startDate = this.getDate(this.oSurvey.start_datetime)
         var endDate = this.getDate(this.oSurvey.end_datetime)
         if (startDate == endDate) {
-          var endDatetime = moment(this.oSurvey.end_datetime).format(
+          var endDatetime = VueMoment(this.oSurvey.end_datetime).format(
             'YYYY-MM-DD HH:mm:ss'
           )
-          var startDatetime = moment(this.oSurvey.start_datetime).format(
+          var startDatetime = VueMoment(this.oSurvey.start_datetime).format(
             'YYYY-MM-DD HH:mm:ss'
           )
 
           // SelTime
-          var selTime = moment(this.oSurvey.start_datetime).toDate()
+          var selTime = VueMoment(this.oSurvey.start_datetime).toDate()
           if (hr) selTime.setHours(hr)
           if (min) selTime.setMinutes(min)
           if (sec) selTime.setSeconds(sec)
 
           // Format again
-          selTime = moment(selTime).format('YYYY-MM-DD HH:mm:ss')
+          selTime = VueMoment(selTime).format('YYYY-MM-DD HH:mm:ss')
 
           switch (type) {
             case 'start':
@@ -2696,8 +2696,8 @@ export default {
         return 0
       }
 
-      var t1 = moment(this.oSurvey.start_datetime)
-      var t2 = moment(this.oSurvey.end_datetime)
+      var t1 = VueMoment(this.oSurvey.start_datetime)
+      var t2 = VueMoment(this.oSurvey.end_datetime)
 
       return Math.abs(t1 - t2) / 1000
     },
