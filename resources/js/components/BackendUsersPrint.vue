@@ -1,16 +1,14 @@
 <template>
   <span>
-    <q-btn
-      icon-left="print"
-      text
-      rounded
-      unelevated
-      error
-      warning
-      :disabled="disabled"
-      :label="users.length + ' ' + $t('print')"
-      @click="printView()"
-    />
+
+    <q-item clickable @click="printView()">
+      <q-item-section>
+        {{ users.length + ' ' + $t('Zugänge drucken') }}
+      </q-item-section>
+      <q-item-section side>
+        <q-icon name="print" />
+      </q-item-section>
+    </q-item>
 
     <q-dialog v-model="dialog" content-class="coha--print-wrapper" maximized>
       <div>

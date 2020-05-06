@@ -39,7 +39,9 @@ class BackendController extends Controller
 
     public function getCreatedUsers(Request $request) {
         return $request->user()->users->each(function ($i, $k) {
-            $i->pan->makeVisible(['pin']);
+            if($i && $i->pan) {
+                $i->pan->makeVisible(['pin']);
+            }
         })->toJson();
     }
 
@@ -99,11 +101,18 @@ class BackendController extends Controller
         for ($i=0; $i < $number; $i++) {
             $sRandPan = $this->getRandomPan();
             $sRandPin = $this->getRandomPin();
+            $imported = $request->imported ?? false;
 
             $user = User::create(['created_by' => $self->id]);
             $user->pan()->updateOrCreate([
                 'pan' => $sRandPan,
-                'pin' => $sRandPin
+                'pin' => $sRandPin,
+
+                // If Imported
+                'contact_mail'          => $imported ? $imported[$i]['mail'] : '',
+                // 'last_mail_sent'        => $imported ? $imported[$i]['mail'] : '',
+                // 'last_mail_status'      => $imported ? $imported[$i]['mail'] : '',
+                'import_comment'        => $imported ? json_encode($imported[$i]) : '',
             ]);
             $user->pan->save();
             $user->save();

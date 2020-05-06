@@ -79,7 +79,7 @@
                 unelevated
                 class="full-width q-mr-sm"
                 :label="iCreateUsersNumber + ('Zugänge Generieren')"
-                @click="createUsers()"
+                @click="createUsers(iCreateUsersNumber)"
               />
             </q-item>
           </q-list>
@@ -126,16 +126,26 @@
               <q-item-section>
                 <q-item-label>Datei hochladen</q-item-label>
                 <q-item-label caption>
+                  Ihre Datei benötigt folgende Voraussetzungen:
+                  <ul>
+                    <li>Ihre Datei muss eine valide <span class="code_font">CSV-Datei</span> sein</li>
+                    <li>Der Kopf bzw. die erste Zeile der Datei muss "mail" enthalten. die weiteren Spalten der Vorlagedatei sind optional</li>
+                    <li>Der Spaltentrenner Ihrer Datei muss das Semikolon-Zeichen <strong class="code_font">;</strong> sein</li>
+                  </ul>
                   Wählen Sie ihre Datei aus und beginnen Sie den Upload<br><br>
                   <q-uploader
-                    url="http://localhost:4444/upload"
+                    url="/import-csv"
                     label="Datei auswählen und Hochladen"
                     color="primary"
                     square
                     flat
                     bordered
+                    auto-upload
                     style="max-width: 300px;"
                     no-thumbnails
+                    field-name="file"
+                    @uploaded="fileUploadSuccess"
+                    @failed="fileUploadFailed"
                   />
                 </q-item-label>
               </q-item-section>
@@ -143,14 +153,34 @@
 
             <q-separator />
 
-            <q-item v-if="false">
+            <q-item>
+              <q-item-section>
+                <q-item-label>Dateiinhalte überprüfen</q-item-label>
+                <q-item-label caption>
+                  Überprüfen Sie die unten stehenden Inhalte<br><br>
+
+                  <q-scroll-area style="min-height: 150px; height: 35vh; max-height: 350px; white-space: break-spaces;">{{
+                    jUploadedUsers
+                  }}</q-scroll-area>
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-separator />
+
+            <q-item v-if="jUploadedUsers">
               <q-item-section>
                 <q-item-label>Import Starten</q-item-label>
                 <q-item-label caption>
                   Starten Sie den Import<br><br>
+                  <q-btn label="Import ausführen" color="primary" depressed class="full-width" @click="createUsers(jUploadedUsers.length, jUploadedUsers)"/>
                 </q-item-label>
               </q-item-section>
             </q-item>
+
+            <q-separator />
+
+            <br><br><br><br>
 
           </q-list>
         </q-card>
@@ -286,8 +316,12 @@
                     </q-item>
                     <q-separator />
                     <q-item clickable v-close-popup>
-                      <q-toggle v-model="showContactMailData" label="Kontakt E-Mail Daten Anzeigen" size="sm" right-label color="red" style="width: 100%;" />
+                      <q-toggle v-model="bShowContactMailData" label="Kontakt / E-Mail Versand-Daten Anzeigen" size="sm" right-label style="width: 100%;" />
                     </q-item>
+                    <q-item clickable v-close-popup>
+                      <q-toggle v-model="bShowImportComment" label="Import-Kommentar Anzeigen" size="sm" right-label style="width: 100%;" />
+                    </q-item>
+                    <q-separator />
                   </q-list>
                 </q-menu>
               </q-btn>&nbsp;
@@ -330,7 +364,6 @@
                 >
                   <q-menu>
                     <q-list style="min-width: 100px">
-
                       <BulkGroupChanges
                         :aItems="user.groups_moderating"
                         :selected="selected"
@@ -368,56 +401,97 @@
                         label="Ort wählen"
                         menuText="Ort"
                       />
+
+                      <!-- Bulk Sending Mails -->
+
+                      <!-- Bulk Delete -->
+                      <q-separator />
+
+                      <q-item clickable>
+                        <q-item-section>Entfernen</q-item-section>
+                        <q-item-section side>
+                          <q-icon name="keyboard_arrow_right" />
+                        </q-item-section>
+                        <q-menu anchor="top right" self="top left">
+                          <q-list>
+                            <q-item clickable @click.stop="deleteUsersDialog = true">
+                              <q-item-section>{{ selected.length + ' ' + $t('delete') }}</q-item-section>
+                              <q-item-section side>
+                                <q-icon name="delete" />
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
+                        </q-menu>
+                      </q-item>
+
+                      <!-- Delete Dialog -->
+                      <q-dialog v-model="deleteUsersDialog" max-width="320" dark>
+                        <q-card>
+                          <q-toolbar class="bg-primary text-white" dark color="primary">
+                            <q-toolbar-title>Zugänge Löschen</q-toolbar-title>
+                            <q-space />
+                            <q-btn dense flat icon="close" v-close-popup>
+                              <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
+                            </q-btn>
+                          </q-toolbar>
+
+                          <q-list>
+                            <q-item>
+                              <q-item-section>
+                                <q-item-label>Benutzer Löschen</q-item-label>
+                                <q-item-label caption>
+                                  Lösche die markierten Benutzer
+                                </q-item-label>
+                              </q-item-section>
+                            </q-item>
+                            <q-item>
+                              <div class="container" fluid>
+                                <div class="row" align="center">
+                                  <div class="text-center col-12 col-sm-12">
+                                    <q-btn unelevated @click.stop="deleteUsersDialog = false" outline>Abbruch</q-btn>
+                                    <q-btn unelevated @click="deleteUsers(selected)" color="red">Zugänge Löschen!</q-btn>
+                                  </div>
+                                </div>
+                              </div>
+                            </q-item>
+                          </q-list>
+                        </q-card>
+                      </q-dialog>
+
+
                     </q-list>
                   </q-menu>
                 </q-btn>
 
                             &nbsp;
-
-                <Print :users="selected" :disabled="getUnsaved(selected).length > 0 ? true : false" />
-
                 <q-btn
-                  rounded
+                  color="primary"
+                  :label="selected.length + ' ' + $t('teilen')"
+                  icon="share"
                   unelevated
-                  error
-                  warning
-                  @click.stop="deleteUsersDialog = true"
-                  icon-left="delete"
-                  :label="selected.length + ' ' + $t('delete')"
-                />
+                  rounded
+                  :disabled="getUnsaved(selected).length > 0 ? true : false"
+                >
+                  <q-menu>
+                    <q-list style="min-width: 100px">
+                      <Print :users="selected" />
 
-                <q-dialog v-model="deleteUsersDialog" max-width="320" dark>
-                  <q-card>
-                    <q-toolbar class="bg-primary text-white" dark color="primary">
-                      <q-toolbar-title>Zugänge Löschen</q-toolbar-title>
-                      <q-space />
-                      <q-btn dense flat icon="close" v-close-popup>
-                        <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
-                      </q-btn>
-                    </q-toolbar>
+                      <q-separator />
 
-                    <q-list>
-                      <q-item>
+                      <q-item clickable>
                         <q-item-section>
-                          <q-item-label>Benutzer Löschen</q-item-label>
-                          <q-item-label caption>
-                            Lösche die markierten Benutzer
-                          </q-item-label>
+                          E-Mail versand
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-icon name="email" />
                         </q-item-section>
                       </q-item>
-                      <q-item>
-                        <div class="container" fluid>
-                          <div class="row" align="center">
-                            <div class="text-center col-12 col-sm-12">
-                              <q-btn unelevated @click.stop="deleteUsersDialog = false" outline>Abbruch</q-btn>
-                              <q-btn unelevated @click="deleteUsers(selected)" color="red">Zugänge Löschen!</q-btn>
-                            </div>
-                          </div>
-                        </div>
-                      </q-item>
+
+                      <q-separator />
+
                     </q-list>
-                  </q-card>
-                </q-dialog>
+                  </q-menu>
+                </q-btn>
 
 
                 <!-- <q-checkbox left-label  class="mt-6 ml-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="accent"></q-checkbox> -->
@@ -445,6 +519,26 @@
             </div>
           </template>
 
+          <!-- Header Cell Slots -->
+          <template v-slot:header-cell-contact_mail="props">
+            <q-th v-if="bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
+          </template>
+
+          <!-- Header Cell Slots -->
+          <template v-slot:header-cell-last_mail_sent="props">
+            <q-th v-if="bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
+          </template>
+
+          <!-- Header Cell Slots -->
+          <template v-slot:header-cell-last_mail_status="props">
+            <q-th v-if="bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
+          </template>
+
+          <!-- Header Cell Slots -->
+          <template v-slot:header-cell-import_comment="props">
+            <q-th v-if="bShowImportComment" :props="props">{{ props.col.label }}</q-th>
+          </template>
+
           <!-- PAN -->
           <template v-slot:body-cell-pan="props">
             <q-td :props="props">
@@ -462,10 +556,6 @@
                 <q-popup-edit
                   v-model="props.row.pan.pan"
                   buttons
-                  @save="save(props.row)"
-                  @cancel="cancel"
-                  @open="open"
-                  @close="close"
                   single-line
                   :label="$t('edit')"
                   persistent
@@ -475,6 +565,8 @@
                   :offset="[5, 0]"
                   label-cancel="Schließen"
                   label-set="Übernehmen"
+                  @save="save(props.row)"
+                  @cancel="cancel"
                 >
                   <span class="coha--list-item pan c-code-text ">
                     <q-input
@@ -520,10 +612,6 @@
                 <q-popup-edit
                   v-model="props.row.pan.pin"
                   buttons
-                  @save="save(props.row)"
-                  @cancel="cancel"
-                  @open="open"
-                  @close="close"
                   single-line
                   :label="$t('edit')"
                   persistent
@@ -533,6 +621,8 @@
                   :offset="[5, 0]"
                   label-cancel="Schließen"
                   label-set="Übernehmen"
+                  @save="save(props.row)"
+                  @cancel="cancel"
                 >
                   <span class="coha--list-item pin c-code-text">
                     <q-input
@@ -542,8 +632,8 @@
                       counter
                       persistent-hint
                       :rules="[maxPinChars]"
-                      v-on:keyup="changePin(props.row)"
-                      v-on:change="changePin(props.row)"
+                      @keyup="changePin(props.row)"
+                      @change="changePin(props.row)"
                       :error="!pinIsOk(props.row)"
                       required
                       autocomplete="off"
@@ -766,6 +856,26 @@
             </q-td>
           </template>
 
+          <!-- contact_mail -->
+          <template v-slot:body-cell-contact_mail="props">
+            <q-td v-if="bShowContactMailData" :props="props">{{ props.row.pan.contact_mail }}</q-td>
+          </template>
+
+          <!-- contact_mail -->
+          <template v-slot:body-cell-last_mail_sent="props">
+            <q-td v-if="bShowContactMailData" :props="props">{{ props.row.pan.last_mail_sent }}</q-td>
+          </template>
+
+          <!-- contact_mail -->
+          <template v-slot:body-cell-last_mail_status="props">
+            <q-td v-if="bShowContactMailData" :props="props">{{ props.row.pan.last_mail_status }}</q-td>
+          </template>
+
+          <!-- contact_mail -->
+          <template v-slot:body-cell-import_comment="props">
+            <q-td v-if="bShowImportComment" :props="props">{{ props.row.pan.import_comment }}</q-td>
+          </template>
+
           <!-- Action Buttons -->
           <template v-slot:body-cell-action="props">
             <q-td :props="props">
@@ -835,7 +945,7 @@ export default {
       usersCreated: 'users/usersCreated'
     }),
 
-    headers() {
+    headers () {
       return [
         {
           label: 'ID',
@@ -889,6 +999,40 @@ export default {
           field: 'location',
           sortable: true
         },
+
+        // Only if
+        /*
+contact_mail
+last_mail_sent
+last_mail_status
+import_comment
+        */
+        {
+          label: this.$t('contact_mail'),
+          name: 'contact_mail',
+          field: 'contact_mail',
+          sortable: true
+        },
+        {
+          label: this.$t('last_mail_sent'),
+          name: 'last_mail_sent',
+          field: 'last_mail_sent',
+          sortable: true
+        },
+        {
+          label: this.$t('last_mail_status'),
+          name: 'last_mail_status',
+          field: 'last_mail_status',
+          sortable: true
+        },
+        {
+          label: this.$t('import_comment'),
+          name: 'import_comment',
+          field: 'import_comment',
+          sortable: true
+        },
+
+        // Dates
         {
           label: this.$t('updated_at'),
           name: 'updated_at',
@@ -901,6 +1045,7 @@ export default {
           field: 'created_at',
           sortable: true
         },
+
         {
           label: 'Aktionen',
           name: 'action',
@@ -961,39 +1106,74 @@ export default {
 
       // Import Users
       bImportUsersDialog: false,
-
-      // Contact Mail Data
-      showContactMailData: false
+      jUploadedUsers: null,
+      bShowContactMailData: false, // Contact Mail Data
+      bShowImportComment: false // Contact Mail Data
 
     }
   },
 
   watch: {
-    usersCreated(promise) {
+    usersCreated (promise) {
       // save Promise result in local state
       this.usersCreatedOld = JSON.parse(JSON.stringify(promise));
     }
   },
 
-  created: function() {
+  created: function () {
     this.$store.dispatch('users/fetchUsersCreated')
     this.$store.dispatch('users/fetchGroupsModerating')
   },
 
   methods: {
 
-
-    testShowDialog() {
-      this.$q.dialog({
-        title: 'Alert',
-        message: 'Modern HTML5 front-end framework on steroids.'
+    fileUploadSuccess (e) {
+      // Notify
+      this.$q.notify({
+        message: 'Upload erfolgreich',
+        color: 'green',
+        position: 'top',
+        timeout: 3000
       })
+
+      this.jUploadedUsers = this.buildCsvJson(e.xhr.response)
+    },
+
+    fileUploadFailed (e) {
+      this.$q.notify({
+        message: e.xhr.response,
+        color: 'red',
+        position: 'top',
+        timeout: 6000
+      })
+    },
+
+    buildCsvJson (csv) {
+      let jCsv = JSON.parse(csv)
+      let thead = jCsv.slice(0, 1)
+      let tbody = jCsv.slice(1)
+      let response = []
+
+      // Go Through Body
+      for (let i in tbody) {
+        let tr = tbody[i]
+
+        // Go Through Head
+        for (let j in thead) {
+          let th = thead[j]
+          let merged = th.reduce((obj, key, index) => ({ ...obj, [key]: tr[index] }), {})
+
+          response.push(merged)
+        }
+      }
+
+      return response
     },
 
     myFilter (rows, terms, cols, cellValue) {
       const lowerTerms = terms ? terms.toLowerCase() : ''
       return rows.filter(
-        row => cols.some( function(col) {
+        row => cols.some(function (col) {
           return (JSON.stringify(cellValue(col,row)) + '').toLowerCase().indexOf(lowerTerms) !== -1;
         })
       )
@@ -1111,44 +1291,52 @@ export default {
         });
     },
 
-    generateRandomPin(item) {
+    generateRandomPin (item) {
       if(item && item.pan && item.pan.pin) {
         item.pan.pin = Math.random().toString().substr(2, this.pinLength);
       }
     },
 
-    createUsers() {
-      var _this = this;
+    createUsers (number, imported) {
+      var _this = this
 
       // Close Dialog and Load
-      this.bCreateUsersLoading = true;
+      this.bCreateUsersLoading = true
 
       // Create Users
       this.$store.dispatch('users/createUsers', {
-        number: this.iCreateUsersNumber
-      }).then(function(response) {
-        _this.bCreateUsersLoading = false;
-        _this.bCreateUsersDialog = false;
+        number: number,
+        imported: imported
+      }).then(function (response) {
+        _this.bCreateUsersLoading = false
+        _this.bCreateUsersDialog = false
 
         // Success
-        var users = response.data;
+        var users = response.data
         for (var i in users) {
-          var oUser = users[i];
-          oUser.isSelected = true;
+          var oUser = users[i]
+          oUser.isSelected = true
 
           // Add to Array
-          _this.usersCreated.unshift(oUser);
-          _this.selected.unshift(oUser);
+          _this.usersCreated.unshift(oUser)
+          _this.selected.unshift(oUser)
         }
-      }).catch(function(response) {
+
+        // If Imported Users - Activate View
+        if (imported) {
+          _this.bImportUsersDialog = false
+          _this.bShowContactMailData = true
+          console.log('imported created successfully')
+        }
+      }).catch(function (response) {
         // ERROR
-        _this.bCreateUsersLoading = false;
-        _this.bCreateUsersDialog = false;
+        _this.bCreateUsersLoading = false
+        _this.bCreateUsersDialog = false
       });
 
     },
 
-    validUser(item) {
+    validUser (item) {
       if(
         this.pinIsOk(item) &&
                 this.panIsOk(item)
@@ -1319,7 +1507,7 @@ export default {
       });
     },
 
-    save() {
+    save () {
       this.$q.notify({
         message: this.$t('attribute_changed'),
         color: 'primary',

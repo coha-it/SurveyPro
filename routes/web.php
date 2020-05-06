@@ -193,6 +193,9 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
         return '';
     });
 
+    // Route for Importing CSV Files
+    Route::post('import-csv', 'ImportCtrl@importCsv');
+
 });
 
 

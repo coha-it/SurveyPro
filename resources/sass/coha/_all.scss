@@ -237,9 +237,20 @@ select {
 .c-code-text {
     &,
     & input {
-        font-family: Roboto Mono;
+        font-family: "Roboto Mono", "Consolas", "monospace", "Courier New", "Lucida Console";
         font-size: 1.15em;
     }
+}
+
+.code_font {
+  display: inline-block;
+  background: #e6e6e6;
+  padding: .25em .4em .2em .4em;
+  border-radius: .5em;
+  color: black;
+  font-weight: bold;
+  font-family: "Consolas", "monospace", "Courier New", "Lucida Console", "Roboto Mono";
+  line-height: inherit;
 }
 
 .coha--filter-input {
