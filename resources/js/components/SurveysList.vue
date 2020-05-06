@@ -57,14 +57,15 @@
 <script>
 // import axios from 'axios'
 import { mapGetters } from 'vuex'
-import moment from 'vue-moment'
+import moment from 'moment'
 import _ from 'lodash'
 
 export default {
   data () {
     return {
       sSearch: '',
-      aSurveys: []
+      aSurveys: [],
+      moment: moment
     }
   },
   computed: {
@@ -98,20 +99,20 @@ export default {
     this.$store.dispatch('surveys/fetchSurveysMembering')
   },
   methods: {
-    fhd: function(d) {
+    fhd: function (d) {
       return moment(d).format('DD.MM.YYYY')
     },
-    fht: function(d) {
+    fht: function (d) {
       return moment(d).format('hh:mm')
     },
-    getBadgeColor(oSurvey) {
-      if(oSurvey.is_fillable) return 'green'
-      if(oSurvey.is_expired) return 'red'
-      return 'primary';
+    getBadgeColor (oSurvey) {
+      if (oSurvey.is_fillable) return 'green'
+      if (oSurvey.is_expired) return 'red'
+      return 'primary'
     },
-    getBadgeLabel(oSurvey) {
-      if(oSurvey.is_fillable) return 'Jetzt Verfügbar'
-      if(oSurvey.is_expired) return 'Abgelaufen'
+    getBadgeLabel (oSurvey) {
+      if (oSurvey.is_fillable) return 'Jetzt Verfügbar'
+      if (oSurvey.is_expired) return 'Abgelaufen'
       return 'Bald verfügbar'
     }
   }

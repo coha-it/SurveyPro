@@ -1,3 +1,12 @@
+// All Tables
+
+// Sort
+.q-table__sort-icon {
+  position: absolute;
+  right: -5px;
+  top: 0;
+}
+
 // My Data-Table
 .my-data-table {
   /* max height is important */
@@ -12,8 +21,13 @@
     z-index: 102;
   }
 
-  thead tr:first-child th{
-    top: 0;
+  thead tr:first-child th {
+    &,
+    &:first-child,
+    &:last-child {
+      top: 0;
+      z-index: 109;
+    }
   }
 
   /* this is when the loading indicator appears */

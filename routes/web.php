@@ -193,9 +193,7 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
         return '';
     });
 
-
 });
-
 
 
 Route::get('{path}', function () {
