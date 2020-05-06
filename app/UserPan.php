@@ -24,7 +24,17 @@ class UserPan extends Model
      * @var array
      */
     protected $visible = [
-        'is_pan_user', 'pan', 'created_at', 'updated_at', 'deleted_at',
+        'is_pan_user',
+        'pan',
+
+        'contact_mail',
+        'last_mail_sent',
+        'last_mail_status',
+
+        'created_at',
+        'updated_at',
+        'deleted_at',
+
     ];
 
     /**
@@ -33,7 +43,12 @@ class UserPan extends Model
      * @var array
      */
     protected $fillable = [
-        'pan', 'pin'
+        'pan',
+        'pin',
+
+        'contact_mail',
+        'last_mail_sent',
+        'last_mail_status',
     ];
 
     /**
