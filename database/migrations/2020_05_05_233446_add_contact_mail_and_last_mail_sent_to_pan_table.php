@@ -14,9 +14,11 @@ class AddContactMailAndLastMailSentToPanTable extends Migration
     public function up()
     {
         Schema::table('u_pans', function (Blueprint $table) {
-            $table->string('contact_mail')->nullable()->after('locked_until');
-            $table->dateTime('last_mail_sent')->nullable()->after('contact_mail');
-            $table->dateTime('last_mail_status')->nullable()->after('last_mail_sent');
+            $table->string(     'contact_mail'     )->nullable()->after('locked_until');
+            $table->dateTime(   'last_mail_sent'   )->nullable()->after('contact_mail');
+            $table->dateTime(   'last_mail_status' )->nullable()->after('last_mail_sent');
+            $table->string(     'import_comment'   )->nullable()->after('last_mail_status');
+
         });
     }
 
@@ -31,6 +33,7 @@ class AddContactMailAndLastMailSentToPanTable extends Migration
             $table->dropColumn('contact_mail');
             $table->dropColumn('last_mail_sent');
             $table->dropColumn('last_mail_status');
+            $table->dropColumn('import_comment');
         });
     }
 }
