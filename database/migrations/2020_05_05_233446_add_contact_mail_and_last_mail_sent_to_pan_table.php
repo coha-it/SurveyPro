@@ -16,7 +16,7 @@ class AddContactMailAndLastMailSentToPanTable extends Migration
         Schema::table('u_pans', function (Blueprint $table) {
             $table->string(     'contact_mail'     )->nullable()->after('locked_until');
             $table->dateTime(   'last_mail_sent'   )->nullable()->after('contact_mail');
-            $table->dateTime(   'last_mail_status' )->nullable()->after('last_mail_sent');
+            $table->string(   'last_mail_status' )->nullable()->after('last_mail_sent');
             $table->json(     'import_comment'   )->nullable()->after('last_mail_status');
 
         });

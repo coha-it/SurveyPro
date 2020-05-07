@@ -1,5 +1,24 @@
 
+// Readonly
+.lowlighted, [lowlighted] {
+  opacity: 0.6!important;
+}
 
+// Menu
+.q-menu {
+
+  // List
+  .q-list {
+    // Direct Items
+    & > .q-item {
+      // Direct Checkbox
+      & > .q-checkbox {
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+  }
+}
 // Guest / Rightsided Content View
 .rightsided-content {
     padding: 5px 20px;
@@ -242,6 +261,12 @@ select {
     }
 }
 
+.import_comment {
+  font-family: "Roboto Mono", "Consolas", "monospace", "Courier New", "Lucida Console";
+  font-size: 12px !important;
+  white-space: pre-wrap !important;
+}
+
 .code_font {
   display: inline-block;
   background: #e6e6e6;
@@ -262,10 +287,18 @@ select {
 }
 
 .pan--dialog-input {
+    white-space: nowrap;
+
     .v-text-field__slot > *,
     input {
         text-transform: uppercase;
     }
+}
+
+.pan--part{
+  &:first-child {
+    margin-right: .35em;
+  }
 }
 
 .coha--list-item {

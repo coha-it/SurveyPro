@@ -71,19 +71,25 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::patch('group/update', 'Backend\BackendGroupController@updateGroup');
 
         // Get Users
-        Route::get('users-created', 'Backend\BackendController@getCreatedUsers'); // Created Users
+        Route::get('users-created', 'BackendCtrl@loadCreatedUsers'); // Created Users
 
         // Get a Generated PAN
-        Route::get('get-random-pan', 'Backend\BackendController@getRandomPan');
+        Route::get('get-random-pan', 'BackendCtrl@getRandomPan');
 
         // Update Users Groups
         Route::post('add-user-to-group', 'Backend\BackendGroupController@addUserToGroup');
         Route::post('remove-user-from-group', 'Backend\BackendGroupController@removeUserFromGroup');
 
         // Change User(s)
-        Route::patch('update-created-users', 'Backend\BackendController@updateCreatedUsers');
-        Route::patch('delete-created-user', 'Backend\BackendController@deleteUser');
-        Route::post('create-users', 'Backend\BackendController@createUsers')->middleware('auth.user.can_create_users');
+        Route::patch('update-created-users', 'BackendCtrl@updateCreatedUsers');
+        Route::patch('delete-created-user', 'BackendCtrl@deleteUser');
+        Route::post('create-users', 'BackendCtrl@createUsers')->middleware('auth.user.can_create_users');
+
+        // Reload User
+        Route::post('reload-user', 'BackendCtrl@getUser');
+
+        // Send Contact Mail to Pan-Users
+        Route::post('send-entrance-mail', 'MailCtrl@sendEntranceMail');
 
         // User who can Create Surveys
         Route::group(['middleware' => ['auth.user.can_create_surveys'], 'prefix' => 'backend' ], function()

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -9,7 +9,7 @@ use App\User as User;
 use App\Group as Group;
 use App\UserPan as Pan;
 
-class BackendController extends Controller
+class BackendCtrl extends Controller
 {
 
     /**
@@ -37,12 +37,24 @@ class BackendController extends Controller
         return $request->user()->getSelfWithRelations();
     }
 
-    public function getCreatedUsers(Request $request) {
+    public function loadCreatedUsers(Request $request) {
+        return $this->getCreatedUsersWithPin($request)->toJson();
+    }
+
+    public function getCreatedUsersWithPin($request) {
         return $request->user()->users->each(function ($i, $k) {
             if($i && $i->pan) {
                 $i->pan->makeVisible(['pin']);
             }
-        })->toJson();
+        });
+    }
+
+    public function getUser(Request $request) {
+        // Validate Data
+        $request->validate(['id' => 'required']);
+
+        // Get and return the created User with Relation & Pin
+        return $this->getCreatedUsersWithPin($request)->find($request->id)->toJson();
     }
 
     /**

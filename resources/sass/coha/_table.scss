@@ -55,6 +55,10 @@
   td:first-child{
     left: 0;
   }
+
+  .groups {
+    white-space: normal;
+  }
 }
 
 // Full Height Table
@@ -85,7 +89,7 @@
 .q-table {
   td, th {
     /* don't shorten cell contents */
-    white-space: normal !important;
+    // white-space: normal !important;
   }
 }
 

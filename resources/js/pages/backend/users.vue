@@ -93,98 +93,8 @@
       </q-dialog>
       &nbsp;
 
-      <q-btn
-        label="Datei-Import"
-        color="primary"
-        unelevated
-        icon-right="publish"
-        @click="bImportUsersDialog = true"
-      />
-      <q-dialog v-model="bImportUsersDialog" maximized max-width="1200" persistent>
-        <q-card>
-          <q-toolbar class="bg-primary text-white" dark color="primary">
-            <q-toolbar-title>Importieren</q-toolbar-title>
-            <q-space />
-            <q-btn dense flat icon="close" v-close-popup>
-              <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
-            </q-btn>
-          </q-toolbar>
-          <q-list three-line subheader>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Vorlage / Testdatei</q-item-label>
-                <q-item-label caption>
-                  <p>Bauen Sie die Datei wenn möglich anhand der Vorlage-Datei auf:</p>
-                  <q-btn size="md" label="Testdatei herunterladen" depressed tile outline icon="get_app" />
-                </q-item-label>
-              </q-item-section>
-            </q-item>
+      <FileImport ref="FileImport" />
 
-            <q-separator />
-
-            <q-item>
-              <q-item-section>
-                <q-item-label>Datei hochladen</q-item-label>
-                <q-item-label caption>
-                  Ihre Datei benötigt folgende Voraussetzungen:
-                  <ul>
-                    <li>Ihre Datei muss eine valide <span class="code_font">CSV-Datei</span> sein</li>
-                    <li>Der Kopf bzw. die erste Zeile der Datei muss "mail" enthalten. die weiteren Spalten der Vorlagedatei sind optional</li>
-                    <li>Der Spaltentrenner Ihrer Datei muss das Semikolon-Zeichen <strong class="code_font">;</strong> sein</li>
-                  </ul>
-                  Wählen Sie ihre Datei aus und beginnen Sie den Upload<br><br>
-                  <q-uploader
-                    url="/import-csv"
-                    label="Datei auswählen und Hochladen"
-                    color="primary"
-                    square
-                    flat
-                    bordered
-                    auto-upload
-                    style="max-width: 300px;"
-                    no-thumbnails
-                    field-name="file"
-                    @uploaded="fileUploadSuccess"
-                    @failed="fileUploadFailed"
-                  />
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-separator />
-
-            <q-item>
-              <q-item-section>
-                <q-item-label>Dateiinhalte überprüfen</q-item-label>
-                <q-item-label caption>
-                  Überprüfen Sie die unten stehenden Inhalte<br><br>
-
-                  <q-scroll-area style="min-height: 150px; height: 35vh; max-height: 350px; white-space: break-spaces;">{{
-                    jUploadedUsers
-                  }}</q-scroll-area>
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-separator />
-
-            <q-item v-if="jUploadedUsers">
-              <q-item-section>
-                <q-item-label>Import Starten</q-item-label>
-                <q-item-label caption>
-                  Starten Sie den Import<br><br>
-                  <q-btn label="Import ausführen" color="primary" depressed class="full-width" @click="createUsers(jUploadedUsers.length, jUploadedUsers)"/>
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-separator />
-
-            <br><br><br><br>
-
-          </q-list>
-        </q-card>
-      </q-dialog>
       &nbsp;
     </p>
 
@@ -281,11 +191,10 @@
           :sort-method="customSort"
           separator="cell"
           :virtual-scroll="usersCreated.length > 150"
+          :pagination.sync="pagination"
 
-          show-select
           :loading="loading"
           :loading-text="$t('loading.text')"
-          :items-per-page="parseInt(itemsPerPage)"
           :footer-props="{
             showFirstLastPage: true,
           }"
@@ -293,10 +202,8 @@
           :selected.sync="selected"
           class="my-data-table"
         >
-
           <!-- Toolbars -->
           <template v-slot:top="props">
-
             <q-toolbar
               :class="'coha--toolbar ' + ((selected.length <= 0) ? '': 'bg-primary text-white')"
               floating
@@ -305,21 +212,35 @@
               :color="selected.length <= 0 ? '' : 'primary'"
               :dark="selected.length <= 0"
             >
-
               <!-- Always Visible -->
 
               <q-btn label="Ansicht" unelevated rounded icon="settings" dense>
-                <q-menu>
-                  <q-list style="min-width: 100px">
-                    <q-item clickable>
-                      <q-toggle v-model="showPin" label="PIN Anzeigen" size="sm" right-label color="red" style="width: 100%;" />
+                <q-menu desne>
+                  <q-list dense style="min-width: 100px">
+                    <q-item clickable :lowlighted="!bShowPin">
+                      <q-item-section avatar>
+                        <q-icon name="no_encryption" :color="bShowPin ? 'red' :''" />
+                      </q-item-section>
+                      <q-checkbox v-model="bShowPin" label="PIN Anzeigen" size="sm" left-label />
+                    </q-item>
+                    <q-item clickable :lowlighted="!settings.bShowDates">
+                      <q-item-section avatar>
+                        <q-icon name="date_range" />
+                      </q-item-section>
+                      <q-checkbox v-model="settings.bShowDates" label="Datumsfelder Anzeigen" size="sm" color="primary" left-label />
                     </q-item>
                     <q-separator />
-                    <q-item clickable v-close-popup>
-                      <q-toggle v-model="bShowContactMailData" label="Kontakt / E-Mail Versand-Daten Anzeigen" size="sm" right-label style="width: 100%;" />
+                    <q-item clickable :lowlighted="!settings.bShowContactMailData">
+                      <q-item-section avatar>
+                        <q-icon name="mail" />
+                      </q-item-section>
+                      <q-checkbox v-model="settings.bShowContactMailData" label="Kontakt / E-Mail Versand-Daten Anzeigen" size="sm" left-label />
                     </q-item>
-                    <q-item clickable v-close-popup>
-                      <q-toggle v-model="bShowImportComment" label="Import-Kommentar Anzeigen" size="sm" right-label style="width: 100%;" />
+                    <q-item clickable :lowlighted="!settings.bShowImportComment">
+                      <q-item-section avatar>
+                        <q-icon name="comment" />
+                      </q-item-section>
+                      <q-checkbox v-model="settings.bShowImportComment" label="Import-Kommentar Anzeigen" size="sm" left-label />
                     </q-item>
                     <q-separator />
                   </q-list>
@@ -329,11 +250,22 @@
               <!-- No Select Toolbar -->
               <template v-if="selected.length <= 0"  :flat="search == ''">
                 <!-- <q-toggle class="mt-6 mr-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="primary" /> -->
-                <div class="flex-grow-1"></div>
-                <q-toolbar-title></q-toolbar-title>
-                <q-input outlined style="max-width: 400px;" v-model="search" :label="$t('Search')" autocomplete="off"  append-icon="search" hide-details outline />
-                            &nbsp;
-                <q-input outlined v-model="itemsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline  />
+                <div class="flex-grow-1" />
+                <q-toolbar-title />
+                <q-input
+                  v-model="search"
+                  outlined
+                  style="max-width: 400px;"
+                  :label="$t('Search')"
+                  autocomplete="off"
+                  append-icon="search"
+                  hide-details
+                  outline
+                />
+
+                &nbsp;
+
+                <q-input v-model="pagination.rowsPerPage" outlined number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline  />
                 <q-btn
                   flat round dense
                   :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -344,7 +276,6 @@
 
               <!-- Toolbar for Selections -->
               <template v-else>
-
                 <q-btn
                   :color="getUnsaved(selected).length ? 'green' : 'primary'"
                   rounded
@@ -457,8 +388,6 @@
                           </q-list>
                         </q-card>
                       </q-dialog>
-
-
                     </q-list>
                   </q-menu>
                 </q-btn>
@@ -498,45 +427,51 @@
 
                 <q-toolbar-title></q-toolbar-title>
                 <div class="flex-grow-1"></div>
-                <q-input outlined dark v-model="itemsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline  />
+                <q-input outlined dark v-model="pagination.rowsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline  />
                 <q-btn
                   flat round dense
                   :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
                   @click="props.toggleFullscreen"
                   class="q-ml-md"
                 />
-
               </template>
-
             </q-toolbar>
 
-            <div class="container" fluid v-if="bExtendedFilter && false">
+            <div v-if="bExtendedFilter && false" class="container" fluid>
               <div class="row">
                 <q-col>
-                  <q-checkbox v-model="bShowDeletedUsers" color="primary" label="Gelöschte Nutzer zeigen"></q-checkbox>
+                  <q-checkbox v-model="bShowDeletedUsers" color="primary" label="Gelöschte Nutzer zeigen" />
                 </q-col>
               </div>
             </div>
           </template>
 
           <!-- Header Cell Slots -->
+          <template v-slot:header-cell-import_comment="props">
+            <q-th v-if="settings.bShowImportComment" :props="props">{{ props.col.label }}</q-th>
+          </template>
+
+          <!-- Header Cell Slots -->
           <template v-slot:header-cell-contact_mail="props">
-            <q-th v-if="bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
+            <q-th v-if="settings.bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
           </template>
 
           <!-- Header Cell Slots -->
           <template v-slot:header-cell-last_mail_sent="props">
-            <q-th v-if="bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
+            <q-th v-if="settings.bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
           </template>
 
           <!-- Header Cell Slots -->
           <template v-slot:header-cell-last_mail_status="props">
-            <q-th v-if="bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
+            <q-th v-if="settings.bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
           </template>
 
-          <!-- Header Cell Slots -->
-          <template v-slot:header-cell-import_comment="props">
-            <q-th v-if="bShowImportComment" :props="props">{{ props.col.label }}</q-th>
+          <!-- Date: Header Cell Slots -->
+          <template v-slot:header-cell-updated_at="props">
+            <q-th v-if="settings.bShowDates" :props="props">{{ props.col.label }}</q-th>
+          </template>
+          <template v-slot:header-cell-created_at="props">
+            <q-th v-if="settings.bShowDates" :props="props">{{ props.col.label }}</q-th>
           </template>
 
           <!-- PAN -->
@@ -545,9 +480,11 @@
               <div class="pan--dialog-input c-code-text">
                 <template v-if="props && props.row && props.row.pan.pan && props.row.pan.pan.length > 0">
                   <span :class="!panIsOk(props.row) ? 'red--text' : ''">
-                    <span class="pan--part">{{ props.row.pan.pan.substring(0,3) }}</span><span class="pan--part">
-                      {{ props.row.pan.pan.substring(3,6) }}
-                    </span>
+                    <span class="pan--part">{{
+                      props.row.pan.pan.substring(0,3)
+                    }}</span><span class="pan--part">{{
+                      props.row.pan.pan.substring(3,6)
+                    }}</span>
                   </span>
                 </template>
                 <template v-else>
@@ -576,16 +513,16 @@
                       counter
                       persistent-hint
                       :rules="[maxPanChars]"
-                      v-on:keyup="changePan(props.row)"
-                      v-on:change="changePan(props.row)"
+                      maxlength="6"
+                      required
                       :error="!panIsOk(props.row)"
                       :disabled="panIsLoading"
                       :loading="panIsLoading"
-                      required
-                      maxlength="6"
+                      @keyup="changePan(props.row)"
+                      @change="changePan(props.row)"
                     >
                       <template v-slot:append>
-                        <q-btn dense flat round icon="repeat" @click="getRandomPan(props.row)"></q-btn>
+                        <q-btn dense flat round icon="repeat" @click="getRandomPan(props.row)" />
                         <q-tooltip>Zufällige PAN generieren</q-tooltip>
                       </template>
                     </q-input>
@@ -595,14 +532,13 @@
             </q-td>
           </template>
 
-
           <!-- PIN -->
           <template v-slot:body-cell-pin="props">
             <q-td :props="props">
               <div class="pin--dialog-input c-code-text">
                 <template v-if="props && props.row && props.row.pan.pin && props.row.pan.pin.length > 0">
                   <span :class="!pinIsOk(props.row) ? 'red--text' : ''">
-                    {{ showPin ? props.row.pan.pin : '****' }}
+                    {{ bShowPin ? props.row.pan.pin : '****' }}
                   </span>
                 </template>
                 <template v-else>
@@ -627,25 +563,25 @@
                   <span class="coha--list-item pin c-code-text">
                     <q-input
                       v-model="props.row.pan.pin"
+                      v-mask="'####'"
                       dense
                       autofocus
                       counter
                       persistent-hint
                       :rules="[maxPinChars]"
-                      @keyup="changePin(props.row)"
-                      @change="changePin(props.row)"
                       :error="!pinIsOk(props.row)"
                       required
                       autocomplete="off"
                       type="text"
                       pattern="[0-9]*"
                       name="pin"
-                      v-mask="'####'"
                       maxlength="4"
-                      :class="showPin ? 'visible': 'secured'"
+                      :class="bShowPin ? 'visible': 'secured'"
+                      @keyup="changePin(props.row)"
+                      @change="changePin(props.row)"
                     >
                       <template v-slot:append>
-                        <q-btn dense flat round icon="repeat" @click="generateRandomPin(props.row)"></q-btn>
+                        <q-btn dense flat round icon="repeat" @click="generateRandomPin(props.row)" />
                         <q-tooltip>Zufällige PIN generieren</q-tooltip>
                       </template>
                     </q-input>
@@ -655,14 +591,12 @@
             </q-td>
           </template>
 
-
           <!-- Groups -->
           <template v-slot:body-cell-groups="props">
-            <q-td :props="props" style="white-space: inherit;">
+            <q-td class="groups" :props="props">
               <template v-if="user.groups_moderating && user.groups_moderating.length >= 1">
                 <template v-for="(group, i) in props.row.groups">
                   <span v-bind:key="i">
-
 
                     <q-badge v-if="user.groups_moderating.find(x => x.id === group.id)" outlined class="mr-1 mt-1 mb-1"
                              :color="getGroupPivotColor(group)">
@@ -691,7 +625,6 @@
 
                 <!-- Gruppen hinzufügen / entfernen -->
                 <template>
-
                   <q-popup-edit content-class="maximize" persistent buttons label-set="Übernehmen" label-cancel="Schließen" v-model="props.row">
                     <div class="inner">
                       <div class="text-h6">Gruppen hinzufügen / entfernen</div>
@@ -815,13 +748,14 @@
           <template v-slot:body-cell-company="props">
             <q-td :props="props">
               <select v-model="props.row.company_id" @change="companyChanged(props.row)">
-                <option disabled>Bitte auswählen</option>
+                <option disabled label="Bitte auswählen" />
                 <option
-                  :value="company.id"
-                  :selected="(props.row.company && props.row.company.id == company.id)"
                   v-for="company in user.companies"
                   v-bind:key="company.id"
-                >{{ company.name }}</option>
+                  :label="company.name"
+                  :value="company.id"
+                  :selected="(props.row.company && props.row.company.id == company.id)"
+                />
               </select>
             </q-td>
           </template>
@@ -830,13 +764,14 @@
           <template v-slot:body-cell-department="props">
             <q-td :props="props">
               <select v-model="props.row.department_id" @change="departmentChanged(props.row)">
-                <option disabled>Bitte auswählen</option>
+                <option disabled label="Bitte auswählen" />
                 <option
-                  :value="department.id"
-                  :selected="(props.row.department && props.row.department.id == department.id)"
                   v-for="department in user.departments"
                   v-bind:key="department.id"
-                >{{ department.name }}</option>
+                  :label="department.name"
+                  :value="department.id"
+                  :selected="(props.row.department && props.row.department.id == department.id)"
+                />
               </select>
             </q-td>
           </template>
@@ -845,48 +780,99 @@
           <template v-slot:body-cell-location="props">
             <q-td :props="props">
               <select v-model="props.row.location_id" @change="locationChanged(props.row)">
-                <option disabled>Bitte auswählen</option>
+                <option disabled label="Bitte auswählen" />
                 <option
-                  :value="location.id"
-                  :selected="(props.row.location && props.row.location.id == location.id)"
                   v-for="location in user.locations"
                   v-bind:key="location.id"
-                >{{ location.name }}</option>
+                  :label="location.name"
+                  :value="location.id"
+                  :selected="(props.row.location && props.row.location.id == location.id)"
+                />
               </select>
+            </q-td>
+          </template>
+
+          <!-- import_comment -->
+          <template v-slot:body-cell-import_comment="props">
+            <q-td v-if="settings.bShowImportComment" class="import_comment" :props="props">
+              <span class="code_font">{{ props.row.pan.import_comment }}</span>
             </q-td>
           </template>
 
           <!-- contact_mail -->
           <template v-slot:body-cell-contact_mail="props">
-            <q-td v-if="bShowContactMailData" :props="props">{{ props.row.pan.contact_mail }}</q-td>
+            <q-td v-if="settings.bShowContactMailData" :props="props">
+              <span class="code_font">{{ props.row.pan.contact_mail }}</span>
+            </q-td>
           </template>
 
-          <!-- contact_mail -->
+          <!-- last_mail_sent -->
           <template v-slot:body-cell-last_mail_sent="props">
-            <q-td v-if="bShowContactMailData" :props="props">{{ props.row.pan.last_mail_sent }}</q-td>
+            <q-td v-if="settings.bShowContactMailData" :props="props">
+              <span class="code_font">{{ props.row.pan.last_mail_sent }}</span>
+            </q-td>
           </template>
 
-          <!-- contact_mail -->
+          <!-- last_mail_status -->
           <template v-slot:body-cell-last_mail_status="props">
-            <q-td v-if="bShowContactMailData" :props="props">{{ props.row.pan.last_mail_status }}</q-td>
+            <q-td v-if="settings.bShowContactMailData" :props="props">
+              <span class="code_font">{{ props.row.pan.last_mail_status }}</span>
+            </q-td>
           </template>
 
-          <!-- contact_mail -->
-          <template v-slot:body-cell-import_comment="props">
-            <q-td v-if="bShowImportComment" :props="props">{{ props.row.pan.import_comment }}</q-td>
+          <!-- Dates -->
+          <template v-slot:body-cell-updated_at="props">
+            <q-td v-if="settings.bShowDates" :props="props">{{ props.row.updated_at }}</q-td>
+          </template>
+          <template v-slot:body-cell-created_at="props">
+            <q-td v-if="settings.bShowDates" :props="props">{{ props.row.created_at }}</q-td>
           </template>
 
           <!-- Action Buttons -->
           <template v-slot:body-cell-action="props">
             <q-td :props="props">
               <div style="white-space: nowrap;">
-                <span>
-                  <q-btn size="sm" :color="isSaved(props.row) ? 'grey' : 'green'" flat round dense class="mr-2" @click="updateUser(props.row)" :disabled="isSaved(props.row) || !validUser(props.row)" icon="save" />
+                <span v-if="isUnsaved(props.row) && validUser(props.row)">
+                  <q-btn
+                    size="sm"
+                    flat
+                    round
+                    dense
+                    class="mr-2"
+                    icon="save"
+                    :color="isSaved(props.row) ? 'grey' : 'green'"
+                    :disabled="isSaved(props.row) || !validUser(props.row)"
+                    @click="updateUser(props.row)"
+                  />
                   <q-tooltip>{{ $t('save') }}</q-tooltip>
                 </span>
 
-                <span>
-                  <q-btn flat round dense icon="replay" :disabled="isSaved(props.row)" size="sm" class="mr-2" @click="resetUser(props.row)" />
+                <span v-if="settings.bShowContactMailData && isSaved(props.row) && props.row.pan.contact_mail">
+                  <q-btn
+                    size="sm"
+                    flat
+                    round
+                    dense
+                    class="mr-2"
+                    icon="mail"
+                    color="primary"
+                    :disabled="isUnsaved(props.row) || !validUser(props.row)"
+                    @click="sendEntranceMail(props.row)"
+                  />
+                  <q-tooltip>{{ $t('Versende Zugangs-Mail') }}</q-tooltip>
+                </span>
+
+                <span v-if="isUnsaved(props.row)">
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    icon="replay"
+                    size="sm"
+                    class="mr-2"
+                    :disabled="isSaved(props.row)"
+                    @click="resetUser(props.row)"
+                  />
                   <q-tooltip>{{ $t('reset') }}</q-tooltip>
                 </span>
 
@@ -916,27 +902,93 @@
 </template>
 
 <script>
+/* eslint-disable eqeqeq */
 import axios from 'axios'
 import { mapGetters } from 'vuex'
-import { mask, TheMask } from 'vue-the-mask'
-import { setTimeout } from 'timers';
+import { setTimeout } from 'timers'
 import UserDataModal from '~/components/BackendUserDataModal'
 import Print from '~/components/BackendUsersPrint'
 import BulkProfileChanges from '~/components/BackendUserBulkProfileChanges'
 import BulkGroupChanges from '~/components/BackendUserBulkGroupChanges'
-import MyPopupEdit from '~/components/MyPopupEdit'
-import { type } from 'os';
+import FileImport from '~/components/Backend/FileImport'
+import { type } from 'os'
 
 export default {
   middleware: 'canCreateUsers',
 
   components: {
-    TheMask,
     UserDataModal,
     Print,
     BulkProfileChanges,
     BulkGroupChanges,
-    MyPopupEdit
+    FileImport
+  },
+
+  // directives: {
+  //   mask
+  // },
+
+  data () {
+    return {
+      pinLength: 4,
+      panLength: 6,
+      panTokens: {
+        P: {
+          pattern: /[0-9A-Za-z]/
+        }
+      },
+      panIsLoading: false,
+
+      usersCreatedOld: [],
+      selected: [],
+
+      loading: false,
+      search: '',
+      bExtendedFilter: false,
+      oFilters: {
+        sId: '',
+        sPan: '',
+        sPin: ''
+      },
+
+      all_groups: [],
+
+      maxPanChars: v => v && v.length <= 6 | 'Input too long!',
+      maxPinChars: v => v && v.length === 4 | 'Pin Wrong!',
+
+      // Settings / Filter
+      bShowPin: false,
+      settings: {
+        bShowDates: false,
+        bShowContactMailData: false, // Contact Mail Data
+        bShowImportComment: false // Contact Mail Data
+      },
+
+      // Create Users
+      iCreateUsersNumber: 5,
+      bCreateUsersDialog: false,
+      bCreateUsersLoading: false,
+      bCreateUsersRandomPan: true,
+      bCreateUsersRandomPin: true,
+      maximizedToggle: false,
+
+      // Delete Users
+      deleteUsersDialog: false,
+
+      // Import Users
+
+      // Pagination
+      pagination: {
+        sortBy: 'id',
+        descending: true,
+        rowsPerPage: 10
+      }
+
+    }
+  },
+
+  mounted () {
+    // Mounted
   },
 
   computed: {
@@ -1002,11 +1054,17 @@ export default {
 
         // Only if
         /*
-contact_mail
-last_mail_sent
-last_mail_status
-import_comment
+          import_comment
+          contact_mail
+          last_mail_sent
+          last_mail_status
         */
+        {
+          label: this.$t('import_comment'),
+          name: 'import_comment',
+          field: 'import_comment',
+          sortable: true
+        },
         {
           label: this.$t('contact_mail'),
           name: 'contact_mail',
@@ -1023,12 +1081,6 @@ import_comment
           label: this.$t('last_mail_status'),
           name: 'last_mail_status',
           field: 'last_mail_status',
-          sortable: true
-        },
-        {
-          label: this.$t('import_comment'),
-          name: 'import_comment',
-          field: 'import_comment',
           sortable: true
         },
 
@@ -1052,129 +1104,48 @@ import_comment
           field: 'action',
           sortable: true
         }
-      ];
-    }
-  },
-
-  directives: {
-    mask
-  },
-
-  mounted () {
-    // Mounted
-  },
-
-  data () {
-    return {
-      pinLength: 4,
-      panLength: 6,
-      panTokens: {
-        P: {
-          pattern: /[0-9A-Za-z]/
-        }
-      },
-      panIsLoading: false,
-
-      usersCreatedOld: [],
-      selected: [],
-
-      loading: false,
-      showPin: false,
-      itemsPerPage: 10,
-      search: '',
-      bExtendedFilter: false,
-      oFilters: {
-        sId: '',
-        sPan: '',
-        sPin: ''
-      },
-
-      all_groups: [],
-
-      maxPanChars: v => v && v.length <= 6 | 'Input too long!',
-      maxPinChars: v => v && v.length === 4 | 'Pin Wrong!',
-
-      // Create Users
-      iCreateUsersNumber: 5,
-      bCreateUsersDialog: false,
-      bCreateUsersLoading: false,
-      bCreateUsersRandomPan: true,
-      bCreateUsersRandomPin: true,
-      maximizedToggle: false,
-
-      deleteUsersDialog: false,
-
-      // Import Users
-      bImportUsersDialog: false,
-      jUploadedUsers: null,
-      bShowContactMailData: false, // Contact Mail Data
-      bShowImportComment: false // Contact Mail Data
-
+      ]
     }
   },
 
   watch: {
     usersCreated (promise) {
       // save Promise result in local state
-      this.usersCreatedOld = JSON.parse(JSON.stringify(promise));
+      this.usersCreatedOld = JSON.parse(JSON.stringify(promise))
+    },
+
+    settings: {
+      handler: function (newValue) {
+        console.log('update settings now')
+        this.updateSettings()
+      },
+      deep: true
     }
   },
 
   created: function () {
     this.$store.dispatch('users/fetchUsersCreated')
     this.$store.dispatch('users/fetchGroupsModerating')
+
+    this.getSettings()
   },
 
   methods: {
 
-    fileUploadSuccess (e) {
-      // Notify
-      this.$q.notify({
-        message: 'Upload erfolgreich',
-        color: 'green',
-        position: 'top',
-        timeout: 3000
-      })
-
-      this.jUploadedUsers = this.buildCsvJson(e.xhr.response)
+    getSettings () {
+      this.settings = JSON.parse(localStorage.getItem('settings')) ?? this.settings
+      this.updateSettings()
     },
 
-    fileUploadFailed (e) {
-      this.$q.notify({
-        message: e.xhr.response,
-        color: 'red',
-        position: 'top',
-        timeout: 6000
-      })
-    },
-
-    buildCsvJson (csv) {
-      let jCsv = JSON.parse(csv)
-      let thead = jCsv.slice(0, 1)
-      let tbody = jCsv.slice(1)
-      let response = []
-
-      // Go Through Body
-      for (let i in tbody) {
-        let tr = tbody[i]
-
-        // Go Through Head
-        for (let j in thead) {
-          let th = thead[j]
-          let merged = th.reduce((obj, key, index) => ({ ...obj, [key]: tr[index] }), {})
-
-          response.push(merged)
-        }
-      }
-
-      return response
+    updateSettings () {
+      localStorage.setItem('settings', JSON.stringify(this.settings))
     },
 
     myFilter (rows, terms, cols, cellValue) {
       const lowerTerms = terms ? terms.toLowerCase() : ''
       return rows.filter(
         row => cols.some(function (col) {
-          return (JSON.stringify(cellValue(col,row)) + '').toLowerCase().indexOf(lowerTerms) !== -1;
+          return (JSON.stringify(cellValue(col,row)) + '').toLowerCase().indexOf(lowerTerms) !== -1
         })
       )
     },
@@ -1193,13 +1164,13 @@ import_comment
             case 'name':
               // String Sort
               return x[sortBy] > y[sortBy] ? 1 : x[sortBy] < y[sortBy] ? -1 : 0
-              break;
+              break
 
             case 'pin':
             case 'pan':
               // String Sort
               return x.pan[sortBy] > y.pan[sortBy] ? 1 : x.pan[sortBy] < y.pan[sortBy] ? -1 : 0
-              break;
+              break
 
             case 'company':
             case 'location':
@@ -1208,92 +1179,92 @@ import_comment
               var yn = yf && yf.name ? yf.name : ''
 
               return xn > yn ? 1 : xn < yn ? -1 : 0
-              break;
+              break
 
             case 'groups':
-              var xid = xf.length > 0 ? xf.reduce(function(prev, curr) {
-                return prev.id > curr.id ? prev : curr;
+              var xid = xf.length > 0 ? xf.reduce(function (prev, curr) {
+                return prev.id > curr.id ? prev : curr
               }).id : 0
 
-              var yid = yf.length > 0 ? yf.reduce(function(prev, curr) {
-                return prev.id > curr.id ? prev : curr;
+              var yid = yf.length > 0 ? yf.reduce(function (prev, curr) {
+                return prev.id > curr.id ? prev : curr
               }).id : 0
 
               return xid > yid ? 1 : xid < yid ? -1 : 0
-              break;
+              break
 
             default:
               // numeric sort
               return parseFloat(x[sortBy]) - parseFloat(y[sortBy])
-              break;
+              break
           }
 
         })
       }
 
-      return data;
+      return data
     },
 
-    getGroupPivotColor(group) {
-      var p = group.pivot;
-      if(p.is_mod && p.is_member) {
-        return 'red';
+    getGroupPivotColor (group) {
+      var p = group.pivot
+      if (p.is_mod && p.is_member) {
+        return 'red'
       }
-      if(p.is_mod) {
-        return 'blue';
+      if (p.is_mod) {
+        return 'blue'
       }
-      if(p.is_member) {
-        return '';
+      if (p.is_member) {
+        return ''
       }
-      return 'grey';
+      return 'grey'
     },
 
-    filterBasic(sSearch, sWhere) {
+    filterBasic (sSearch, sWhere) {
       if (!sSearch) return true
-      if( !this.bExtendedFilter ) return true;
+      if ( !this.bExtendedFilter ) return true
       return sWhere.toLowerCase().includes(sSearch.toLowerCase())
     },
 
-    filterPan(sSearch, sWhere) {
+    filterPan (sSearch, sWhere) {
       if (!sSearch) return true
-      if( !this.bExtendedFilter ) return true;
+      if ( !this.bExtendedFilter ) return true
       return sWhere.toLowerCase().includes(sSearch.replace(' ', '').toLowerCase())
     },
 
-    filterId(sSearch, sWhere) {
+    filterId (sSearch, sWhere) {
       if (!sSearch) return true
-      if( !this.bExtendedFilter ) return true;
-      return sWhere == sSearch;
+      if ( !this.bExtendedFilter ) return true
+      return sWhere == sSearch
     },
 
-    companyChanged(item) {
-      item.company = this.findById(this.user.companies, item.company_id);
+    companyChanged (item) {
+      item.company = this.findById(this.user.companies, item.company_id)
     },
 
-    departmentChanged(item) {
-      item.department = this.findById(this.user.departments, item.department_id);
+    departmentChanged (item) {
+      item.department = this.findById(this.user.departments, item.department_id)
     },
 
-    locationChanged(item) {
-      item.location = this.findById(this.user.locations, item.location_id);
+    locationChanged (item) {
+      item.location = this.findById(this.user.locations, item.location_id)
     },
 
-    getRandomPan(user) {
-      var _this = this;
-      _this.panIsLoading = true;
+    getRandomPan (user) {
+      var _this = this
+      _this.panIsLoading = true
 
       axios.get('/api/get-random-pan')
-        .then(function(response) {
-          _this.panIsLoading = false;
-          user.pan.pan = response.data;
-        }).catch(function(response) {
-          _this.panIsLoading = false;
-        });
+        .then(function (response) {
+          _this.panIsLoading = false
+          user.pan.pan = response.data
+        }).catch(function (response) {
+          _this.panIsLoading = false
+        })
     },
 
     generateRandomPin (item) {
-      if(item && item.pan && item.pan.pin) {
-        item.pan.pin = Math.random().toString().substr(2, this.pinLength);
+      if (item && item.pan && item.pan.pin) {
+        item.pan.pin = Math.random().toString().substr(2, this.pinLength)
       }
     },
 
@@ -1322,116 +1293,145 @@ import_comment
           _this.selected.unshift(oUser)
         }
 
+        // Set Rows Per Page on DataTable
+        _this.pagination.rowsPerPage = users.length
+
         // If Imported Users - Activate View
         if (imported) {
-          _this.bImportUsersDialog = false
-          _this.bShowContactMailData = true
-          console.log('imported created successfully')
+          _this.$refs.FileImport.closeDialog()
+          _this.settings.bShowContactMailData = true
+          console.log('import created successfully')
         }
       }).catch(function (response) {
         // ERROR
         _this.bCreateUsersLoading = false
         _this.bCreateUsersDialog = false
-      });
-
+      })
     },
 
     validUser (item) {
-      if(
-        this.pinIsOk(item) &&
-                this.panIsOk(item)
-      ) {
-        return true;
-      }
-      return false;
+      return (this.pinIsOk(item) && this.panIsOk(item))
     },
 
-    pinIsOk(item) {
-      return item.pan && item.pan.pin && item.pan.pin.length == this.pinLength;
+    invalidUser (item) {
+      return !this.validUser(item)
     },
 
-    panIsOk(item) {
-      return item.pan && item.pan.pan && item.pan.pan.length == this.panLength;
+    pinIsOk (item) {
+      return item.pan && item.pan.pin && item.pan.pin.length == this.pinLength
     },
 
-    getOldUsersId(item) {
-      return this.usersCreated.map(function(x) {
-        return x.id;
-      }).indexOf(item.id);
+    panIsOk (item) {
+      return item.pan && item.pan.pan && item.pan.pan.length == this.panLength
     },
 
-    copyObject(obj) {
-      if(typeof obj != 'undefined') {
-        var copy = JSON.parse(JSON.stringify(obj));
-        if(copy) return copy
+    getOldUsersId (item) {
+      return this.usersCreated.map(function (x) {
+        return x.id
+      }).indexOf(item.id)
+    },
+
+    copyObject (obj) {
+      if (typeof obj != 'undefined') {
+        var copy = JSON.parse(JSON.stringify(obj))
+        if (copy) return copy
       }
     },
 
-    isSaved(item) {
-      var key = this.getOldUsersId(item);
-      var itemL = this.copyObject(item);
-      var itemR = this.copyObject(this.usersCreatedOld[key]);
+    isSaved (item) {
+      var key = this.getOldUsersId(item)
+      var itemL = this.copyObject(item)
+      var itemR = this.copyObject(this.usersCreatedOld[key])
 
-      if(itemL && itemR) {
-        delete itemL.undefined;
-        delete itemR.undefined;
-        delete itemL.isSelected;
-        delete itemR.isSelected;
-        delete itemL.groupDialog;
-        delete itemR.groupDialog;
-        delete itemL.deleteUserDialog;
-        delete itemR.deleteUserDialog;
+      if (itemL && itemR) {
+        delete itemL.undefined
+        delete itemR.undefined
+        delete itemL.isSelected
+        delete itemR.isSelected
+        delete itemL.groupDialog
+        delete itemR.groupDialog
+        delete itemL.deleteUserDialog
+        delete itemR.deleteUserDialog
 
         // Differences
-        if(JSON.stringify(itemR) != JSON.stringify(itemL)) {
+        if (JSON.stringify(itemR) != JSON.stringify(itemL)) {
           // console.log(JSON.stringify(itemR), JSON.stringify(itemL));
-          return false;
+          return false
         } else {
-          return true;
+          return true
         }
       }
 
-      return true;
+      return true
     },
 
-    isUnsaved(item) {
-      return !this.isSaved(item);
+    isUnsaved (item) {
+      return !this.isSaved(item)
     },
 
-    getUnsaved(arr) {
-      var unsaved = [];
+    getUnsaved (arr) {
+      var unsaved = []
       for (var i in arr) {
-        var item = arr[i];
+        var item = arr[i]
 
-        if(this.isUnsaved(item)) {
-          unsaved.push(item);
+        if (this.isUnsaved(item)) {
+          unsaved.push(item)
         }
       }
-      return unsaved;
+      return unsaved
     },
 
-
-    resetUser(item) {
-      var key = this.getOldUsersId(item);
+    resetUser (item) {
+      var key = this.getOldUsersId(item)
       Object.assign(item, JSON.parse(JSON.stringify(this.usersCreatedOld[key])))
     },
 
-    updateUser(user) {
-      this.updateUsers([user]);
+    sendEntranceMail (user) {
+      axios.post('/api/send-entrance-mail', {
+        id: user.id
+      }).then((e) => {
+        console.log('success', e)
+      }).catch((e) => {
+        console.log('error', e)
+      }).then((e) => {
+        this.reloadUser(user)
+      })
     },
 
-    updateUsers(users) {
+    reloadUser (user) {
+      axios.post('/api/reload-user', {
+        id: user.id
+      }).then((response) => {
+        let responseUser = response.data
+        let key = this.getOldUsersId(responseUser)
+
+        console.log(this.usersCreated)
+
+        Object.assign(this.usersCreated[key], JSON.parse(JSON.stringify(responseUser)))
+        Object.assign(this.usersCreatedOld[key], JSON.parse(JSON.stringify(responseUser)))
+
+        console.log(this.usersCreated)
+      }).catch((response) => {
+        console.log('error reloading user', response)
+      })
+    },
+
+    updateUser (user) {
+      this.updateUsers([user])
+    },
+
+    updateUsers (users) {
       // Variables
-      var _this = this;
-      this.loading = true;
+      var _this = this
+      this.loading = true
 
       // Update Users
       this.$store.dispatch('users/updateUsers', {
         users: users
-      }).then(function(e) {
+      }).then(function (e) {
         // Success
-        if(!e || !e.response || !e.response.data || !e.response.data.error) {
-          console.log('success!!');
+        if (!e || !e.response || !e.response.data || !e.response.data.error) {
+          console.log('success!!')
 
           _this.$q.notify({
             message: _this.$t('data_saved'),
@@ -1442,20 +1442,20 @@ import_comment
 
           // Save Old
           for (var i in users) {
-            var user = users[i];
-            var key = _this.getOldUsersId(user);
+            var user = users[i]
+            var key = _this.getOldUsersId(user)
             Object.assign(_this.usersCreatedOld[key], JSON.parse(JSON.stringify(user)))
           }
         }
-        _this.loading = false;
-      }).catch(function(e) {
+        _this.loading = false
+      }).catch(function (e) {
         // Error
-        if(!e || !e.response || !e.response.data) return;
-        var res = e.response.data;
-        var err = res.error;
-        var errText = '';
+        if (!e || !e.response || !e.response.data) return
+        var res = e.response.data
+        var err = res.error
+        var errText = ''
         for (var e in err) {
-          errText += ': ' + err[e];
+          errText += ': ' + err[e]
         }
 
         _this.$q.notify({
@@ -1464,30 +1464,30 @@ import_comment
           timeout: 6000
         })
 
-        _this.loading = false;
-      });
+        _this.loading = false
+      })
     },
 
-    findKeyById(arr, item) {
-      return arr.findIndex(x => x.id === item.id);
+    findKeyById (arr, item) {
+      return arr.findIndex(x => x.id === item.id)
     },
 
     findById (arr, id) {
-      return arr.find(x => x.id === id);
+      return arr.find(x => x.id === id)
     },
 
-    deleteUsers(users) {
+    deleteUsers (users) {
       // Variables
-      var _this = this;
-      this.loading = true;
-      this.deleteUsersDialog = false;
+      var _this = this
+      this.loading = true
+      this.deleteUsersDialog = false
 
       // Delete User
       this.$store.dispatch('users/deleteUsers', {
         ids: users.map(user => user.id)
-      }).then(function(e) {
+      }).then(function (e) {
         // Success
-        _this.loading = false;
+        _this.loading = false
 
         _this.$q.notify({
           message: _this.$t('data_saved'),
@@ -1496,15 +1496,15 @@ import_comment
           position: 'top'
         })
 
-        var tmpUsers = _this.copyObject(users);
+        var tmpUsers = _this.copyObject(users)
         for (var i in tmpUsers) {
-          var tmpUser = tmpUsers[i];
-          _this.selected.splice( _this.findKeyById(_this.selected, tmpUser), 1);
-          _this.usersCreatedOld.splice( _this.findKeyById(_this.usersCreatedOld, tmpUser), 1);
-          _this.usersCreated.splice(_this.findKeyById(_this.usersCreated, tmpUser), 1);
+          var tmpUser = tmpUsers[i]
+          _this.selected.splice( _this.findKeyById(_this.selected, tmpUser), 1)
+          _this.usersCreatedOld.splice( _this.findKeyById(_this.usersCreatedOld, tmpUser), 1)
+          _this.usersCreated.splice(_this.findKeyById(_this.usersCreated, tmpUser), 1)
         }
 
-      });
+      })
     },
 
     save () {
@@ -1529,38 +1529,37 @@ import_comment
       // When Edit Dialog Closed
     },
 
-
-    changePan(item) {
-      if(item.pan && item.pan.pan) {
-        item.pan.pan = item.pan.pan.toUpperCase();
-        item.pan.pan = item.pan.pan.replace(' ', '');
+    changePan (item) {
+      if (item.pan && item.pan.pan) {
+        item.pan.pan = item.pan.pan.toUpperCase()
+        item.pan.pan = item.pan.pan.replace(' ', '')
       }
     },
 
-    changePin(item) {
+    changePin (item) {
 
     },
 
-    alreadyInGroups(group, groups) {
-      if(!group || !groups || !groups.filter) return;
+    alreadyInGroups (group, groups) {
+      if (!group || !groups || !groups.filter) return
       // item.groupsModerating && item.groupsModerating.includes(group)
-      if (groups.filter(function(e) { return e.id === group.id; }).length > 0) {
-        return true;
+      if (groups.filter(function (e) { return e.id === group.id }).length > 0) {
+        return true
       }
-      return false;
+      return false
     },
 
-    addCreatedUserToGroup(user, group) {
+    addCreatedUserToGroup (user, group) {
       group.pivot = {
-        is_mod : 0,
+        is_mod: 0,
         is_member: 1
-      };
+      }
 
-      user.groups.push(group);
+      user.groups.push(group)
     },
 
-    removeCreatedUserFromGroup(user, index) {
-      user.groups.splice(index, 1);
+    removeCreatedUserFromGroup (user, index) {
+      user.groups.splice(index, 1)
     }
 
   }

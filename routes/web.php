@@ -157,17 +157,6 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
         // print_r(App\QuestionOption::find(1)->question->toArray());
     });
 
-    // Send Mail
-    Route::get('send-mail', function() {
-        Mail::raw('Hallo Welt', function($message)
-        {
-            $message->from('it@corporate-happiness.de', env('APP_NAME'));
-            $message->subject('Account Locked');
-            $message->to('it@corporate-happiness.de');
-        });
-    });
-
-
     // Get PAN and then get User
     Route::get('user/pan', function() {
         dd(
