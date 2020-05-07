@@ -28,7 +28,7 @@ class UserPan extends Model
         'pan',
 
         'contact_mail',
-        'last_mail_sent',
+        'last_mail_date',
         'last_mail_status',
         'import_comment',
 
@@ -48,7 +48,7 @@ class UserPan extends Model
         'pin',
 
         'contact_mail',
-        'last_mail_sent',
+        'last_mail_date',
         'last_mail_status',
         'import_comment',
     ];

@@ -407,9 +407,9 @@
 
                       <q-separator />
 
-                      <q-item clickable>
+                      <q-item clickable @click="sendEntranceMails()">
                         <q-item-section>
-                          E-Mail versand
+                          Zugangs-E-Mails versenden
                         </q-item-section>
                         <q-item-section side>
                           <q-icon name="email" />
@@ -457,7 +457,7 @@
           </template>
 
           <!-- Header Cell Slots -->
-          <template v-slot:header-cell-last_mail_sent="props">
+          <template v-slot:header-cell-last_mail_date="props">
             <q-th v-if="settings.bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
           </template>
 
@@ -806,10 +806,10 @@
             </q-td>
           </template>
 
-          <!-- last_mail_sent -->
-          <template v-slot:body-cell-last_mail_sent="props">
+          <!-- last_mail_date -->
+          <template v-slot:body-cell-last_mail_date="props">
             <q-td v-if="settings.bShowContactMailData" :props="props">
-              <span class="code_font">{{ props.row.pan.last_mail_sent }}</span>
+              <span class="code_font">{{ props.row.pan.last_mail_date }}</span>
             </q-td>
           </template>
 
@@ -1056,7 +1056,7 @@ export default {
         /*
           import_comment
           contact_mail
-          last_mail_sent
+          last_mail_date
           last_mail_status
         */
         {
@@ -1072,9 +1072,9 @@ export default {
           sortable: true
         },
         {
-          label: this.$t('last_mail_sent'),
-          name: 'last_mail_sent',
-          field: 'last_mail_sent',
+          label: this.$t('last_mail_date'),
+          name: 'last_mail_date',
+          field: 'last_mail_date',
           sortable: true
         },
         {
@@ -1387,6 +1387,8 @@ export default {
     },
 
     sendEntranceMail (user) {
+      this.loading = true
+
       axios.post('/api/send-entrance-mail', {
         id: user.id
       }).then((e) => {
@@ -1394,11 +1396,22 @@ export default {
       }).catch((e) => {
         console.log('error', e)
       }).then((e) => {
+        this.loading = false
         this.reloadUser(user)
       })
     },
 
+    sendEntranceMails () {
+      let users = this.selected
+      for (var i in users) {
+        var user = users[i]
+        this.sendEntranceMail(user)
+      }
+    },
+
     reloadUser (user) {
+      this.loading = true
+
       axios.post('/api/reload-user', {
         id: user.id
       }).then((response) => {
@@ -1413,6 +1426,8 @@ export default {
         console.log(this.usersCreated)
       }).catch((response) => {
         console.log('error reloading user', response)
+      }).then(() => {
+        this.loading = false
       })
     },
 

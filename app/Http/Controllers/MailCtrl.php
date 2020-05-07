@@ -40,9 +40,10 @@ class MailCtrl extends Controller
         // });
 
         // Update User with sending Mail
-        $panUser->pan['last_mail_status'] = mt_rand(1, 50000);
+        $panUser->pan['last_mail_date'] = now()->toDateTimeString();
+        $panUser->pan['last_mail_status'] = 'success';
+
+        // Save PAN
         $panUser->pan->save();
-
-
     }
 }
