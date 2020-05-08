@@ -185,6 +185,9 @@ return [
         // Excel Importer
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
+        // Snowfile Beautiful Mail
+        Snowfire\Beautymail\BeautymailServiceProvider::class,
+
     ],
 
     /*
