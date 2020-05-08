@@ -141,7 +141,8 @@ export default {
   methods: {
 
     download (name) {
-      let path = '/storage/files/examples/'
+      // let path = '/storage/files/examples/'
+      let path = 'https://dreamteam-survey.s3.eu-central-1.amazonaws.com/files/example/import/'
       let file = name
       let filepath = path + file
 
