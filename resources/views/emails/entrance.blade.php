@@ -2,26 +2,43 @@
 
 @section('content')
 
-	@include('beautymail::templates.widgets.articleStart')
+  @include('beautymail::templates.widgets.newfeatureStart')
 
-		<h4 class="secondary"><strong>Hello World</strong></h4>
-    <p>This is a test</p>
+    @php
+      $code_style = '
+                      display: inline-block;
+                      background: #e6e6e6;
+                      padding: .25em .4em .2em .4em;
+                      border-radius: .5em;
+                      color: black;
+                      font-weight: bold;
+                      font-family: "Consolas", "monospace", "Courier New", "Lucida Console", "Roboto Mono";
+                      line-height: inherit;
+      '
+    @endphp
+
+
+		<h4 class="secondary"><strong>Ihre Zugangsdaten</strong></h4>
 
     {{-- ID: {{ $id }}
     PAN: {{ $pan }}
     PIN: {{ $pin }} --}}
 
-    ID: {{ $user['id'] }} <br>
-    PAN: {{ $user['pan']['pan'] }} <br>
-    PIN: {{ $user['pan']['pin'] }} <br>
+    <p>
+      ID: {{ $user['id'] }}
+      <br>
 
-	@include('beautymail::templates.widgets.articleEnd')
+      PAN: <span style="{{ $code_style  }}"> {{ $user['pan']['pan'] }} </span>
+      <br>
 
+      PIN: <span style="{{ $code_style  }}">{{ $user['pan']['pin'] }}</span>
+      <br>
 
-	@include('beautymail::templates.widgets.newfeatureStart')
+      URL: <span><a href="{{ env('APP_URL') }}" target="_blank">{{ env('APP_URL') }}</a></span>
+      <br>
 
-		<h4 class="secondary"><strong>Hello World again</strong></h4>
-		<p>This is another test</p>
+    </p>
+
 
 	@include('beautymail::templates.widgets.newfeatureEnd')
 

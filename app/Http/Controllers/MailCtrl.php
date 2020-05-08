@@ -31,26 +31,30 @@ class MailCtrl extends Controller
 
         // Get Created User with Relation
         $panUser = $request->user()->users->find($request->id)->getSelfWithRelations($request->id);
+        $email = $panUser->pan->contact_mail;
 
         // Send Mail
-        Mail::send('emails.entrance', ['user' => $panUser], function ($mail) use ($panUser) {
+        Mail::send('emails.entrance', ['user' => $panUser], function ($mail) use ($panUser, $email) {
             $mail
                 ->from('it@corporate-happiness.de', env('APP_NAME'))
-                ->to($panUser->pan->contact_mail)
+                ->to($email)
                 ->subject('Welcome - Your Entrance-Informatio');
         });
 
         $response = '';
+        $response .= ($this->correct_format($email)) ? null: "Wrong Format! \n";
+        $response .= ($this->domain_exists($email)) ? null: "No DNS! \n";
+
         if( count(Mail::failures()) > 0 ) {
 
-            $response .= "There was one or more failures. They were: <br />";
+            $response .= "There was one or more failures. They were: \n";
 
             foreach(Mail::failures() as $email_address) {
-                $response .= " - $email_address <br />";
+                $response .= " - $email_address \n";
              }
 
          } else {
-             $response .= "Success";
+             $response .= "Success \n";
          }
 
         // Update User with sending Mail
@@ -60,4 +64,16 @@ class MailCtrl extends Controller
         // Save PAN
         $panUser->pan->save();
     }
+
+    // Check E-Mail Format
+    public function correct_format($email) {
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    // An optional sender
+    public function domain_exists($email, $record = 'MX'){
+        list($user, $domain) = explode('@', $email);
+        return checkdnsrr($domain, $record);
+    }
+
 }

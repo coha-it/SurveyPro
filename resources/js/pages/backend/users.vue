@@ -802,21 +802,21 @@
           <!-- contact_mail -->
           <template v-slot:body-cell-contact_mail="props">
             <q-td v-if="settings.bShowContactMailData" :props="props">
-              <span class="code_font">{{ props.row.pan.contact_mail }}</span>
+              <span class="code_font contact_mail">{{ props.row.pan.contact_mail }}</span>
             </q-td>
           </template>
 
           <!-- last_mail_date -->
           <template v-slot:body-cell-last_mail_date="props">
             <q-td v-if="settings.bShowContactMailData" :props="props">
-              <span class="code_font">{{ props.row.pan.last_mail_date }}</span>
+              <span class="code_font last_mail_date">{{ props.row.pan.last_mail_date }}</span>
             </q-td>
           </template>
 
           <!-- last_mail_status -->
           <template v-slot:body-cell-last_mail_status="props">
             <q-td v-if="settings.bShowContactMailData" :props="props">
-              <span class="code_font">{{ props.row.pan.last_mail_status }}</span>
+              <span class="code_font last_mail_status">{{ props.row.pan.last_mail_status }}</span>
             </q-td>
           </template>
 

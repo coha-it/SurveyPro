@@ -276,6 +276,11 @@ select {
   font-weight: bold;
   font-family: "Consolas", "monospace", "Courier New", "Lucida Console", "Roboto Mono";
   line-height: inherit;
+  // white-space: break-spaces;
+}
+
+.last_mail_status {
+  white-space: pre;
 }
 
 .coha--filter-input {
