@@ -32,22 +32,26 @@ class MailCtrl extends Controller
         // Get Created User with Relation
         $panUser = $request->user()->users->find($request->id)->getSelfWithRelations($request->id);
 
+        // Send Mail
+        Mail::send('emails.entrance', ['user' => $panUser], function ($mail) use ($panUser) {
+            $mail
+                ->from('it@corporate-happiness.de', env('APP_NAME'))
+                ->to($panUser->pan->contact_mail)
+                ->subject('Welcome - Your Entrance-Informatio');
+        });
 
         $response = '';
-        try {
-            // Send Mail
-            Mail::send('emails.entrance', ['user' => $panUser], function ($mail) use ($panUser) {
-                $mail
-                    ->from('it@corporate-happiness.de', env('APP_NAME'))
-                    ->to($panUser->pan->contact_mail)
-                    ->subject('Welcome - Your Entrance-Informatio');
-            });
+        if( count(Mail::failures()) > 0 ) {
 
-            $response .= "Success";
-        } catch (\Exception $ex) {
-            // Debug via $ex->getMessage();
-            $response .= $ex->getMessage();
-        }
+            $response .= "There was one or more failures. They were: <br />";
+
+            foreach(Mail::failures() as $email_address) {
+                $response .= " - $email_address <br />";
+             }
+
+         } else {
+             $response .= "Success";
+         }
 
         // Update User with sending Mail
         $panUser->pan['last_mail_status'] = $response;
