@@ -124,7 +124,7 @@ class BackendCtrl extends Controller
                 'contact_mail'          => $imported ? $imported[$i]['mail'] : '',
                 // 'last_mail_date'        => $imported ? $imported[$i]['mail'] : '',
                 // 'last_mail_status'      => $imported ? $imported[$i]['mail'] : '',
-                'import_comment'        => $imported ? json_encode($imported[$i]) : '',
+                'import_comment'        => $imported ? json_encode($imported[$i]) : null,
             ]);
             $user->pan->save();
             $user->save();
