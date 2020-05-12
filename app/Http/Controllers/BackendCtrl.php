@@ -174,7 +174,7 @@ class BackendCtrl extends Controller
         foreach ($users as $key => $reqUser) {
             // Validate Data
             $validator = \Validator::make($reqUser, [
-                'pan.pan' => 'required|unique:u_pans,pan,'. $request->user['id'] .',user_id',
+                'pan.pan' => 'required|unique:u_pans,pan,'. $reqUser['id'] .',user_id',
                 'pan.pin' => 'required|min:4|max:4'
             ]);
 

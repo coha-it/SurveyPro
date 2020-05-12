@@ -82,7 +82,7 @@
                   style="max-width: 300px;"
                   no-thumbnails
                   field-name="file"
-                  @removed="fileRemovedFromUploader"
+                  @removed="removeUploadedUsers"
                   @uploaded="fileUploadSuccess"
                   @failed="fileUploadFailed"
                 />
@@ -156,9 +156,10 @@ export default {
     createImportedUsers () {
       // Create Users
       this.$parent.createUsers(this.jUploadedUsers.length, this.jUploadedUsers)
+      this.removeUploadedUsers()
     },
 
-    fileRemovedFromUploader () {
+    removeUploadedUsers () {
       this.jUploadedUsers = null
     },
 
