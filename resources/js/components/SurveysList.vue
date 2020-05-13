@@ -6,7 +6,7 @@
           v-for="oSurvey in aSurveys"
           :id="'survey-'+oSurvey.id"
           :key="oSurvey.id"
-          class="col col-12 col-xs-12 col-xl-12"
+          :class="'col col-12 col-xs-12 col-xl-12 ' + (isEnabled(oSurvey) ? 'pointer' : null)"
           clickable
           flat
           bordered

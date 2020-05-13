@@ -784,11 +784,11 @@
                           </q-td>
 
                           <!-- ID -->
-                          <q-td auto-width>
+                          <!-- <q-td auto-width>
                             <span>
                               <small style="word-break: break-all">{{ props.row.id }}</small>
                             </span>
-                          </q-td>
+                          </q-td> -->
 
                           <q-td key="expand" :props="props">
                             <q-btn
@@ -1355,11 +1355,11 @@
                                                     </q-td>
 
                                                     <!-- ID -->
-                                                    <q-td auto-width>
+                                                    <!-- <q-td auto-width>
                                                       <span>
                                                         <small style="word-break: break-all">{{ option.row.id }}</small>
                                                       </span>
-                                                    </q-td>
+                                                    </q-td> -->
 
                                                     <!-- Actions -->
                                                     <q-td auto-width>
@@ -1612,7 +1612,7 @@ export default {
         '#54656C', // primary
         '#9AC0C9', // secondary
         '#fafafa', // background
-        '#E8D03E', // accent
+        '#E8D03E' // accent
       ],
 
       // Questions Extended (local storage)
@@ -1921,13 +1921,13 @@ export default {
           align: 'center',
           sortable: true
         },
-        {
-          label: 'ID',
-          name: 'id',
-          field: 'id',
-          align: 'center',
-          sortable: true
-        },
+        // {
+        //   label: 'ID',
+        //   name: 'id',
+        //   field: 'id',
+        //   align: 'center',
+        //   sortable: true
+        // },
         {
           label: '',
           name: 'expand',
@@ -1994,13 +1994,13 @@ export default {
           align: 'left',
           sortable: true
         },
-        {
-          label: 'ID',
-          name: 'id',
-          field: 'id',
-          align: 'center',
-          sortable: true
-        },
+        // {
+        //   label: 'ID',
+        //   name: 'id',
+        //   field: 'id',
+        //   align: 'center',
+        //   sortable: true
+        // },
         {
           label: 'Aktionen',
           name: 'actions',

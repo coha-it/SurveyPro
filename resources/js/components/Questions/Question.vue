@@ -6,7 +6,7 @@
         <div class="survey-progress-wrapper">
           <template v-for="question in oSurvey.questions">
             <router-link
-              v-bind:key="question.id"
+              :key="question.id"
               :to="getQuestionHash(question)"
               :class="getProgressClasses(oSurvey, question)"
             >
@@ -23,7 +23,7 @@
         <transition :name="question_transition" mode="out-in">
           <!-- The Question -->
           <!-- Single Question here -->
-          <div v-if="questionIsViewed(question)" v-bind:key="question.id">
+          <div v-if="questionIsViewed(question)" :key="question.id">
             <div class="q-mb-md q-pa-md">
               <div class="text-overline">{{ $t('Question') }} {{ getQuestionPosition() }} / {{ oSurvey.question_count }}</div>
               <h1 class="text-black">{{ question.title }}</h1>
@@ -34,17 +34,17 @@
             <!-- if checkboxes -->
             <template v-if="question.format == 'checkboxes'">
               <q-item
-                tag="label"
-                v-ripple
                 v-for="option in question.options"
-                v-bind:key="option.id"
+                :key="option.id"
+                v-ripple
+                tag="label"
                 :value="option.id"
               >
                 <q-item-section avatar top>
                   <!-- Multiple -->
                   <q-checkbox
                     v-if="question.max_options > 1"
-                    v-on:click.native="toggleAwnserOption(question, option)"
+                    @click.native="toggleAwnserOption(question, option)"
                     :value="findSelectedOption(question, option) ? true : false"
                   />
                   <!-- Single -->
@@ -53,7 +53,7 @@
                     :value="findSelectedOptionId(question, option)"
                     :val="option.id"
                     selected
-                    v-on:click.native="toggleAwnserOptionSingle(question, option)"
+                    @click.native="toggleAwnserOptionSingle(question, option)"
                   />
                 </q-item-section>
                 <q-item-section>
@@ -152,13 +152,24 @@
         <!-- <q-btn flat icon="keyboard_arrow_left" :to="beforeQuestionRoute(question)" /> -->
         <q-btn flat icon="keyboard_arrow_left" :to="getOverviewHash()" />
         <template v-if="question">
-          <q-btn
-            :label="getQuestionLabel(question)"
-            :disable="questionIsNotSubmittable(question) ? true : false"
-            color="primary"
-            class="full-width"
-            @click="updateOrCreateAwnser(question)"
-          />
+          <template v-if="question.is_skippable && questionIsNotSubmittable(question)">
+            <q-btn
+              label="Frage überspringen"
+              color="primary"
+              class="full-width"
+              @click="skipQuestion(question)"
+            />
+          </template>
+
+          <template v-else>
+            <q-btn
+              :label="getQuestionLabel(question)"
+              :disable="questionIsNotSubmittable(question)"
+              color="primary"
+              class="full-width"
+              @click="updateOrCreateAwnser(question)"
+            />
+          </template>
         </template>
         <q-btn flat icon="keyboard_arrow_down" :to="hashes.overview" />
       </q-toolbar>
@@ -167,6 +178,7 @@
 </template>
 
 <script>
+/* eslint-disable vue/require-default-prop */
 export default {
   props: {
     hashes: Object,
@@ -182,7 +194,7 @@ export default {
     isLight: Function,
     isDark: Function,
     lightOrDark: Function,
-    question_transition: String,
+    question_transition: String
   },
 
   data () {
@@ -222,8 +234,7 @@ export default {
     },
     questionIsSubmittable (q) {
       // Skippable
-      const skp = q.is_skippable
-      if (skp) return true
+      // if (q.is_skippable) return true
 
       // Options Available
       if (q && q.users_awnser && q.users_awnser.awnser_options) {
@@ -268,6 +279,9 @@ export default {
     nextQuestionRoute (q) {
       return this.questionRoute(q, +1)
     },
+    skipQuestion (q) {
+      this.$router.push(this.nextQuestionRoute(q))
+    },
     getProgressClasses (survey, question) {
       var r = ['progress']
       var viewedQ = this.getViewedQuestion(survey)
@@ -278,8 +292,11 @@ export default {
       else r.push('curr')
 
       // If Question is Awnsered
-      if (question.users_awnser) r.push('awnsered')
-      else r.push('unawnsered')
+      if (question.users_awnser && this.questionIsSubmittable(question)) {
+        r.push('awnsered')
+      } else {
+        r.push('unawnsered')
+      }
 
       return r.join(' ')
     },
@@ -348,8 +365,8 @@ export default {
       }
     },
     findSelectedOptionId (question, option) {
-      var option = this.findSelectedOption(question, option)
-      if (option && option.id) return option.id
+      let opt = this.findSelectedOption(question, option)
+      if (opt && opt.id) return opt.id
     },
     updateOrCreateAwnser (question) {
       const _t = this

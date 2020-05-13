@@ -1,34 +1,38 @@
 <template>
   <transition name="fade" mode="out-in">
-    <div :key="overviewIsViewed()">
-      <div v-if="oSurvey">
-        <!-- Overview -->
-        <Overview
-          v-if="overviewIsViewed()"
-          :hashes="hashes"
-          :o-survey="oSurvey"
-          :get-question-hash="getQuestionHash"
-          :get-overview-hash="getOverviewHash"
-        />
+    <div class="survey wrapper">
+      <div class="inner">
+        <div :key="overviewIsViewed()">
+          <div v-if="oSurvey">
+            <!-- Overview -->
+            <Overview
+              v-if="overviewIsViewed()"
+              :hashes="hashes"
+              :o-survey="oSurvey"
+              :get-question-hash="getQuestionHash"
+              :get-overview-hash="getOverviewHash"
+            />
 
-        <!-- Questions -->
-        <Question
-          v-else
-          :hashes="hashes"
-          :o-survey="oSurvey"
-          :question="question"
-          :get-viewed-question="getViewedQuestion"
-          :get-question-hash="getQuestionHash"
-          :get-overview-hash="getOverviewHash"
-          :question-is-viewed="questionIsViewed"
-          :get-position-by-id="getPositionById"
-          :find-by-key="findByKey"
-          :copy-object="copyObject"
-          :is-light="isLight"
-          :is-dark="isDark"
-          :light-or-dark="lightOrDark"
-          :question_transition="question_transition"
-        />
+            <!-- Questions -->
+            <Question
+              v-else
+              :hashes="hashes"
+              :o-survey="oSurvey"
+              :question="question"
+              :get-viewed-question="getViewedQuestion"
+              :get-question-hash="getQuestionHash"
+              :get-overview-hash="getOverviewHash"
+              :question-is-viewed="questionIsViewed"
+              :get-position-by-id="getPositionById"
+              :find-by-key="findByKey"
+              :copy-object="copyObject"
+              :is-light="isLight"
+              :is-dark="isDark"
+              :light-or-dark="lightOrDark"
+              :question_transition="question_transition"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </transition>
@@ -284,11 +288,11 @@ h2 {
       .inner {
         opacity: 1;
       }
-      &.awnsered {
-        & + .progress {
-          pointer-events: all;
-        }
-      }
+      // &.awnsered {
+      //   & + .progress {
+      //     pointer-events: all;
+      //   }
+      // }
     }
     &.passed {
       .inner {
