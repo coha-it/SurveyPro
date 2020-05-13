@@ -27,7 +27,9 @@
               <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximieren</q-tooltip>
             </q-btn>
             <q-btn dense flat icon="close" v-close-popup>
-              <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
+              <q-tooltip content-class="bg-white text-primary">
+                Schließen
+              </q-tooltip>
             </q-btn>
           </q-toolbar>
           <q-list three-line subheader>
@@ -88,7 +90,7 @@
         <!-- Loading -->
         <template v-else>
           <p>{{ $t('loading.text') }}</p>
-          <q-progress-linear indeterminate color="white" class="mb-0"></q-progress-linear>
+          <q-progress-linear indeterminate color="white" class="mb-0" />
         </template>
       </q-dialog>
       &nbsp;
@@ -99,7 +101,6 @@
     </p>
 
     <p>
-
       <UserDataModal
         sEditText="Firmen bearbeiten"
         sCreateText="Neue Firma erstellen"

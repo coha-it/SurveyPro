@@ -1,4 +1,24 @@
 
+
+// A Links
+// a:not(.q-btn):not(.q-item) {
+//     position: relative;
+//     z-index: 1;
+
+//     &:before {
+//         content: "";
+//         background: rgba(247, 223, 79, 0.5);
+//         width: 100%;
+//         height: 50%;
+//         position: absolute;
+//         bottom: -02%;
+//         left: 0;
+//         right: 0;
+//         margin: auto;
+//         z-index: -1;
+//     }
+// }
+
 // Readonly
 .lowlighted, [lowlighted] {
   opacity: 0.6!important;

@@ -1,7 +1,21 @@
 <template>
   <div>
     <h1>Surveys Management</h1>
-    <p>Manage your Surveys or <router-link :to="{name: 'backend.survey', params: {id: 'create'}}">create a new one</router-link></p>
+    <p>
+      Bearbeite deine Umfragen oder erstelle eine Neue:
+    </p>
+    <p>
+      <q-btn
+        label="Umfrage erstellen"
+        color="primary"
+        depressed
+        unelevated
+        tile
+        xoutline
+        class="mt-2 mr-2" 
+        :to="{name: 'backend.survey', params: {id: 'create'}}"
+      />
+    </p>
     <q-card>
       <q-card-section>
         <q-input

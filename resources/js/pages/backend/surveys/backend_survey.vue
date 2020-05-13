@@ -14,47 +14,47 @@
         :label="$t('Back to surveys')"
       />
 
-                <UserDataModal
-                  sEditText="Gruppen Bearbeiten"
-                  sCreateText="Neue Gruppe erstellen"
-                  sInputLabel="Gruppenname"
-                  sInputLabel2="Gruppenbeschreibung Öffentlich"
-                  sInputLabel3="Gruppenbeschreibung für Moderatoren"
-                  p_sModel="group"
-                  :p_oModels="user.groups_moderating"
-                  :p_aHeaders="[
-                    {
-                      name: 'id',
-                      label: this.$t('id'),
-                      field: 'id',
-                    },
-                    {
-                      name: 'name',
-                      label: this.$t('name'),
-                      field: 'name',
-                    },
-                    {
-                      name: 'description_public',
-                      label: this.$t('description_public'),
-                      field: 'description_public',
-                    },
-                    {
-                      name: 'description_mods',
-                      label: this.$t('description_mods'),
-                      field: 'description_mods',
-                    },
-                    {
-                      name: 'updated_at',
-                      label: this.$t('updated_at'),
-                      field: 'updated_at',
-                    },
-                    {
-                      name: 'created_at',
-                      label: this.$t('created_at'),
-                      field: 'created_at',
-                    }
-                  ]"
-                />
+      <UserDataModal
+        sEditText="Gruppen Bearbeiten"
+        sCreateText="Neue Gruppe erstellen"
+        sInputLabel="Gruppenname"
+        sInputLabel2="Gruppenbeschreibung Öffentlich"
+        sInputLabel3="Gruppenbeschreibung für Moderatoren"
+        p_sModel="group"
+        :p_oModels="user.groups_moderating"
+        :p_aHeaders="[
+          {
+            name: 'id',
+            label: this.$t('id'),
+            field: 'id',
+          },
+          {
+            name: 'name',
+            label: this.$t('name'),
+            field: 'name',
+          },
+          {
+            name: 'description_public',
+            label: this.$t('description_public'),
+            field: 'description_public',
+          },
+          {
+            name: 'description_mods',
+            label: this.$t('description_mods'),
+            field: 'description_mods',
+          },
+          {
+            name: 'updated_at',
+            label: this.$t('updated_at'),
+            field: 'updated_at',
+          },
+          {
+            name: 'created_at',
+            label: this.$t('created_at'),
+            field: 'created_at',
+          }
+        ]"
+      />
 
       <br />
       <br />
@@ -63,7 +63,7 @@
     <div v-if="oSurvey">
       <!-- Data Sheet -->
       <template>
-        <q-form v-on:submit.prevent v-model="valid" ref="form" style="max-width: 1280px;">
+        <q-form ref="form" v-model="valid" style="max-width: 1280px;" v-on:submit.prevent>
           <q-toolbar color="primary" dark>
             <q-toolbar-title>
               <template v-if="bCreate">{{ "Neue Umfrage erstellen" }}</template>
@@ -291,7 +291,7 @@
                         <div class="row">
                           <div class="col col-12 col-sm-6 col-md-6">
                             <q-input
-                              :value="formatDate(oSurvey.start_datetime)"
+                              :value="getDateFormat(oSurvey.start_datetime)"
                               :disable="surveyIsUneditable()"
                               label="Beginnt am"
                               placeholder="Bitte auswählen"
@@ -336,7 +336,7 @@
                           <div class="col col-12 col-sm-6 col-md-6">
                             <q-input
                               v-if="oSurvey.start_datetime"
-                              :value="formatTime(oSurvey.start_datetime)"
+                              :value="getTimeFormat(oSurvey.start_datetime)"
                               :disable="surveyIsUneditable()"
                               label="Beginnt um"
                               placeholder="Bitte auswählen"
@@ -378,7 +378,7 @@
                         <div class="row" v-if="oSurvey.start_datetime">
                           <div class="col col-12 col-sm-6 col-md-6">
                             <q-input
-                              :value="formatDate(oSurvey.end_datetime)"
+                              :value="getDateFormat(oSurvey.end_datetime)"
                               :disable="surveyIsUneditable()"
                               label="Endet am"
                               readonly
@@ -421,7 +421,7 @@
                           </div>
                           <div class="col col-12 col-sm-6 col-md-6">
                             <q-input
-                              :value="formatTime(oSurvey.end_datetime)"
+                              :value="getTimeFormat(oSurvey.end_datetime)"
                               :disable="surveyIsUneditable()"
                               label="Endet um"
                               readonly
@@ -462,7 +462,7 @@
                         <div class="row justify-center full-width">
                           <div class="col">
                             <q-chat-message
-                              :text="['Hallo! Die Umfrage ersteckt sich über folgende Zeit: <br/><strong>'+ getDiffDatetimeLabel() + '</strong>. Startend am ' + formatDate(oSurvey.start_datetime) + ' bis zum ' + formatDate(oSurvey.end_datetime)  ]"
+                              :text="['Hallo! Die Umfrage ersteckt sich über folgende Zeit: <br/><strong>'+ getDiffDatetimeLabel() + '</strong>. Startend am ' + getDateFormat(oSurvey.start_datetime) + ' bis zum ' + getDateFormat(oSurvey.end_datetime)  ]"
                               sent
                               :bg-color="getDiffDatetimeColor()"
                               text-color="white"
@@ -1024,7 +1024,7 @@
                                                   label="Maximale Optionen"
                                                   required
                                                 >
-                                                <template v-slot:append>
+                                                  <template v-slot:append>
                                                     <q-icon :name="help_icon">
                                                       <q-tooltip
                                                         self="center middle"
@@ -1332,25 +1332,25 @@
 
                                                     <!-- Color -->
                                                     <q-td>
-      <q-btn
-        class="c-code-text"
-        unelevated
-        rounded
-        size="md"
-        :style="'text-transform: uppercase; background-color: ' + option.row.color"
-      >
-        <span :class="getNegativeColor(option.row.color)">
-          {{  option.row.color || 'no color'  }}
-        </span>
-        <q-popup-proxy transition-show="scale" transition-hide="scale">
-          <q-color
-            v-model="option.row.color"
-            :palette="colorPalette"
-            default-view="palette"
-          />
-        </q-popup-proxy>
-      </q-btn>
-      <q-btn v-if="option.row.color" size="sm" icon="clear" rounded flat round @click="option.row.color = ''" />
+                                                      <q-btn
+                                                        class="c-code-text"
+                                                        unelevated
+                                                        rounded
+                                                        size="md"
+                                                        :style="'text-transform: uppercase; background-color: ' + option.row.color"
+                                                      >
+                                                        <span :class="getNegativeColor(option.row.color)">
+                                                          {{  option.row.color || 'no color'  }}
+                                                        </span>
+                                                        <q-popup-proxy transition-show="scale" transition-hide="scale">
+                                                          <q-color
+                                                            v-model="option.row.color"
+                                                            :palette="colorPalette"
+                                                            default-view="palette"
+                                                          />
+                                                        </q-popup-proxy>
+                                                      </q-btn>
+                                                      <q-btn v-if="option.row.color" size="sm" icon="clear" rounded flat round @click="option.row.color = ''" />
 
                                                     </q-td>
 
@@ -1586,7 +1586,7 @@
 <script>
 // import axios from 'axios'
 import { mapGetters } from 'vuex'
-import VueMoment from 'vue-moment'
+import dayjs from 'dayjs'
 import UserDataModal from '~/components/BackendUserDataModal'
 
 export default {
@@ -2039,9 +2039,9 @@ export default {
       },
 
       // Today
-      sTodayDate: VueMoment().format('YYYY-MM-DD'),
-      sTodayTime: VueMoment().format('HH:mm:ss'),
-      sTodayDatetime: VueMoment().format('YYYY-MM-DD HH:mm:ss'),
+      sTodayDate: this.format_y_m_d(),
+      sTodayTime: this.format_h_m_s(),
+      sTodayDatetime: this.format_y_m_d_h_m_s(),
 
       // Tmps Start
       // sStartDate: '', // this.getStartDate(),
@@ -2310,13 +2310,11 @@ export default {
     },
 
     getStartDate () {
-      return VueMoment()
-        .format()
-        .substr(0, 10)
+      return this.date().format().substr(0, 10)
     },
 
     // getEndDate() {
-    //   return VueMoment(VueMoment() + 5).format().substr(0, 10)
+    //   return this.date(this.date() + 5).format().substr(0, 10)
     // },
 
     reorderQuestions () {
@@ -2339,19 +2337,35 @@ export default {
       }
     },
 
-    events (d) {
-      var entry = VueMoment(d).format('YYYY-MM-DD')
-      var start = VueMoment(this.oSurvey.start_datetime).format('YYYY-MM-DD')
-      var end = VueMoment(this.oSurvey.end_datetime).format('YYYY-MM-DD')
-      var today = VueMoment(this.sTodayDate).format('YYYY-MM-DD')
+    date (d) {
+      return dayjs(d)
+    },
 
-      return (entry >= start && entry <= end) || entry == today
+    format_y_m_d (d) {
+      return this.date(d).format('YYYY-MM-DD')
+    },
+
+    format_h_m_s (d) {
+      return this.date(d).format('HH:mm:ss')
+    },
+
+    format_y_m_d_h_m_s (d) {
+      return this.date(d).format('YYYY-MM-DD HH:mm:ss')
+    },
+
+    events (d) {
+      var entry = this.format_y_m_d(d)
+      var start = this.format_y_m_d(this.oSurvey.start_datetime)
+      var end = this.format_y_m_d(this.oSurvey.end_datetime)
+      var today = this.format_y_m_d(this.sTodayDate)
+
+      return (entry >= start && entry <= end) || entry === today
     },
 
     eventColor (d) {
-      var entry = VueMoment(d).format('YYYY-MM-DD')
-      var start = VueMoment(this.oSurvey.start_datetime).format('YYYY-MM-DD')
-      var end = VueMoment(this.oSurvey.end_datetime).format('YYYY-MM-DD')
+      var entry = this.format_y_m_d(d)
+      var start = this.format_y_m_d(this.oSurvey.start_datetime)
+      var end = this.format_y_m_d(this.oSurvey.end_datetime)
 
       switch (entry) {
         case end:
@@ -2642,7 +2656,7 @@ export default {
     },
 
     getDate (ts) {
-      return VueMoment(ts).format('YYYY-MM-DD')
+      return this.date(ts).format('YYYY-MM-DD')
     },
 
     getMinStartTime (hr, min, sec) {
@@ -2657,22 +2671,18 @@ export default {
       if (this.oSurvey.start_datetime && this.oSurvey.end_datetime) {
         var startDate = this.getDate(this.oSurvey.start_datetime)
         var endDate = this.getDate(this.oSurvey.end_datetime)
-        if (startDate == endDate) {
-          var endDatetime = VueMoment(this.oSurvey.end_datetime).format(
-            'YYYY-MM-DD HH:mm:ss'
-          )
-          var startDatetime = VueMoment(this.oSurvey.start_datetime).format(
-            'YYYY-MM-DD HH:mm:ss'
-          )
+        if (startDate === endDate) {
+          var endDatetime = this.format_y_m_d_h_m_s(this.oSurvey.end_datetime)
+          var startDatetime = this.format_y_m_d_h_m_s(this.oSurvey.start_datetime)
 
           // SelTime
-          var selTime = VueMoment(this.oSurvey.start_datetime).toDate()
+          var selTime = this.date(this.oSurvey.start_datetime).toDate()
           if (hr) selTime.setHours(hr)
           if (min) selTime.setMinutes(min)
           if (sec) selTime.setSeconds(sec)
 
           // Format again
-          selTime = VueMoment(selTime).format('YYYY-MM-DD HH:mm:ss')
+          selTime = this.format_y_m_d_h_m_s(selTime)
 
           switch (type) {
             case 'start':
@@ -2696,8 +2706,8 @@ export default {
         return 0
       }
 
-      var t1 = VueMoment(this.oSurvey.start_datetime)
-      var t2 = VueMoment(this.oSurvey.end_datetime)
+      var t1 = this.date(this.oSurvey.start_datetime)
+      var t2 = this.date(this.oSurvey.end_datetime)
 
       return Math.abs(t1 - t2) / 1000
     },
@@ -2717,40 +2727,38 @@ export default {
           return 'warning'
 
         default:
-          return 'negative'
+          return 'negative grey'
       }
-
-      return 'grey'
     },
 
     getDiffDatetimeLabel() {
       // get total seconds between the times
       var delta = this.getDiffDatetime();
 
-      if (!delta) return "";
+      if (!delta) return '';
 
       // calculate (and subtract) whole days
       var iDays = Math.floor(delta / 86400);
-      var sDays = "";
+      var sDays = '';
       delta -= iDays * 86400;
-      if (iDays) sDays = iDays + " " + this.$t("days") + " ";
+      if (iDays) sDays = iDays + ' ' + this.$t('days') + ' ';
 
       // calculate (and subtract) whole hours
       var iHours = Math.floor(delta / 3600) % 24;
-      var sHours = "";
+      var sHours = '';
       delta -= iHours * 3600;
-      if (iHours) sHours = iHours + " " + this.$t("hours") + " ";
+      if (iHours) sHours = iHours + ' ' + this.$t('hours') + ' ';
 
       // calculate (and subtract) whole minutes
       var iMinutes = Math.floor(delta / 60) % 60;
-      var sMinutes = "";
+      var sMinutes = '';
       delta -= iMinutes * 60;
-      if (iMinutes) sMinutes = iMinutes + " " + this.$t("minutes") + " ";
+      if (iMinutes) sMinutes = iMinutes + ' ' + this.$t('minutes') + ' ';
 
       return sDays + sHours + sMinutes;
     },
 
-    isSameDay(dates) {
+    isSameDay (dates) {
       if (dates && dates[0] == dates[1]) {
         return true;
       }
@@ -2798,25 +2806,25 @@ export default {
     //   }
     // },
 
-    getDatesDiffDays() {
+    getDatesDiffDays () {
       return this.getDiffDays(
         this.oSurvey.start_datetime,
         this.oSurvey.end_datetime
       );
     },
 
-    getDiffDays(d1, d2) {
-      var date1 = new Date(d1);
-      var date2 = new Date(d2);
-      var diff_in_time = date2.getTime() - date1.getTime();
-      var diff_in_days = diff_in_time / (1000 * 3600 * 24);
+    getDiffDays (d1, d2) {
+      var date1 = new Date(d1)
+      var date2 = new Date(d2)
+      var diff_in_time = date2.getTime() - date1.getTime()
+      var diff_in_days = diff_in_time / (1000 * 3600 * 24)
 
       return (Math.abs(diff_in_days) + 1).toString();
     },
 
-    formatDate(sDate) {
-      var locale = '';
-      var dDate = new Date(sDate);
+    getDateFormat (sDate) {
+      var locale = ''
+      var dDate = new Date(sDate)
 
       switch (this._i18n.locale) {
         case 'de':
@@ -2833,7 +2841,7 @@ export default {
       }
     },
 
-    formatTime(sDate) {
+    getTimeFormat (sDate) {
       return sDate ? sDate.substr(11, 5) + ' Uhr' : ''
     },
 
@@ -2879,9 +2887,9 @@ export default {
     },
 
     copyObject (obj) {
-      if (typeof obj != "undefined") {
-        var copy = JSON.parse(JSON.stringify(obj));
-        if (copy) return copy;
+      if (typeof obj !== 'undefined') {
+        var copy = JSON.parse(JSON.stringify(obj))
+        if (copy) return copy
       }
     },
 
@@ -2892,7 +2900,7 @@ export default {
 
       if (itemL && itemR) {
         // Differences
-        if (JSON.stringify(itemR) != JSON.stringify(itemL)) {
+        if (JSON.stringify(itemR) !== JSON.stringify(itemL)) {
           // console.log(JSON.stringify(itemR), JSON.stringify(itemL));
           bReturn = false
         } else {
@@ -2943,21 +2951,21 @@ export default {
           _t.bIsLoading = false
         })
         .catch(function (e) {
-          console.log(e)
           // Error
           if (e.reponse && e.reponse.data && e.response.data.error) {
-            var errText = "";
-            for (var e in e.response.data.error) {
-              errText += ": " + err[e];
+            let errText = ''
+            let err = e.response.data.error
+            for (var i in err) {
+              errText += ': ' + err[i]
             }
+            _t.showSnackbarError(_t.$t('data_unsaved') + '<br />' + errText)
           }
 
-          _t.showSnackbarError(_t.$t('data_unsaved') + '<br />' + errText);
           _t.bIsLoading = false
         })
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

@@ -5,13 +5,14 @@
         <q-card
           v-for="oSurvey in aSurveys"
           :id="'survey-'+oSurvey.id"
-          v-bind:key="oSurvey.id"
+          :key="oSurvey.id"
           class="col col-12 col-xs-12 col-xl-12"
           clickable
           flat
           bordered
           ripple
-          :disabled="!oSurvey.is_fillable"
+          :disabled="isDisabled(oSurvey)"
+          @click="isEnabled(oSurvey) ? link('survey/'+oSurvey.id + '#overview') : null"
         >
           <q-card-section>
             <div class="text-subtitle2">
@@ -25,9 +26,7 @@
                 style="float:right"
               />
             </div>
-            <router-link :to="'survey/'+oSurvey.id + '#overview'">
-              <div class="text-h6 text-black">{{ oSurvey.title || 'Umfrage #'+oSurvey.id }}</div>
-            </router-link>
+            <div class="text-h6 text-black">{{ oSurvey.title || 'Umfrage #'+oSurvey.id }}</div>
 
             <div class="row justify-center full-height full-width text-center  items-center">
               <div class="col col-4">
@@ -57,7 +56,7 @@
 <script>
 // import axios from 'axios'
 import { mapGetters } from 'vuex'
-import VueMoment from 'vue-moment'
+import dayjs from 'dayjs'
 import _ from 'lodash'
 
 export default {
@@ -98,11 +97,20 @@ export default {
     this.$store.dispatch('surveys/fetchSurveysMembering')
   },
   methods: {
-    fhd: function (d) {
-      return VueMoment(d).format('DD.MM.YYYY')
+    link (url) {
+      this.$router.push(url)
     },
-    fht: function (d) {
-      return VueMoment(d).format('hh:mm')
+    isDisabled (survey) {
+      return !this.isEnabled(survey)
+    },
+    isEnabled (survey) {
+      return survey.is_fillable
+    },
+    fhd (d) {
+      return dayjs(d).format('DD.MM.YYYY')
+    },
+    fht (d) {
+      return dayjs(d).format('hh:mm')
     },
     getBadgeColor (oSurvey) {
       if (oSurvey.is_fillable) return 'green'
