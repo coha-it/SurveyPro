@@ -1,0 +1,46 @@
+
+@media screen and (min-width: 770px) {
+
+  .survey.wrapper {
+    max-width: 770px !important;
+    position: relative;
+    margin: auto;
+    display: flex;
+    min-height: 100vh;
+    // align-items: center;
+    align-items: self-start;
+    justify-content: center;
+
+    & > .inner {
+      margin: 5vh 15px 15vh;
+      box-shadow: 0px 6px 25px -9px #0000001a;
+      border: 1px solid #e4e5e6;
+      height: auto;
+      width: 100%;
+      padding: 0 0 5px;
+      background: #fff;
+
+      .q-page,
+      .q-layout  {
+        min-height: unset !important;
+        min-height: auto !important;
+      }
+
+      .q-page-container {
+        padding-top: unset !important;
+      }
+
+      .q-header,
+      .q-footer {
+        position: static;
+      }
+
+      .q-footer {
+        border: 0;
+      }
+    }
+
+
+  }
+
+}

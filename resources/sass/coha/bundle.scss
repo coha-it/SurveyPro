@@ -1,10 +1,12 @@
 // Single Files
-@import 'structure.scss';
-@import 'page.scss';
-@import 'native-alerts.scss';
+@import 'structure';
+@import 'page';
+@import 'native-alerts';
 @import 'print';
 @import 'table';
 @import 'button';
 
 // All
 @import 'all';
+@import 'survey';
+@import 'font/nunito';
