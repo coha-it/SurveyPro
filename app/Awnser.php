@@ -23,7 +23,12 @@ class Awnser extends Model
      *
      * @var array
      */
-    protected $guarded = ['id'];
+    protected $guarded = [
+        'id',
+        'updated_at',
+        'created_at',
+        'deleted_at'
+    ];
 
     /**
      * Relations
@@ -52,11 +57,6 @@ class Awnser extends Model
     /**
      * Question
      */
-    // public function awnser_options()
-    // {
-    //     return $this->hasMany('App\AwnserOption');
-    // }
-
     public function awnser_options()
     {
         return $this->belongsToMany('App\QuestionOption', 'awnser_options', 'awnser_id', 'option_id');

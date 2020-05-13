@@ -44,8 +44,8 @@
                   <!-- Multiple -->
                   <q-checkbox
                     v-if="question.max_options > 1"
-                    @click.native="toggleAwnserOption(question, option)"
                     :value="findSelectedOption(question, option) ? true : false"
+                    @click.native="toggleAwnserOption(question, option)"
                   />
                   <!-- Single -->
                   <q-radio
@@ -98,51 +98,72 @@
               </template>
             </template>
 
-            <!-- Debug -->
-            <div v-if="false" class="code">{{ question }}</div>
+            <div style="text-align: center">
+              <div class="comment_wrapper">
+                <template v-if="question.users_awnser">
+                  <div v-if="question.users_awnser.comment" class="comment_inner">
+                    <p class="user_comment">
+                      {{ question.users_awnser.comment }}
+                    </p>
+                  </div>
 
-            <div class="comment-wrapper" style="text-align: center">
-              <template v-if="question.users_awnser">
+                  <q-btn
+                    :label="question.users_awnser.comment == '' ? 'Kommentar hinzufügen' : 'Kommentar bearbeiten'"
+                    icon="chat"
+                    size="md"
+                    flat
+                    rounded
+                    color="grey"
+                    @click.native="question_dialog = true"
+                  />
+                  <q-dialog
+                    v-model="question_dialog"
+                    persistent
+                  >
+                    <q-card style="min-width: 350px">
+                      <q-card-section>
+                        <div class="text-h6">Kommentar:</div>
+                      </q-card-section>
+
+                      <q-card-section class="q-pt-none">
+                        <q-input v-model="question.users_awnser.comment" dense autofocus @keyup.enter="question_dialog = false" />
+                      </q-card-section>
+
+                      <q-card-actions align="right" class="text-primary">
+                        <q-btn v-close-popup flat label="Übernehmen" />
+                      </q-card-actions>
+                    </q-card>
+                  </q-dialog>
+                </template>
+
+                <template v-else>
+                  <q-btn
+                    label="Kommentar hinzufügen"
+                    icon="chat"
+                    size="md"
+                    flat
+                    rounded
+                    color="grey"
+                    @click="findOrCreateAwnser(question); question_dialog = true"
+                  />
+                </template>
+
+              </div>
+
+              <div v-if="question.is_skippable" class="skippable-wrapper">
+                <br><br>
                 <q-btn
-                  :label="question.users_awnser.comment == '' ? 'Kommentar hinzufügen' : 'Kommentar bearbeiten'"
-                  icon="chat"
+                  label="Frage überspringen"
+                  icon="skip_next"
                   size="md"
                   flat
                   rounded
                   color="grey"
-                  @click.native="question_dialog = true"
+                  @click="skipQuestion(question)"
                 />
-                <q-dialog
-                  v-model="question_dialog"
-                  persistent
-                >
-                  <q-card style="min-width: 350px">
-                    <q-card-section>
-                      <div class="text-h6">Kommentar:</div>
-                    </q-card-section>
-
-                    <q-card-section class="q-pt-none">
-                      <q-input dense v-model="question.users_awnser.comment" autofocus @keyup.enter="question_dialog = false" />
-                    </q-card-section>
-
-                    <q-card-actions align="right" class="text-primary">
-                      <q-btn flat label="Übernehmen" v-close-popup />
-                    </q-card-actions>
-                  </q-card>
-                </q-dialog>
-              </template>
-              <template v-else>
-                <q-btn
-                  label="Kommentar hinzufügen"
-                  icon="chat"
-                  size="md"
-                  flat
-                  rounded
-                  color="grey"
-                  @click="findOrCreateAwnser(question); question_dialog = true"
-                />
-              </template>
+              </div>
             </div>
+            <!-- <pre class="debug">{{ question }}</pre> -->
           </div>
         </transition>
       </q-page>
@@ -152,7 +173,7 @@
         <!-- <q-btn flat icon="keyboard_arrow_left" :to="beforeQuestionRoute(question)" /> -->
         <q-btn flat icon="keyboard_arrow_left" :to="getOverviewHash()" />
         <template v-if="question">
-          <template v-if="question.is_skippable && questionIsNotSubmittable(question)">
+          <template v-if="question.is_skippable && !hasAwnser(question)">
             <q-btn
               label="Frage überspringen"
               color="primary"
@@ -163,8 +184,8 @@
 
           <template v-else>
             <q-btn
-              :label="getQuestionLabel(question)"
-              :disable="questionIsNotSubmittable(question)"
+              label="Antwort speichern"
+              :disable="!questionSubmittable(question)"
               color="primary"
               class="full-width"
               @click="updateOrCreateAwnser(question)"
@@ -204,6 +225,17 @@ export default {
   },
 
   methods: {
+
+    hasAwnser (q) {
+      return (
+        q &&
+        q.users_awnser &&
+        (
+          q.users_awnser.awnser_options.length > 0 || q.users_awnser.comment
+        )
+      )
+    },
+
     toggleAwnserOption (oQuestion, oOption) {
       var oAwnser = this.findOrCreateAwnser(oQuestion)
       var aAwOpts = oAwnser.awnser_options
@@ -228,13 +260,9 @@ export default {
     getQuestionPosition () {
       return this.getPositionById(this.question, this.oSurvey.questions) + 1
     },
-    getQuestionLabel (question) {
-      var s = 'Antwort speichern'
-      return s
-    },
-    questionIsSubmittable (q) {
+    questionSubmittable (q) {
       // Skippable
-      // if (q.is_skippable) return true
+      if (q.is_skippable) return true
 
       // Options Available
       if (q && q.users_awnser && q.users_awnser.awnser_options) {
@@ -248,9 +276,6 @@ export default {
 
       return false
     },
-    questionIsNotSubmittable (q) {
-      return !this.questionIsSubmittable(q)
-    },
     getQuestion (q, dir) {
       var qs = this.oSurvey.questions
       var iCurPos = this.getPositionById(q, qs)
@@ -262,11 +287,11 @@ export default {
       if (
         question &&
         question.users_awnser &&
-        question.users_awnser.awnser_options)
-      {
+        question.users_awnser.awnser_options
+      ) {
         return question.users_awnser.awnser_options[0]
       }
-      return 0
+      return {}
     },
     questionRoute (q, dir) {
       var nq = this.getQuestion(q, dir)
@@ -279,9 +304,6 @@ export default {
     nextQuestionRoute (q) {
       return this.questionRoute(q, +1)
     },
-    skipQuestion (q) {
-      this.$router.push(this.nextQuestionRoute(q))
-    },
     getProgressClasses (survey, question) {
       var r = ['progress']
       var viewedQ = this.getViewedQuestion(survey)
@@ -292,7 +314,11 @@ export default {
       else r.push('curr')
 
       // If Question is Awnsered
-      if (question.users_awnser && this.questionIsSubmittable(question)) {
+      if (
+        question.users_awnser &&
+        question.users_awnser.skipped != 1 &&
+        this.questionSubmittable(question)
+      ) {
         r.push('awnsered')
       } else {
         r.push('unawnsered')
@@ -301,8 +327,8 @@ export default {
       return r.join(' ')
     },
     getSelectedSliderOptionOrder (question) {
-      var o = this.firstAwnser(question)
-      return (o.order) ? o.order : null
+      let o = this.firstAwnser(question)
+      return (o && o.order) ? o.order : null
     },
     getFirstQuestionOption (question) {
       return Math.min.apply(Math, question.options.map(option => option.order))
@@ -314,16 +340,16 @@ export default {
       return this.firstAwnser(question) ? true : false
     },
     getSliderLabel (question) {
-      var o = this.firstAwnser(question)
-      return (o.title) ? o.title : null
+      let o = this.firstAwnser(question)
+      return (o && o.title) ? o.title : null
     },
     getSliderColor () {
-      var o = this.firstAwnser(this.question)
-      return (o.color) ? o.color : ''
+      let o = this.firstAwnser(this.question)
+      return (o && o.color) ? o.color : ''
     },
     getSliderTextColor (question) {
-      var o = this.firstAwnser(question)
-      return (o.color && this.isLight(o.color)) ? 'black' : 'white'
+      let o = this.firstAwnser(question)
+      return (o && o.color && this.isLight(o.color)) ? 'black' : 'white'
     },
     sliderInput (e) {
       console.log(e)
@@ -364,14 +390,32 @@ export default {
         )
       }
     },
+
     findSelectedOptionId (question, option) {
       let opt = this.findSelectedOption(question, option)
       if (opt && opt.id) return opt.id
     },
-    updateOrCreateAwnser (question) {
+
+    skipQuestion (q) {
+      if (!q.users_awnser) {
+        q.users_awnser = {}
+      }
+      q.users_awnser.awnser_options = [{}]
+      q.users_awnser.comment = null
+      q.users_awnser.skipped = 1
+      this.sendAwnser(q)
+    },
+
+    updateOrCreateAwnser (q) {
+      q.users_awnser.skipped = 0
+      this.sendAwnser(q)
+    },
+
+    sendAwnser (question) {
       const _t = this
 
-      // Update Users
+      console.log('jo', question.users_awnser)
+
       this.$store
         .dispatch('surveys/updateOrCreateAwnser', {
           survey_id: question.survey_id,

@@ -22,8 +22,8 @@ class CreateAwnserOptionsTable extends Migration
 
         Schema::table('awnser_options', function (Blueprint $table) {
             // Connect Foreign Key
-            $table->foreign('awnser_id')->references('id')->on('awnsers');
-            $table->foreign('option_id')->references('id')->on('question_options');
+            $table->foreign('awnser_id')->references('id')->on('awnsers')->onDelete('cascade');
+            $table->foreign('option_id')->references('id')->on('question_options')->onDelete('cascade');
         });
     }
 

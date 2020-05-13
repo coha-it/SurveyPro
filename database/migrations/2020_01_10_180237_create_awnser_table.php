@@ -19,6 +19,10 @@ class CreateAwnserTable extends Migration
             $table->bigInteger('question_id')->unsigned()->index();
             $table->bigInteger('user_id')->unsigned()->index();
 
+            // Content
+            $table->boolean('skipped')->default(0);
+            $table->longText('comment')->nullable();
+
             // Timestamps
             $table->timestamps();
             $table->softDeletes();
@@ -26,8 +30,8 @@ class CreateAwnserTable extends Migration
 
         Schema::table('awnsers', function (Blueprint $table) {
             // Connect Foreign Keys
-            $table->foreign('question_id')->references('id')->on('questions');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

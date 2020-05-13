@@ -47,19 +47,34 @@ class SurveyController extends Controller
         $reqAw['user_id']   = Auth()->user()->id;
         unset($reqAw['awnser_options']); // Remove Useless
 
+        // If Question is Skippable
+        if(!$question->is_skippable) {
+            // Not Skippable
+            $reqAw['skipped'] = 0;
+        }
+
         // Update Or Create
-        return $question->usersAwnser()->updateOrCreate(
+        $awnser = $question->usersAwnser()->updateOrCreate(
             ['id' => $reqAw['id'] ?? 0],
             $reqAw
         );
+
+        // If Question is skippable AND skipped
+        if($question->is_skippable && $awnser->skipped) {
+            // Awnser is Skipped
+            $this->syncWithOptions($awnser);
+        } else {
+            // Create and De-/Re- Connect
+            $this->syncWithOptions($awnser, $request->awnser['awnser_options']); // Connect selected Options with Awnser's Options
+        }
+
+        // REturn the Awnser
+        return $awnser;
     }
 
-    public function reconnectWithOptions($awnser, $request) {
+    public function syncWithOptions($awnser, $arr = []) {
         $awnser->awnser_options()->sync(
-            array_column(
-                $request->awnser['awnser_options'],
-                'id'
-            )
+            array_column($arr, 'id')
         );
     }
 
@@ -78,9 +93,6 @@ class SurveyController extends Controller
 
         // Update or Create the Awnser
         $awnser = $this->updateOrCreateAwnser($question, $request); // Update Awnser
-
-        // Create and De-/Re- Connect
-        $this->reconnectWithOptions($awnser, $request); // Connect selected Options with Awnser's Options
 
         // Variables
         return $question->usersAwnser()->find($awnser->id)->toJson();

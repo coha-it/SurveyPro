@@ -31,7 +31,9 @@
 
                 <q-item-section side top>
                   <template v-if="question.users_awnser">
-                    <q-item-label caption>Beantwortet</q-item-label>
+                    <q-item-label caption>
+                      {{ question.users_awnser.skipped ? 'Übersprungen' : 'Beantwortet' }}
+                    </q-item-label>
                     <q-icon name="check" color="green" />
                   </template>
                 </q-item-section>
