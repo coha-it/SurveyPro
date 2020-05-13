@@ -21,7 +21,7 @@
             <div :key="question.id">
               <q-item
                 :to="getQuestionHash(question)"
-                :class="question.users_awnser ? 'bg-green-1' : ''"
+                :class="getQuestionClasses(question)"
                 :disable="questionIsUnselectable(question)"
               >
                 <q-item-section>
@@ -32,9 +32,12 @@
                 <q-item-section side top>
                   <template v-if="question.users_awnser">
                     <q-item-label caption>
-                      {{ question.users_awnser.skipped ? 'Übersprungen' : 'Beantwortet' }}
+                      {{ questionIsSkipped(question) ? 'Übersprungen' : 'Beantwortet' }}
                     </q-item-label>
-                    <q-icon name="check" color="green" />
+                    <q-icon
+                      :name="questionIsSkipped(question) ? 'redo' : 'check'"
+                      :color="questionIsSkipped(question) ? 'yellow-9' : 'green'"
+                    />
                   </template>
                 </q-item-section>
               </q-item>
@@ -46,7 +49,8 @@
     </q-page-container>
     <q-footer bordered class="bg-white text-primary">
       <q-toolbar>
-        <q-btn flat icon="keyboard_arrow_down" :to="'/'" />
+        <q-btn flat icon="keyboard_arrow_left" @click="$router.back()" />
+
         <q-btn
           v-if="allQuestionsAwnsered()"
           label="Umfrage abschließen"
@@ -61,7 +65,7 @@
           :to="getSelectableQuestionHash()"
           @click="getSelectableQuestion()"
         />
-        <q-btn flat icon=" " readonly disabled />
+        <q-btn flat icon="keyboard_arrow_down" :to="'/'" />
       </q-toolbar>
     </q-footer>
   </q-layout>
@@ -120,6 +124,21 @@ export default {
     },
     noQuestionsAwnsered: function () {
       return this.countAwnseredQuestions() === 0
+    },
+    questionIsSkipped (q) {
+      return q.users_awnser && q.users_awnser.skipped
+    },
+    getQuestionClasses (q) {
+
+      if (this.questionIsSkipped(q)) {
+        return 'bg-yellow-1'
+      }
+
+      if (q.users_awnser) {
+        return 'bg-green-1'
+      }
+
+      return 'f'
     }
   }
 }

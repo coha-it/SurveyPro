@@ -128,8 +128,8 @@ export default {
     getOverviewHash () {
       return this.hashes.overview
     },
-    getQuestionHash (question) {
-      return this.hashes.question + question.id
+    getQuestionHash (q) {
+      return this.hashes.question + (q && q.id ? q.id : null)
     },
     questionIsViewed (q) {
       return this.getQuestionHash(q) === this.$route.hash

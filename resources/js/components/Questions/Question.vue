@@ -171,7 +171,7 @@
     <q-footer bordered class="bg-white text-primary">
       <q-toolbar>
         <!-- <q-btn flat icon="keyboard_arrow_left" :to="beforeQuestionRoute(question)" /> -->
-        <q-btn flat icon="keyboard_arrow_left" :to="getOverviewHash()" />
+        <q-btn flat icon="keyboard_arrow_left" @click="$router.back()" />
         <template v-if="question">
           <template v-if="question.is_skippable && !hasAwnser(question)">
             <q-btn
