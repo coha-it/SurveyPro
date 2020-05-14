@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Surveys Management</h1>
+    <h1>Umfrage bearbeiten & erstellen</h1>
     <p>
       Bearbeite deine Umfragen oder erstelle eine Neue:
     </p>
@@ -12,7 +12,7 @@
         unelevated
         tile
         xoutline
-        class="mt-2 mr-2" 
+        class="mt-2 mr-2"
         :to="{name: 'backend.survey', params: {id: 'create'}}"
       />
     </p>

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>Users</h1>
-    <p>Create Users with PAN & PIN</p>
+    <h1>Zugänge verwalten</h1>
+    <p>Erstelle Benutzerkonten und dafür jeweils PAN & PIN</p>
     <p>
       <!-- Create User -->
 

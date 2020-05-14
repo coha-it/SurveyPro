@@ -99,7 +99,7 @@
             </template>
 
             <div style="text-align: center">
-              <div class="comment_wrapper">
+              <div v-if="question.is_commentable" class="comment_wrapper">
                 <template v-if="question.users_awnser">
                   <div v-if="question.users_awnser.comment" class="comment_inner">
                     <p class="user_comment">
@@ -116,17 +116,20 @@
                     color="grey"
                     @click.native="question_dialog = true"
                   />
-                  <q-dialog
-                    v-model="question_dialog"
-                    persistent
-                  >
+                  <q-dialog v-model="question_dialog">
                     <q-card style="min-width: 350px">
                       <q-card-section>
                         <div class="text-h6">Kommentar:</div>
                       </q-card-section>
 
                       <q-card-section class="q-pt-none">
-                        <q-input v-model="question.users_awnser.comment" dense autofocus @keyup.enter="question_dialog = false" />
+                        <q-input
+                          v-model="question.users_awnser.comment"
+                          dense
+                          autofocus
+                          :type="question.comment_is_number ? 'number' : 'text'"
+                          @keyup.enter="question_dialog = false"
+                        />
                       </q-card-section>
 
                       <q-card-actions align="right" class="text-primary">
@@ -226,6 +229,10 @@ export default {
 
   methods: {
 
+    isSkipped (q) {
+      return q.users_awnser && q.users_awnser.skipped
+    },
+
     hasAwnser (q) {
       return (
         q &&
@@ -263,6 +270,9 @@ export default {
     questionSubmittable (q) {
       // Skippable
       if (q.is_skippable) return true
+
+      // If Text only
+      if (q.format === 'text_only' && q.users_awnser && q.users_awnser.comment) return true
 
       // Options Available
       if (q && q.users_awnser && q.users_awnser.awnser_options) {
@@ -309,14 +319,17 @@ export default {
       var viewedQ = this.getViewedQuestion(survey)
 
       // Get Viewed Question
-      if      (question.order < viewedQ.order) r.push('passed')
+      if (question.order < viewedQ.order) r.push('passed')
       else if (question.order > viewedQ.order) r.push('away')
       else r.push('curr')
 
+      // If Question is Skipped
+      if (this.isSkipped(question)) {
+        r.push('skipped')
+      }
       // If Question is Awnsered
-      if (
+      else if (
         question.users_awnser &&
-        question.users_awnser.skipped != 1 &&
         this.questionSubmittable(question)
       ) {
         r.push('awnsered')
@@ -362,10 +375,11 @@ export default {
     },
     toggleAwnserOptionSingle (question, option) {
       // Delete all Awnser Options
-      if (question &&
-          question.users_awnser &&
-          question.users_awnser.awnser_options)
-      {
+      if (
+        question &&
+        question.users_awnser &&
+        question.users_awnser.awnser_options
+      ) {
         question.users_awnser.awnser_options = []
       }
 

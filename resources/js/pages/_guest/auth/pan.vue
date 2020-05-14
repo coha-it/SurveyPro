@@ -51,7 +51,7 @@
                 color="black"
                 :standout="'text-white bg-primary'"
                 :error="form.errors.has('pin') ? true : false"
-                type="text"
+                type="password"
                 pattern="[0-9]*"
                 name="pin"
                 required

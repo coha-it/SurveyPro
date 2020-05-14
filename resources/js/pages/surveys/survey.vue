@@ -276,6 +276,11 @@ h2 {
         background-color: var(--q-color-positive);
       }
     }
+    &.skipped {
+      .inner {
+        background: #bbbd5e;
+      }
+    }
     &.away {
       .inner {
         opacity: .3;

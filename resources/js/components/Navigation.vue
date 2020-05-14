@@ -2,28 +2,23 @@
   <q-drawer show-if-above v-model="bLeft" side="left" bordered @input="callToggleNavigation">
     <!-- drawer content -->
     <q-scroll-area class="fit nav-flex">
-      <div style="flex: auto">
-        <q-item>
-          <q-item-section top thumbnail class="q-ml-none">
-            <img src="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/corporate-happiness-gmbh.svg" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{ title }}
-            </q-item-label>
-            <q-item-label caption>
-              {{ $t('sidenav.subtitle') }}
-            </q-item-label>
+      <div style="flex: auto; min-height: 100%;">
+        <q-item class="pointer">
+          <q-item-section top class="q-ml-none">
+            <router-link :to="{path: '/'}">
+              <img
+                class="logo"
+                src="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/app/logo/dts-app-logo.svg"
+              >
+            </router-link>
           </q-item-section>
         </q-item>
 
-        <br>
-
         <q-list
           v-for="(cat, key) in sidenav"
-          v-bind:key="key"
+          :key="key"
         >
-          <template v-if="(cat.hide_for_pan && user.pan && user.pan.pan) ? false : true">
+          <template v-if="!(cat.hide_for_pan && user.pan && user.pan.pan) && !(cat.hide_for_pan && !user.right)">
             <template v-if="cat.title">
               <q-separator spaced />
               <q-item-label header>Verwaltung</q-item-label>
@@ -58,8 +53,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn outline :label="$t('logout.btn_stay_here')" @click="logoutDialog = false" color="primary" v-close-popup />
-          <q-btn outline :label="$t('logout.btn')" @click="logout" color="warning" v-close-popup />
+          <q-btn v-close-popup outline :label="$t('logout.btn_stay_here')" color="primary" @click="logoutDialog = false" />
+          <q-btn v-close-popup outline :label="$t('logout.btn')" color="warning" @click="logout" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -107,7 +102,7 @@ export default {
         }
       ],
 
-      logoutDialog: false,
+      logoutDialog: false
     }
   },
 
@@ -157,6 +152,13 @@ export default {
     background-size: 75%;
   }
 }
+
+.nav-flex.q-scrollarea .scroll .absolute.full-width {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 </style>
 
 <style lang="scss" scoped>
@@ -167,5 +169,9 @@ export default {
       max-width: 125px;
       letter-spacing: inherit;
   }
+}
+.logo {
+    width: 90%;
+    margin: 7px 0 7px 0px;
 }
 </style>

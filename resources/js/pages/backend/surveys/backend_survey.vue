@@ -1753,24 +1753,34 @@ export default {
 
               switch (i) {
                 case 1:
-                  c = '#cf8c36'
                   v = -2
+                  c = '#cf8c36'
+                  s = 'Garnicht'
                   break
 
                 case 2:
                   v = -1
+                  c = '#cfae35'
+                  s = 'Eher nicht'
                   break
 
                 case 3:
                   v = 0
+                  c = '#c6c6c6'
+                  s = 'Mittelmäßig'
+                  d = 'Durchschnittlich. 50 / 50'
                   break
 
                 case 4:
                   v = 1
+                  c = '#7ebd82'
+                  s = 'Gut'
                   break
 
                 case 5:
                   v = 2
+                  c = '#55a559'
+                  s = 'Sehr gut'
                   break
 
                 default:
@@ -2845,10 +2855,9 @@ export default {
       return sDate ? sDate.substr(11, 5) + ' Uhr' : ''
     },
 
-    showSnackbarError: function (text) {
-      var _this = this
-      _this.$q.notify({
-        message: _this.$t(text),
+    showSnackbarError (text) {
+      this.$q.notify({
+        message: this.$t(text),
         color: 'red',
         position: 'top-right',
         actions: [{ icon: 'close', color: 'white' }],
@@ -2856,10 +2865,9 @@ export default {
       })
     },
 
-    showSnackbarSuccess: function (text) {
-      var _this = this
-      _this.$q.notify({
-        message: _this.$t(text),
+    showSnackbarSuccess (text) {
+      this.$q.notify({
+        message: this.$t(text),
         color: 'green',
         position: 'top-right',
         actions: [{ icon: 'close', color: 'white' }],
@@ -2950,18 +2958,19 @@ export default {
           }
           _t.bIsLoading = false
         })
-        .catch(function (e) {
+        .catch((e) => {
+          console.log(e.response.data)
+          console.log(e.response.data.errors)
           // Error
-          if (e.reponse && e.reponse.data && e.response.data.error) {
-            let errText = ''
-            let err = e.response.data.error
+          let errText = ''
+          if (e.response && e.response.data && e.response.data) {
+            let err = e.response.data.errors
             for (var i in err) {
               errText += ': ' + err[i]
             }
-            _t.showSnackbarError(_t.$t('data_unsaved') + '<br />' + errText)
           }
-
-          _t.bIsLoading = false
+          this.showSnackbarError(this.$t('data_unsaved') + '\n' + errText)
+          this.bIsLoading = false
         })
     }
   }
