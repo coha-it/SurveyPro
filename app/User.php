@@ -28,7 +28,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'company_id', 'department_id', 'location_id', 'created_by'
+        'email', 'password', 'company_id', 'department_id', 'location_id', 'created_by',
+
+        'user_id', 'survey_id'
     ];
 
     /**
@@ -300,7 +302,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function fillableSurveys()
     {
-        return $this->memberingSurveys()->where('is_fillable', true);
+        return $this->memberingSurveys()->where('is_fillable', true)->whereNull('user_finished');
     }
 
     /**

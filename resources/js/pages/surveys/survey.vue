@@ -63,6 +63,13 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters({
+      user: 'auth/user',
+      surveyFillable: 'surveys/surveyFillable'
+    })
+  },
+
   watch: {
     surveyFillable: function (promise) {
       this.oSurvey = this.copyObject(promise)
@@ -78,6 +85,15 @@ export default {
         this.question = this.getViewedQuestion(this.oSurvey)
       }
     }
+  },
+
+  created: function () {
+    this.$store.dispatch(
+      'surveys/fetchSurveyFillable',
+      parseInt(this.$route.params.id)
+    )
+
+    this.changedHash()
   },
 
   methods: {
@@ -208,22 +224,6 @@ export default {
         this.question_transition = a < b ? 'fade-left' : 'fade-right'
       }
     }
-  },
-
-  created: function () {
-    this.$store.dispatch(
-      'surveys/fetchSurveyFillable',
-      parseInt(this.$route.params.id)
-    )
-
-    this.changedHash()
-  },
-
-  computed: {
-    ...mapGetters({
-      user: 'auth/user',
-      surveyFillable: 'surveys/surveyFillable'
-    })
   }
 
 }

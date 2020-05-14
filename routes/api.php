@@ -40,6 +40,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     // Update or create Awnser
     Route::post('update-or-create-awnser', 'SurveyController@httpUpdateOrCreateAwnser');
 
+    // Finish Survey
+    Route::post('finish-survey', 'SurveyController@httpFinishSurvey');
+
     // Only Email Users
     Route::group(['middleware' => ['auth.user.email' ] ], function() {
         Route::patch('settings/profile', 'Settings\ProfileController@update');

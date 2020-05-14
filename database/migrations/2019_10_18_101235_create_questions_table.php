@@ -45,7 +45,7 @@ class CreateQuestionsTable extends Migration
 
         Schema::table('questions', function (Blueprint $table) {
             // Connect Foreign Keys
-            $table->foreign('survey_id')->references('id')->on('surveys');
+            $table->foreign('survey_id')->references('id')->on('surveys')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users');
         });
     }

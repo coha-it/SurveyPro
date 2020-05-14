@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\SurveyFinishedData;
 
 class SurveyController extends Controller
 {
@@ -96,6 +97,44 @@ class SurveyController extends Controller
 
         // Variables
         return $question->usersAwnser()->find($awnser->id)->toJson();
+    }
+
+    public function httpFinishSurvey(Request $request) {
+        // Validate Data
+        $request->validate([
+            'survey_id' => 'required',
+        ]);
+
+        // Find Variables like self or Survey
+        $self       = $request->user();
+        $survey     = $self->fillableSurvey($request->survey_id);
+
+        // Check if Awnsers count bigger or equal the questions
+        if (
+            $survey->questions()->count() > $survey->userAwnsers()->count()
+        ) return abort(403, 'Es müssen zuerst alle Fragen beantwortet werden');
+
+        // Finish Survey
+        $survey->finishSurvey();
+        $survey->save();
+
+        // Extra Survey Data
+        $this->saveExtraSurveyData($request, $survey, $self);
+
+        // Return Survey
+        return $survey->toJson();
+    }
+
+    public function saveExtraSurveyData($request, $survey, $user)
+    {
+        SurveyFinishedData::create([
+            'survey_id' => $survey->id,
+            'user_id' => $user->id,
+            'ip_v4' => $request->ip() ?? null,
+            'ip_v6' => $request->getClientIp() ?? null,
+            'navigator' => json_encode($request->navigator ?? null),
+            'json_data' => json_encode($request->json_data ?? null),
+        ]);
     }
 
     // // Get the Allowed Survey

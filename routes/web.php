@@ -47,6 +47,15 @@ Route::get('create-awnser-1', function () {
 });
 
 Route::group(['middleware' => 'auth.user.admin'], function () {
+
+    // Test Surveys
+    Route::get('show-surveys', function() {
+        dd(
+            auth()->user()->allowedSurveys()->toArray()
+            // auth()->user()->allowedSurveys()->first()->user_finished->get()->toArray()
+        );
+    });
+
     // // Test 2
     // Route::get('test', function() {
 

@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\SurveyFinished;
+use App\SurveyFinishedData;
+
 class Survey extends Model
 {
     use SoftDeletes;
@@ -50,7 +53,8 @@ class Survey extends Model
         'has_started',
         'has_ended',
         'is_expired',
-        'question_count'
+        'question_count',
+        'user_finished'
     ];
 
     // Attributes
@@ -82,6 +86,11 @@ class Survey extends Model
     public function getHasEndedAttribute()
     {
         return $this->hasEnded();
+    }
+
+    public function getUserFinishedAttribute()
+    {
+        return $this->userFinished()->first();
     }
 
     // Only if the Survey is Fillable
@@ -200,5 +209,35 @@ class Survey extends Model
         return $this->questions()->find($id);
     }
 
+    public function userAwnsers()
+    {
+        return $this
+                ->hasManyThrough('App\Awnser', 'App\Question')
+                ->where('user_id', auth()->user()->id);
+    }
+
+    /**
+     * Check the Finished
+     */
+    public function userFinished()
+    {
+        // return $this
+        //         ->hasOne('App\SurveyFinished')
+        //         ->where('user_id', auth()->user()->id);
+        return $this->hasOneThrough(
+            'App\SurveyFinished',   // owner
+            'App\User',             // car
+            'id',                   // Foreign key on cars table...
+            'survey_id'             // Foreign key on owners table...
+        );
+    }
+
+    public function finishSurvey()
+    {
+        return $this->userFinished()->create([
+            'survey_id' => $this->id,
+            'user_id' => auth()->user()->id
+        ]);
+    }
 
 }

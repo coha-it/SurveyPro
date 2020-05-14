@@ -76,18 +76,20 @@ export default {
     surveysMembering: function (promise) {
       // Order
       promise = _.orderBy(promise, [
+        'user_finished',  // 1 .. 0
         'is_fillable',    // 1 .. 0
         'is_finished',    // 0 .. 1
         'has_ended',      // 0 .. 1
         'has_started',    // 1 .. 0
-        'start_datetime', // 1 .. 0
+        'start_datetime'  // 1 .. 0
       ], [
         'desc',           // 1 .. 0
+        'desc',           // 1 .. 0
         'asc',            // 0 .. 1
         'asc',            // 0 .. 1
         'desc',           // 1 .. 0
         'desc',           // 1 .. 0
-      ]);
+      ])
 
       // Set
       this.aSurveys = promise
@@ -100,11 +102,11 @@ export default {
     link (url) {
       this.$router.push(url)
     },
-    isDisabled (survey) {
-      return !this.isEnabled(survey)
+    isDisabled (s) {
+      return !this.isEnabled(s)
     },
-    isEnabled (survey) {
-      return survey.is_fillable
+    isEnabled (s) {
+      return s.is_fillable && !s.user_finished
     },
     fhd (d) {
       return dayjs(d).format('DD.MM.YYYY')
@@ -112,14 +114,15 @@ export default {
     fht (d) {
       return dayjs(d).format('hh:mm')
     },
-    getBadgeColor (oSurvey) {
-      if (oSurvey.is_fillable) return 'green'
-      if (oSurvey.is_expired) return 'red'
+    getBadgeColor (s) {
+      if (s.is_fillable) return 'green'
+      if (s.is_expired) return 'red'
       return 'primary'
     },
-    getBadgeLabel (oSurvey) {
-      if (oSurvey.is_fillable) return 'Jetzt Verfügbar'
-      if (oSurvey.is_expired) return 'Abgelaufen'
+    getBadgeLabel (s) {
+      if (s.user_finished) return 'Erfolgreich ausgefüllt'
+      if (s.is_fillable) return 'Jetzt Verfügbar'
+      if (s.is_expired) return 'Abgelaufen'
       return 'Bald verfügbar'
     }
   }

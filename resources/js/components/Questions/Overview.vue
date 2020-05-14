@@ -52,19 +52,38 @@
         <q-btn flat icon="keyboard_arrow_left" @click="$router.back()" />
 
         <q-btn
-          v-if="allQuestionsAwnsered()"
-          label="Umfrage abschließen"
-          color="primary"
-          class="full-width"
-        />
-        <q-btn
-          v-else
+          v-if="!allQuestionsAwnsered()"
           :label="noQuestionsAwnsered() ? 'Umfrage Beginnen' : 'Umfrage fortsetzen'"
           color="primary"
           class="full-width"
           :to="getSelectableQuestionHash()"
           @click="getSelectableQuestion()"
         />
+
+        <q-btn
+          v-else-if="!oSurvey.user_finished"
+          label="Umfrage abschließen"
+          color="primary"
+          class="full-width"
+          icon="check_circle"
+          @click="bTryFinishDialog = true"
+        />
+
+        <q-dialog v-model="bTryFinishDialog" persistent>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="warning" color="white" text-color="green" />
+              <span class="q-ml-sm">Nach dem Abschließen ist die Umfrage nichtmehr bearbeitbar</span>
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn v-close-popup flat label="Abbruch" color="primary" />
+              <q-space />
+              <q-btn v-close-popup icon="check" unelevated label="Umfrage abschließen" color="primary" @click="finishSurvey" />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+
         <q-btn flat icon="keyboard_arrow_down" :to="'/'" />
       </q-toolbar>
     </q-footer>
@@ -79,6 +98,12 @@ export default {
     getQuestionHash: Function,
     getOverviewHash: Function,
     getProgressClasses: Function,
+  },
+
+  data () {
+    return {
+      bTryFinishDialog: false
+    }
   },
 
   methods: {
@@ -129,7 +154,6 @@ export default {
       return q.users_awnser && q.users_awnser.skipped
     },
     getQuestionClasses (q) {
-
       if (this.questionIsSkipped(q)) {
         return 'bg-yellow-1'
       }
@@ -139,6 +163,75 @@ export default {
       }
 
       return 'f'
+    },
+    finishSurvey () {
+      this.$store
+        .dispatch('surveys/finishSurvey', {
+          survey_id: this.oSurvey.id,
+          navigator: this.recur(navigator),
+          json_data: {
+            screen: this.recur(window.screen),
+            client_info: this.recur(window.clientInformation),
+            window: {
+              width: {
+                inner: window.innerWidth ?? null,
+                outer: window.outerWidth ?? null
+              },
+              height: {
+                inner: window.innerHeight ?? null,
+                outer: window.outerHeight ?? null
+              }
+            }
+          }
+        })
+        .then((e) => {
+          this.$q.notify({
+            message: this.$t('Umfrage erfolgreich gespeichert'),
+            color: 'green',
+            position: 'top-right',
+            actions: [{ icon: 'close', color: 'white' }],
+            timeout: 6000
+          })
+
+          setTimeout(() => {
+            this.$router.push('/')
+          }, 1000)
+        })
+        .catch((e) => {
+          if (e && e.response && e.response.data && e.response.data.message) {
+            let message = e.response.data.message ?? ''
+            let messages = e.response.data.messages ?? ''
+
+            this.$q.notify({
+              message: this.$t(message + '. ' + messages),
+              color: 'red',
+              position: 'top-right',
+              actions: [{ icon: 'close', color: 'white' }],
+              timeout: 6000
+            })
+          }
+        })
+    },
+    recur (obj) {
+      let result = {}
+      let _tmp
+      for (var i in obj) {
+        // enabledPlugin is too nested, also skip functions
+        if (i === 'enabledPlugin' || typeof obj[i] === 'function') {
+          continue
+        } else if (typeof obj[i] === 'object') {
+          // get props recursively
+          _tmp = this.recur(obj[i])
+          // if object is not {}
+          if (Object.keys(_tmp).length) {
+            result[i] = _tmp
+          }
+        } else {
+          // string, number or boolean
+          result[i] = obj[i]
+        }
+      }
+      return result
     }
   }
 }

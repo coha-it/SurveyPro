@@ -94,6 +94,14 @@ export const actions = {
     }
   },
 
+  finishSurvey ({ commit }, payload) {
+    try {
+      return axios.post('/api/finish-survey', payload)
+    } catch (e) {
+      return e
+    }
+  },
+
   createSurvey ({ commit }, payload) {
     try {
       return axios.post('/api/backend/create-survey', payload)
