@@ -54,6 +54,7 @@ class Survey extends Model
         'has_ended',
         'is_expired',
         'question_count',
+        'awnser_count',
         'user_finished'
     ];
 
@@ -76,6 +77,11 @@ class Survey extends Model
     public function getQuestionCountAttribute()
     {
         return $this->questions()->count();
+    }
+
+    public function getAwnserCountAttribute()
+    {
+        return $this->userAwnsers()->count();
     }
 
     public function getHasStartedAttribute()

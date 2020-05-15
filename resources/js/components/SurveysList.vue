@@ -28,13 +28,13 @@
             </div>
             <div class="text-h6 text-black">{{ oSurvey.title || 'Umfrage #'+oSurvey.id }}</div>
 
-            <div class="row justify-center full-height full-width text-center  items-center">
+            <div v-if="oSurvey.question_count" class="row justify-center full-height full-width text-center  items-center">
               <div class="col col-4">
-                <q-linear-progress rounded size="8px" :value="0" color="green" />
+                <q-linear-progress rounded size="8px" :value="oSurvey.awnser_count / oSurvey.question_count" color="green" />
               </div>
               <div class="col col-8 text-left q-pl-sm">
                 <small class="text-caption">
-                  {{ '0 von '+ oSurvey.question_count +' Fragen beantwortet' }}
+                  {{ oSurvey.awnser_count + ' von '+ oSurvey.question_count +' Fragen beantwortet' }}
                 </small>
               </div>
             </div>
