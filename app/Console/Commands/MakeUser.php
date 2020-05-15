@@ -40,7 +40,7 @@ class MakeUser extends Command
     public function handle()
     {
       // Disable in Production
-      if(env('APP_ENV') == 'production') return $this->error('Not available in Production-Mode');
+      if(env('APP_ENV') == 'production') $this->error('Warning! Production-Mode');
 
       // Go Through Model
       $attributes = [];
