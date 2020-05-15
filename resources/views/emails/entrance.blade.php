@@ -2,44 +2,93 @@
 
 @section('content')
 
-  @include('beautymail::templates.widgets.newfeatureStart')
-
     @php
+      $h3_style = 'margin-bottom: 0; font-size: 1.5em;';
+      $h4_style = 'margin-top: 0; font-size: 1.2em; font-weight: 400;';
+      $login_style = '
+                      font-family: \'Helvetica Neue\',Helvetica,Arial,sans-serif;
+                      background: #E8D03E;
+                      text-align: center;
+                      padding: 20px;
+                      margin: 5px 20px;
+                      font-size: 18px;
+                      box-shadow: 0 6px 33px -9px rgba(0, 0, 0, 0.28);
+      ';
       $code_style = '
                       display: inline-block;
-                      background: #e6e6e6;
                       padding: .25em .4em .2em .4em;
-                      border-radius: .5em;
+                      border-radius: .15em;
                       color: black;
                       font-weight: bold;
                       font-family: "Consolas", "monospace", "Courier New", "Lucida Console", "Roboto Mono";
                       line-height: inherit;
-      '
+                      margin:  3px 3px 15px;
+      ';
+      $login_button_styles = '
+      padding: 15px 25px;
+      background-color: #fff;
+      color: #000;
+      display: inline-block;
+      font-weight: 500;
+      text-decoration: unset;
+      letter-spacing: 1px;
+      font-size: 18px;
+      ';
+      $login_url_style = '
+        font-size: 12px;
+        margin: 3px;
+        display: block;
+        opacity: 0.8;
+        font-weight: normal;
+      ';
+      $dark_style = '
+        background-color: #000;
+        color: #fff;
+        font-size: 1.25em;
+      ';
+      $subinfo_styles = '
+      margin: 5px;
+    color: #6d6d6d;
+    font-size: 13px;
+      ';
     @endphp
 
+  <div class="login_wrapper" style="{{ $login_style }}">
+    <img style="width: 120px;" width="120px" src="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/corporate-happiness-gmbh-logo-full-white.svg" class="logo">
 
-		<h4 class="secondary"><strong>Ihre Zugangsdaten</strong></h4>
+    <h3 style="{{ $h3_style }}">Mitarbeiter-Befragung</h3>
+    <h4 style="{{ $h4_style }}">Ihre Zugangsdaten</h4>
+    <p>
+      Dies ist ihr individueller Zugang für die Mitarbeiter-Befragung.
+    </p>
 
-    {{-- ID: {{ $id }}
-    PAN: {{ $pan }}
-    PIN: {{ $pin }} --}}
+    <a
+      href="{{ url(env('APP_URL').'/p/'.strtolower($user['pan']['pan']) ) }}"
+      target="_blank"
+      style="{{ $login_button_styles }}"
+    >Jetzt Anmelden</a>
+    <br>
+    <span style="{{ $code_style . $login_url_style }}"> {{ str_replace(['http://','https://'], '', env('APP_URL')) }}/p/{{ strtolower($user['pan']['pan']) }} </span>
 
     <p>
-      ID: {{ $user['id'] }}
+      <strong>PAN:</strong><br>
+      <span style="{{ $code_style . $dark_style  }}"> {{ $user['pan']['pan'] }} </span>
       <br>
 
-      PAN: <span style="{{ $code_style  }}"> {{ $user['pan']['pan'] }} </span>
-      <br>
+      <strong>PIN:</strong><br>
+      <span style="{{ $code_style . $dark_style  }}">{{ $user['pan']['pin'] }}</span>
+    </p>
 
-      PIN: <span style="{{ $code_style  }}">{{ $user['pan']['pin'] }}</span>
-      <br>
-
-      URL: <span><a href="{{ env('APP_URL') }}" target="_blank">{{ env('APP_URL') }}</a></span>
-      <br>
+    <p style="{{ $subinfo_styles }}">
+      Falls sich der weiße Knopf "Jetzt Anmelden" nicht klicken lässt, kopieren Sie den Link darunter und öffnen Sie diesen in einem Webbrowser.<br>
+      Ihre Zugangsdaten sind individuell und für Sie persönlich gedacht. Gebe Sie die Inhalte unter keinen Umständen weiter.<br>
 
     </p>
 
-
-	@include('beautymail::templates.widgets.newfeatureEnd')
+  </div>
 
 @stop
+
+@section('footer')
+  Jo
+@endsection

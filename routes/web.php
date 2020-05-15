@@ -14,47 +14,53 @@
 Route::get('allowed-surveys', 'SurveyController@getAllowedSurveys');
 Route::get('fillable-surveys', 'SurveyController@getFillableSurveys');
 
-Route::get('sendmail', function() {
-    Mail::send('welcome', [], function($message) {
-        $message->to('a.bachschmid@corporate-happiness.de')->subject('Ach halli hallo ich bin survey');
-    });
-});
 
-
-Route::get('awnsers-1', function () {
-    dd(
-        Auth()->user()->fillableSurveys()->find(22) // find survey
-        ->questions->find(108) // Find question
-        ->question_options->find(141) // Find Options
-        ->awnser_options->find(1) // Find Awnser Options
-        ->awnser->toArray()
-    );
-});
-
-Route::get('create-awnser-1', function () {
-        $aw = Auth()->user()->fillableSurveys()->find(22) // find survey
-        ->questions->find(109) // Find question
-        ->awnser()->updateOrCreate([
-            'user_id' => Auth()->user()->id
-        ]);
-
-        $aw->awnser_options()->updateOrCreate([
-            'option_id' => 138
-        ]);
-
-        // ->question_options->find(141) // Find Options
-
-});
+// DEBUG
+// Route::get('debug/pan-mail', function() {
+//     return view('emails.entrance', [
+//         'user' => auth()->user()
+//     ]);
+// });
 
 Route::group(['middleware' => 'auth.user.admin'], function () {
 
-    // Test Surveys
-    Route::get('show-surveys', function() {
+    Route::get('sendmail', function() {
+        Mail::send('welcome', [], function($message) {
+            $message->to('a.bachschmid@corporate-happiness.de')->subject('Ach halli hallo ich bin survey');
+        });
+    });
+
+
+    Route::get('awnsers-1', function () {
         dd(
-            auth()->user()->allowedSurveys()->toArray()
-            // auth()->user()->allowedSurveys()->first()->user_finished->get()->toArray()
+            Auth()->user()->fillableSurveys()->find(22) // find survey
+            ->questions->find(108) // Find question
+            ->question_options->find(141) // Find Options
+            ->awnser_options->find(1) // Find Awnser Options
+            ->awnser->toArray()
         );
     });
+
+    Route::get('create-awnser-1', function () {
+            $aw = Auth()->user()->fillableSurveys()->find(22) // find survey
+            ->questions->find(109) // Find question
+            ->awnser()->updateOrCreate([
+                'user_id' => Auth()->user()->id
+            ]);
+
+            $aw->awnser_options()->updateOrCreate([
+                'option_id' => 138
+            ]);
+            // ->question_options->find(141) // Find Options
+    });
+
+    // Test Surveys
+    // Route::get('show-surveys', function() {
+    //     dd(
+    //         auth()->user()->allowedSurveys()->toArray()
+    //         // auth()->user()->allowedSurveys()->first()->user_finished->get()->toArray()
+    //     );
+    // });
 
     // // Test 2
     // Route::get('test', function() {

@@ -26,7 +26,7 @@
             <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
               <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximieren</q-tooltip>
             </q-btn>
-            <q-btn dense flat icon="close" v-close-popup>
+            <q-btn v-close-popup dense flat icon="close">
               <q-tooltip content-class="bg-white text-primary">
                 Schließen
               </q-tooltip>
@@ -167,8 +167,8 @@
     <template>
       <q-card>
         <q-card-section>
-          <div class="text-h6">Created Users</div>
-          <div class="text-subtitle2">All your Created Users</div>
+          <div class="text-h6">Erstellte Benutzer</div>
+          <div class="text-subtitle2">Alle erstellten Benutzer</div>
         </q-card-section>
         <q-card-section>
           <!-- <div class="row" no-gutters align-content="end" align="end" justify="end">
@@ -418,22 +418,20 @@
                       </q-item>
 
                       <q-separator />
-
                     </q-list>
                   </q-menu>
                 </q-btn>
 
-
                 <!-- <q-checkbox left-label  class="mt-6 ml-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="accent"></q-checkbox> -->
 
-                <q-toolbar-title></q-toolbar-title>
-                <div class="flex-grow-1"></div>
-                <q-input outlined dark v-model="pagination.rowsPerPage" number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline  />
+                <q-toolbar-title />
+                <div class="flex-grow-1" />
+                <q-input v-model="pagination.rowsPerPage" outlined dark number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline />
                 <q-btn
                   flat round dense
                   :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-                  @click="props.toggleFullscreen"
                   class="q-ml-md"
+                  @click="props.toggleFullscreen"
                 />
               </template>
             </q-toolbar>
@@ -803,8 +801,48 @@
           <!-- contact_mail -->
           <template v-slot:body-cell-contact_mail="props">
             <q-td v-if="settings.bShowContactMailData" :props="props">
-              <span class="code_font contact_mail">{{ props.row.pan.contact_mail }}</span>
+              <div>
+                <template v-if="props && props.row && props.row.pan.contact_mail">
+                  <span class="code_font contact_mail">{{ props.row.pan.contact_mail }}</span>
+                </template>
+                <template v-else>
+                  <span style="text-transform: uppercase;" class="text-grey">{{ $t('empty') }}</span>
+                </template>
+                <q-popup-edit
+                  v-model="props.row.pan.contact_mail"
+                  buttons
+                  single-line
+                  :label="$t('edit')"
+                  persistent
+                  :cover="false"
+                  self="center left"
+                  anchor="center right"
+                  :offset="[5, 0]"
+                  label-cancel="Schließen"
+                  label-set="Übernehmen"
+                  @save="save(props.row)"
+                  @cancel="cancel"
+                >
+                  <span class="coha--list-item">
+                    <q-input
+                      v-model="props.row.pan.contact_mail"
+                      dense
+                      autofocus
+                      persistent-hint
+                      :rules="[val => !!val || 'Email is missing', isValidEmail]"
+                      required
+                      type="email"
+                      :error="!panIsOk(props.row)"
+                      :disabled="panIsLoading"
+                      :loading="panIsLoading"
+                    />
+                  </span>
+                </q-popup-edit>
+              </div>
             </q-td>
+
+
+
           </template>
 
           <!-- last_mail_date -->
@@ -1132,6 +1170,11 @@ export default {
   },
 
   methods: {
+
+    isValidEmail (val) {
+      const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/
+      return emailPattern.test(val) || 'Invalid email'
+    },
 
     getSettings () {
       this.settings = JSON.parse(localStorage.getItem('settings')) ?? this.settings

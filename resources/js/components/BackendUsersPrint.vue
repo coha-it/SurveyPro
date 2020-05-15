@@ -53,7 +53,7 @@
                 <qrcode-vue :value="url(user)" level="H"></qrcode-vue>
               </p>
 
-              <p class="subtext">Jetzt anmelden auf: <br>www.surveypro.tk/pan </p>
+              <p class="subtext">Jetzt anmelden auf: <br>{{ string_url(user) }}</p>
 
               <img class="bg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAMAAAAoyzS7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyhpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQ1IDc5LjE2MzQ5OSwgMjAxOC8wOC8xMy0xNjo0MDoyMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTkgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RDk3MDdGMDNDNzZBMTFFOTgyN0RGNzg4NTBENkE5QjYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RDk3MDdGMDRDNzZBMTFFOTgyN0RGNzg4NTBENkE5QjYiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpEOTcwN0YwMUM3NkExMUU5ODI3REY3ODg1MEQ2QTlCNiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpEOTcwN0YwMkM3NkExMUU5ODI3REY3ODg1MEQ2QTlCNiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PipDYJYAAAAGUExURe3QAAAAAIZIzsoAAAAMSURBVHjaYmAACDAAAAIAAU9tWeEAAAAASUVORK5CYII=" />
             </div>
@@ -111,51 +111,51 @@ import axios from 'axios'
 import QrcodeVue from 'qrcode.vue'
 
 export default {
-    props: [
-        'users',
-        'disabled'
-    ],
+  props: [
+    'users',
+    'disabled'
+  ],
 
-    components: {
-        QrcodeVue
-    },
+  components: {
+    QrcodeVue
+  },
 
-    data() {
-        return {
-            bBeforePrint: false,
-            dialog: false,
-            colorfull: true,
-            oPrint: {
-                bShowCompany: true,
-                bShowDepartment: true,
-                bShowLocation: true
-            }
-        }
-    },
-
-
-    methods: {
-        printView() {
-          var _this = this;
-          _this.dialog = true;
-        },
-        printUsers() {
-          var _this = this;
-
-          _this.bBeforePrint = true;
-
-          setTimeout(function() {
-            window.print();
-            setTimeout(function() {
-              _this.bBeforePrint = false;
-            }, 10);
-          }, 10);
-
-        },
-        url(user) {
-            return "https://surveypro.tk/p/"+user.pan.pan;
-        }
+  data() {
+    return {
+      bBeforePrint: false,
+      dialog: false,
+      colorfull: true,
+      oPrint: {
+        bShowCompany: true,
+        bShowDepartment: true,
+        bShowLocation: true
+      }
     }
+  },
+
+  methods: {
+    printView () {
+      var _this = this
+      _this.dialog = true
+    },
+    printUsers () {
+      var _this = this
+      _this.bBeforePrint = true
+
+      setTimeout(function () {
+        window.print()
+        setTimeout(function () {
+          _this.bBeforePrint = false
+        }, 10)
+      }, 10)
+    },
+    url (user) {
+      return window.location.origin + '/p/' + user.pan.pan.toLowerCase()
+    },
+    string_url (user) {
+      return window.location.host + '/p/' + user.pan.pan.toLowerCase()
+    }
+  }
 }
 </script>
 
