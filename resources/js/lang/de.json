@@ -92,8 +92,8 @@
     "id": "ID",
     "public": "Öffentlich",
     "created_by": "Erstellt von",
-    "password_label": "PASSWORT",
-    "email_label": "E-MAIL",
+    "password_label": "Passwort",
+    "email_label": "E-Mail",
     "Search": "Suchen...",
 
     "bottombar": {

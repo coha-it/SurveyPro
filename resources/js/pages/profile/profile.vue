@@ -19,15 +19,13 @@
       <q-form style="max-width: 550px;" @submit.prevent="update" @keydown="form.onKeydown($event)">
         <div class="container">
           <div class="row">
-            <div cols="12" sm="12" md="12" class="pa-0">
+            <div class="pa-0 col">
               <q-checkbox
                 ref="newsletter"
                 v-model="form.newsletter"
                 type="checkbox"
                 :label="$t('newsletter.newsletter')"
               />
-
-              {{ form }}
 
               <!-- Email -->
               <q-input

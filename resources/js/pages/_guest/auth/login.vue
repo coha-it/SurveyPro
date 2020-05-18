@@ -1,15 +1,12 @@
 <template>
   <div class="rightsided-content coha--login-wrapper">
     <div class="inner-content">
-
       <!-- Back and Header -->
       <div class="container">
         <div class="row">
           <div clas="cols-12 sm-12 md-12">
-
             <!-- Back -->
             <Back :to="{ name:'auth' }" />
-
           </div>
         </div>
         <div class="row">
@@ -30,37 +27,37 @@
             <div class="col-12 sm-12 md-12">
               <!-- Email -->
               <q-input
+                ref="email"
                 v-model="form.email"
                 :label="$t('email_label')"
-                color='black'
+                color="black"
                 :error="form.errors.has('email')"
                 type="email"
                 name="email"
                 required
-                ref="email"
-              ></q-input>
+              />
             </div>
           </div>
           <div class="row">
             <div class="col-12 sm-12 md-12">
               <!-- Password -->
               <q-input
-              v-model="form.password"
-              :label="$t('password_label')"
-              color='black'
-              :error="form.errors.has('password')"
-              name="password"
-              :type="show1 ? 'text' : 'password'"
-              :append-icon="show1 ? 'visibility' : 'visibility_off'"
-              @click:append="show1 = !show1"
-              required
-              ></q-input>
+                v-model="form.password"
+                :label="$t('password_label')"
+                color="black"
+                :error="form.errors.has('password')"
+                name="password"
+                :type="show1 ? 'text' : 'password'"
+                :append-icon="show1 ? 'visibility' : 'visibility_off'"
+                required
+                @click:append="show1 = !show1"
+              />
             </div>
           </div>
           <div class="row">
             <div class="col-12 sm-12 md-12" style="padding-bottom: 0;">
               <!-- Remember Me -->
-              <q-checkbox color="primary" v-model="remember" :label="$t('remember_me')" name="remember"></q-checkbox>
+              <q-checkbox v-model="remember" color="primary" :label="$t('remember_me')" name="remember"/>
             </div>
           </div>
           <div class="row">
@@ -72,13 +69,11 @@
               <br>
               <p>Neu hier? <router-link :to="{ name: 'register' }" class="small ml-auto my-auto">{{ $t('free_register') }}</router-link></p>
               <p>Haben Sie Ihr <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">{{ $t('forgot_password') }}</router-link></p>
-
             </div>
           </div>
         </div>
       </q-form>
     </div>
-
   </div>
 </template>
 
@@ -96,17 +91,6 @@ export default {
   props: [
 
   ],
-  created: function() {
-
-  },
-  mounted(){
-    this.$refs.email.focus();
-  },
-
-  // This was causing Theme-Problems
-  // metaInfo () {
-  //   return { title: this.$t('login') }
-  // },
 
   data: () => ({
     form: new Form({
@@ -114,19 +98,30 @@ export default {
       password: ''
     }),
     remember: false,
-    show1: false,
+    show1: false
   }),
+
+  created: function () {
+
+  },
+
+  mounted () {
+    this.$refs.email.focus()
+  },
+
+  // This was causing Theme-Problems
+  // metaInfo () {
+  //   return { title: this.$t('login') }
+  // },
 
   methods: {
 
     async login () {
-      var _t = this;
-
       // Submit the form.
-      const { data } = await this.form.post('/api/login').catch(function(error) {
-        var response = error.response.data;
-        _t.$q.notify({
-          message: _t.$t(response.message),
+      const { data } = await this.form.post('/api/login').catch((error) => {
+        var response = error.response.data
+        this.$q.notify({
+          message: this.$t(response.message)
         })
       })
 
@@ -142,7 +137,7 @@ export default {
       // Redirect home.
       this.$router.push({ name: 'home' })
     }
-  },
+  }
 
 }
 </script>
