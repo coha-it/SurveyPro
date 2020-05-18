@@ -408,7 +408,7 @@
 
                       <q-separator />
 
-                      <q-item clickable @click="sendEntranceMails()">
+                      <q-item clickable @click="trySendEntranceMails()">
                         <q-item-section>
                           Zugangs-E-Mails versenden
                         </q-item-section>
@@ -896,7 +896,7 @@
                     icon="mail"
                     color="primary"
                     :disabled="isUnsaved(props.row) || !validUser(props.row)"
-                    @click="sendEntranceMail(props.row)"
+                    @click="trySendEntranceMail(props.row)"
                   />
                   <q-tooltip>{{ $t('Versende Zugangs-Mail') }}</q-tooltip>
                 </span>
@@ -1430,18 +1430,97 @@ export default {
       Object.assign(item, JSON.parse(JSON.stringify(this.usersCreatedOld[key])))
     },
 
-    sendEntranceMail (user) {
-      this.loading = true
+    trySendEntranceMail (user) {
+      let pan = user.pan ?? {}
+      let msg = pan && pan.pan ? 'Pan: "' + pan.pan : 'No Pan!'
+      msg += pan && pan.contact_mail ? '" E-Mail: "' + pan.contact_mail : ' No Contact-Mail '
+      msg += '"'
 
-      axios.post('/api/send-entrance-mail', {
-        id: user.id
-      }).then((e) => {
-        console.log('success', e)
-      }).catch((e) => {
-        console.log('error', e)
-      }).then((e) => {
-        this.loading = false
-        this.reloadUser(user)
+      this.$q.dialog({
+        title: 'Send Entrance-Mail for User',
+        message: msg,
+        ok: {
+          label: 'E-Mail versendden',
+          color: 'negative'
+        },
+        cancel: {
+          label: 'Abbruch'
+        }
+      }).onOk(() => {
+        this.sendEntranceMail(user)
+      }).onCancel(() => {
+        // console.log('Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
+    },
+
+    sendEntranceMail (user) {
+      if (user.pan && user.pan.contact_mail) {
+        // Try Sending Mail
+        this.loading = true
+
+        this.$q.notify({
+          message: this.$t('Try sending E-Mail to ' + user.pan.contact_mail),
+          color: 'primary',
+          position: 'top',
+          timeout: 5000
+        })
+
+        axios.post('/api/send-entrance-mail', {
+          id: user.id
+        }).then((e) => {
+          this.$q.notify({
+            message: this.$t('Success sending E-Mail to ' + user.pan.contact_mail),
+            color: 'positive',
+            position: 'top',
+            timeout: 5000
+          })
+        }).catch((e) => {
+          this.$q.notify({
+            message: this.$t('Error sending E-Mail to ' + user.pan.contact_mail),
+            caption: JSON.stringify(e),
+            type: 'negative',
+            position: 'top',
+            timeout: 10000,
+            progress: true
+          })
+        }).then((e) => {
+          this.loading = false
+          this.reloadUser(user)
+        })
+      } else {
+        // No E-Mail
+        this.$q.notify({
+          message: this.$t('Error! No E-Mail at ' + user.pan.pan),
+          caption: JSON.stringify(user.pan),
+          type: 'warning',
+          position: 'top',
+          timeout: 10000,
+          progress: true
+        })
+      }
+    },
+
+    trySendEntranceMails () {
+      let len = this.selected.length ?? 'some'
+
+      this.$q.dialog({
+        title: 'Send multiple Entrance-Mails',
+        message: 'Try send Entrance-Mail for ' + len + ' Users',
+        ok: {
+          label: 'E-Mails versenden',
+          color: 'negative'
+        },
+        cancel: {
+          label: 'Abbruch'
+        }
+      }).onOk(() => {
+        this.sendEntranceMails()
+      }).onCancel(() => {
+        // console.log('Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
       })
     },
 

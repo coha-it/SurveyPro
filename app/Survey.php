@@ -96,7 +96,7 @@ class Survey extends Model
 
     public function getUserFinishedAttribute()
     {
-        return $this->userFinished()->first();
+        return $this->userFinished();
     }
 
     // Only if the Survey is Fillable
@@ -227,15 +227,15 @@ class Survey extends Model
      */
     public function userFinished()
     {
-        // return $this
-        //         ->hasOne('App\SurveyFinished')
-        //         ->where('user_id', auth()->user()->id);
         return $this->hasOneThrough(
             'App\SurveyFinished',   // owner
             'App\User',             // car
             'id',                   // Foreign key on cars table...
             'survey_id'             // Foreign key on owners table...
         );
+        // return $this
+        //         ->hasOne('App\SurveyFinished')
+        //         ->where('user_id', auth()->user()->id);
     }
 
     public function finishSurvey()

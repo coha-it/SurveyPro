@@ -13,6 +13,8 @@
         class="small ml-auto my-auto"
         :label="$t('Back to surveys')"
       />
+      <br>
+      <br>
 
       <UserDataModal
         sEditText="Gruppen Bearbeiten"
@@ -230,8 +232,6 @@
                         v-model="bExtendedSettings"
                         :disabled="oSurvey.is_finished == 1 || oSurvey.is_canceled == 1"
                         color="primary"
-                        :true-value="1"
-                        :false-value="0"
                       />
                     </q-item-section>
                     <q-item-section>
@@ -245,7 +245,7 @@
                       <q-item-section side top>
                         <q-checkbox
                           v-model="oSurvey.is_finished"
-                          color="error"
+                          color="red"
                           :true-value="1"
                           :false-value="0"
                           :disable="surveyIsUneditable()"
@@ -262,7 +262,7 @@
                         <q-checkbox
                           v-model="oSurvey.is_canceled"
                           :disable="surveyIsUneditable()"
-                          color="error"
+                          color="red"
                           :true-value="1"
                           :false-value="0"
                         />
@@ -512,7 +512,7 @@
                       style="min-height:100px"
                       height="auto"
                     >
-                      <div class="flex-grow-1"></div>
+                      <div class="flex-grow-1" />
                       <q-input
                         v-model="sSearch"
                         style="max-width: 400px;"
@@ -1048,6 +1048,7 @@
                                               emit-value
                                               map-options
                                               required
+                                              :error="!props.row.format"
                                             >
                                               <template v-slot:selected-item="scope">
                                                 <q-item
@@ -1146,9 +1147,9 @@
                                                 :flat="sSearch == ''"
                                                 floating
                                                 min-height="85px"
-                                                height="auto">
-
-                                                <div class="flex-grow-1"></div>
+                                                height="auto"
+                                              >
+                                                <div class="flex-grow-1" />
                                               </q-toolbar>
 
                                               <q-table
@@ -1639,97 +1640,19 @@ export default {
           }
         },
         {
-          label: '1 bis 10 Slider',
-          value: 'slider_ten',
-          id: 'slider_ten',
+          label: '0 bis 10 Slider',
+          value: 'slider_zero_to_ten',
+          id: 'slider_zero_to_ten',
           load: function (_t, question) {
-
-            // Change Question
-            question.format = 'slider'
-            question.min_options = 1
-            question.max_options = 1
-
-            // Change Options
-            for (let i = 1; i <= 10; i++) {
-              var c = '#C6C6C6'
-              var v = 0
-              var t = i
-              var s = ''
-              var d = ''
-
-              switch (i) {
-                case 1:
-                  c = '#cf6035'
-                  s = 'Trifft nicht zu'
-                  v = -4
-                  break
-
-                case 2:
-                  c = '#cf6035'
-                  s = 'Trifft nicht zu'
-                  v = -3
-                  break
-
-                case 3:
-                  c = '#cf8c36'
-                  s = 'Trifft weniger zu'
-                  v = -2
-                  break
-
-                case 4:
-                  s = 'Trifft weniger zu'
-                  v = -1
-                  break
-
-                case 5:
-                  s = 'Unentschlossen'
-                  d = '50 / 50'
-                  v = 0
-                  break
-
-                case 6:
-                  s = 'Trifft manchmal zu'
-                  v = 1
-                  break
-
-                case 7:
-                  c = '#7ea680'
-                  s = 'Trifft manchmal zu'
-                  v = 2
-                  break
-
-                case 8:
-                  c = '#55a559'
-                  s = 'Trifft eher zu'
-                  v = 3
-                  break
-
-                case 9:
-                  c = '#55a559'
-                  s = 'Trifft absolut zu'
-                  v = 4
-                  break
-
-                case 10:
-                  c = '#55a559'
-                  s = 'Trifft absolut zu'
-                  v = 5
-                  break
-
-                default:
-                  break
-              }
-
-              _t.addOption({
-                id: _t.getRandomId(),
-                question_id: question.id,
-                title: t,
-                value: v,
-                color: c,
-                subtitle: s,
-                description: d
-              }, question)
-            }
+            return _t.loadPresetToTenSlider(question, 0)
+          }
+        },
+        {
+          label: '1 bis 10 Slider',
+          value: 'slider_one_to_ten',
+          id: 'slider_one_to_ten',
+          load: function (_t, question) {
+            return _t.loadPresetToTenSlider(question, 1)
           }
         },
         {
@@ -1737,7 +1660,6 @@ export default {
           value: 'slider_five',
           id: 'slider_five',
           load: function (_t, question) {
-
             // Change Question
             question.format = 'slider'
             question.min_options = 1
@@ -2169,6 +2091,101 @@ export default {
 
   methods: {
 
+    loadPresetToTenSlider (question, iStart) {
+      // Change Question
+      question.format = 'slider'
+      question.min_options = 1
+      question.max_options = 1
+
+      // Change Options
+      for (let i = iStart; i <= 10; i++) {
+        var c = '#C6C6C6'
+        var v = 0
+        var t = i
+        var s = ''
+        var d = ''
+
+        switch (i) {
+          case 0:
+            c = '#cf6035'
+            s = 'Trifft überhaupt nicht zu'
+            v = -5
+            break
+
+          case 1:
+            c = '#cf6035'
+            s = 'Trifft überhaupt nicht zu'
+            v = -4
+            break
+
+          case 2:
+            c = '#cf6035'
+            s = 'Trifft nicht zu'
+            v = -3
+            break
+
+          case 3:
+            c = '#cf8c36'
+            s = 'Trifft weniger zu'
+            v = -2
+            break
+
+          case 4:
+            s = 'Trifft weniger zu'
+            v = -1
+            break
+
+          case 5:
+            s = 'Unentschlossen'
+            d = '50 / 50'
+            v = 0
+            break
+
+          case 6:
+            s = 'Trifft manchmal zu'
+            v = 1
+            break
+
+          case 7:
+            c = '#7ea680'
+            s = 'Trifft manchmal zu'
+            v = 2
+            break
+
+          case 8:
+            c = '#55a559'
+            s = 'Trifft eher zu'
+            v = 3
+            break
+
+          case 9:
+            c = '#55a559'
+            s = 'Trifft absolut zu'
+            v = 4
+            break
+
+          case 10:
+            c = '#55a559'
+            s = 'Trifft absolut zu'
+            v = 5
+            break
+
+          default:
+            break
+        }
+
+        this.addOption({
+          id: this.getRandomId(),
+          question_id: question.id,
+          title: t,
+          value: v,
+          color: c,
+          subtitle: s,
+          description: d
+        }, question)
+      }
+    },
+
     getNegativeColor (color) {
       if (this.isDark(color)) {
         return 'text-white'
@@ -2553,7 +2570,7 @@ export default {
 
     // QUESTIONS
     addQuestion (q) {
-      var aQ = this.oSurvey.questions;
+      var aQ = this.oSurvey.questions
 
       // Increment one order-point up
       q.order = aQ.length + 1
@@ -2569,7 +2586,11 @@ export default {
     addNewQuestion () {
       return this.addQuestion({
         id: this.getRandomId(),
-        options: []
+        options: [],
+        is_commentable: 1,
+        comment_is_required: 0,
+        comment_is_number: 0,
+        is_skippable: 0
       })
     },
 
@@ -2583,7 +2604,7 @@ export default {
         // Delete oNewQ.options.id
         oNewQ.options.forEach(option => {
           option.question_id = oNewQ.id
-        });
+        })
 
         return this.addQuestion(oNewQ)
       }
@@ -2820,7 +2841,7 @@ export default {
       return this.getDiffDays(
         this.oSurvey.start_datetime,
         this.oSurvey.end_datetime
-      );
+      )
     },
 
     getDiffDays (d1, d2) {

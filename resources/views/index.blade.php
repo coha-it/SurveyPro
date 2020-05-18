@@ -12,6 +12,13 @@ $config = [
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+
+  <link href="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/logo/favicon/favicon.ico" rel="shortcut icon" type="image/x-icon">
+  <link href="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/logo/favicon/favicon.svg" rel="icon" type="image/svg+xml" sizes="any">
+  <link href="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/logo/favicon/favicon.png" rel="icon" type="image/png" sizes="any">
+
   <title>{{ config('app.name') }}</title>
 
   <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Nunito:400,400i,600,700|Merriweather:ital,wght@0,400;1,400;1,700|Roboto:100,300,400,500,700,900|Material+Icons|Raleway:400,700|Roboto+Mono&display=swap'>

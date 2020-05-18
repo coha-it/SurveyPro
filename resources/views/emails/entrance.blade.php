@@ -81,7 +81,7 @@
 
     <p style="{{ $subinfo_styles }}">
       Falls sich der weiße Knopf "Jetzt Anmelden" nicht klicken lässt, kopieren Sie den Link darunter und öffnen Sie diesen in einem Webbrowser.<br>
-      Ihre Zugangsdaten sind individuell und für Sie persönlich gedacht. Gebe Sie die Inhalte unter keinen Umständen weiter.<br>
+      Ihre Zugangsdaten sind individuell und für Sie persönlich gedacht. Geben Sie die Inhalte unter keinen Umständen weiter.<br>
 
     </p>
 
