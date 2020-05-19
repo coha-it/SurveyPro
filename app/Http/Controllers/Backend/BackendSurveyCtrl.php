@@ -70,15 +70,18 @@ class BackendSurveyCtrl extends Controller
             // Create if New
             if($bIsNew) {
                 unset($reqOptionId);
-                $question->options()->updateOrCreate($reqOption);
+                $option = $question->options()->updateOrCreate($reqOption);
             }
             // Update if not
             else {
-                $question->options()->updateOrCreate(
+                $option = $question->options()->updateOrCreate(
                     ['id' => $reqOptionId],
                     $reqOption
                 );
             }
+
+            // Save Option
+            $option->save();
 
         }
     }
@@ -111,6 +114,10 @@ class BackendSurveyCtrl extends Controller
                 );
             }
 
+            // Save Question
+            $question->save();
+
+            // update or Create Options
             $this->updateOrCreateQuestionOptions( $bIsNew, $question, $reqQuestion['options'] ?? [] );
         }
     }

@@ -794,7 +794,9 @@
           <!-- import_comment -->
           <template v-slot:body-cell-import_comment="props">
             <q-td v-if="settings.bShowImportComment" class="import_comment" :props="props">
-              <span class="code_font">{{ props.row.pan.import_comment }}</span>
+              <template v-if="props.row.pan.import_comment">
+                <span class="code_font">{{ props.row.pan.import_comment }}</span>
+              </template>
             </q-td>
           </template>
 

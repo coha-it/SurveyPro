@@ -1694,17 +1694,6 @@
       </q-card>
     </q-dialog>
 
-    <!-- Dialog Loading -->
-    <q-dialog
-      v-model="bIsLoading"
-      max-width="500"
-      dark
-      content-class="naked dark centered"
-      persistent
-    >
-      <q-circular-progress indeterminate />
-      <div>{{ $t('loading.text') }}</div>
-    </q-dialog>
   </div>
 </template>
 
@@ -2076,9 +2065,6 @@ export default {
       // Options
       aSelectedOptions: [],
 
-      // Loading
-      bIsLoading: false,
-
       // Tabs
       active_tab: 'basis',
 
@@ -2264,11 +2250,18 @@ export default {
 
       // Transform Data
       delete data.id
+      delete data.created_by
+      delete data.url_full
+      delete data.user_finished
+      delete data.created_at
+      delete data.updated_at
 
       for (const i in data.groups) {
         if (data.groups.hasOwnProperty(i)) {
           let g = data.groups[i]
           delete g.pivot
+          delete g.created_at
+          delete g.updated_at
         }
       }
 
@@ -2278,6 +2271,8 @@ export default {
           let options = q.options
           delete q.id
           delete q.survey_id
+          delete q.created_at
+          delete q.updated_at
 
           for (const j in options) {
             if (options.hasOwnProperty(j)) {
@@ -2285,6 +2280,8 @@ export default {
 
               delete o.id
               delete o.question_id
+              delete o.created_at
+              delete o.updated_at
             }
           }
         }
@@ -3186,7 +3183,11 @@ export default {
 
     updateSurvey: function () {
       var _t = this
-      this.bIsLoading = true
+
+      this.$q.loading.show({
+        message: 'Updating Survey',
+        delay: 400
+      })
 
       // Update Users
       this.$store
@@ -3195,26 +3196,26 @@ export default {
           delete_questions_ids: _t.aDeleteQuestionsIds,
           delete_options_ids: _t.aDeleteOptionsIds
         })
-        .then(function (e) {
+        .then((e) => {
           // Success
           if (!e || !e.response || !e.response.data || !e.response.data.error) {
-            _t.showSnackbarSuccess(_t.$t('data_saved'))
-            _t.oSurvey = _t.copyObject(e.data)
-            _t.oSurveyOld = _t.copyObject(e.data)
+            this.showSnackbarSuccess(this.$t('data_saved'))
+            this.oSurvey = this.copyObject(e.data)
+            this.oSurveyOld = this.copyObject(e.data)
 
-            if (_t.bCreate) {
-              _t.$router.push({
+            if (this.bCreate) {
+              this.$router.push({
                 name: 'backend.survey',
                 params: {
-                  id: _t.oSurvey.id
+                  id: this.oSurvey.id
                 }
               })
             }
-            _t.aDeleteQuestionsIds = []
-            _t.aDeleteOptionsIds = []
-            _t.startEditMode()
+            this.aDeleteQuestionsIds = []
+            this.aDeleteOptionsIds = []
+            this.startEditMode()
           }
-          _t.bIsLoading = false
+          this.$q.loading.hide()
         })
         .catch((e) => {
           console.log(e.response.data)
@@ -3228,7 +3229,7 @@ export default {
             }
           }
           this.showSnackbarError(this.$t('data_unsaved') + '\n' + errText)
-          this.bIsLoading = false
+          this.$q.loading.hide()
         })
     }
   }
