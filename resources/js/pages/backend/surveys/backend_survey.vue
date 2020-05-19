@@ -58,8 +58,8 @@
         ]"
       />
 
-      <br />
-      <br />
+      <br >
+      <br >
     </template>
 
     <div v-if="oSurvey">
@@ -582,7 +582,7 @@
                           </q-list>
                         </q-menu>
                       </q-btn>
-                      <div class="flex-grow-1"></div>
+                      <div class="flex-grow-1"/>
                     </q-toolbar>
 
                     <!-- Delete - Dialog -->
@@ -1521,34 +1521,46 @@
             <q-item>
               <q-input v-model="oSurvey.title" required :rules="required" style="display: none;" />
 
-              <q-btn color="grey" dark class="mr-4">Zurück</q-btn>
               <q-btn
-                color="green"
+                color="grey"
+                dark
+                class="mr-4"
+                label="Zurück"
+                unelevated
+                outlined
+              />
+              &nbsp;
+              <q-btn
+                v-if="surveyIsEditable()"
+                color="primary"
                 type="submit"
                 class="mr-4 white--text"
-                v-if="surveyIsEditable()"
                 :disabled="surveyFormIsInvalid()"
+                :label="'Umfrage Speichern ' + (isUnsaved() ? '*' : '')"
+                unelevated
+                icon="save"
                 @click="updateSurvey"
-              >Umfrage Speichern {{ isUnsaved() ? '*' : undefined }}</q-btn>
-
-              <!-- Save as FAB -->
-              <!-- <q-page-sticky bottom right :open-on-hover="true" v-model="bFabButtonInner" fixed>
-                <template v-slot:activator v-slot:extension>
-                  <q-page-sticky>
-                    <q-btn
-                      v-show="isUnsaved()"
-                      v-model="bFabButtonInner"
-                      color="success"
-                      dark
-                      fab
-                      type="submit"
-                      @click="updateSurvey()"
-                      :icon="bFabButtonInner ? 'mdi-content-save' : false"
-                    ></q-btn>
-                  </q-page-sticky>
-                </template>
-                <q-btn fab dark small color="warning" icon="mdi-restore" />
-              </q-page-sticky> -->
+              />
+              &nbsp;
+              <!-- <q-btn
+                color="primary"
+                flat
+                round
+                icon="settings"
+              >
+                <q-menu dense>
+                  <q-list style="min-width: 100px">
+                    <q-item v-close-popup :disabled="surveyIsUneditable() || isUnsaved()" clickable>
+                      <q-item-section>
+                        Export
+                      </q-item-section>
+                      <q-item-section avatar>
+                        <q-icon name="export" />
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn> -->
 
               <q-page-sticky position="bottom-right" :offset="[18, 18]" style="z-index: 999">
                 <q-btn
@@ -1560,8 +1572,59 @@
                   size="md"
                   @click="updateSurvey"
                 />
-                <q-fab icon="arrow_drop_up" direction="up" color="grey">
-                  <q-fab-action fab dark small color="warning" icon="mdi-restore" @click="restoreSurvey" />
+                <q-fab
+                  icon="arrow_drop_up"
+                  direction="up"
+                  color="grey"
+                  vertical-actions-align="right"
+                >
+                  <q-fab-action
+                    :disable="isUnsaved()"
+                    fab
+                    dark
+                    small
+                    color="secondary"
+                    icon="get_app"
+                    label="Umfrage als Datei exportieren"
+                    label-position="left"
+                    external-label
+                    @click="exportToFile"
+                  />
+                  <q-fab-action
+                    :disable="surveyIsUneditable()"
+                    fab
+                    dark
+                    small
+                    color="warning"
+                    icon="publish"
+                    label="Umfrage aus Datei importieren"
+                    label-position="left"
+                    external-label
+                    @click="bImportDialog = true"
+                  />
+                  <q-fab-action
+                    :disable="isSaved()"
+                    fab
+                    dark
+                    small
+                    color="warning"
+                    icon="mdi-restore"
+                    label="Umfrage Zurücksetzen"
+                    label-position="left"
+                    external-label
+                    @click="resetSurvey"
+                  />
+                  <q-fab-action
+                    fab
+                    dark
+                    small
+                    color="red"
+                    icon="mdi-delete"
+                    disable
+                    label="Umfrage Löschen"
+                    label-position="left"
+                    external-label
+                  />
                 </q-fab>
               </q-page-sticky>
             </q-item>
@@ -1569,6 +1632,67 @@
         </q-form>
       </template>
     </div>
+
+    <!-- Import Dialog -->
+    <q-dialog v-model="bImportDialog" maximized>
+      <q-card>
+        <q-bar>
+          <q-space />
+          <q-btn v-close-popup dense flat icon="close">
+            <q-tooltip content-class="bg-white text-primary">Close</q-tooltip>
+          </q-btn>
+        </q-bar>
+
+        <q-card-section>
+          <div class="text-h6">
+            Import from File
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <p>
+            Kopieren Sie den Inhalt einer survey-***-.json Datei in dieses Textfeld
+          </p>
+          <br>
+          <q-input
+            v-model="sImportJson"
+            class="c-code-text"
+            filled
+            type="textarea"
+            placeholder="Inhalt von survey-***-.json"
+            :error="sImportJson != '' && invalidJson(sImportJson)"
+          >
+            <template v-slot:error>
+              Der Inhalt ist nicht valide. Bitte überprüfen Sie die JSON-Validität des Textes.
+            </template>
+          </q-input>
+          <br>
+
+          <div class="row">
+            <div class="col col-12 col-sm-6 col-md-6">
+              <q-btn
+                v-if="sImportJson"
+                :disable="invalidJson(sImportJson)"
+                label="Import Survey"
+                color="primary"
+                unelevated
+                @click="importFromFile"
+              />
+              <br>
+            </div>
+
+            <div v-if="sImportJson && validJson(sImportJson)" class="col col-12 col-sm-6 col-md-6">
+              Inhalte überprüfen
+              <q-scroll-area
+                style="min-height: 250px; height: 50vh; max-height: 770px;"
+              >
+                <span class="import_comment">{{ toJson(sImportJson) }}</span>
+              </q-scroll-area>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
     <!-- Dialog Loading -->
     <q-dialog
@@ -1598,6 +1722,10 @@ export default {
 
   data () {
     return {
+
+      // Import Dialog
+      bImportDialog: false,
+      sImportJson: '',
 
       // Colors
       colorPalette: [
@@ -2090,6 +2218,102 @@ export default {
   },
 
   methods: {
+
+    validJson (str) {
+      try {
+        JSON.parse(str)
+      } catch (e) {
+        return false
+      }
+      return true
+    },
+
+    invalidJson (str) {
+      return !this.validJson(str)
+    },
+
+    toJson (str) {
+      return JSON.parse(str)
+    },
+
+    importFromFile () {
+      try {
+        // Format Json
+        let json = this.toJson(this.sImportJson)
+
+        // Insert to Survey
+        this.oSurvey = this.copyObject(json)
+
+        // Close Dialog
+        this.bImportDialog = false
+      } catch (error) {
+        this.$q.notify({
+          message: this.$t('Error Importing - No Valid JSON'),
+          color: 'red',
+          position: 'top-right',
+          actions: [{ icon: 'close', color: 'white' }],
+          timeout: 6000
+        })
+      }
+    },
+
+    exportToFile () {
+      // Variables
+      let data = this.copyObject(this.oSurvey)
+      let filename = 'survey-' + this.format_y_m_d_h_m_s() + '.json'
+
+      // Transform Data
+      delete data.id
+
+      for (const i in data.groups) {
+        if (data.groups.hasOwnProperty(i)) {
+          let g = data.groups[i]
+          delete g.pivot
+        }
+      }
+
+      for (const i in data.questions) {
+        if (data.questions.hasOwnProperty(i)) {
+          let q = data.questions[i]
+          let options = q.options
+          delete q.id
+          delete q.survey_id
+
+          for (const j in options) {
+            if (options.hasOwnProperty(j)) {
+              let o = options[j]
+
+              delete o.id
+              delete o.question_id
+            }
+          }
+        }
+      }
+
+      this.saveToFile(
+        JSON.stringify(data),
+        filename
+      )
+    },
+
+    saveToFile (jsonData, filename) {
+      let blob = new Blob([jsonData], { type: 'text/plain;charset=utf-8;' })
+      if (navigator.msSaveBlob) { // IE 10+
+        navigator.msSaveBlob(blob, filename)
+      } else {
+        let link = document.createElement('a')
+        if (link.download !== undefined) { // feature detection
+          // Browsers that support HTML5 download attribute
+          let url = URL.createObjectURL(blob)
+          link.setAttribute('href', url)
+          link.setAttribute('download', filename)
+          link.style.visibility = 'hidden'
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        }
+      }
+    },
 
     loadPresetToTenSlider (question, iStart) {
       // Change Question
@@ -2651,11 +2875,11 @@ export default {
     },
 
     surveyIsEditable () {
-      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate ? true : false
+      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate
     },
 
     surveyIsUneditable () {
-      return !this.surveyIsEditable() ? true : false
+      return !this.surveyIsEditable()
     },
 
     getMaxEndDate (date) {
@@ -2943,8 +3167,21 @@ export default {
       return !this.isSaved()
     },
 
-    restoreSurvey: function () {
-      this.oSurvey = this.copyObject(this.oSurveyOld)
+    resetSurvey: function () {
+      this.$q.dialog({
+        title: 'Umfrage zurücksetzen',
+        message: 'Umfrage wirklich zurücksetzen?',
+        ok: {
+          label: 'Zurücksetzen',
+          color: 'warning'
+        },
+        cancel: {
+          label: 'Abbruch'
+        },
+        persistent: true
+      }).onOk(() => {
+        this.oSurvey = this.copyObject(this.oSurveyOld)
+      })
     },
 
     updateSurvey: function () {

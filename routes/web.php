@@ -11,8 +11,8 @@
 |
 */
 
-Route::get('allowed-surveys', 'SurveyController@getAllowedSurveys');
-Route::get('fillable-surveys', 'SurveyController@getFillableSurveys');
+Route::get('allowed-surveys', 'SurveyCtrl@getAllowedSurveys');
+Route::get('fillable-surveys', 'SurveyCtrl@getFillableSurveys');
 
 
 // DEBUG

@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\SurveyFinishedData;
 
-class SurveyController extends Controller
+class SurveyCtrl extends Controller
 {
     /**
      * Create a new controller instance.

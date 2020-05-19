@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\User as User;
 use App\Group as Group;
 
-class BackendGroupController extends Controller
+class BackendGroupCtrl extends Controller
 {
 
     /**
