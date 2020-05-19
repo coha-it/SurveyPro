@@ -54,7 +54,7 @@ class MailCtrl extends Controller
              }
 
          } else {
-             $response .= "Success \n";
+             $response .= "Success: Sending Mail \n";
          }
 
         // Update User with sending Mail
