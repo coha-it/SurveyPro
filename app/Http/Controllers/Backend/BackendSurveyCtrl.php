@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Survey as Survey;
 use App\Question as Question;
 
-class BackendSurveyController extends Controller
+class BackendSurveyCtrl extends Controller
 {
     /**
      * Create a new controller instance.
@@ -64,18 +64,24 @@ class BackendSurveyController extends Controller
             // Remove Dialog
             unset($reqOption['dialog']);
 
+            // Request Option Id
+            $reqOptionId = array_key_exists('id', $reqOption) ? $reqOption['id'] : null;
+
             // Create if New
             if($bIsNew) {
-                unset($reqOption['id']);
-                $question->options()->updateOrCreate($reqOption);
+                unset($reqOptionId);
+                $option = $question->options()->updateOrCreate($reqOption);
             }
             // Update if not
             else {
-                $question->options()->updateOrCreate(
-                    ['id' => $reqOption['id']],
+                $option = $question->options()->updateOrCreate(
+                    ['id' => $reqOptionId],
                     $reqOption
                 );
             }
+
+            // Save Option
+            $option->save();
 
         }
     }
@@ -92,6 +98,10 @@ class BackendSurveyController extends Controller
             unset($tmp['options']);
             unset($tmp['is_new']);
 
+            // Req Question Id
+            $reqQuestionId = array_key_exists('id', $reqQuestion) ? $reqQuestion['id'] : null;
+
+            // If Is New
             if($bIsNew) {
                 unset($tmp['id']);
                 $tmp['created_by'] = $self->id;
@@ -99,11 +109,15 @@ class BackendSurveyController extends Controller
             }
             else {
                 $question = $survey->questions()->updateOrCreate(
-                    ['id' => $reqQuestion['id']],
+                    ['id' => $reqQuestionId],
                     $tmp
                 );
             }
 
+            // Save Question
+            $question->save();
+
+            // update or Create Options
             $this->updateOrCreateQuestionOptions( $bIsNew, $question, $reqQuestion['options'] ?? [] );
         }
     }

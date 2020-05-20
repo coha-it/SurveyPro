@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\SurveyFinishedData;
 
-class SurveyController extends Controller
+class SurveyCtrl extends Controller
 {
     /**
      * Create a new controller instance.
@@ -127,7 +127,7 @@ class SurveyController extends Controller
 
     public function saveExtraSurveyData($request, $survey, $user)
     {
-        SurveyFinishedData::create([
+        SurveyFinishedData::updateOrCreate([
             'survey_id' => $survey->id,
             'user_id' => $user->id,
             'ip_v4' => $request->ip() ?? null,

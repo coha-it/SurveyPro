@@ -794,7 +794,9 @@
           <!-- import_comment -->
           <template v-slot:body-cell-import_comment="props">
             <q-td v-if="settings.bShowImportComment" class="import_comment" :props="props">
-              <span class="code_font">{{ props.row.pan.import_comment }}</span>
+              <template v-if="props.row.pan.import_comment">
+                <span class="code_font">{{ props.row.pan.import_comment }}</span>
+              </template>
             </q-td>
           </template>
 
@@ -840,15 +842,17 @@
                 </q-popup-edit>
               </div>
             </q-td>
-
-
-
           </template>
 
           <!-- last_mail_date -->
           <template v-slot:body-cell-last_mail_date="props">
             <q-td v-if="settings.bShowContactMailData" :props="props">
-              <span class="code_font last_mail_date">{{ props.row.pan.last_mail_date }}</span>
+              <template v-if="props.row.pan.last_mail_date">
+                <span class="code_font last_mail_date">{{ props.row.pan.last_mail_date }}</span><br>
+                <span :class="getLastMailColorClass(props.row.pan.last_mail_date)">
+                  {{ $t('time since') }}: <span>{{ timeSince(date(props.row.pan.last_mail_date)) }}</span>
+                </span>
+              </template>
             </q-td>
           </template>
 
@@ -945,6 +949,7 @@
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { setTimeout } from 'timers'
+import dayjs from 'dayjs'
 import UserDataModal from '~/components/BackendUserDataModal'
 import Print from '~/components/BackendUsersPrint'
 import BulkProfileChanges from '~/components/BackendUserBulkProfileChanges'
@@ -1099,25 +1104,25 @@ export default {
           last_mail_status
         */
         {
-          label: this.$t('import_comment'),
+          label: this.$t('import comment'),
           name: 'import_comment',
           field: 'import_comment',
           sortable: true
         },
         {
-          label: this.$t('contact_mail'),
+          label: this.$t('contact mail'),
           name: 'contact_mail',
           field: 'contact_mail',
           sortable: true
         },
         {
-          label: this.$t('last_mail_date'),
+          label: this.$t('last mail date'),
           name: 'last_mail_date',
           field: 'last_mail_date',
           sortable: true
         },
         {
-          label: this.$t('last_mail_status'),
+          label: this.$t('last mail status'),
           name: 'last_mail_status',
           field: 'last_mail_status',
           sortable: true
@@ -1170,6 +1175,62 @@ export default {
   },
 
   methods: {
+
+    getLastMailColorClass (date) {
+      let sec = this.secondsSince(date)
+
+      switch (true) {
+        case (sec < 3600):
+          // Unter 1 stunde
+          return 'text-red'
+
+        case (sec < 86400):
+          // Unter ein Tag
+          return 'text-orange'
+
+        case (sec < 604800):
+          // Unter einer woche
+          return 'text-yellow-8'
+
+        default:
+          return 'text-grey'
+      }
+    },
+
+    secondsSince (date) {
+      return Math.floor((this.date() - this.date(date)) / 1000)
+    },
+
+    timeSince (date) {
+      let seconds = this.secondsSince(date)
+      let interval = Math.floor(seconds / 31536000)
+
+      if (interval > 1) {
+        return interval + ' ' + this.$t('years')
+      }
+      interval = Math.floor(seconds / 2592000)
+      if (interval > 1) {
+        return interval + ' ' + this.$t('months')
+      }
+      interval = Math.floor(seconds / 86400)
+      if (interval > 1) {
+        return interval + ' ' + this.$t('days')
+      }
+      interval = Math.floor(seconds / 3600)
+      if (interval > 1) {
+        return interval + ' ' + this.$t('hours')
+      }
+      interval = Math.floor(seconds / 60)
+      if (interval > 1) {
+        return interval + ' ' + this.$t('minutes')
+      }
+
+      return Math.floor(seconds) + ' ' + this.$t('seconds')
+    },
+
+    date (d) {
+      return dayjs(d)
+    },
 
     isValidEmail (val) {
       const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/
@@ -1440,7 +1501,7 @@ export default {
         title: 'Send Entrance-Mail for User',
         message: msg,
         ok: {
-          label: 'E-Mail versendden',
+          label: 'E-Mail versenden',
           color: 'negative'
         },
         cancel: {

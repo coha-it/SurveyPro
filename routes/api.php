@@ -34,14 +34,14 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/user', 'User\UserController@self');
 
     // Get all users surveys which he is membering
-    Route::get('surveys-membering', 'SurveyController@getMemberingSurveys');
-    Route::get('survey-fillable', 'SurveyController@getFillableSurvey');
+    Route::get('surveys-membering', 'SurveyCtrl@getMemberingSurveys');
+    Route::get('survey-fillable', 'SurveyCtrl@getFillableSurvey');
 
     // Update or create Awnser
-    Route::post('update-or-create-awnser', 'SurveyController@httpUpdateOrCreateAwnser');
+    Route::post('update-or-create-awnser', 'SurveyCtrl@httpUpdateOrCreateAwnser');
 
     // Finish Survey
-    Route::post('finish-survey', 'SurveyController@httpFinishSurvey');
+    Route::post('finish-survey', 'SurveyCtrl@httpFinishSurvey');
 
     // Only Email Users
     Route::group(['middleware' => ['auth.user.email' ] ], function() {
@@ -68,10 +68,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::patch('location/update', 'User\UserController@updateLocation');
 
         // Groups
-        Route::get('groups-moderating', 'Backend\BackendGroupController@getGroupsModerating'); // Moderating Groups
-        Route::get('get-group', 'Backend\BackendGroupController@getGroup'); // Get Group Content
-        Route::post('group/create', 'Backend\BackendGroupController@createGroup');
-        Route::patch('group/update', 'Backend\BackendGroupController@updateGroup');
+        Route::get('groups-moderating', 'Backend\BackendGroupCtrl@getGroupsModerating'); // Moderating Groups
+        Route::get('get-group', 'Backend\BackendGroupCtrl@getGroup'); // Get Group Content
+        Route::post('group/create', 'Backend\BackendGroupCtrl@createGroup');
+        Route::patch('group/update', 'Backend\BackendGroupCtrl@updateGroup');
 
         // Get Users
         Route::get('users-created', 'BackendCtrl@loadCreatedUsers'); // Created Users
@@ -80,8 +80,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('get-random-pan', 'BackendCtrl@getRandomPan');
 
         // Update Users Groups
-        Route::post('add-user-to-group', 'Backend\BackendGroupController@addUserToGroup');
-        Route::post('remove-user-from-group', 'Backend\BackendGroupController@removeUserFromGroup');
+        Route::post('add-user-to-group', 'Backend\BackendGroupCtrl@addUserToGroup');
+        Route::post('remove-user-from-group', 'Backend\BackendGroupCtrl@removeUserFromGroup');
 
         // Change User(s)
         Route::patch('update-created-users', 'BackendCtrl@updateCreatedUsers');
@@ -98,16 +98,16 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['middleware' => ['auth.user.can_create_surveys'], 'prefix' => 'backend' ], function()
         {
             // Get Survey(s)
-            Route::get('surveys-allowed', 'Backend\BackendSurveyController@getAllowedSurveys');
-            Route::get('survey-allowed',  'Backend\BackendSurveyController@getAllowedSurvey')->name('backend.survey');
+            Route::get('surveys-allowed', 'Backend\BackendSurveyCtrl@getAllowedSurveys');
+            Route::get('survey-allowed',  'Backend\BackendSurveyCtrl@getAllowedSurvey')->name('backend.survey');
 
             // Change Surveys
-            Route::patch('update-allowed-survey', 'Backend\BackendSurveyController@tryUpdateAllowedSurvey');
-            Route::patch('delete-allowed-survey', 'Backend\BackendSurveyController@deleteSurvey');
-            Route::post('create-survey', 'Backend\BackendSurveyController@createUsers');
+            Route::patch('update-allowed-survey', 'Backend\BackendSurveyCtrl@tryUpdateAllowedSurvey');
+            Route::patch('delete-allowed-survey', 'Backend\BackendSurveyCtrl@deleteSurvey');
+            Route::post('create-survey', 'Backend\BackendSurveyCtrl@createUsers');
 
             // Delete Questions
-            Route::patch('delete-questions', 'Backend\BackendSurveyController@deleteQuestions');
+            Route::patch('delete-questions', 'Backend\BackendSurveyCtrl@deleteQuestions');
         });
     });
 });

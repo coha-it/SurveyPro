@@ -159,9 +159,12 @@
       "text": "Bitte warten ..."
     },
     "required": "Dieses Feld ist erforderlich",
+    "years": "Jahre",
+    "months": "Monate",
     "days": "Tage",
     "hours": "Stunden",
     "minutes": "Minuten",
+    "seconds": "Sekunden",
     "The given data was invalid.": "Die eingegebenen Daten sind nicht korrekt",
     "title": "Titel",
     "subtitle": "Untertitel",
@@ -176,5 +179,10 @@
     "description_mods": "Beschreibung Moderatoren",
     "description_public": "Beschreibung Öffentlich",
     "Question": "Frage",
-    "From": "Von"
+    "From": "Von",
+    "time since": "Vor",
+    "import comment": "Import-Kommentar",
+    "contact mail": "Kontakt-Mail",
+    "last mail date": "Datum letzter Mail",
+    "last mail status": "Status letzter Mail"
 }
