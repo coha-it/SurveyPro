@@ -69,9 +69,9 @@ export default {
       sSearch: '',
       pagination: {
         sortBy: 'id',
-        descending: true
+        descending: true,
         // page: 1,
-        // rowsPerPage: 3
+        rowsPerPage: 50
       },
       aHeaders: [
         {

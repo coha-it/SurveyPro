@@ -438,8 +438,8 @@
                                 transition-hide="scale"
                               >
                                 <q-time
-                                  format24h
                                   v-model="oSurvey.end_datetime"
+                                  format24h
                                   :disable="surveyIsUneditable()"
                                   mask="YYYY-MM-DD HH:mm:ss"
                                   color="grey"
@@ -447,10 +447,10 @@
                                 >
                                   <div class="row items-center justify-end q-gutter-sm">
                                     <q-btn
+                                      v-close-popup
                                       :label="$t('closer_button')"
                                       color="primary"
                                       flat
-                                      v-close-popup
                                     />
                                   </div>
                                 </q-time>
