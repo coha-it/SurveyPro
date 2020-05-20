@@ -2,30 +2,19 @@
   <div>
     <!-- Alert -->
     <alert-success :form="form" :message="$t('info_updated')" />
-    <alert-error :form="form" :message="$t('error_alert_text')" />
+    <alert-error :form="form" :message="$t('error_alert_text') + (response)" />
 
     <h1>{{ $t('profile.h1') }}</h1>
     <p>{{ $t('your_info') }}</p>
 
-    <!-- PAN - User -->
-    <template v-if="user && user.pan && user.pan.is_pan_user === 1">
+    <q-form style="max-width: 550px;" @submit.prevent="update" @keydown="form.onKeydown($event)">
+      <div class="container">
+        <!-- E-Mail User -->
+        <template v-if="user.is_panuser === false">
+          <!-- Form -->
 
-    </template>
-
-    <!-- E-Mail User -->
-    <template v-else>
-
-      <!-- Form -->
-      <q-form style="max-width: 550px;" @submit.prevent="update" @keydown="form.onKeydown($event)">
-        <div class="container">
           <div class="row">
             <div class="pa-0 col">
-              <q-checkbox
-                ref="newsletter"
-                v-model="form.newsletter"
-                type="checkbox"
-                :label="$t('newsletter.newsletter')"
-              />
 
               <!-- Email -->
               <q-input
@@ -37,19 +26,26 @@
                 type="email"
                 name="email"
                 required
+                outlined
                 style="max-width: 350px;"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="email" />
+                </template>
+              </q-input>
+
+              <br>
+
+              <q-checkbox
+                ref="newsletter"
+                v-model="form.newsletter"
+                type="checkbox"
+                :label="$t('newsletter.newsletter')"
               />
             </div>
           </div>
 
-          <div class="row">
-            <div cols="12" sm="12" md="12" class="pa-0">
-              <!-- Submit Button -->
-              <q-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('update') }}</q-btn>
-            </div>
-          </div>
-
-          <br><br><br>
+          <br><br>
 
           <!-- <div class="row" align="center" style="max-width: 350px;">
             <div class="pa-0 col col-12 col-sm-12 col-md-12">
@@ -117,9 +113,83 @@
               />
             </div>
           </div> -->
+        </template>
+
+        <!-- PAN - User -->
+        <template v-if="user.is_panuser">
+          <div class="row">
+            <div class="pa-0 col">
+              <q-checkbox v-model="bChangePin" label="Pin Ändern" />
+              <template v-if="bChangePin">
+                <br>
+                <br>
+
+                <q-input
+                  ref="pin"
+                  v-model="form.pin"
+                  label="Aktuelle Pin"
+                  color="black"
+                  :error="form.errors.has('pin')"
+                  required
+                  style="max-width: 350px;"
+                  :type="bShowCurrentPin ? 'text' : 'password'"
+                  outlined
+                  :placeholder="'Ihre bisherige Pin'"
+                  mask="####"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="lock" />
+                  </template>
+                  <template v-slot:append>
+                    <q-icon
+                      name="visibility"
+                      class="pointer"
+                      @mousedown="bShowCurrentPin = true"
+                      @mouseup="bShowCurrentPin = false"
+                    />
+                  </template>
+                </q-input>
+
+                <q-input
+                  ref="new_pin"
+                  v-model="form.new_pin"
+                  label="Neue Pin"
+                  color="black"
+                  :error="form.errors.has('new_pin')"
+                  required
+                  style="max-width: 350px;"
+                  :type="bShowNewPin ? 'text' : 'password'"
+                  outlined
+                  :placeholder="'z.B.: ' + randPin()"
+                  mask="####"
+                  hint="Mask: Vierstellige Nummern-kombination"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="dialpad" />
+                  </template>
+                  <template v-slot:append>
+                    <q-icon
+                      name="visibility"
+                      class="pointer"
+                      @mousedown="bShowNewPin = true"
+                      @mouseup="bShowNewPin = false"
+                    />
+                  </template>
+                </q-input>
+              </template>
+              <br><br>
+            </div>
+          </div>
+        </template>
+
+        <div class="row">
+          <div cols="12" sm="12" md="12" class="pa-0">
+            <!-- Submit Button -->
+            <q-btn color="primary" large block :loading="form.busy" type="submit">{{ $t('update') }}</q-btn>
+          </div>
         </div>
-      </q-form>
-    </template>
+      </div>
+    </q-form>
   </div>
 </template>
 
@@ -136,13 +206,25 @@ export default {
   // },
 
   data: () => ({
+
+    // Response
+    response: '',
+
+    // Hide Show
+    bChangePin: false,
+    bShowCurrentPin: false,
+    bShowNewPin: false,
+
+    // Form
     form: new Form({
       name: '',
       email: '',
       company_id: '',
       department_id: '',
       location_id: '',
-      newsletter: false
+      newsletter: false,
+      pin: '',
+      new_pin: ''
     }),
     company: [],
     department: [],
@@ -163,12 +245,22 @@ export default {
   },
 
   methods: {
+    randPin () {
+      let max = 9999
+      let min = 1000
+
+      return Math.floor(Math.random() * (max - min + 1) + min)
+    },
     async update () {
       const { data } = await this.form.patch('/api/settings/profile')
       this.$store.dispatch('auth/updateUser', { user: data })
+        .then((e) => {
+          this.form.pin = ''
+          this.form.new_pin = ''
+        })
     },
     findById (arr, id) {
-      return arr.find(x => x.id === id);
+      return arr.find(x => x.id === id)
     },
     profileDataChanged (str, id, arr) {
       var f = this.findById(arr, id)

@@ -54,7 +54,20 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      *
      * @var array
      */
-    protected $appends = ['newsletter'];
+    protected $appends = [
+        'newsletter',
+        'is_panuser'
+    ];
+
+    public function getNewsletterAttribute()
+    {
+        return $this->newsletter();
+    }
+
+    public function getIsPanUserAttribute()
+    {
+        return $this->isPanUser();
+    }
 
     /**
      * Get the oauth providers.
@@ -133,11 +146,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function newsletter()
     {
         return $this->hasOne('App\UserNewsletter', 'user_id');
-    }
-
-    public function getNewsletterAttribute()
-    {
-        return $this->newsletter();
     }
 
     /**

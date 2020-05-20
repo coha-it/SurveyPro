@@ -18,13 +18,13 @@
           v-for="(cat, key) in sidenav"
           :key="key"
         >
-          <template v-if="!(cat.hide_for_pan && user.pan && user.pan.pan) && !(cat.hide_for_pan && !user.right)">
+          <template v-if="!(cat.hide_for_pan && user.is_panuser) && !(cat.hide_for_pan && !user.right)">
             <template v-if="cat.title">
               <q-separator spaced />
               <q-item-label header>Verwaltung</q-item-label>
             </template>
 
-            <q-item color="red" exact :to="item.route" v-for="item in cat.pages" :key="item.title" clickable v-ripple>
+            <q-item v-for="item in cat.pages" :key="item.title" v-ripple color="red" exact :to="item.route" clickable>
               <q-item-section avatar>
                 <q-icon :name="item.icon" />
               </q-item-section>
@@ -39,7 +39,7 @@
       <!-- Bottom of Sidenav -->
       <div style="position: sticky; bottom: 0;" class="q-pa-sm bg-white">
         <!-- <q-footer class="bg-white"> -->
-        <q-btn block outline depressed :label="$t('logout.btn')" color="grey" @click="logoutDialog = true" class="full-width" />
+        <q-btn block outline depressed :label="$t('logout.btn')" color="grey" class="full-width" @click="logoutDialog = true" />
         <!-- </q-footer> -->
       </div>
     </q-scroll-area>
@@ -70,13 +70,6 @@ export default {
     user: 'auth/user'
   }),
 
-  mounted() {
-  },
-
-  // created: function() {
-  //   this.$parent.$on('updateNavigation', this.toggleNavigation);
-  // },
-
   data () {
     return {
       bLeft: false,
@@ -84,20 +77,20 @@ export default {
       sidenav: [
         {
           pages: [
-            { title: 'sidenav.home', icon: 'home', route: {name:'home'} },
-            { title: 'sidenav.surveys', icon: 'poll', route: {name: 'surveys'} },
-            { title: 'sidenav.profile', icon: 'person', route: {name:'profile'} },
-            { title: 'sidenav.faq', icon: 'help', route: {name: 'faq'} }
+            { title: 'sidenav.home', icon: 'home', route: { name:'home' } },
+            { title: 'sidenav.surveys', icon: 'poll', route: { name: 'surveys' } },
+            { title: 'sidenav.profile', icon: 'person', route: { name:'profile' } },
+            { title: 'sidenav.faq', icon: 'help', route: { name: 'faq' } }
           ]
         },
         {
           title: 'sidenav.backend.title',
           hide_for_pan: true,
           pages: [
-            { title: 'sidenav.backend.groups', icon: 'group_add', route: {name: 'backend.groups'},            sPermission: 'create_groups',                },
-            { title: 'sidenav.backend.pan', icon: 'person_add', route: {name: 'backend.users'},             sPermission: 'create_users',               },
-            { title: 'sidenav.backend.surveys', icon: 'forum', route: {name: 'backend.surveys'},              sPermission: 'create_surveys',              },
-            { title: 'sidenav.backend.statistics', icon: 'pie_chart', route: {name: 'backend.statistics'},}
+            { title: 'sidenav.backend.groups', icon: 'group_add', route: { name: 'backend.groups' }, sPermission: 'create_groups' },
+            { title: 'sidenav.backend.pan', icon: 'person_add', route: { name: 'backend.users' }, sPermission: 'create_users' },
+            { title: 'sidenav.backend.surveys', icon: 'forum', route: { name: 'backend.surveys' }, sPermission: 'create_surveys' },
+            { title: 'sidenav.backend.statistics', icon: 'pie_chart', route: { name: 'backend.statistics' } }
           ]
         }
       ],
@@ -105,6 +98,14 @@ export default {
       logoutDialog: false
     }
   },
+
+  mounted () {
+    //
+  },
+
+  // created: function() {
+  //   this.$parent.$on('updateNavigation', this.toggleNavigation);
+  // },
 
   methods: {
     async logout () {
@@ -115,30 +116,30 @@ export default {
       this.$router.push({ name: 'welcome' })
     },
 
-    callToggleNavigation: function() {
-      this.$emit('navigationStateChanged', this.bLeft);
+    callToggleNavigation: function () {
+      this.$emit('navigationStateChanged', this.bLeft)
     },
 
-    setNavigation(state) {
-      this.bLeft = state;
+    setNavigation (state) {
+      this.bLeft = state
     },
 
-    userIsAdmin() {
-      return this.user && this.user.right && this.user.right.admin ? true : false;
+    userIsAdmin () {
+      return this.user && this.user.right && this.user.right.admin ? true : false
     },
 
     checkRights (item) {
-      var perm = item.sPermission;
+      var perm = item.sPermission
 
-      if(this.userIsAdmin() || typeof perm === "undefined" || perm === null) {
-        return true;
+      if (this.userIsAdmin() || typeof perm === 'undefined' || perm === null) {
+        return true
       }
 
-      if(perm && this.user && this.user.right && this.user.right[perm] != 1) {
-        return false;
+      if (perm && this.user && this.user.right && this.user.right[perm] != 1) {
+        return false
       }
 
-      return true;
+      return true
     }
   }
 

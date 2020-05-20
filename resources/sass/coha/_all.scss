@@ -19,6 +19,14 @@
 //     }
 // }
 
+.alert button.close {
+    border: 0;
+    padding: 0;
+    height: 0;
+    margin: 0;
+    width: 0;
+}
+
 .debug {
     text-align: left;
     white-space: pre-wrap;

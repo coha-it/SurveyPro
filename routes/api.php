@@ -43,11 +43,14 @@ Route::group(['middleware' => 'auth:api'], function () {
     // Finish Survey
     Route::post('finish-survey', 'SurveyCtrl@httpFinishSurvey');
 
+    // Update Profile
+    Route::patch('settings/profile', 'Settings\ProfileController@update');
+
     // Only Email Users
     Route::group(['middleware' => ['auth.user.email' ] ], function() {
-        Route::patch('settings/profile', 'Settings\ProfileController@update');
-        Route::patch('settings/password', 'Settings\PasswordController@update');
 
+        // Change Password
+        Route::patch('settings/password', 'Settings\PasswordController@update');
 
         // Company
         Route::get('companies/all', 'User\UserController@getCompanies');
