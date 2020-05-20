@@ -319,7 +319,7 @@
                                   :selected-items-text="getDatesDiffDays() + ' Tage Zeit'"
                                   color="secondary"
                                   header-color="primary"
-                                  mask="YYYY-MM-DD HH:mm:ss"
+                                  :mask="datepicker_mask"
                                 >
                                   <div class="row items-center justify-end q-gutter-sm">
                                     <q-btn
@@ -358,7 +358,7 @@
                                   v-model="oSurvey.start_datetime"
                                   :disable="surveyIsUneditable()"
                                   :options="getMinStartTime"
-                                  mask="YYYY-MM-DD HH:mm:ss"
+                                  :mask="datepicker_mask"
                                   color="green"
                                 >
                                   <div class="row items-center justify-end q-gutter-sm">
@@ -405,7 +405,7 @@
                                   range
                                   color="grey"
                                   header-color="primary"
-                                  mask="YYYY-MM-DD HH:mm:ss"
+                                  :mask="datepicker_mask"
                                 >
                                   <div class="row items-center justify-end q-gutter-sm">
                                     <q-btn
@@ -441,7 +441,7 @@
                                   v-model="oSurvey.end_datetime"
                                   format24h
                                   :disable="surveyIsUneditable()"
-                                  mask="YYYY-MM-DD HH:mm:ss"
+                                  :mask="datepicker_mask"
                                   color="grey"
                                   :options="getMaxEndTime"
                                 >
@@ -486,11 +486,12 @@
 
                   <div class="col col-12 col-sm-6 col-md-6">
                     <q-date
+                      :value="oSurvey.start_datetime || sTodayDatetime"
+                      :mask="datepicker_mask"
                       :events="events"
                       :event-color="eventColor"
                       :options="events"
-                      :value="sTodayDatetime"
-                      :title="getDiffDatetimeLabel()"
+                      minimal
                       subtitle="Zeit für die Umfrage"
                     />
                   </div>
@@ -2090,6 +2091,9 @@ export default {
       sTodayTime: this.format_h_m_s(),
       sTodayDatetime: this.format_y_m_d_h_m_s(),
 
+      // Datepicker Mask
+      datepicker_mask: 'YYYY-MM-DD HH:mm:ss',
+
       // Tmps Start
       // sStartDate: '', // this.getStartDate(),
 
@@ -3041,7 +3045,7 @@ export default {
       }
     },
 
-    getDiffDatetimeLabel() {
+    getDiffDatetimeLabel () {
       // get total seconds between the times
       var delta = this.getDiffDatetime();
 

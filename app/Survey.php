@@ -137,9 +137,10 @@ class Survey extends Model
 
     public function isInProcess() {
         return
-            $this->active &&
-            now()->toDateTimeString() > $this->start_datetime &&
-            now()->toDateTimeString() < $this->end_datetime;
+            $this->active 
+            && now()->toDateTimeString() > $this->start_datetime 
+            // && now()->toDateTimeString() < $this->end_datetime
+        ;
     }
 
     public function isNotInProcess() {
