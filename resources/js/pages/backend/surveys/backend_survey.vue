@@ -1615,15 +1615,16 @@
                     @click="resetSurvey"
                   />
                   <q-fab-action
+                    v-if="oSurvey.id"
                     fab
                     dark
                     small
                     color="red"
                     icon="mdi-delete"
-                    disable
                     label="Umfrage Löschen"
                     label-position="left"
                     external-label
+                    @click="tryDeleteSurvey"
                   />
                 </q-fab>
               </q-page-sticky>
@@ -2205,6 +2206,64 @@ export default {
 
   methods: {
 
+    tryDeleteSurvey () {
+      this.$q.dialog({
+        title: 'Lösche Umfrage',
+        message: 'Bitte geben Sie das Wort "Löschen" ohne Anführungszeichen ein und klicken Sie auf "Unwiderruflich Löschen" um die Umfrage zu löschen.',
+        prompt: {
+          model: '',
+          isValid: val => val === 'Löschen',
+          type: 'text'
+        },
+        ok: {
+          label: 'Unwiderruflich Löschen',
+          color: 'red',
+          unelevated: true
+        },
+        cancel: {
+          label: 'Zurück',
+          color: 'grey',
+          unelevated: true
+        }
+      }).onOk(data => {
+        this.$q.notify({
+          message: this.$t('Umfrage wird gelöscht ...'),
+          color: 'warning',
+          position: 'top-right',
+          actions: [{ icon: 'close', color: 'white' }],
+          timeout: 6000
+        })
+
+        // Return Response
+        let res = (e) => {
+          this.$q.notify({
+            message: this.$t('Löschvorgang abgeschlossen'),
+            caption: (e),
+            color: 'primary',
+            position: 'top-right',
+            actions: [{ icon: 'close', color: 'white' }],
+            timeout: 6000
+          })
+          setTimeout(() => {
+            this.$router.back()
+          }, 250)
+        }
+
+        // Update Users
+        this.$store
+          .dispatch('surveys/updateSurvey', {
+            survey: this.oSurvey,
+            force_delete: true
+          })
+          .then((e) => {
+            res(e)
+          })
+          .catch((e) => {
+            res(e)
+          })
+      })
+    },
+
     validJson (str) {
       try {
         JSON.parse(str)
@@ -2461,7 +2520,6 @@ export default {
     },
 
     askLoadPreset (question) {
-      console.log(question)
       this.$q.dialog({
         title: 'Frage-Vorlage Laden',
         message: 'Vorsicht: für die Frage #' + question.id + ' "'+ question.title +'" werden alle Einstellungen überschrieben',

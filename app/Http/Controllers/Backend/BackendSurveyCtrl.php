@@ -148,6 +148,9 @@ class BackendSurveyCtrl extends Controller
         // Try to Delete Some Questions
         $this->deleteQuestions($survey, $request);
 
+        // If Delete Survey
+        $this->tryDeleteSurvey($survey, $request);
+
         // Return the Survey
         return $survey;
     }
@@ -192,14 +195,18 @@ class BackendSurveyCtrl extends Controller
 
     public function deleteQuestions($survey, $req)
     {
-        // Go Through all Sended Question-IDs
-        $oDeleteQuestions   = $survey->questions->find($req['delete_questions_ids'] ?? []);
-
-        // Delete Questions
-        foreach ($oDeleteQuestions as $question)
+        foreach ($survey->questions->find($req['delete_questions_ids'] ?? []) as $question)
         {
-            // Try to Delete Question
             $question->delete();
+        }
+    }
+
+    public function tryDeleteSurvey($survey, $r)
+    {
+        $k = 'force_delete';
+
+        if ($r[$k] === true) {
+            $survey->delete();
         }
     }
 
