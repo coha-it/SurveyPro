@@ -1,86 +1,78 @@
 <template>
-    <div>
-        <h1>Groups</h1>
+  <div>
+    <h1>Groups</h1>
 
-            <UserDataModal
-                sEditText="Gruppen Bearbeiten"
-                sCreateText="Neue Gruppe erstellen"
-                sInputLabel="Gruppenname"
-                sInputLabel2="Gruppenbeschreibung Öffentlich"
-                sInputLabel3="Gruppenbeschreibung für Moderatoren"
-                p_sModel="group"
-                :p_oModels="user.groups_moderating"
-                :p_aHeaders="[
-                    {
-                      name: 'id',
-                      label: this.$t('id'),
-                      field: 'id',
-                    },
-                    {
-                      name: 'name',
-                      label: this.$t('name'),
-                      field: 'name',
-                    },
-                    {
-                      name: 'description_public',
-                      label: this.$t('description_public'),
-                      field: 'description_public',
-                    },
-                    {
-                      name: 'description_mods',
-                      label: this.$t('description_mods'),
-                      field: 'description_mods',
-                    },
-                    {
-                      name: 'updated_at',
-                      label: this.$t('updated_at'),
-                      field: 'updated_at',
-                    },
-                    {
-                      name: 'created_at',
-                      label: this.$t('created_at'),
-                      field: 'created_at',
-                    }
-                ]"
-              />
+    <UserDataModal
+      s-edit-text="Gruppen Bearbeiten"
+      s-create-text="Neue Gruppe erstellen"
+      s-input-label="Gruppenname"
+      s-input-label2="Gruppenbeschreibung Öffentlich"
+      s-input-label3="Gruppenbeschreibung für Moderatoren"
+      s-parent-model="group"
+      :a-parent-models="user.groups_moderating"
+      :a-parent-headers="[
+        {
+          name: 'id',
+          label: this.$t('id'),
+          field: 'id',
+        },
+        {
+          name: 'name',
+          label: this.$t('name'),
+          field: 'name',
+        },
+        {
+          name: 'description_public',
+          label: this.$t('description_public'),
+          field: 'description_public',
+        },
+        {
+          name: 'description_mods',
+          label: this.$t('description_mods'),
+          field: 'description_mods',
+        },
+        {
+          name: 'updated_at',
+          label: this.$t('updated_at'),
+          field: 'updated_at',
+        },
+        {
+          name: 'created_at',
+          label: this.$t('created_at'),
+          field: 'created_at',
+        }
+      ]"
+    />
 
+    <br><br>
+    <!-- Go Through all Groups -->
+    <h2>Gruppe anzeigen</h2>
 
+    <v-combobox
+      v-model="oSelectedGroup"
+      :items="user.groups_moderating"
+      label="Wählen Sie eine moderierende Gruppe"
+      item-text="name"
+      clearable
+    >
+      <template v-slot:item="{ item }">
+        {{ item.name }}&nbsp; <small> #{{ item.id }}</small>
+      </template>
+    </v-combobox>
 
-        <br><br>
-        <!-- Go Through all Groups -->
-        <h2>Gruppe anzeigen</h2>
-
-        <v-combobox
-          v-model="oSelectedGroup"
-          :items="user.groups_moderating"
-          label="Wählen Sie eine moderierende Gruppe"
-          item-text="name"
-          clearable
-        >
-            <template v-slot:item="{ item }">
-                {{ item.name }}&nbsp; <small> #{{ item.id }}</small>
-            </template>
-        </v-combobox>
-
-
-
-        <v-data-table
-            v-if="oGroup && oGroup.users"
-            :headers="headers"
-            :items="oGroup.users"
-            v-model="selected"
-            show-select
-            multi-sort
-            :footer-props="{
-                showFirstLastPage: true,
-            }"
-            dense
-            >
-        </v-data-table>
-
-
-
-    </div>
+    <q-table
+      v-if="oGroup && oGroup.users"
+      v-model="selected"
+      :headers="headers"
+      :items="oGroup.users"
+      show-select
+      multi-sort
+      :footer-props="{
+        showFirstLastPage: true,
+      }"
+      dense
+    />
+  </div>
 </template>
 
 <script>
@@ -89,69 +81,66 @@ import { mapGetters } from 'vuex'
 import UserDataModal from '~/components/BackendUserDataModal'
 
 export default {
-    middleware: 'canCreateGroups',
+  middleware: 'canCreateGroups',
 
-    components: {
-        UserDataModal,
-    },
+  components: {
+    UserDataModal
+  },
 
-    computed: {
-        ...mapGetters({
-            user: 'auth/user',
-        }),
-    },
+  data: () => ({
+    oSelectedGroup: null,
+    oGroup: {},
+    selected: [],
 
+    headers: [
+      {
+        text: 'ID',
+        align: 'left',
+        value: 'id'
+      },
+      {
+        text: 'PAN',
+        value: 'pan.pan'
+      },
+      { text: 'groups', value: 'groups' },
+      { text: 'company', value: 'company' },
+      { text: 'department', value: 'department' },
+      { text: 'location', value: 'location' },
+      { text: 'updated_at', value: 'updated_at' },
+      { text: 'created_at', value: 'created_at' },
+      { text: 'Actions', value: 'action', sortable: false }
+    ]
+  }),
 
-    data: () => ({
-        oSelectedGroup: null,
-        oGroup: {},
-        selected: [],
+  computed: {
+    ...mapGetters({
+      user: 'auth/user'
+    })
+  },
 
+  watch: {
+    oSelectedGroup (group) {
+      if (typeof group === 'object' && group.id) {
+        this.getGroup(group.id)
+      }
+    }
+  },
 
-
-        headers: [
-                {
-                    text: 'ID',
-                    align: 'left',
-                    value: 'id',
-                },
-                {
-                    text: 'PAN',
-                    value: 'pan.pan',
-                },
-                { text: 'groups', value: 'groups'},
-                { text: 'company', value: 'company'},
-                { text: 'department', value: 'department'},
-                { text: 'location', value: 'location'},
-                { text: 'updated_at', value: 'updated_at'},
-                { text: 'created_at', value: 'created_at'},
-                { text: 'Actions', value: 'action', sortable: false },
-        ],
-    }),
-
-    methods: {
-        getGroup(id) {
-            var _this = this;
-            axios.get('/api/get-group', {
-                params: {
-                    id: id
-                }
-            })
-            .then(function(response) {
-                if(response.data) {
-                    _this.oGroup = response.data;
-                }
-            });
+  methods: {
+    getGroup (id) {
+      var _this = this
+      axios.get('/api/get-group', {
+        params: {
+          id: id
         }
-    },
-
-    watch: {
-        oSelectedGroup(group) {
-            if(typeof group === 'object' && group.id) {
-                this.getGroup(group.id);
-            }
-        }
-    },
+      })
+        .then(function (response) {
+          if (response.data) {
+            _this.oGroup = response.data
+          }
+        })
+    }
+  }
 
 }
 </script>

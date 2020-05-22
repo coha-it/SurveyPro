@@ -1,3 +1,4 @@
+/* eslint-disable vue/order-in-components */
 <template>
   <span>
     <q-btn :label="sEditText" color="primary" depressed tile outline class="mt-2 mr-2" @click="editDialog = true" />
@@ -18,16 +19,15 @@
 
           <q-space />
 
-          <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
+          <q-btn dense flat icon="minimize" :disable="!maximizedToggle" @click="maximizedToggle = false">
             <q-tooltip v-if="maximizedToggle" content-class="bg-white text-primary">Minimieren</q-tooltip>
           </q-btn>
-          <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
+          <q-btn dense flat icon="crop_square" :disable="maximizedToggle" @click="maximizedToggle = true">
             <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximieren</q-tooltip>
           </q-btn>
-          <q-btn dense flat icon="close" v-close-popup>
+          <q-btn v-close-popup dense flat icon="close">
             <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
           </q-btn>
-
 
         </q-toolbar>
         <q-card-section>
@@ -35,7 +35,7 @@
           <q-card>
             <q-card-section>
               <!-- New Company -->
-              <q-btn @click="createDialog = true" color="primary" depressed dark >{{ sCreateText }}</q-btn>
+              <q-btn color="primary" depressed dark @click="createDialog = true">{{ sCreateText }}</q-btn>
               <q-dialog v-model="createDialog" persistent>
 
                 <q-card style="min-width: 350px">
@@ -44,31 +44,30 @@
                   </q-card-section>
 
                   <q-card-section>
-                    <q-input dense v-model="item.name" :label="sInputLabel" required autofocus @keyup.enter="prompt = false" />
+                    <q-input v-model="item.name" dense :label="sInputLabel" required autofocus @keyup.enter="prompt = false" />
                     <template v-if="sModel == 'group'">
-                      <q-input :label="sInputLabel2" required v-model="item.description_public" />
-                      <q-input :label="sInputLabel3" required v-model="item.description_mods" />
+                      <q-input v-model="item.description_public" :label="sInputLabel2" required />
+                      <q-input v-model="item.description_mods" :label="sInputLabel3" required />
                     </template>
                   </q-card-section>
 
                   <q-card-actions align="right" class="text-primary">
-                    <q-btn flat :label="$t('cancel')" v-close-popup />
-                    <q-btn flat :label="$t('save')" v-close-popup @click="createModel(item)" />
+                    <q-btn v-close-popup flat :label="$t('cancel')" />
+                    <q-btn v-close-popup flat :label="$t('save')" @click="createModel(item)" />
                   </q-card-actions>
                 </q-card>
 
               </q-dialog>
-              <div class="flex-grow-1"></div>
+              <div class="flex-grow-1" />
 
             </q-card-section>
             <q-table
+              v-if="aHeaders"
               :columns="aHeaders"
               :data="oModels"
               :items-per-page="20"
               class="elevation-1 my-sticky-header-table"
-              v-if="aHeaders">
-
-
+            >
               <template v-slot:body-cell-name="props">
                 <q-td :props="props">
                   <MyPopupEdit :props="props" val="name" :save="save" />
@@ -107,22 +106,44 @@ export default {
     MyPopupEdit
   },
 
-  computed: {
-    ...mapGetters({
-      user: 'auth/user'
-    })
-  },
+  props: {
 
-  props: [
-    'sCreateText',
-    'sEditText',
-    'sInputLabel',
-    'sInputLabel2',
-    'sInputLabel3',
-    'p_sModel',
-    'p_oModels',
-    'p_aHeaders',
-  ],
+    sParentModel: {
+      type: String,
+      required: true
+    },
+    aParentModels: {
+      type: Array,
+      required: true
+    },
+    aParentHeaders: {
+      type: Array,
+      required: true
+    },
+
+    sCreateText: {
+      type: String,
+      required: true
+    },
+    sEditText: {
+      type: String,
+      required: true
+    },
+
+    sInputLabel: {
+      type: String,
+      required: true
+    },
+    sInputLabel2: {
+      type: String,
+      required: true
+    },
+    sInputLabel3: {
+      type: String,
+      required: true
+    }
+
+  },
 
   data () {
     return {
@@ -136,81 +157,87 @@ export default {
       sSearch: '',
 
       // From Parent
-      sModel: this.p_sModel,
-      oModels: this.p_oModels,
+      sModel: this.sParentModel,
+      oModels: this.aParentModels,
 
       // Company Headers
-      aHeaders: this.p_aHeaders || [
+      aHeaders: this.aParentHeaders || [
         {
           name: 'id',
           label: this.$t('id'),
           field: 'id',
-          sortable: true,
+          sortable: true
         },
         {
           name: 'name',
           label: this.$t('name'),
           field: 'name',
-          sortable: true,
+          sortable: true
         },
         {
           name: 'public',
           label: this.$t('public'),
           field: 'public',
-          sortable: true,
+          sortable: true
         },
         {
           name: 'created_by',
           label: this.$t('created_by'),
           field: 'created_by',
-          sortable: true,
+          sortable: true
         },
         {
           name: 'updated_at',
           label: this.$t('updated_at'),
           field: 'updated_at',
-          sortable: true,
+          sortable: true
         },
         {
           name: 'created_at',
           label: this.$t('created_at'),
           field: 'created_at',
-          sortable: true,
-        },
+          sortable: true
+        }
       ],
 
       // Rules
-      minChars: v => v.length >= 1 || this.$t('validation.length.short'),
+      minChars: v => v.length >= 1 || this.$t('validation.length.short')
     }
   },
 
+  computed: {
+    ...mapGetters({
+      user: 'auth/user'
+    })
+  },
+
   methods: {
-    save(item) {
-      if(!item.name) return;
+    save (item) {
+      if (!item.name) return
 
       this.$q.notify({
         message: this.$t('data_saved'),
         color: 'green',
-        timeout: 5000,
+        timeout: 5000
       })
 
-      axios.patch('/api/'+ this.sModel +'/update', {
+      axios.patch('/api/' + this.sModel + '/update', {
         item: item
-      });
+      })
     },
 
     createModel (item) {
-      var _this = this;
-      _this.createDialog = false;
+      var _this = this
+      _this.createDialog = false
 
-      axios.post('/api/'+ this.sModel +'/create', {
+      axios.post('/api/' + this.sModel + '/create', {
         item: item
       }).then(function (response) {
-        _this.oModels.push(response.data);
-        if(item.name) item.name = '';
-        if(item.description_public) item.description_public  = '';
-        if(item.description_mods) item.description_mods = '';
-      });
+        _this.oModels.push(response.data)
+        if (item.name) item.name = ''
+        if (item.description_public) item.description_public = ''
+        if (item.description_mods) item.description_mods = ''
+      })
     },
 
     cancel () {
@@ -222,7 +249,7 @@ export default {
 
     close () {
       // When Edit Dialog Closed
-    },
+    }
   }
 }
 </script>
