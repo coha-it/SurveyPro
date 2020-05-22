@@ -102,32 +102,38 @@
 
     <p>
       <UserDataModal
-        sEditText="Firmen bearbeiten"
-        sCreateText="Neue Firma erstellen"
-        sInputLabel="Firmenname"
-        p_sModel="company"
-        :p_oModels="user.companies" />
+        s-edit-text="Firmen bearbeiten"
+        s-create-text="Neue Firma erstellen"
+        s-input-label="Firmenname"
+        s-parent-model="company"
+        :a-parent-models="user.companies"
+      />
+
       <UserDataModal
-        sEditText="Abteilungen bearbeiten"
-        sCreateText="Neue Abteilung Erstellen"
-        sInputLabel="Abteilungsname"
-        p_sModel="department"
-        :p_oModels="user.departments" />
+        s-edit-text="Abteilungen bearbeiten"
+        s-create-text="Neue Abteilung Erstellen"
+        s-input-label="Abteilungsname"
+        s-parent-model="department"
+        :a-parent-models="user.departments"
+      />
+
       <UserDataModal
-        sEditText="Orte Bearbeiten"
-        sCreateText="Neuen Ort erstellen"
-        sInputLabel="Ortsname"
-        p_sModel="location"
-        :p_oModels="user.locations" />
+        s-edit-text="Orte Bearbeiten"
+        s-create-text="Neuen Ort erstellen"
+        s-input-label="Ortsname"
+        s-parent-model="location"
+        :a-parent-models="user.locations"
+      />
+
       <UserDataModal
-        sEditText="Gruppen Bearbeiten"
-        sCreateText="Neue Gruppe erstellen"
-        sInputLabel="Gruppenname"
-        sInputLabel2="Gruppenbeschreibung Öffentlich"
-        sInputLabel3="Gruppenbeschreibung für Moderatoren"
-        p_sModel="group"
-        :p_oModels="user.groups_moderating"
-        :p_aHeaders="[
+        s-edit-text="Gruppen Bearbeiten"
+        s-create-text="Neue Gruppe erstellen"
+        s-input-label="Gruppenname"
+        s-input-label2="Gruppenbeschreibung Öffentlich"
+        s-input-label3="Gruppenbeschreibung für Moderatoren"
+        s-parent-model="group"
+        :a-parent-models="user.groups_moderating"
+        :a-parent-headers="[
           {
             name: 'id',
             label: this.$t('id'),
@@ -297,41 +303,41 @@
                   <q-menu>
                     <q-list style="min-width: 100px">
                       <BulkGroupChanges
-                        :aItems="user.groups_moderating"
+                        :a-items="user.groups_moderating"
                         :selected="selected"
                       />
 
                       <!-- Menu: Company -->
                       <BulkProfileChanges
-                        :aItems="user.companies"
+                        :a-items="user.companies"
                         :selected="selected"
-                        sId="company_id"
-                        sModel="company"
+                        s-id="company_id"
+                        s-model="company"
                         title="Ändere Firma"
                         label="Firma wählen"
-                        menuText="Firma"
+                        menu-text="Firma"
                       />
 
                       <!-- Menu: Department -->
                       <BulkProfileChanges
-                        :aItems="user.departments"
+                        :a-items="user.departments"
                         :selected="selected"
-                        sId="department_id"
-                        sModel="department"
+                        s-id="department_id"
+                        s-model="department"
                         title="Ändere Abteilung"
                         label="Abteilung wählen"
-                        menuText="Abteilung"
+                        menu-text="Abteilung"
                       />
 
                       <!-- Menu: Location -->
                       <BulkProfileChanges
-                        :aItems="user.locations"
+                        :a-items="user.locations"
                         :selected="selected"
-                        sId="location_id"
-                        sModel="location"
+                        s-id="location_id"
+                        s-model="location"
                         title="Ändere Ort"
                         label="Ort wählen"
-                        menuText="Ort"
+                        menu-text="Ort"
                       />
 
                       <!-- Bulk Sending Mails -->

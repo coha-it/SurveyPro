@@ -110,37 +110,37 @@ export default {
 
     sParentModel: {
       type: String,
-      required: true
+      default: null
     },
     aParentModels: {
       type: Array,
-      required: true
+      default: null
     },
     aParentHeaders: {
       type: Array,
-      required: true
+      default: null
     },
 
     sCreateText: {
       type: String,
-      required: true
+      default: null
     },
     sEditText: {
       type: String,
-      required: true
+      default: null
     },
 
     sInputLabel: {
       type: String,
-      required: true
+      default: null
     },
     sInputLabel2: {
       type: String,
-      required: true
+      default: null
     },
     sInputLabel3: {
       type: String,
-      required: true
+      default: null
     }
 
   },
