@@ -4,7 +4,7 @@
       <q-toolbar>
         <div class="q-mx-sm q-my-md">
           <h4 style="margin: 0;">
-            <div class="text-caption text-gray">{{ $t('from') + ' ' + oSurvey.author }}</div>
+            <div class="text-caption text-gray">{{ getAuthor() }}</div>
             <span>{{ oSurvey.title }}</span>
           </h4>
         </div>
@@ -107,6 +107,12 @@ export default {
   },
 
   methods: {
+
+    getAuthor () {
+      if (this.oSurvey.author) {
+        return this.$t('from') + ' ' + (this.oSurvey.author)
+      }
+    },
 
     getSelectableQuestionHash: function () {
       return this.getQuestionHash(this.getSelectableQuestion())

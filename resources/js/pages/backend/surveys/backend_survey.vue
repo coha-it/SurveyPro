@@ -105,12 +105,12 @@
                 <q-item>
                   <q-item-section>
                     <q-input
+                      v-model="oSurvey.title"
                       :disable="surveyIsUneditable()"
                       dense
                       persistent-hint
                       outlined
                       hint="Titel der Umfrage. Wird angezeigt"
-                      v-model="oSurvey.title"
                       label="Title"
                       required
                       :rules="required"
@@ -123,13 +123,13 @@
                 <q-item>
                   <q-item-section>
                     <q-input
+                      v-model="oSurvey.author"
                       :disable="surveyIsUneditable()"
                       dense
                       persistent-hint
                       outlined
                       hint="Author in Textform. Wird angezeigt"
                       :placeholder="oSurveyOld.author ? oSurveyOld.author : 'z.B.: &quot;Dr. Johannes Müller&quot; '"
-                      v-model="oSurvey.author"
                       label="Autor"
                       required
                     />
@@ -1536,11 +1536,11 @@
                 color="primary"
                 type="submit"
                 class="mr-4 white--text"
-                :disabled="surveyFormIsInvalid()"
+                :disabled="surveyFormIsInvalid() || surveyIsInvalid()"
                 :label="'Umfrage Speichern ' + (isUnsaved() ? '*' : '')"
                 unelevated
                 icon="save"
-                @click="updateSurvey"
+                @click="tryUpdateSurvey"
               />
               &nbsp;
               <!-- <q-btn
@@ -1571,7 +1571,7 @@
                   icon="mdi-content-save"
                   color="green"
                   size="md"
-                  @click="updateSurvey"
+                  @click="tryUpdateSurvey"
                 />
                 <q-fab
                   icon="arrow_drop_up"
@@ -1580,7 +1580,6 @@
                   vertical-actions-align="right"
                 >
                   <q-fab-action
-                    :disable="isUnsaved()"
                     fab
                     dark
                     small
@@ -2195,9 +2194,6 @@ export default {
 
     // Check Tab for Hash
     this.checkTabForHash()
-
-    // // Check Router
-    // this.routerCheckLeaving()
   },
 
   mounted () {
@@ -2551,26 +2547,6 @@ export default {
         // console.log('>>>> Cancel')
       }).onDismiss(() => {
         // console.log('I am triggered on both OK and Cancel')
-      })
-    },
-
-    routerCheckLeaving () {
-      this.$router.beforeEach((to, from, next) => {
-        // ...
-        if (from.name != to.name) {
-          console.log('LEAVING?!?!?!?')
-          return this.checkWarnings(null)
-        }
-      })
-    },
-
-    checkWarnings (e) {
-      // Warn before leaving
-      window.addEventListener('beforeunload', function (e) {
-        var confirmationMessage = 'Unsafed Changes!';
-
-        (e || window.event).returnValue = confirmationMessage
-        return confirmationMessage
       })
     },
 
@@ -2933,6 +2909,18 @@ export default {
       return !this.surveyFormIsValid()
     },
 
+    surveyIsValid () {
+      return (
+        this.oSurvey.start_datetime &&
+        this.oSurvey.end_datetime &&
+        this.oSurvey.title
+      )
+    },
+
+    surveyIsInvalid () {
+      return !this.surveyIsValid()
+    },
+
     surveyIsEditable () {
       return (this.oSurvey.is_editable && this.bEdit) || this.bCreate
     },
@@ -3232,7 +3220,8 @@ export default {
         message: 'Umfrage wirklich zurücksetzen?',
         ok: {
           label: 'Zurücksetzen',
-          color: 'warning'
+          color: 'warning',
+          depressed: true
         },
         cancel: {
           label: 'Abbruch'
@@ -3243,9 +3232,43 @@ export default {
       })
     },
 
-    updateSurvey: function () {
-      var _t = this
+    tryUpdateSurvey: function () {
+      if (
+        this.oSurvey.start_datetime <= this.format_y_m_d_h_m_s() &&
+        this.oSurvey.active
+      ) {
+        this.$q.dialog({
+          html: true,
+          title: 'Warnung!',
+          message: 'Wenn sie diese Umfrage speichern, ist diese im Anschluss <strong>nichtmehr</strong> bearbeitbar. ' +
+                    '<br><br>Dies hat Zwei Gründe: <br>1. Die Umfrage ist als <strong>"Aktiviert"</strong> markiert <br>2. <strong>Das Startdatum</strong> der Umfrage liegt in der Vergangenheit,',
+          ok: {
+            label: 'Trotzdem Speichern',
+            color: 'red',
+            depressed: true
+          },
+          cancel: {
+            label: 'Zurück',
+            depressed: true
+          },
+          persistent: true
+        }).onOk(() => {
+          this.updateSurvey()
+        }).onCancel(() => {
+          this.$q.notify({
+            message: this.$t('Umfrage nicht gespeichert'),
+            position: 'top-right',
+            actions: [{ icon: 'close', color: 'white' }],
+            timeout: 3000
+          })
+        })
+      } else {
+        this.updateSurvey()
+      }
+    },
 
+    updateSurvey () {
+      // Loader
       this.$q.loading.show({
         message: 'Updating Survey',
         delay: 400
@@ -3254,9 +3277,9 @@ export default {
       // Update Users
       this.$store
         .dispatch('surveys/updateSurvey', {
-          survey: _t.oSurvey,
-          delete_questions_ids: _t.aDeleteQuestionsIds,
-          delete_options_ids: _t.aDeleteOptionsIds
+          survey: this.oSurvey,
+          delete_questions_ids: this.aDeleteQuestionsIds,
+          delete_options_ids: this.aDeleteOptionsIds
         })
         .then((e) => {
           // Success
@@ -3294,6 +3317,7 @@ export default {
           this.$q.loading.hide()
         })
     }
+
   }
 }
 </script>
