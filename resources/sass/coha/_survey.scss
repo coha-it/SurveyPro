@@ -42,9 +42,11 @@
   }
 }
 
-.q-checkbox__inner--truthy .q-checkbox__bg {
-  background: var(--option-color);
-  border-color: var(--option-color);
+.survey.wrapper {
+  .q-checkbox__inner--truthy .q-checkbox__bg {
+    background: var(--option-color);
+    border-color: var(--option-color);
+  }
 }
 
 .coha--rating-slider {
