@@ -2378,6 +2378,9 @@ export default {
         }
       }
 
+      // TMP Delete Groups (i dont know why im scared)
+      delete data.groups
+
       for (const i in data.questions) {
         if (data.questions.hasOwnProperty(i)) {
           let q = data.questions[i]
