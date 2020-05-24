@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Surveys</h1>
+    <h1>{{ $t('surveys') }}</h1>
     <SurveysList />
   </div>
 </template>

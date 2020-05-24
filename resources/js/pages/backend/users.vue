@@ -80,7 +80,7 @@
                 color="primary"
                 unelevated
                 class="full-width q-mr-sm"
-                :label="iCreateUsersNumber + ('Zugänge Generieren')"
+                :label="iCreateUsersNumber + (' Zugänge Generieren')"
                 @click="createUsers(iCreateUsersNumber)"
               />
             </q-item>
@@ -484,7 +484,7 @@
             <q-td :props="props">
               <div class="pan--dialog-input c-code-text">
                 <template v-if="props && props.row && props.row.pan.pan && props.row.pan.pan.length > 0">
-                  <span :class="!panIsOk(props.row) ? 'red--text' : ''">
+                  <span :class="!panIsOk(props.row) ? 'text-red' : ''">
                     <span class="pan--part">{{
                       props.row.pan.pan.substring(0,3)
                     }}</span><span class="pan--part">{{
@@ -523,6 +523,7 @@
                       :error="!panIsOk(props.row)"
                       :disabled="panIsLoading"
                       :loading="panIsLoading"
+                      @keydown="changePan(props.row)"
                       @keyup="changePan(props.row)"
                       @change="changePan(props.row)"
                     >
@@ -542,7 +543,9 @@
             <q-td :props="props">
               <div class="pin--dialog-input c-code-text">
                 <template v-if="props && props.row && props.row.pan.pin && props.row.pan.pin.length > 0">
-                  <span :class="!pinIsOk(props.row) ? 'red--text' : ''">
+                  <span
+                    :class="pinIsOk(props.row) ? 'text-grey' : 'text-red'"
+                  >
                     {{ bShowPin ? props.row.pan.pin : '****' }}
                   </span>
                 </template>
@@ -955,6 +958,7 @@
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { setTimeout } from 'timers'
+import {mask} from 'vue-the-mask'
 import dayjs from 'dayjs'
 import UserDataModal from '~/components/BackendUserDataModal'
 import Print from '~/components/BackendUsersPrint'
@@ -974,9 +978,9 @@ export default {
     FileImport
   },
 
-  // directives: {
-  //   mask
-  // },
+  directives: {
+    mask
+  },
 
   data () {
     return {
@@ -1429,7 +1433,7 @@ export default {
     },
 
     pinIsOk (item) {
-      return item.pan && item.pan.pin && item.pan.pin.length == this.pinLength
+      return item.pan && item.pan.pin && item.pan.pin.length === this.pinLength
     },
 
     panIsOk (item) {

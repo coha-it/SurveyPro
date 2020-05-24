@@ -95,6 +95,8 @@
     "password_label": "Passwort",
     "email_label": "E-Mail",
     "Search": "Suchen...",
+    "home": "Startseite",
+    "surveys": "Umfragen",
 
     "bottombar": {
       "menu": "Menü",

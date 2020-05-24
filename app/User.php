@@ -56,7 +56,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     protected $appends = [
         'newsletter',
-        'is_panuser'
+        'is_panuser',
+        'is_adminuser'
     ];
 
     public function getNewsletterAttribute()
@@ -67,6 +68,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function getIsPanUserAttribute()
     {
         return $this->isPanUser();
+    }
+
+    public function getIsAdminUserAttribute()
+    {
+        return $this->isAdminUser();
     }
 
     /**

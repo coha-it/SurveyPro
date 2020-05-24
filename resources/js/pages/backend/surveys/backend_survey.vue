@@ -671,12 +671,14 @@
                               <q-icon
                                 name="mdi-arrow-up"
                                 x-small
+                                class="pointer"
                                 @click="moveUp(props.row, oSurvey.questions)"
                               />
                               {{ props.row.order }}
                               <q-icon
                                 name="mdi-arrow-down"
                                 x-small
+                                class="pointer"
                                 @click="moveDown(props.row, oSurvey.questions)"
                               />
                             </div>
@@ -1280,9 +1282,9 @@
                                                     <q-td>
                                                       <div style="white-space: nowrap;">
                                                         <!-- <q-icon name="mdi-arrow-up" x-small @click="moveUp(props.item, item.options)" /> -->
-                                                        <q-icon name="mdi-arrow-up" x-small @click="moveUp(option.row, props.row.options)" />
+                                                        <q-icon name="mdi-arrow-up" x-small class="pointer" @click="moveUp(option.row, props.row.options)" />
                                                         {{ option.row.order }}
-                                                        <q-icon name="mdi-arrow-down" x-small @click="moveDown(option.row, props.row.options)" />
+                                                        <q-icon name="mdi-arrow-down" x-small class="pointer" @click="moveDown(option.row, props.row.options)" />
                                                       </div>
                                                     </q-td>
 
@@ -1311,7 +1313,7 @@
 
                                                     <!-- Title -->
                                                     <q-td>
-                                                      {{ option.row.title }}
+                                                      <b>{{ option.row.title }}</b>
                                                       <q-popup-edit
                                                         v-model="option.row.title"
                                                         buttons
@@ -1386,7 +1388,7 @@
                                                         :style="'text-transform: uppercase; background-color: ' + option.row.color"
                                                       >
                                                         <span :class="getNegativeColor(option.row.color)">
-                                                          {{ option.row.color || 'no color' }}
+                                                          {{ option.row.color || 'no color' }}
                                                         </span>
                                                         <q-popup-proxy transition-show="scale" transition-hide="scale">
                                                           <q-color
@@ -1794,36 +1796,42 @@ export default {
           color: 'secondary'
         },
         {
-          label: 'Schulnoten (6 bis 1)',
-          value: 'school_notes',
-          id: 'school_notes',
-          load: function (_t, question) {
-            // Load School-Notes Preset:
-            var aNotes = '6 6+ 5- 5 5+ 4- 4 4+ 3- 3 3+ 2- 2 2+ 1- 1'.split(' ')
-            console.log(aNotes)
+          label: 'Schulnoten Erweitert (Mit Plus und Minus)',
+          value: 'school_notes_advanced',
+          id: 'school_notes_advanced',
+          load: (_t, question) => {
+            return this.loadPresetSchoolNotes(question, '6 5- 5 5+ 4- 4 4+ 3- 3 3+ 2- 2 2+ 1- 1 1+')
+          }
+        },
+        {
+          label: 'Schulnoten Einfach',
+          value: 'school_notes_simple',
+          id: 'school_notes_simple',
+          load: (_t, question) => {
+            return this.loadPresetSchoolNotes(question, '6 5 4 3 2 1')
           }
         },
         {
           label: '0 bis 10 Slider',
           value: 'slider_zero_to_ten',
           id: 'slider_zero_to_ten',
-          load: function (_t, question) {
-            return _t.loadPresetToTenSlider(question, 0)
+          load: (_t, question) => {
+            return this.loadPresetToTenSlider(question, 0)
           }
         },
         {
           label: '1 bis 10 Slider',
           value: 'slider_one_to_ten',
           id: 'slider_one_to_ten',
-          load: function (_t, question) {
-            return _t.loadPresetToTenSlider(question, 1)
+          load: (_t, question) => {
+            return this.loadPresetToTenSlider(question, 1)
           }
         },
         {
           label: '1 bis 5 Slider',
           value: 'slider_five',
           id: 'slider_five',
-          load: function (_t, question) {
+          load: (_t, question) => {
             // Change Question
             question.format = 'slider'
             question.min_options = 1
@@ -1889,16 +1897,16 @@ export default {
           label: '3er Slider',
           value: 'slider_three',
           id: 'slider_three',
-          load: function (_t, question) {
-            console.log(question)
+          load: (_t, question) => {
+            return this.loadPresetToThreeSlider(question)
           }
         },
         {
           label: 'Ja / Nein',
           value: 'yes_or_no',
           id: 'yes_or_no',
-          load: function (_t, question) {
-            console.log(question)
+          load: (_t, question) => {
+            return this.loadPresetYesOrNo(question)
           }
         }
       ],
@@ -2413,6 +2421,197 @@ export default {
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
+        }
+      }
+    },
+
+    loadPresetYesOrNo (question) {
+      // Change Question
+      question.format = 'checkboxes'
+      question.min_options = 1
+      question.max_options = 1
+
+      this.addOption({
+        id: null,
+        question_id: question.id,
+        title: 'Nein',
+        value: -1,
+        color: '#cf8c36'
+      }, question)
+
+      this.addOption({
+        id: null,
+        question_id: question.id,
+        title: 'Ja',
+        value: 1,
+        color: '#55a559'
+      }, question)
+    },
+
+    loadPresetToThreeSlider (question) {
+      // Change Question
+      question.format = 'slider'
+      question.min_options = 1
+      question.max_options = 1
+
+      // Change Options
+      for (let i = 1; i <= 3; i++) {
+        var c = '#C6C6C6'
+        var v = 0
+        var t = i
+        var s = ''
+        var d = ''
+
+        switch (i) {
+          case 1:
+            v = -1
+            c = '#cf8c36'
+            s = 'Trifft nicht zu'
+            break
+          case 2:
+            v = 0
+            c = '#c6c6c6'
+            s = 'Teilweise / Mittelmäßig'
+            break
+          case 3:
+            v = 1
+            c = '#55a559'
+            s = 'Trifft zu'
+            break
+        }
+
+        this.addOption({
+          id: this.getRandomId(),
+          question_id: question.id,
+          title: t,
+          value: v,
+          color: c,
+          subtitle: s,
+          description: d
+        }, question)
+      }
+    },
+
+    loadPresetSchoolNotes (question, sNotes) {
+      // Change Question
+      question.format = 'slider'
+      question.min_options = 1
+      question.max_options = 1
+
+      // Load School-Notes Preset:
+      let aNotes = sNotes.split(' ')
+
+      // Change Options
+      for (const i in aNotes) {
+        if (aNotes.hasOwnProperty(i)) {
+          const sNote = aNotes[i]
+
+          let c = '#C6C6C6'
+          let v = 0
+          let t = sNote
+          let s = ''
+          let d = ''
+
+          switch (sNote) {
+            case '6':
+              v = -8
+              c = '#cf8c36'
+              s = 'ungenügend'
+              break
+
+            case '5-':
+              v = -7
+              c = '#cf8c36'
+              s = 'knapp mangelhaft'
+              break
+
+            case '5':
+              v = -6
+              c = '#cf8c36'
+              s = 'mangelhaft'
+              break
+
+            case '5+':
+              v = -5
+              c = '#cf8c36'
+              s = 'voll mangelhaft'
+              break
+
+            case '4-':
+              v = -4
+              c = '#cfae35'
+              s = 'knapp ausreichend'
+              break
+
+            case '4':
+              v = -3
+              c = '#cfae35'
+              s = 'ausreichend'
+              break
+            case '4+':
+              v = -2
+              c = '#cfae35'
+              s = 'voll ausreichend'
+              break
+            case '3-':
+              v = -1
+              c = '#c6c6c6'
+              s = 'knapp befriedigend'
+              break
+            case '3':
+              v = 1
+              c = '#c6c6c6'
+              s = 'befriedigend'
+              break
+            case '3+':
+              v = 2
+              c = '#c6c6c6'
+              s = 'voll befriedigend'
+              break
+            case '2-':
+              v = 3
+              c = '#7ebd82'
+              s = 'knapp gut'
+              break
+            case '2':
+              v = 4
+              c = '#7ebd82'
+              s = 'gut'
+              break
+            case '2+':
+              v = 5
+              c = '#7ebd82'
+              s = 'voll gut'
+              break
+            case '1-':
+              v = 6
+              c = '#55a559'
+              s = 'knapp sehr gut'
+              break
+            case '1':
+              v = 7
+              c = '#55a559'
+              s = 'sehr gut'
+              break
+            case '1+':
+              v = 8
+              c = '#55a559'
+              s = 'voll sehr gut'
+              break
+
+            default:
+              break
+          }
+
+          this.addOption({
+            id: this.getRandomId(),
+            question_id: question.id,
+            title: t,
+            value: v,
+            color: c,
+            subtitle: s,
+            description: d
+          }, question)
         }
       }
     },
@@ -2968,7 +3167,7 @@ export default {
     },
 
     surveyIsEditable () {
-      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate
+      return (this.oSurvey.is_editable && this.bEdit) || this.bCreate || this.user.is_adminuser
     },
 
     surveyIsUneditable () {
@@ -3281,7 +3480,8 @@ export default {
     tryUpdateSurvey: function () {
       if (
         this.oSurvey.start_datetime <= this.format_y_m_d_h_m_s() &&
-        this.oSurvey.active
+        this.oSurvey.active &&
+        !this.user.is_adminuser
       ) {
         this.$q.dialog({
           html: true,

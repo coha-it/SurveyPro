@@ -38,10 +38,13 @@
                 </small>
               </div>
             </div>
+
+            <div class="q-mt-smxxx">
+              {{ oSurvey.desc_short }}
+            </div>
           </q-card-section>
 
           <q-card-section>
-            <div>{{ oSurvey.desc_short }}</div>
             <div class="text-right text-grey text-caption">
               Startet am {{ fhd(oSurvey.start_datetime) }} um {{ fht(oSurvey.start_datetime) }}<br>
               Endet um {{ fhd(oSurvey.end_datetime) }} um {{ fht(oSurvey.end_datetime) }}<br>

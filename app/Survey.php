@@ -112,9 +112,15 @@ class Survey extends Model
     // Methods
     public function isEditable() {
         return
-            $this->isUnfinished() &&
-            $this->isUncanceled() &&
-            $this->isNotInProcess();
+            // If User Is Admin-User - always editable survey
+            auth()->user()->isAdminUser()
+
+            // Or All required functions return true
+            || (
+                $this->isUnfinished() &&
+                $this->isUncanceled() &&
+                $this->isNotInProcess()
+            );
     }
 
     public function hasStarted() {

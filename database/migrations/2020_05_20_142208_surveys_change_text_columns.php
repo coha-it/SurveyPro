@@ -30,10 +30,10 @@ class SurveysChangeTextColumns extends Migration
     public function down()
     {
         Schema::table('surveys', function (Blueprint $table) {
-            $table->string('author')->nullable()->change();
-            $table->string('title')->nullable()->change();
-            $table->string('desc_short')->nullable()->change();
-            $table->string('desc_long')->nullable()->change();
+            // $table->string('author')->nullable()->change();
+            // $table->string('title')->nullable()->change();
+            // $table->string('desc_short')->nullable()->change();
+            // $table->string('desc_long')->nullable()->change();
         });
     }
 }

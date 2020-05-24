@@ -334,6 +334,14 @@ select {
     }
 }
 
+.pin--dialog-input {
+    &:hover {
+        & > span {
+            color: black !important;
+        }
+    }
+}
+
 .pan--dialog-input {
     white-space: nowrap;
 

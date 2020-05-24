@@ -68,7 +68,7 @@
       style="{{ $login_button_styles }}"
     >Jetzt Anmelden</a>
     <br>
-    <span style="{{ $code_style . $login_url_style }}"> {{ str_replace(['http://','https://'], '', env('APP_URL')) }}/p/{{ strtolower($user['pan']['pan']) }} </span>
+    <span style="{{ $code_style . $login_url_style }}"> {{ preg_replace("(^https?://)", "", config('app.url') ) }}/p/{{ strtolower($user['pan']['pan']) }} </span>
 
     <p>
       <strong>PAN:</strong><br>

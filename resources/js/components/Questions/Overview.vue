@@ -84,6 +84,29 @@
           </q-card>
         </q-dialog>
 
+        <q-dialog
+          v-model="bFinishedSurveyDialog"
+          content-class="naked centered finished_survey_dialog"
+          persistent
+        >
+          <q-card>
+            <q-card-section class="text-center full-height">
+              <div class="justify-center full-height full-width text-center items-center flex column">
+                <q-icon name="check_circle" class="text-green" style="font-size: 8rem;" />
+                <br>
+                <h1 class="q-mb-xs">Vielen Dank!</h1>
+                <br>
+                <h6 class="q-ma-xs">Ihre Umfrageergebnisse wurden erfolgreich ausgefüllt</h6>
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-space />
+              <q-btn v-close-popup unelevated label="Ok" color="primary" @click="$router.push('/')" />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+
         <q-btn flat icon="keyboard_arrow_down" :to="'/'" />
       </q-toolbar>
     </q-footer>
@@ -102,7 +125,8 @@ export default {
 
   data () {
     return {
-      bTryFinishDialog: false
+      bTryFinishDialog: false,
+      bFinishedSurveyDialog: false
     }
   },
 
@@ -200,8 +224,8 @@ export default {
           })
 
           setTimeout(() => {
-            this.$router.push('/')
-          }, 1000)
+            this.bFinishedSurveyDialog = true
+          }, 250)
         })
         .catch((e) => {
           if (e && e.response && e.response.data && e.response.data.message) {

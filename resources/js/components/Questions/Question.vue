@@ -45,6 +45,7 @@
                   <q-checkbox
                     v-if="question.max_options > 1"
                     :value="findSelectedOption(question, option) ? true : false"
+                    :style="'--option-color: '+ option.color + ';'"
                     @click.native="toggleAwnserOption(question, option)"
                   />
                   <!-- Single -->
@@ -53,6 +54,7 @@
                     :value="findSelectedOptionId(question, option)"
                     :val="option.id"
                     selected
+                    :style="'--option-color: '+ option.color + ';'"
                     @click.native="toggleAwnserOptionSingle(question, option)"
                   />
                 </q-item-section>
@@ -67,7 +69,7 @@
             </template>
 
             <!-- If Else Slider -->
-            <template v-else-if="question.format == 'slider'">
+            <template v-else-if="question.format.indexOf('slider') !== -1">
               <q-slider
                 :value="getSelectedSliderOptionOrder(question)"
                 :min="getFirstQuestionOption(question)"
@@ -80,6 +82,8 @@
                 class="coha--rating-slider"
                 label-always
                 markers
+                :vertical="question.format === 'slider_vert'"
+                :reverse="question.format === 'slider_vert'"
                 @change="sliderChange"
                 @mousedown.native="sliderInput"
               />
@@ -150,7 +154,6 @@
                     @click="findOrCreateAwnser(question); question_dialog = true"
                   />
                 </template>
-
               </div>
 
               <div v-if="question.is_skippable" class="skippable-wrapper">
@@ -314,6 +317,28 @@ export default {
     nextQuestionRoute (q) {
       return this.questionRoute(q, +1)
     },
+    goTo (a) {
+      this.$router.push(a)
+    },
+    goToQuestion (q) {
+      this.goTo(this.questionRoute(q, 0))
+    },
+    goToOverview () {
+      this.goTo(this.getOverviewHash())
+    },
+    nextUnawnseredQuestion (q) {
+      // Get next Unawnsered Questions
+      const nextUaQuestions = this.oSurvey.questions.filter(e =>
+        (!e.users_awnser || e.users_awnser.skipped) && // Where already Awnsered And
+        e.order > q.order // Where order is bigger
+      )
+
+      if (nextUaQuestions.length) {
+        this.goToQuestion(nextUaQuestions[0])
+      } else {
+        this.goToOverview()
+      }
+    },
     getProgressClasses (survey, question) {
       var r = ['progress']
       var viewedQ = this.getViewedQuestion(survey)
@@ -426,43 +451,29 @@ export default {
     },
 
     sendAwnser (question) {
-      const _t = this
-
-      console.log('jo', question.users_awnser)
-
       this.$store
         .dispatch('surveys/updateOrCreateAwnser', {
           survey_id: question.survey_id,
           question_id: question.id,
           awnser: question.users_awnser
         })
-        .then(function (e) {
+        .then((e) => {
           // Success
           if (!e || !e.response || !e.response.data || !e.response.data.error) {
             // _t.showSnackbarSuccess(_t.$t('data_saved'))
             console.log('data saved')
 
             // Update in Model
-            question.users_awnser = _t.copyObject(e.data)
+            question.users_awnser = this.copyObject(e.data)
 
             // Next Question
-            _t.$router.push(
-              _t.nextQuestionRoute(question)
-            )
+            this.nextUnawnseredQuestion(question)
           }
         })
-        .catch(function (e) {
-          console.log(e)
+        .catch((e) => {
           // Error
-          if (e.reponse && e.reponse.data && e.response.data.error) {
-            var errText = ''
-            var err = e.response.data.error
-            for (var i in err) {
-              errText += ': ' + err[i]
-            }
-            console.log('data UNsaved')
-            // _t.showSnackbarError(_t.$t('data_unsaved') + '<br />' + errText)
-          }
+          console.log(e)
+          this.showSnackbarError(this.$t('data_unsaved') + '<br />' + e)
         })
     }
   }

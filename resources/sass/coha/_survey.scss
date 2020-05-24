@@ -39,8 +39,62 @@
         border: 0;
       }
     }
+  }
+}
+
+.q-checkbox__inner--truthy .q-checkbox__bg {
+  background: var(--option-color);
+  border-color: var(--option-color);
+}
+
+.coha--rating-slider {
+
+  margin: 0 auto;
+
+  .q-slider__track-container {
+    margin-top: -3px;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 5px;
+  }
+
+  .q-slider__track-markers {
+    opacity: .15;
+    :after {
+      height: 100%
+    }
+  }
+
+  &[aria-orientation="horizontal"] {
+    max-width: 350px;
+    .q-slider__track-container {
+      height: 6px;
+    }
+  }
+
+  &[aria-orientation="vertical"] {
+    min-height: 200px;
+    height: 30vh;
+    max-height: 660px;
+    .q-slider__track-container {
+      width: 6px;
+    }
+  }
+}
 
 
+// Survey Questions
+.finished_survey_dialog .q-card {
+  min-width: 320px;
+  max-width: 770px;
+  width: 75vw;
+  min-height: 220px;
+  height: 75vh;
+  max-height: 770px;
+
+  .q-card__actions {
+    bottom: 0;
+    position: absolute;
+    right: 0;
   }
 
 }
