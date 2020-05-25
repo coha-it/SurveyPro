@@ -11,8 +11,12 @@
         </div>
         <div class="row">
           <div class="col-10 sm-10 md-10 self-center">
-            <h1>{{ $t('login_title') }}</h1>
-            <p class="subtitle">{{ $t('login_desc') }}</p>
+            <h1 class="q-mb-none">
+              {{ $t('login_title') }}
+            </h1>
+            <p class="subtitle">
+              {{ $t('login_desc') }}
+            </p>
           </div>
           <div class="col-2 sm-2 md-2 self-center">
             <q-icon name="mdi-account" size="xl" color="white" />
@@ -65,12 +69,22 @@
           <div class="row">
             <div class="col-12 sm-12 md-12 q-my-md self-right">
               <!-- Submit Button -->
-              <q-btn unelevated class="full-width" color="primary" large :loading="form.busy" type="submit">{{ $t('login') }}</q-btn>
+              <q-btn unelevated class="full-width" color="primary" large :loading="form.busy" type="submit">
+                {{ $t('login') }}
+              </q-btn>
             </div>
             <div class="col-12 sm-12 md-12 self-center text-center">
               <br>
-              <p>Neu hier? <router-link :to="{ name: 'register' }" class="small ml-auto my-auto">{{ $t('free_register') }}</router-link></p>
-              <p>Haben Sie Ihr <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">{{ $t('forgot_password') }}</router-link></p>
+              <p>
+                Neu hier? <router-link :to="{ name: 'register' }" class="small ml-auto my-auto">
+                  {{ $t('free_register') }}
+                </router-link>
+              </p>
+              <p>
+                Haben Sie Ihr <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">
+                  {{ $t('forgot_password') }}
+                </router-link>
+              </p>
             </div>
           </div>
         </div>

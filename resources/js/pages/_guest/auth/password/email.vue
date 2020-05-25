@@ -9,14 +9,14 @@
             <Back :to="{name: 'login'}" />
           </div>
         </div>
-        <div class="row">
-          <div class="col-10 col-sm-10 col-md-10" align-self="center">
-            <h1>{{ $t('prm_title') }}</h1>
+        <div class="row self-center">
+          <div class="col-10 col-sm-10 col-md-10 self-center" align-self="center">
+            <h1 class="q-mb-none">{{ $t('prm_title') }}</h1>
             <p class="subtitle">
               {{ $t('prm_desc') }}
             </p>
           </div>
-          <div class="col-2 col-sm-2 col-md-2" align-self="center">
+          <div class="col-2 col-sm-2 col-md-2 self-center" align-self="center">
             <q-icon name="mdi-email" size="xl" />
           </div>
         </div>
