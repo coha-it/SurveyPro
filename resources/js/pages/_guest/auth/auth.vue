@@ -41,7 +41,7 @@ import AuthPanel from '~/components/AuthPanel'
 export default {
 
   middleware: 'guest',
-  layout: 'rightsided',
+  layout: 'RightsidedLayout',
 
   components: {
     AuthPanel

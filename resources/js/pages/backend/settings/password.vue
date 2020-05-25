@@ -23,10 +23,8 @@
 
       <!-- Submit Button -->
       <div class="form-group row">
-        <div class="col-md-9 ml-md-auto">
-          <v-button :loading="form.busy" type="success">
-            {{ $t('update') }}
-          </v-button>
+        <div class="col-md-9 ml-md-auto q-my-md">
+          <q-button :loading="form.busy" type="success" :label="$t('update')" unelevated class="full-width q-mb-xl" />
         </div>
       </div>
     </form>

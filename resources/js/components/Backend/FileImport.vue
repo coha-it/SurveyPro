@@ -72,7 +72,7 @@
                 </ul>
                 Wählen Sie ihre Datei aus und beginnen Sie den Upload<br><br>
                 <q-uploader
-                  url="/import-csv"
+                  url="/api/import-csv"
                   label="Datei auswählen und Hochladen"
                   color="primary"
                   square

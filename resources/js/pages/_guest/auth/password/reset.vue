@@ -100,7 +100,7 @@ import Form from 'vform'
 
 export default {
   middleware: 'guest',
-  layout:'rightsided',
+  layout:'RightsidedLayout',
 
   metaInfo () {
     return { title: this.$t('reset_password') }

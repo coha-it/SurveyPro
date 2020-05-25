@@ -12,7 +12,7 @@
           </v-col>
         </v-row>
 
-        <v-row>  
+        <v-row>
           <v-col cols="12" sm="12" md="12">
             <!-- Alert -->
             <template v-if="success">
@@ -68,7 +68,7 @@ const qs = (params) => Object.keys(params).map(key => `${key}=${params[key]}`).j
 
 export default {
   middleware: 'guest',
-  layout: 'rightsided',
+  layout: 'RightsidedLayout',
 
   async beforeRouteEnter (to, from, next) {
     try {

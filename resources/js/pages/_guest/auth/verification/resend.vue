@@ -3,7 +3,7 @@
     <div class="inner-content">
       <!-- Back and Header -->
       <v-container>
-        <v-row>  
+        <v-row>
           <v-col cols="12" sm="12" md="12">
             <!-- Alert -->
             <alert-success :form="form" :message="status" />
@@ -19,15 +19,15 @@
         <form @submit.prevent="send" @keydown="form.onKeydown($event)">
           <v-row>
             <v-col>
-              
+
                 <!-- Email -->
                 <q-input
-                  v-model="form.email" 
-                  :label="$t('email_label')" 
-                  color='black' 
-                  :error="form.errors.has('email')" 
-                  type="email" 
-                  name="email" 
+                  v-model="form.email"
+                  :label="$t('email_label')"
+                  color='black'
+                  :error="form.errors.has('email')"
+                  type="email"
+                  name="email"
                   required
                   ref="email"
                 />
@@ -50,7 +50,7 @@ import Form from 'vform'
 
 export default {
   middleware: 'guest',
-  layout: 'rightsided',
+  layout: 'RightsidedLayout',
 
   data: () => ({
     status: '',

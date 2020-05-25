@@ -31,7 +31,7 @@ export default {
 
   data: () => ({
     layout: null,
-    defaultLayout: 'app'
+    defaultLayout: 'AppLayout'
   }),
 
   metaInfo () {

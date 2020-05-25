@@ -44,7 +44,7 @@ import Overview from '~/components/Questions/Overview'
 import Question from '~/components/Questions/Question'
 
 export default {
-  layout: 'naked',
+  layout: 'NakedLayout',
   middleware: 'auth',
 
   components: {

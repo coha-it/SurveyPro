@@ -12,7 +12,8 @@
     "go_home": "Zur Startseite",
     "email": "E-Mail",
     "your_email": "Ihre E-Mail Adresse",
-    "check_mails": "Mail wurde versendet!",
+    "check_mails": "E-Mail wurde versendet",
+    "email sent": "E-Mail versendet",
     "remember_me": "Angemeldet bleiben",
     "password": "Passwort",
     "forgot_password": "Passwort vergessen?",
@@ -24,7 +25,6 @@
     "delete": "löschen",
     "your_name": "Ihr Name",
     "toggle_navigation": "Navigation umschalten",
-    "home": "Home",
     "you_are_logged_in": "Sie sind angemeldet!",
     "reset_password": "Passwort zurücksetzen",
     "send_password_reset_link": "Sende Passwort-Zurücksetzen-Link",
@@ -97,7 +97,6 @@
     "Search": "Suchen...",
     "home": "Startseite",
     "surveys": "Umfragen",
-
     "bottombar": {
       "menu": "Menü",
       "profile": "Konto",
@@ -182,6 +181,7 @@
     "description_public": "Beschreibung Öffentlich",
     "Question": "Frage",
     "From": "Von",
+    "from": "von",
     "time since": "Vor",
     "import comment": "Import-Kommentar",
     "contact mail": "Kontakt-Mail",

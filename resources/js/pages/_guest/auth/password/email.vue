@@ -12,7 +12,9 @@
         <div class="row">
           <div class="col-10 col-sm-10 col-md-10" align-self="center">
             <h1>{{ $t('prm_title') }}</h1>
-            <p class="subtitle">{{ $t('prm_desc') }}</p>
+            <p class="subtitle">
+              {{ $t('prm_desc') }}
+            </p>
           </div>
           <div class="col-2 col-sm-2 col-md-2" align-self="center">
             <q-icon name="mdi-email" size="xl" />
@@ -27,27 +29,29 @@
             <div class="col-12 col-sm-12 col-md-12">
               <!-- Email -->
               <q-input
+                ref="email"
                 v-model="form.email"
+                filled
                 :label="$t('email_label')"
-                color='black'
+                color="black"
                 :error="form.errors.has('email')"
                 type="email"
                 name="email"
                 required
-                ref="email"
               />
             </div>
           </div>
 
           <div class="row">
-            <div cols="12" sm="12" md="12" align="right">
+            <div class="col col-12">
               <!-- Submit Button -->
               <q-btn
                 color="primary"
                 size="medium"
-                class="full-width"
+                class="full-width q-mb-md"
                 :loading="form.busy"
                 type="submit"
+                unelevated
                 :label="$t('send_password_reset_link')"
               />
             </div>
@@ -64,7 +68,7 @@ import Back from '~/components/AuthBack.vue'
 
 export default {
   middleware: 'guest',
-  layout: 'rightsided',
+  layout: 'RightsidedLayout',
 
   components: {
     Back
@@ -74,11 +78,11 @@ export default {
     status: '',
     form: new Form({
       email: ''
-    }),
+    })
   }),
 
   methods: {
-    alertError: function() {
+    alertError () {
       this.$q.notify({
         message: this.form.errors,
         position: 'top-right',
@@ -86,12 +90,14 @@ export default {
         timeout: 3000
       })
     },
-    alertSuccess: function() {
+    alertSuccess () {
       this.$q.notify({
-        message: this.$t(this.status),
+        message: this.$t('email sent'),
+        caption: this.$t(this.status),
+        actions: [{ icon: 'close', color: 'white' }],
         position: 'top-right',
         color: 'primary',
-        timeout: 3000
+        timeout: 10000
       })
     },
     async send () {

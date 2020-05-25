@@ -25,6 +25,6 @@ export default {
   //   return { title: this.$t('home') }
   // },
 
-  created: function () {}
+  mounted: function () {}
 }
 </script>

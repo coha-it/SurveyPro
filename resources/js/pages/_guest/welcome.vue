@@ -33,7 +33,7 @@ import { mapGetters } from 'vuex'
 import Footer from '~/components/FooterGuest'
 
 export default {
-  layout: 'naked',
+  layout: 'NakedLayout',
   middleware: 'guest',
 
   components: {

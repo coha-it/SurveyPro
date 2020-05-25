@@ -1,7 +1,6 @@
 <template>
   <div class="rightsided-content coha--register-wrapper">
     <div class="inner-content">
-
       <!-- Back and Header -->
       <div class="container">
         <div class="row">
@@ -12,14 +11,15 @@
         <div class="row">
           <div class="col col-10 col-sm-12 col-md-12 align-center">
             <h1>{{ $t('register_title') }}</h1>
-            <p class="subtitle">{{ $t('register_desc') }}</p>
+            <p class="subtitle">
+              {{ $t('register_desc') }}
+            </p>
           </div>
           <div class="col col-2 col-sm-12 col-md-12 align-center">
             <q-icon name="account" x-large color="white" />
           </div>
         </div>
       </div>
-
 
       <!-- Form -->
       <template v-if="mustVerifyEmail">
@@ -32,32 +32,34 @@
             <div class="row">
               <div class="col col-12 col-sm-12 md-12">
                 <!-- Email -->
-                <q-input 
-                  v-model="form.email" 
-                  :label="$t('email_label')" 
-                  color='black' 
-                  :error="form.errors.has('email')" 
-                  type="email" 
-                  name="email" 
-                  required
+                <q-input
                   ref="email"
+                  v-model="form.email"
+                  filled
+                  :label="$t('email_label')"
+                  color="black"
+                  :error="form.errors.has('email')"
+                  type="email"
+                  name="email"
+                  required
                 />
               </div>
             </div>
             <div class="row">
               <div class="col col-12 col-sm-12 md-12">
                 <!-- Password -->
-                <q-input 
-                v-model="form.password" 
-                :label="$t('password_label')" 
-                :error="form.errors.has('password')"  
-                name="password" 
-                :type="show1 ? 'text' : 'password'"
-                :append-icon="show1 ? 'visibility' : 'visibility_off'"
-                @click:append="show1 = !show1"
-                required
-                color="black"
-                :hint="form.password.length + ' / 6 ' + $t('password_hint')"
+                <q-input
+                  v-model="form.password"
+                  filled
+                  :label="$t('password_label')"
+                  :error="form.errors.has('password')"
+                  name="password"
+                  :type="show1 ? 'text' : 'password'"
+                  :append-icon="show1 ? 'visibility' : 'visibility_off'"
+                  required
+                  color="black"
+                  :hint="form.password ? form.password.length + ' / 6 ' + $t('password_hint') : false"
+                  @click:append="show1 = !show1"
                 />
               </div>
             </div>
@@ -65,34 +67,31 @@
             <div class="row">
               <div class="col col-12 col-sm-12 md-12">
                 <!-- Password Repeat -->
-                <q-input 
-                v-model="form.password_confirmation" 
-                :label="$t('password_label')" 
-                color='black' 
-                :error="form.errors.has('password_confirmation')"  
-                name="password_confirmation" 
-                :type="show1 ? 'text' : 'password'"
-                :append-icon="show1 ? 'visibility' : 'visibility_off'"
-                @click:append="show1 = !show1"
-                required 
-                :hint="$t('password_repeat_hint')"
-
+                <q-input
+                  v-model="form.password_confirmation"
+                  filled
+                  :label="$t('password_label')"
+                  color="black"
+                  :error="form.errors.has('password_confirmation')"
+                  name="password_confirmation"
+                  :type="show1 ? 'text' : 'password'"
+                  :append-icon="show1 ? 'visibility' : 'visibility_off'"
+                  required
+                  :hint="form.password_confirmation ? $t('password_repeat_hint') : false"
+                  @click:append="show1 = !show1"
                 />
               </div>
             </div>
 
             <div class="row">
-              <div class="col col-12 col-sm-12 md-12 align-right">
+              <div class="col col-12 col-sm-12 md-12 align-right q-my-md">
                 <!-- Submit Button -->
-                <q-btn color="primary" large block :loading="form.busy" type="submit" :label="$t('register')" />
+                <q-btn color="primary" class="full-width" unelevated large block :loading="form.busy" type="submit" :label="$t('register')" />
               </div>
             </div>
-          
           </div>
-
         </q-form>
         <!-- End Form -->
-
       </template>
     </div>
   </div>
@@ -104,7 +103,7 @@ import Back from '~/components/AuthBack.vue'
 
 export default {
   middleware: 'guest',
-  layout: 'rightsided',
+  layout: 'RightsidedLayout',
   components: {
     Back
   },
@@ -125,8 +124,8 @@ export default {
     mustVerifyEmail: false
   }),
 
-  mounted(){
-    this.$refs.email.focus();
+  mounted () {
+    this.$refs.email.focus()
   },
 
   methods: {
@@ -152,21 +151,20 @@ export default {
       }
     },
 
-    passwordIsNotCorrect() {
-      let a = this.form.password;
-      let b = this.form.password_confirmation;
+    passwordIsNotCorrect () {
+      let a = this.form.password
+      let b = this.form.password_confirmation
 
-
-      if(a === '' || b === '') {
-        return false;
+      if (a === '' || b === '') {
+        return false
       }
 
-      if(a === b) {
-        return false;
+      if (a === b) {
+        return false
       }
 
-      return true;
-    },
+      return true
+    }
 
   }
 }

@@ -207,6 +207,7 @@ select {
 .coha--login-wrapper {
     color: rgba(0,0,0,.6);
     background-color: #b6b6b6;
+    // background-color: rgba(182, 182, 182, 0.75);
 
     & + .footer {
         background-color: rgb(171, 171, 171);
@@ -216,6 +217,7 @@ select {
 // Register
 .coha--register-wrapper {
     background-color: #9ac0c9;
+    background-color: rgba(154, 192, 201, 0.62);
 
     & + .footer {
         background-color: #9ac0c9;
@@ -226,7 +228,8 @@ select {
 .coha--pan-wrapper {
 
     & + .footer {
-        background-color: #d2bc37;
+        background-color: rgb(232, 208, 62);
+        background-color: rgba(232, 208, 62, 0.85);
     }
 
     input {

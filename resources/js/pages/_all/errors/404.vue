@@ -16,7 +16,7 @@
 <script>
 export default {
   name: 'NotFound',
-  layout: 'naked'
+  layout: 'NakedLayout'
 }
 </script>
 

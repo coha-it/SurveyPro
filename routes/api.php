@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     // Get all users surveys which he is membering
     Route::get('surveys-membering', 'SurveyCtrl@getMemberingSurveys');
     Route::get('survey-fillable', 'SurveyCtrl@getFillableSurvey');
+    Route::get('first-survey-fillable', 'SurveyCtrl@getFirstSurveyFillable');
 
     // Update or create Awnser
     Route::post('update-or-create-awnser', 'SurveyCtrl@httpUpdateOrCreateAwnser');
@@ -96,6 +97,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         // Send Contact Mail to Pan-Users
         Route::post('send-entrance-mail', 'MailCtrl@sendEntranceMail');
+
+        // Route for Importing CSV Files
+        Route::post('import-csv', 'ImportCtrl@importCsv');
 
         // User who can Create Surveys
         Route::group(['middleware' => ['auth.user.can_create_surveys'], 'prefix' => 'backend' ], function()

@@ -10,10 +10,12 @@
         <div class="row">
           <div class="col-10 col-sm-10 col-md-10 self-center">
             <h1>{{ $t('pan_title') }}</h1>
-            <p class="subtitle">{{ $t('pan_desc') }}</p>
+            <p class="subtitle">
+              {{ $t('pan_desc') }}
+            </p>
           </div>
           <div class="col-2 col-sm-2 col-md-2 self-center">
-            <q-icon name="mdi-dialpad" size="xl"></q-icon>
+            <q-icon name="mdi-dialpad" size="xl" />
           </div>
         </div>
         <div class="row">
@@ -79,17 +81,18 @@
 <script>
 import Form from 'vform'
 import Back from '~/components/AuthBack.vue'
-import {mask} from 'vue-the-mask'
+import { mask } from 'vue-the-mask'
+import axios from 'axios'
 
 export default {
   middleware: 'guest',
-  layout: 'rightsided',
+  layout: 'RightsidedLayout',
   components: {
     Back
   },
 
   directives: {
-    mask,
+    mask
   },
 
   data: () => ({
@@ -100,95 +103,94 @@ export default {
       pin: ''
     }),
     snackbar: false,
-    snackbarText: '',
+    snackbarText: ''
   }),
 
-  created: function() {
+  created: function () {
     // Check if PAN is in URL
-    var pathMatch = this.$router.history.current.params.pathMatch;
-    if(pathMatch)
-    {
-      var urlPan = pathMatch.replace("/", "");
-      if(urlPan)
-      {
-        this.form.pan = urlPan;
+    var pathMatch = this.$router.history.current.params.pathMatch
+    if (pathMatch) {
+      var urlPan = pathMatch.replace('/', '')
+      if (urlPan) {
+        this.form.pan = urlPan
       }
     }
   },
 
-  mounted(){
-    this.focusPan();
-    this.changePan();
+  mounted () {
+    this.focusPan()
+    this.changePan()
   },
 
   methods: {
 
-    getLengthHint(text, max) {
-      if(text && max) {
-        return text.replace(/\s/g, '').length + ' / ' + (max - 1);
+    getLengthHint (text, max) {
+      if (text && max) {
+        return text.replace(/\s/g, '').length + ' / ' + (max - 1)
       }
     },
 
-    changePan() {
-      this.form.pan = this.form.pan.toUpperCase();
-      if(this.panIsFull()) {
-        if(this.pinIsFull()) {
-          this.loginpan();
+    changePan () {
+      this.form.pan = this.form.pan.toUpperCase()
+      if (this.panIsFull()) {
+        if (this.pinIsFull()) {
+          this.loginpan()
         } else {
-          this.focusPin();
+          this.focusPin()
         }
       }
     },
 
-    changePin() {
-      if(this.pinIsFull()) {
-        if(this.panIsFull()) {
-          this.loginpan();
+    changePin () {
+      if (this.pinIsFull()) {
+        if (this.panIsFull()) {
+          this.loginpan()
         } else {
-          this.focusPan();
+          this.focusPan()
         }
       }
     },
 
-    focusPin() {
-      if(this.$refs.pin) {
-        this.$refs.pin.focus();
+    focusPin () {
+      if (this.$refs.pin) {
+        this.$refs.pin.focus()
       }
     },
 
-    focusPan() {
-      if(this.$refs.pan) {
-        this.$refs.pan.focus();
+    focusPan () {
+      if (this.$refs.pan) {
+        this.$refs.pan.focus()
       }
     },
 
-    panIsFull() {
-      return this.form.pan.length >= this.pan_maxlength;
+    panIsFull () {
+      return this.form.pan.length >= this.pan_maxlength
     },
 
-    pinIsFull() {
-      return this.form.pin.length >= this.pin_maxlength;
+    pinIsFull () {
+      return this.form.pin.length >= this.pin_maxlength
     },
-
 
     async loginpan () {
+      if (this.form.busy) return
 
-      var _this = this;
-
-      if(this.form.busy) return;
+      // Start Loading
+      this.$q.loading.show({
+        message: 'Anmeldung läuft ...'
+      })
 
       // Submit the form.
       const { data } = await this.form.post('/api/loginpan')
-      .catch((error) => {
-        _this.form.pin = '';
-        if(error && error.response && error.response.data) {
-          this.$q.notify({
-            message: error.response.data.message,
-            icon: 'error',
-            color: 'error',
-          });
-        }
-      });
+        .catch((error) => {
+          this.form.pin = ''
+          if (error && error.response && error.response.data) {
+            this.$q.notify({
+              message: error.response.data.message,
+              icon: 'error',
+              color: 'error'
+            })
+          }
+        })
 
       // Save the token.
       this.$store.dispatch('auth/saveToken', {
@@ -199,12 +201,36 @@ export default {
       // Fetch the user.
       await this.$store.dispatch('auth/fetchUser')
 
-      // Redirect home.
-      this.$router.push({ name: 'home' })
-
+      // After Login
+      await this.afterLogin()
     },
 
-  },
+    afterLogin () {
+      axios.get('/api/first-survey-fillable').then((e) => {
+        // Stop loading
+        this.$q.loading.hide()
+
+        // Try get first survey
+        const survey = e.data
+        if (survey && survey.id) {
+          // Go to First Open Survey
+          this.$router.push({
+            name: 'survey',
+            params: {
+              id: survey.id
+            }
+          })
+        } else {
+          // Redirect home.
+          this.$router.push({ name: 'home' })
+        }
+      }).catch((e) => {
+        // Stop Loading
+        this.$q.loading.hide()
+      })
+    }
+
+  }
 
 }
 </script>

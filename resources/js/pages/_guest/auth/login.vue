@@ -29,6 +29,7 @@
               <q-input
                 ref="email"
                 v-model="form.email"
+                filled
                 :label="$t('email_label')"
                 color="black"
                 :error="form.errors.has('email')"
@@ -43,6 +44,7 @@
               <!-- Password -->
               <q-input
                 v-model="form.password"
+                filled
                 :label="$t('password_label')"
                 color="black"
                 :error="form.errors.has('password')"
@@ -57,13 +59,13 @@
           <div class="row">
             <div class="col-12 sm-12 md-12" style="padding-bottom: 0;">
               <!-- Remember Me -->
-              <q-checkbox v-model="remember" color="primary" :label="$t('remember_me')" name="remember"/>
+              <q-checkbox v-model="remember" color="primary" :label="$t('remember_me')" name="remember" />
             </div>
           </div>
           <div class="row">
-            <div class="col-12 sm-12 md-12 self-right">
+            <div class="col-12 sm-12 md-12 q-my-md self-right">
               <!-- Submit Button -->
-              <q-btn class="full-width" color="primary" large :loading="form.busy" type="submit">{{ $t('login') }}</q-btn>
+              <q-btn unelevated class="full-width" color="primary" large :loading="form.busy" type="submit">{{ $t('login') }}</q-btn>
             </div>
             <div class="col-12 sm-12 md-12 self-center text-center">
               <br>
@@ -84,7 +86,7 @@ import Back from '~/components/AuthBack.vue'
 export default {
   name: 'Login',
   middleware: 'guest',
-  layout: 'rightsided',
+  layout: 'RightsidedLayout',
   components: {
     Back
   },
@@ -133,9 +135,6 @@ export default {
 
       // Fetch the user.
       await this.$store.dispatch('auth/fetchUser')
-
-      // Redirect home.
-      this.$router.push({ name: 'home' })
     }
   }
 

@@ -134,7 +134,7 @@ export default {
 
     getAuthor () {
       if (this.oSurvey.author) {
-        return this.$t('from') + ' ' + (this.oSurvey.author)
+        return this.$t('From') + ' ' + (this.oSurvey.author)
       }
     },
 

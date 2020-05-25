@@ -11,9 +11,8 @@
 |
 */
 
-Route::get('allowed-surveys', 'SurveyCtrl@getAllowedSurveys');
-Route::get('fillable-surveys', 'SurveyCtrl@getFillableSurveys');
-
+// Route::get('allowed-surveys', 'SurveyCtrl@getAllowedSurveys');
+// Route::get('fillable-surveys', 'SurveyCtrl@getFillableSurveys');
 
 // DEBUG
 // Route::get('debug/pan-mail', function() {
@@ -22,37 +21,30 @@ Route::get('fillable-surveys', 'SurveyCtrl@getFillableSurveys');
 //     ]);
 // });
 
-Route::group(['middleware' => 'auth.user.admin'], function () {
+// Route::group(['middleware' => 'auth.user.admin'], function () {
 
-    Route::get('sendmail', function() {
-        Mail::send('welcome', [], function($message) {
-            $message->to('a.bachschmid@corporate-happiness.de')->subject('Ach halli hallo ich bin survey');
-        });
-    });
+    // Route::get('awnsers-1', function () {
+    //     dd(
+    //         Auth()->user()->fillableSurveys()->find(22) // find survey
+    //         ->questions->find(108) // Find question
+    //         ->question_options->find(141) // Find Options
+    //         ->awnser_options->find(1) // Find Awnser Options
+    //         ->awnser->toArray()
+    //     );
+    // });
 
+    // Route::get('create-awnser-1', function () {
+    //         $aw = Auth()->user()->fillableSurveys()->find(22) // find survey
+    //         ->questions->find(109) // Find question
+    //         ->awnser()->updateOrCreate([
+    //             'user_id' => Auth()->user()->id
+    //         ]);
 
-    Route::get('awnsers-1', function () {
-        dd(
-            Auth()->user()->fillableSurveys()->find(22) // find survey
-            ->questions->find(108) // Find question
-            ->question_options->find(141) // Find Options
-            ->awnser_options->find(1) // Find Awnser Options
-            ->awnser->toArray()
-        );
-    });
-
-    Route::get('create-awnser-1', function () {
-            $aw = Auth()->user()->fillableSurveys()->find(22) // find survey
-            ->questions->find(109) // Find question
-            ->awnser()->updateOrCreate([
-                'user_id' => Auth()->user()->id
-            ]);
-
-            $aw->awnser_options()->updateOrCreate([
-                'option_id' => 138
-            ]);
-            // ->question_options->find(141) // Find Options
-    });
+    //         $aw->awnser_options()->updateOrCreate([
+    //             'option_id' => 138
+    //         ]);
+    //         // ->question_options->find(141) // Find Options
+    // });
 
     // Test Surveys
     // Route::get('show-surveys', function() {
@@ -109,38 +101,38 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
     //     return '';
     // });
 
-    Route::get('update/group', function() {
-        // Update a Group which you are Moderating
-        $g = App\User::find(5)->groupsModerating()->find(2);
+    // Route::get('update/group', function() {
+    //     // Update a Group which you are Moderating
+    //     $g = App\User::find(5)->groupsModerating()->find(2);
 
-        try {
-            $g->update(['name' => rand(0, 1000) ]);
-            return $g;
-        } catch (\Throwable $th) {
-            return "ne man";
-        }
-    });
+    //     try {
+    //         $g->update(['name' => rand(0, 1000) ]);
+    //         return $g;
+    //     } catch (\Throwable $th) {
+    //         return "ne man";
+    //     }
+    // });
 
-    Route::get('groups', function() {
+    // Route::get('groups', function() {
 
-        // Get All Groups from User with id 5 which he can moderate
-        dd(App\User::find(5)->groupsModerating);
+    //     // Get All Groups from User with id 5 which he can moderate
+    //     dd(App\User::find(5)->groupsModerating);
 
-        // Get All Groups in which user with id 11 is a part of
-        dd(App\User::find(11)->groups);
+    //     // Get All Groups in which user with id 11 is a part of
+    //     dd(App\User::find(11)->groups);
 
-        // Get all Members from current User's Group
-        dd(Auth()->user()->groups->first()->users);
-        // Or like This
-        dd(Auth()->user()->groups()->first()->users()->get());
+    //     // Get all Members from current User's Group
+    //     dd(Auth()->user()->groups->first()->users);
+    //     // Or like This
+    //     dd(Auth()->user()->groups()->first()->users()->get());
 
-        // Get all Groups from current User
-        dd(Auth()->user()->groups);
-    });
+    //     // Get all Groups from current User
+    //     dd(Auth()->user()->groups);
+    // });
 
-    Route::get('group-surveys', function() {
-        dd(Auth()->user()->groupSurveys());
-    });
+    // Route::get('group-surveys', function() {
+    //     dd(Auth()->user()->groupSurveys());
+    // });
 
 
     // Route::get('allowed-surveys', function() {
@@ -162,46 +154,42 @@ Route::group(['middleware' => 'auth.user.admin'], function () {
     // });
 
 
-    Route::get('survey-question', function() {
-        // dd(Auth()->user()->surveys()->find(12)->questions);
-        // dd(App\Question::find(1)->survey);
-        // dd(App\Question::find(1)->option);
+    // Route::get('survey-question', function() {
+    //     // dd(Auth()->user()->surveys()->find(12)->questions);
+    //     // dd(App\Question::find(1)->survey);
+    //     // dd(App\Question::find(1)->option);
 
-        // dd(App\QuestionOption::find(1)->question->with(['option'])->get());
-        // echo "<pre><code>";
-        // print_r(App\QuestionOption::find(1)->question->toArray());
-    });
+    //     // dd(App\QuestionOption::find(1)->question->with(['option'])->get());
+    //     // echo "<pre><code>";
+    //     // print_r(App\QuestionOption::find(1)->question->toArray());
+    // });
 
-    // Get PAN and then get User
-    Route::get('user/pan', function() {
-        dd(
-            App\UserPan::find(12)->user()->first()->id
-        );
+    // // Get PAN and then get User
+    // Route::get('user/pan', function() {
+    //     dd(
+    //         App\UserPan::find(12)->user()->first()->id
+    //     );
 
-        return "";
-    });
+    //     return "";
+    // });
 
-    // Get Companies created by the User
-    Route::get('companies', function() {
-        dd(Auth()->user()->createdCompanies);
-        return '';
-    });
+    // // Get Companies created by the User
+    // Route::get('companies', function() {
+    //     dd(Auth()->user()->createdCompanies);
+    //     return '';
+    // });
 
-    Route::get('creator', function() {
-        dd(Auth()->user()->creator->pan);
-        return '';
-    });
+    // Route::get('creator', function() {
+    //     dd(Auth()->user()->creator->pan);
+    //     return '';
+    // });
 
-    Route::get('users', function() {
-        dd(Auth()->user()->users);
-        return '';
-    });
+    // Route::get('users', function() {
+    //     dd(Auth()->user()->users);
+    //     return '';
+    // });
 
-    // Route for Importing CSV Files
-    Route::post('import-csv', 'ImportCtrl@importCsv');
-
-});
-
+// });
 
 Route::get('{path}', function () {
     return view('index');

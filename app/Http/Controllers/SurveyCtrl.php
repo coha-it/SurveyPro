@@ -38,7 +38,19 @@ class SurveyCtrl extends Controller
     // Get the Membering and Fillable Surveys
     public function getFillableSurvey(Request $request) {
         return json_encode(
-            $request->user()->fillableSurvey($request->id)
+            $request
+                ->user()
+                ->fillableSurvey($request->id)
+        );
+    }
+
+    // Get the Membering and Fillable Surveys
+    public function getFirstSurveyFillable(Request $request) {
+        return json_encode(
+            $request
+                ->user()
+                ->fillableSurveys()
+                ->first()
         );
     }
 

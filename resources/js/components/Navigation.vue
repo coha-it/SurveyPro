@@ -14,26 +14,28 @@
           </q-item-section>
         </q-item>
 
-        <q-list
-          v-for="(cat, key) in sidenav"
-          :key="key"
-        >
-          <template v-if="!(cat.hide_for_pan && user.is_panuser) && !(cat.hide_for_pan && !user.right)">
-            <template v-if="cat.title">
-              <q-separator spaced />
-              <q-item-label header>Verwaltung</q-item-label>
-            </template>
+        <template v-if="user">
+          <q-list
+            v-for="(cat, key) in sidenav"
+            :key="key"
+          >
+            <template v-if="!(cat.hide_for_pan && user.is_panuser) && !(cat.hide_for_pan && !user.right)">
+              <template v-if="cat.title">
+                <q-separator spaced />
+                <q-item-label header>Verwaltung</q-item-label>
+              </template>
 
-            <q-item v-for="item in cat.pages" :key="item.title" v-ripple color="red" exact :to="item.route" clickable>
-              <q-item-section avatar>
-                <q-icon :name="item.icon" />
-              </q-item-section>
-              <q-item-section>
-                {{ $t( item.title) }}
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-list>
+              <q-item v-for="item in cat.pages" :key="item.title" v-ripple color="red" exact :to="item.route" clickable>
+                <q-item-section avatar>
+                  <q-icon :name="item.icon" />
+                </q-item-section>
+                <q-item-section>
+                  {{ $t( item.title) }}
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-list>
+        </template>
       </div>
 
       <!-- Bottom of Sidenav -->
