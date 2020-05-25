@@ -118,7 +118,12 @@ export default {
   }),
 
   created: function () {
-
+    // Copy Email from Localstorage if Available
+    const lEmail = localStorage.email
+    if (lEmail) {
+      this.form.email = JSON.parse(JSON.stringify(lEmail))
+      localStorage.removeItem('email')
+    }
   },
 
   mounted () {
@@ -149,6 +154,9 @@ export default {
 
       // Fetch the user.
       await this.$store.dispatch('auth/fetchUser')
+
+      // Redirect home.
+      this.$router.push({ name: 'home' })
     }
   }
 
