@@ -11,16 +11,6 @@
 |
 */
 
-// Route::get('allowed-surveys', 'SurveyCtrl@getAllowedSurveys');
-// Route::get('fillable-surveys', 'SurveyCtrl@getFillableSurveys');
-
-// DEBUG
-// Route::get('debug/pan-mail', function() {
-//     return view('emails.entrance', [
-//         'user' => auth()->user()
-//     ]);
-// });
-
 // Route::group(['middleware' => 'auth.user.admin'], function () {
 
     // Route::get('awnsers-1', function () {
@@ -191,6 +181,4 @@
 
 // });
 
-Route::get('{path}', function () {
-    return view('index');
-})->where('path', '(.*)');
+Route::get('{path}', 'RouteCtrl@index')->where('path', '(.*)');

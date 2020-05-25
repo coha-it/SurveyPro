@@ -61,6 +61,7 @@
                 :maxlength="pin_maxlength"
                 input-class="big-input secured"
                 persistent-hint
+                inputmode="numeric"
                 @input="changePin"
               >
                 <template v-slot:hint>
