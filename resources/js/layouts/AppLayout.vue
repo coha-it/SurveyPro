@@ -41,17 +41,17 @@ export default {
   },
 
   methods: {
-    toggleNavigation(state) {
-      this.left = state;
-      this.callChild();
+    toggleNavigation (state) {
+      this.left = state
+      this.callChild()
     },
 
-    callChild() {
-      this.$refs.childRef.setNavigation(this.left);
+    callChild () {
+      this.$refs.childRef.setNavigation(this.left)
     },
 
-    navigationStateChanged(state) {
-      this.left = state;
+    navigationStateChanged (state) {
+      this.left = state
     }
   }
 }

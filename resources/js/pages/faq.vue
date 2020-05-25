@@ -1,80 +1,53 @@
 <template>
-  <div>
+  <div class="q-pa-md" style="max-width: 770px">
     <h1>FAQ</h1>
     <p>Frequently asked questions</p>
 
-    <input v-model="search" type="text" placeholder="Search title..">
+    <q-toolbar class="rounded-borders">
+      <q-space />
+      <q-input
+        v-model="search"
+        input-class="text-right"
+        type="text"
+        placeholder="Filter"
+        :autofocus="true"
+        borderless
+      >
+        <template v-slot:append>
+          <q-icon v-if="search === ''" name="search" />
+          <q-icon v-else name="clear" class="cursor-pointer" @click="search = ''" />
+        </template>
+      </q-input>
+    </q-toolbar>
 
-    <template>
-      <q-card class="mx-auto">
-        <q-list two-line>
-          <template v-for="(item, index) in filteredList">
-            <div :key="item.title">
-              <q-item>
-                <template>
-                  <q-item-content>
-                    <q-item-title v-text="item.title" />
-                    <q-item-subtitle class="text--primary" v-text=" 'Frage'+ ': ' +item.headline" />
-                    <q-item-subtitle v-text="'Antwort' + ': '+ item.subtitle" />
-                  </q-item-content>
-                  <q-item-action>
-                    <q-icon text color="grey lighten-1" @click="onClickToggle(item)">
-                      <template v-if="item.active">
-                        keyboard_arrow_up
-                      </template>
-                      <template v-else>
-                        keyboard_arrow_down
-                      </template>
-                    </q-icon>
-                  </q-item-action>
-                </template>
-              </q-item>
+    <q-list bordered>
+      <template>
+        <template v-for="(item, index) in filteredList">
+          <div :key="item.title">
+            <Item :item="item" />
+            <q-separator />
+          </div>
+        </template>
 
-              <template>
-                <q-fade-transition mode="out-in">
-                  <div v-show="item.active" style="padding: 5px 15px 20px;" class="mx-auto">
-                    {{ item.text }}
-                  </div>
-                </q-fade-transition>
-              </template>
-
-              <q-separator v-if="index + 1 < items.length" :key="index" />
-            </div>
-          </template>
-
-          <template v-for="(item, index) in unfilteredList">
-            <div :key="item.title">
-              <q-item disabled>
-                <template>
-                  <q-item-content>
-                    <q-item-title v-text="item.title" />
-                    <q-item-subtitle class="text--primary" v-text=" 'Frage'+ ': ' +item.headline" />
-                    <q-item-subtitle v-text="'Antwort' + ': '+ item.subtitle" />
-                  </q-item-content>
-                  <q-item-action>
-                    <q-icon text color="grey lighten-1" @click="onClickToggle(item)">
-                      <template v-if="item.active">
-                        keyboard_arrow_up
-                      </template>
-                      <template v-else>
-                        keyboard_arrow_down
-                      </template>
-                    </q-icon>
-                  </q-item-action>
-                </template>
-              </q-item>
-
-              <q-separator v-if="index + 1 < items.length" :key="index" />
-            </div>
-          </template>
-        </q-list>
-      </q-card>
-    </template>
+        <template v-for="(item, index) in unfilteredList">
+          <div :key="item.title">
+            <Item :item="item" :disable="true" />
+            <q-separator />
+          </div>
+        </template>
+      </template>
+    </q-list>
   </div>
 </template>
 
 <script>
+import Item from '~/components/FaqItem'
+
 export default {
+
+  components: {
+    Item
+  },
 
   data: () => ({
     selected: [],
@@ -85,12 +58,14 @@ export default {
         title: 'Zahlarten',
         subtitle: "I'll be in your neighborhood doing errands this weekend. Do you want to hang out?",
         text: 'Längerer Text',
+        icon: 'money',
         active: false
       },
       {
-        title: 'Probleme',
+        title: 'Kontakt',
         subtitle: "Wish I could come, but I'm out of town this weekend.",
-        text: 'Längerer Text',
+        text: 'Wenn sie uns Kontaktieren möchten, ',
+        icon: 'email',
         active: false
       }
     ]

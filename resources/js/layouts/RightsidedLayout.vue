@@ -6,8 +6,8 @@
           <div class="col-12 col-sm-12 col-md-6 col-xl-6">
             <div class="gt-sm coha--banner-wrapper">
               <div class="coha--banner">
-                <div class="image" v-bind:style="{ backgroundImage: backgroundImage }"></div>
-                <div class="text"></div>
+                <div class="image" :style="{ backgroundImage: backgroundImage }" />
+                <div class="text" />
               </div>
             </div>
           </div>
@@ -94,7 +94,4 @@ export default {
   }
 }
 
-.v-footer {
-  transition: 0ms;
-}
 </style>
