@@ -173,16 +173,16 @@ export default {
     },
 
     async loginpan () {
+      // Form is busy?
       if (this.form.busy) return
 
       // Start Loading
-      this.$q.loading.show({
-        message: 'Anmeldung läuft ...'
-      })
+      this.$q.loading.show({ message: 'Anmeldung läuft ...' })
 
-      // Submit the form.
+      // Submit the form
       const { data } = await this.form.post('/api/loginpan')
         .catch((error) => {
+          this.hideLoader()
           this.form.pin = ''
           if (error && error.response && error.response.data) {
             this.$q.notify({
@@ -193,42 +193,46 @@ export default {
           }
         })
 
-      // Save the token.
       this.$store.dispatch('auth/saveToken', {
         token: data.token,
         remember: this.remember
       })
 
-      // Fetch the user.
       await this.$store.dispatch('auth/fetchUser')
 
-      // After Login
       await this.afterLogin()
     },
 
     afterLogin () {
       axios.get('/api/first-survey-fillable').then((e) => {
-        // Stop loading
-        this.$q.loading.hide()
+        this.hideLoader()
 
-        // Try get first survey
         const survey = e.data
         if (survey && survey.id) {
-          // Go to First Open Survey
-          this.$router.push({
-            name: 'survey',
-            params: {
-              id: survey.id
-            }
-          })
+          this.goToFirstSurvey(survey)
         } else {
-          // Redirect home.
-          this.$router.push({ name: 'home' })
+          this.goToHome()
         }
       }).catch((e) => {
-        // Stop Loading
-        this.$q.loading.hide()
+        this.hideLoader()
       })
+    },
+
+    goToFirstSurvey (s) {
+      this.$router.push({
+        name: 'survey',
+        params: {
+          id: s.id
+        }
+      })
+    },
+
+    goToHome () {
+      this.$router.push({ name: 'home' })
+    },
+
+    hideLoader () {
+      this.$q.loading.hide()
     }
 
   }
