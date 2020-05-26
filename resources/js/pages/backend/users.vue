@@ -102,30 +102,8 @@
 
     <p>
       <UserDataModal
-        s-edit-text="Firmen bearbeiten"
-        s-create-text="Neue Firma erstellen"
-        s-input-label="Firmenname"
-        s-parent-model="company"
-        :a-parent-models="user.companies"
-      />
-
-      <UserDataModal
-        s-edit-text="Abteilungen bearbeiten"
-        s-create-text="Neue Abteilung Erstellen"
-        s-input-label="Abteilungsname"
-        s-parent-model="department"
-        :a-parent-models="user.departments"
-      />
-
-      <UserDataModal
-        s-edit-text="Orte Bearbeiten"
-        s-create-text="Neuen Ort erstellen"
-        s-input-label="Ortsname"
-        s-parent-model="location"
-        :a-parent-models="user.locations"
-      />
-
-      <UserDataModal
+        s-icon="group"
+        :b-outline="false"
         s-edit-text="Gruppen Bearbeiten"
         s-create-text="Neue Gruppe erstellen"
         s-input-label="Gruppenname"
@@ -164,8 +142,35 @@
             label: this.$t('created_at'),
             field: 'created_at',
           }
-        ]" />
+        ]"
+      />
 
+      <UserDataModal
+        s-icon="apartment"
+        s-edit-text="Firmen bearbeiten"
+        s-create-text="Neue Firma erstellen"
+        s-input-label="Firmenname"
+        s-parent-model="company"
+        :a-parent-models="user.companies"
+      />
+
+      <UserDataModal
+        s-icon="work"
+        s-edit-text="Abteilungen bearbeiten"
+        s-create-text="Neue Abteilung Erstellen"
+        s-input-label="Abteilungsname"
+        s-parent-model="department"
+        :a-parent-models="user.departments"
+      />
+
+      <UserDataModal
+        s-icon="location_on"
+        s-edit-text="Orte Bearbeiten"
+        s-create-text="Neuen Ort erstellen"
+        s-input-label="Ortsname"
+        s-parent-model="location"
+        :a-parent-models="user.locations"
+      />
     </p>
 
     <br>
@@ -1512,10 +1517,12 @@ export default {
         message: msg,
         ok: {
           label: 'E-Mail versenden',
-          color: 'negative'
+          color: 'negative',
+          unelevated: true
         },
         cancel: {
-          label: 'Abbruch'
+          label: 'Abbruch',
+          unelevated: true
         }
       }).onOk(() => {
         this.sendEntranceMail(user)
@@ -1581,10 +1588,12 @@ export default {
         message: 'Try send Entrance-Mail for ' + len + ' Users',
         ok: {
           label: 'E-Mails versenden',
-          color: 'negative'
+          color: 'negative',
+          unelevated: true
         },
         cancel: {
-          label: 'Abbruch'
+          label: 'Abbruch',
+          unelevated: true
         }
       }).onOk(() => {
         this.sendEntranceMails()

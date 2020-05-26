@@ -1,7 +1,17 @@
 /* eslint-disable vue/order-in-components */
 <template>
   <span>
-    <q-btn :label="sEditText" color="primary" depressed tile outline class="mt-2 mr-2" @click="editDialog = true" />
+    <q-btn
+      :label="sEditText"
+      color="primary"
+      unelevated
+      tile
+      class="mt-2 mr-2"
+      :outline="bOutline"
+      :size="sSize"
+      :icon-right="sIcon"
+      @click="editDialog = true"
+    />
     <q-dialog
       v-model="editDialog"
       max-width="900px"
@@ -107,6 +117,21 @@ export default {
   },
 
   props: {
+
+    sSize: {
+      type: String,
+      default: 'md'
+    },
+
+    bOutline: {
+      type: Boolean,
+      default: true
+    },
+
+    sIcon: {
+      type: String,
+      default: null
+    },
 
     sParentModel: {
       type: String,

@@ -8,6 +8,7 @@ use App\Exceptions\VerifyEmailException;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 
 use Mail;
 use App\User;
@@ -61,7 +62,7 @@ class LoginController extends Controller
     {
         // Validate Request
         $this->validate(
-            $req, 
+            $req,
             [
                 'pan' => 'required',
                 'pin' => 'required',
@@ -72,16 +73,11 @@ class LoginController extends Controller
         );
 
         // Transform PAN
-        $pan = $req->pan;
+        $pan = str_replace(' ', '', $req->pan); // Remove Whitespace
         $pin = $req->pin;
-
-        // Remove Whitespace
-        $pan = str_replace(' ', '', $pan);
-
-        // 1. Check PAN!
-        // Try to Find the User
         $now = Carbon::now();
 
+        // 1. Check PAN! Try to Find the User
         $user = User::whereHas('pan', function ($query) use ($pan) {
             $query->where('pan', '=', $pan);
         })->first();
@@ -89,7 +85,7 @@ class LoginController extends Controller
         if(!$user) {
             // Found no User
             return $this->loginPanErrorResponse(
-                "PAN & PIN Combination failed", 
+                "PAN & PIN Combination failed",
                 [
                     "pan" => ["auth.failed"],
                     "pin" => ["auth.failed"]
@@ -99,47 +95,23 @@ class LoginController extends Controller
             $upan = $user->pan;
         }
 
-        // 2. Check dates "locked_until"
-        if($upan->locked_until) {
-
-            // If Account is still Locked for XX Hours
-            if($now <= $upan->locked_until) {
-
-                // Display time to wait. Should be 24 Hours
-                return $this->sendLockedResponse($upan, $now);
-            }
+        // 2. Check dates "locked_until" | If Account is still Locked for XX Hours
+        if($this->accountIsAlreadyLocked($upan, $now))
+        {
+            return $this->sendLockedResponse($upan, $now);
         }
 
         // 3. Check "Failed Login Attempts"!
-        if($upan->failed_logins) {
-
-            // if more than 15
-            if($upan->failed_logins >= 15) {
-                // Add 24 Hours and Lock user, but reset failed attempts to 0
-                $this->lockAccount($upan, 24, $req->ip());
-
-                // Display time to wait. Should be 24 Hours
-                return $this->sendLockedResponse($upan, $now);
-            }
+        if ($this->tooManyFailedLogins($upan))
+        {
+            $this->lockAccount($upan, 24, $req->ip());
+            return $this->sendLockedResponse($upan, $now);
         }
 
         // 4. Check PAN && PIN
-        if($pan != $upan->pan || $pin != $upan->pin)
-        {
-            // Login Failed
-            $upan->failed_logins += 1;
-            $upan->save();
-
-            return $this->loginPanErrorResponse(
-                "PAN & PIN Combination failed",
-                [
-                    "pan" => ["auth.failed"],
-                    "pin" => ["auth.failed"]
-                ]
-            );
-        } else {
+        if ($this->checkPanAndPin($upan, $pan, $pin)) {
             // Login Success
-            \Auth::login($user);
+            Auth::login($user);
 
             // Reset Failed Logins
             $upan->failed_logins = 0;
@@ -154,7 +126,53 @@ class LoginController extends Controller
                 'token_type' => 'bearer',
                 'expires_in' => $expiration - time(),
             ]);
+        } else {
+            // Login Failed
+            $upan->failed_logins += 1;
+            $upan->save();
+
+            return $this->loginPanErrorResponse(
+                "PAN & PIN Combination failed",
+                [
+                    "pan" => ["auth.failed"],
+                    "pin" => ["auth.failed"]
+                ]
+            );
         }
+    }
+
+    /**
+     * Check if the requested PAN and PIN are correct
+     *
+     * @return Boolean
+     */
+    protected function checkPanAndPin($u, $pan, $pin) {
+        return
+                $u->pan === $pan &&
+                $u->pin === $pin;
+    }
+
+    /**
+     * Check if the Account is already locked
+     *
+     * @return Boolean
+     */
+    protected function accountIsAlreadyLocked($u, $now) {
+        return
+                $u->locked_until &&
+                $u->locked_until >= $now;
+    }
+
+    /**
+     * Check if to many failed logins were made
+     * If more than XX, return true
+     *
+     * @return Boolean
+     */
+    protected function tooManyFailedLogins($u) {
+        return
+            $u->failed_logins &&
+            $u->failed_logins >= 7;
     }
 
     /**
@@ -163,6 +181,7 @@ class LoginController extends Controller
      * @param \App\User $user
      */
     protected function lockAccount($upan, $hours, $ip = "") {
+        // Add XX Hours and lock user, but reset failed attempts to 0
         // Lock Account
         $upan->locked_until = Carbon::now()->copy()->addHours($hours);
         $upan->failed_logins = 0;
@@ -188,6 +207,7 @@ class LoginController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     protected function sendLockedResponse($user, $now) {
+        // Display time to wait. Should be XX (~24) Hours
         $diff = $now->diffInHours($user->locked_until);
         return $this->loginPanErrorResponse(
             __("auth.acc_locked", ['hours' => $diff]), [], $status=423

@@ -2387,6 +2387,7 @@ export default {
           let options = q.options
           delete q.id
           delete q.survey_id
+          delete q.created_by
           delete q.created_at
           delete q.updated_at
 
@@ -3366,10 +3367,10 @@ export default {
     getDiffDays (d1, d2) {
       var date1 = new Date(d1)
       var date2 = new Date(d2)
-      var diff_in_time = date2.getTime() - date1.getTime()
-      var diff_in_days = diff_in_time / (1000 * 3600 * 24)
+      var diffInTime = date2.getTime() - date1.getTime()
+      var diffInDays = diffInTime / (1000 * 3600 * 24)
 
-      return (Math.abs(diff_in_days) + 1).toString()
+      return (Math.abs(diffInDays) + 1).toString()
     },
 
     getDateFormat (sDate) {
@@ -3564,7 +3565,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 // Display Events as Long Stripes
 .q-date__event {
   width: 37px;
