@@ -41,25 +41,18 @@
       <!-- Bottom of Sidenav -->
       <div style="position: sticky; bottom: 0;" class="q-pa-sm bg-white">
         <!-- <q-footer class="bg-white"> -->
-        <q-btn block outline depressed :label="$t('logout.btn')" color="grey" class="full-width" @click="logoutDialog = true" />
+        <q-btn
+          block
+          outline
+          depressed
+          :label="$t('logout.btn')"
+          color="grey"
+          class="full-width"
+          @click="tryLogout"
+        />
         <!-- </q-footer> -->
       </div>
     </q-scroll-area>
-    <q-dialog v-model="logoutDialog">
-      <q-card>
-        <q-card-section class="row items-center">
-          <q-avatar icon="logout" color="primary" text-color="white" />
-          <span class="q-ml-sm">
-            <p>{{ $t('logout.title') }}<br>{{ $t('logout.desc') }}</p>
-          </span>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn v-close-popup outline :label="$t('logout.btn_stay_here')" color="primary" @click="logoutDialog = false" />
-          <q-btn v-close-popup outline :label="$t('logout.btn')" color="warning" @click="logout" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </q-drawer>
 </template>
 
@@ -110,6 +103,29 @@ export default {
   // },
 
   methods: {
+    tryLogout () {
+      this.$q.dialog({
+        title: this.$t('logout.title'),
+        message: this.$t('logout.desc'),
+        ok: {
+          label: this.$t('logout.btn'),
+          unelevated: true,
+          color: 'negative'
+        },
+        cancel: {
+          label: this.$t('logout.btn_stay_here'),
+          unelevated: true
+        },
+        persistent: true
+      }).onOk(() => {
+        this.logout()
+      }).onCancel(() => {
+        //
+      }).onDismiss(() => {
+        //
+      })
+    },
+
     async logout () {
       // Log out the user.
       await this.$store.dispatch('auth/logout')
@@ -144,7 +160,6 @@ export default {
       return true
     }
   }
-
 
 }
 </script>

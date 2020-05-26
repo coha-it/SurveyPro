@@ -2,9 +2,21 @@
   margin: 0 0 5px 0;
 }
 
+// Display Events as Long Stripes
+.q-date__event {
+  width: 37px;
+  border-radius: 0;
+  bottom: 1px;
+  height: 4px;
+}
+
 .q-date__today {
     background: #d1af35;
     color: #fff;
+
+    // .q-date__event {
+    //   display: none;
+    // }
 }
 
 // A Links

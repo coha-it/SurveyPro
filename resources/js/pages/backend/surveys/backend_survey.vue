@@ -3659,17 +3659,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-// Display Events as Long Stripes
-.q-date__event {
-  width: 37px;
-  border-radius: 0;
-  bottom: 1px;
-  height: 4px;
-}
-
-.q-date__today .q-date__event {
-  display: none;
-}
-</style>

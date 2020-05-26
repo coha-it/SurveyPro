@@ -19,12 +19,12 @@
       </q-toolbar>
     </q-header>
     <q-page-container>
-      <q-page class="q-mb-xl">
+      <q-page class="q-pb-xl">
         <transition :name="question_transition" mode="out-in">
           <!-- The Question -->
           <!-- Single Question here -->
           <div v-if="questionIsViewed(question)" :key="question.id">
-            <div class="q-mb-md q-pa-md">
+            <div class="q-mb-md q-px-md q-pb-md q-pt-sm">
               <div class="text-overline">{{ $t('Question') }} {{ getQuestionPosition() }} / {{ oSurvey.question_count }}</div>
               <h1 class="text-black">{{ question.title }}</h1>
               <div class="text-subtitle1 text-black">{{ question.subtitle }}</div>
@@ -103,7 +103,7 @@
             </template>
 
             <div style="text-align: center">
-              <div v-if="question.is_commentable" class="comment_wrapper">
+              <div v-if="question.is_commentable" class="comment_wrapper q-pa-md">
                 <template v-if="question.users_awnser">
                   <div v-if="question.users_awnser.comment" class="comment_inner">
                     <p class="user_comment">
@@ -132,6 +132,7 @@
                           dense
                           autofocus
                           :type="question.comment_is_number ? 'number' : 'text'"
+                          :inputmode="question.comment_is_number ? 'decimal' : null"
                           @keyup.enter="question_dialog = false"
                         />
                       </q-card-section>
@@ -156,8 +157,7 @@
                 </template>
               </div>
 
-              <div v-if="question.is_skippable" class="skippable-wrapper">
-                <br><br>
+              <div v-if="question.is_skippable" class="skippable-wrapper q-pa-md">
                 <q-btn
                   label="Frage überspringen"
                   icon="skip_next"
