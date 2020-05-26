@@ -17,6 +17,8 @@
       <br>
 
       <UserDataModal
+        s-icon="group"
+        :b-outline="false"
         s-create-text="Neue Gruppe erstellen"
         s-edit-text="Gruppen Bearbeiten"
         s-input-label="Gruppenname"
@@ -535,7 +537,7 @@
                       height="auto"
                     >
                       <div class="flex-grow-1" />
-                      <q-input
+                      <!-- <q-input
                         v-model="sSearch"
                         style="max-width: 400px;"
                         :label="$t('Search')"
@@ -543,14 +545,14 @@
                         append-icon="search"
                         hide-details
                         outlined
-                      />
+                      /> -->
                       <q-input
                         v-model="pagination.rowsPerPage"
                         number
                         type="number"
                         hide-details
                         style="max-width: 150px;"
-                        label="Zeilen pro Seite"
+                        label="Fragen pro Seite"
                         class="ml-5"
                         outlined
                       />
@@ -1720,9 +1722,67 @@
 
           <div class="row">
             <div class="col col-12 col-sm-6 col-md-6">
+              <q-select
+                v-model="oImportType"
+                filled
+                :options="
+                  [
+                    {
+                      label: 'Überschreiben',
+                      value: 'override',
+                      description: 'Vorsicht! Alle bisherigen Daten (Titel, Fragen, ...) werden überschrieben und mit den Daten aus der importierten Datei überschrieben!',
+                      icon: 'warning'
+                    },
+                    // {
+                    //   label: 'Zusammenfügen Sanft',
+                    //   value: 'merge',
+                    //   description: 'Merge / Zusammenfügen. Füge dort ein wo Felder leer sind',
+                    //   icon: 'call_merge'
+                    // },
+                    {
+                      label: 'Fragen anfügen',
+                      value: 'questions_append',
+                      description: 'Fragen aus Import-Datei werden zusätzlich zu den aktuellen Fragen hinzugefügt',
+                      icon: 'call_merge'
+                    }
+                  ]
+                "
+                label="Import-Typ"
+                color="primary"
+                clearable
+                required
+                options-selected-class="text-deep-orange"
+              >
+                <template v-slot:option="scope">
+                  <q-item
+                    v-bind="scope.itemProps"
+                    v-on="scope.itemEvents"
+                  >
+                    <q-item-section avatar>
+                      <q-icon :name="scope.opt.icon" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label v-html="scope.opt.label" />
+                      <q-item-label caption>
+                        {{ scope.opt.description }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+
+              <br>
+              <br>
+
+              <q-btn
+                v-close-popup
+                outline
+                label="zurück"
+                unelevated
+              />
               <q-btn
                 v-if="sImportJson"
-                :disable="invalidJson(sImportJson)"
+                :disable="invalidJson(sImportJson) || !oImportType"
                 label="Import Survey"
                 color="primary"
                 unelevated
@@ -1764,6 +1824,7 @@ export default {
       // Import Dialog
       bImportDialog: false,
       sImportJson: '',
+      oImportType: '',
 
       // Colors
       colorPalette: [
@@ -2338,13 +2399,39 @@ export default {
     importFromFile () {
       try {
         // Format Json
-        let json = this.toJson(this.sImportJson)
+        const json = this.toJson(this.sImportJson)
+        const sImportType = this.oImportType.value
 
-        // Insert to Survey
-        this.oSurvey = this.copyObject(json)
+        switch (sImportType) {
+          case 'override':
+            // Insert to Survey
+            this.oSurvey = this.copyObject(json)
+            this.afterImportSuccess()
+            break
 
-        // Close Dialog
-        this.bImportDialog = false
+          case 'questions_append':
+            // questions append
+            const questions = json.questions
+            for (const key in questions) {
+              if (questions.hasOwnProperty(key)) {
+                const q = questions[key]
+                this.addQuestion(q)
+              }
+            }
+            this.afterImportSuccess()
+            break
+
+          default:
+            // Default
+            this.$q.notify({
+              message: 'No Valid Import-Type',
+              color: 'warning',
+              position: 'top-right',
+              actions: [{ icon: 'close', color: 'white' }],
+              timeout: 6000
+            })
+            break
+        }
       } catch (error) {
         this.$q.notify({
           message: this.$t('Error Importing - No Valid JSON'),
@@ -2354,6 +2441,14 @@ export default {
           timeout: 6000
         })
       }
+    },
+
+    afterImportSuccess () {
+      // Close Dialog
+      this.bImportDialog = false
+
+      // Empty Import
+      this.sImportJson = ''
     },
 
     exportToFile () {
