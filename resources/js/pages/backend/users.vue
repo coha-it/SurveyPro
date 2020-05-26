@@ -20,11 +20,15 @@
 
             <q-space />
 
-            <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
-              <q-tooltip v-if="maximizedToggle" content-class="bg-white text-primary">Minimieren</q-tooltip>
+            <q-btn dense flat icon="minimize" :disable="!maximizedToggle" @click="maximizedToggle = false">
+              <q-tooltip v-if="maximizedToggle" content-class="bg-white text-primary">
+                Minimieren
+              </q-tooltip>
             </q-btn>
-            <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
-              <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximieren</q-tooltip>
+            <q-btn dense flat icon="crop_square" :disable="maximizedToggle" @click="maximizedToggle = true">
+              <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">
+                Maximieren
+              </q-tooltip>
             </q-btn>
             <q-btn v-close-popup dense flat icon="close">
               <q-tooltip content-class="bg-white text-primary">
@@ -36,17 +40,19 @@
             <q-item>
               <q-item-section>
                 <q-item-label>Benutzer / Zugänge erstellen</q-item-label>
-                <q-item-label caption>Wählen Sie eine Anzahl der zu erstellenden Benutzer aus</q-item-label>
+                <q-item-label caption>
+                  Wählen Sie eine Anzahl der zu erstellenden Benutzer aus
+                </q-item-label>
               </q-item-section>
             </q-item>
 
             <q-item>
               <q-item-section style="max-width:400px;">
-                <q-input outlined clearable label="Benutzeranzahl" v-model="iCreateUsersNumber" required hide-details type="number" />
+                <q-input v-model="iCreateUsersNumber" outlined clearable label="Benutzeranzahl" required hide-details type="number" />
               </q-item-section>
             </q-item>
 
-            <q-item tag="label" v-ripple>
+            <q-item v-ripple tag="label">
               <q-item-section side top>
                 <q-checkbox v-model="bCreateUsersRandomPin" />
               </q-item-section>
@@ -89,7 +95,9 @@
         </q-card>
         <!-- Loading -->
         <template v-else>
-          <p>{{ $t('loading.text') }}</p>
+          <p class="text-white">
+            {{ $t('loading.text') }}
+          </p>
           <q-progress-linear indeterminate color="white" class="mb-0" />
         </template>
       </q-dialog>
@@ -178,8 +186,12 @@
     <template>
       <q-card>
         <q-card-section>
-          <div class="text-h6">Erstellte Benutzer</div>
-          <div class="text-subtitle2">Alle erstellten Benutzer</div>
+          <div class="text-h6">
+            Erstellte Benutzer
+          </div>
+          <div class="text-subtitle2">
+            Alle erstellten Benutzer
+          </div>
         </q-card-section>
         <q-card-section>
           <!-- <div class="row" no-gutters align-content="end" align="end" justify="end">
@@ -260,7 +272,7 @@
               </q-btn>&nbsp;
 
               <!-- No Select Toolbar -->
-              <template v-if="selected.length <= 0"  :flat="search == ''">
+              <template v-if="selected.length <= 0" :flat="search == ''">
                 <!-- <q-toggle class="mt-6 mr-6" v-model="bExtendedFilter" :label="'Erweitert Filtern'" color="primary" /> -->
                 <div class="flex-grow-1" />
                 <q-toolbar-title />
@@ -277,12 +289,12 @@
 
                 &nbsp;
 
-                <q-input v-model="pagination.rowsPerPage" outlined number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline  />
+                <q-input v-model="pagination.rowsPerPage" outlined number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline />
                 <q-btn
                   flat round dense
                   :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-                  @click="props.toggleFullscreen"
                   class="q-ml-md"
+                  @click="props.toggleFullscreen"
                 />
               </template>
 
@@ -292,10 +304,10 @@
                   :color="getUnsaved(selected).length ? 'green' : 'primary'"
                   rounded
                   unelevated
-                  @click="updateUsers(getUnsaved(selected))"
                   :disabled="!getUnsaved(selected).length"
                   icon="save"
                   :label="getUnsaved(selected).length + ' ' + $t('save')"
+                  @click="updateUsers(getUnsaved(selected))"
                 /> &nbsp;
 
                 <q-btn
@@ -373,8 +385,10 @@
                           <q-toolbar class="bg-primary text-white" dark color="primary">
                             <q-toolbar-title>Zugänge Löschen</q-toolbar-title>
                             <q-space />
-                            <q-btn dense flat icon="close" v-close-popup>
-                              <q-tooltip content-class="bg-white text-primary">Schließen</q-tooltip>
+                            <q-btn v-close-popup dense flat icon="close">
+                              <q-tooltip content-class="bg-white text-primary">
+                                Schließen
+                              </q-tooltip>
                             </q-btn>
                           </q-toolbar>
 
@@ -391,8 +405,12 @@
                               <div class="container" fluid>
                                 <div class="row" align="center">
                                   <div class="text-center col-12 col-sm-12">
-                                    <q-btn unelevated @click.stop="deleteUsersDialog = false" outline>Abbruch</q-btn>
-                                    <q-btn unelevated @click="deleteUsers(selected)" color="red">Zugänge Löschen!</q-btn>
+                                    <q-btn unelevated outline @click.stop="deleteUsersDialog = false">
+                                      Abbruch
+                                    </q-btn>
+                                    <q-btn unelevated color="red" @click="deleteUsers(selected)">
+                                      Zugänge Löschen!
+                                    </q-btn>
                                   </div>
                                 </div>
                               </div>
@@ -458,30 +476,42 @@
 
           <!-- Header Cell Slots -->
           <template v-slot:header-cell-import_comment="props">
-            <q-th v-if="settings.bShowImportComment" :props="props">{{ props.col.label }}</q-th>
+            <q-th v-if="settings.bShowImportComment" :props="props">
+              {{ props.col.label }}
+            </q-th>
           </template>
 
           <!-- Header Cell Slots -->
           <template v-slot:header-cell-contact_mail="props">
-            <q-th v-if="settings.bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
+            <q-th v-if="settings.bShowContactMailData" :props="props">
+              {{ props.col.label }}
+            </q-th>
           </template>
 
           <!-- Header Cell Slots -->
           <template v-slot:header-cell-last_mail_date="props">
-            <q-th v-if="settings.bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
+            <q-th v-if="settings.bShowContactMailData" :props="props">
+              {{ props.col.label }}
+            </q-th>
           </template>
 
           <!-- Header Cell Slots -->
           <template v-slot:header-cell-last_mail_status="props">
-            <q-th v-if="settings.bShowContactMailData" :props="props">{{ props.col.label }}</q-th>
+            <q-th v-if="settings.bShowContactMailData" :props="props">
+              {{ props.col.label }}
+            </q-th>
           </template>
 
           <!-- Date: Header Cell Slots -->
           <template v-slot:header-cell-updated_at="props">
-            <q-th v-if="settings.bShowDates" :props="props">{{ props.col.label }}</q-th>
+            <q-th v-if="settings.bShowDates" :props="props">
+              {{ props.col.label }}
+            </q-th>
           </template>
           <template v-slot:header-cell-created_at="props">
-            <q-th v-if="settings.bShowDates" :props="props">{{ props.col.label }}</q-th>
+            <q-th v-if="settings.bShowDates" :props="props">
+              {{ props.col.label }}
+            </q-th>
           </template>
 
           <!-- PAN -->
@@ -609,10 +639,11 @@
             <q-td class="groups" :props="props">
               <template v-if="user.groups_moderating && user.groups_moderating.length >= 1">
                 <template v-for="(group, i) in props.row.groups">
-                  <span v-bind:key="i">
+                  <span :key="i">
 
                     <q-badge v-if="user.groups_moderating.find(x => x.id === group.id)" outlined class="mr-1 mt-1 mb-1"
-                             :color="getGroupPivotColor(group)">
+                             :color="getGroupPivotColor(group)"
+                    >
                       {{ user.groups_moderating.find(x => x.id === group.id).name }}
                       <q-tooltip bottom :open-delay="group.pivot ? group.pivot.is_member ? 1000 : 100 : 100">
                         <template v-if="group.pivot.is_member">
@@ -626,7 +657,7 @@
                         </template>
                       </q-tooltip>
                     </q-badge>
-                    <q-badge v-else outlined disabled  class="mr-1 mt-1 mb-1">
+                    <q-badge v-else outlined disabled class="mr-1 mt-1 mb-1">
                       {{ group.name }}
                       <q-tooltip bottom :open-delay="group.pivot ? group.pivot.is_member ? 1000 : 100 : 100">
                         Keine Rolle!
@@ -638,9 +669,11 @@
 
                 <!-- Gruppen hinzufügen / entfernen -->
                 <template>
-                  <q-popup-edit content-class="maximize" persistent buttons label-set="Übernehmen" label-cancel="Schließen" v-model="props.row">
+                  <q-popup-edit v-model="props.row" content-class="maximize" persistent buttons label-set="Übernehmen" label-cancel="Schließen">
                     <div class="inner">
-                      <div class="text-h6">Gruppen hinzufügen / entfernen</div>
+                      <div class="text-h6">
+                        Gruppen hinzufügen / entfernen
+                      </div>
                       <q-separator />
 
                       <p>Der Gewählte Nutzer mit der ID "{{ props.row.id }}" und mit der PAN "{{ props.row.pan && props.row.pan.pan ? props.row.pan.pan : '' }}"</p>
@@ -649,7 +682,7 @@
                         <div>Nutzer ist in Gruppen:</div>
                         <template v-if="props.row.groups">
                           <template v-for="(group, i) in props.row.groups">
-                            <div v-bind:key="group.id">
+                            <div :key="group.id">
                               <q-item>
                                 <q-item-section top avatar>
                                   <q-avatar color="primary" text-color="white" icon="mdi-account-multiple" />
@@ -662,10 +695,9 @@
 
                                     <p v-if="group.pivot">
                                       <br>
-                                      <q-checkbox v-model="group.pivot.is_member" color="primary" dense hide-details label="Teilnehmer" :true-value="1" :false-value="0"></q-checkbox>
-                                      <q-checkbox v-model="group.pivot.is_mod" color="red" dense hide-details label="Moderator" :true-value="1" :false-value="0"></q-checkbox>
+                                      <q-checkbox v-model="group.pivot.is_member" color="primary" dense hide-details label="Teilnehmer" :true-value="1" :false-value="0" />
+                                      <q-checkbox v-model="group.pivot.is_mod" color="red" dense hide-details label="Moderator" :true-value="1" :false-value="0" />
                                     </p>
-
                                   </q-item-label>
                                 </q-item-section>
 
@@ -680,11 +712,10 @@
                                       text
                                       size="small"
                                       color="error"
-                                      @click="removeCreatedUserFromGroup(props.row, i)"
                                       :label="$t('remove')"
+                                      @click="removeCreatedUserFromGroup(props.row, i)"
                                     />
                                   </q-item-label>
-
                                 </q-item-section>
                               </q-item>
                               <q-separator v-if="i+1 < props.row.groups.length" inset />
@@ -695,12 +726,11 @@
 
                       <br>
 
-
                       <q-list subheader two-line flat>
                         <div>Nutzer für diese Gruppen hinzufügen</div>
                         <template v-if="user.groups_moderating">
                           <template v-for="(group, i) in user.groups_moderating">
-                            <div v-bind:key="group.id">
+                            <div :key="group.id">
                               <q-item :disabled="alreadyInGroups(group, props.row.groups)">
                                 <q-item-section top avatar>
                                   <q-avatar color="primary" text-color="white" icon="mdi-account-multiple-plus" />
@@ -710,9 +740,8 @@
                                   <q-item-label>{{ group.name }}</q-item-label>
                                   <q-item-label caption lines="2">
                                     <p>
-                                      {{ group.description_public || 'Ohne Gruppenbeschreibung'  }}
+                                      {{ group.description_public || 'Ohne Gruppenbeschreibung' }}
                                     </p>
-
                                   </q-item-label>
                                 </q-item-section>
 
@@ -740,7 +769,6 @@
                                       @click="addCreatedUserToGroup(props.row, group)"
                                     />
                                   </q-item-label>
-
                                 </q-item-section>
                               </q-item>
                               <q-separator v-if="i+1 < user.groups_moderating.length" inset />
@@ -750,9 +778,7 @@
                       </q-list>
                     </div>
                   </q-popup-edit>
-
                 </template>
-
               </template>
             </q-td>
           </template>
@@ -764,7 +790,7 @@
                 <option disabled label="Bitte auswählen" />
                 <option
                   v-for="company in user.companies"
-                  v-bind:key="company.id"
+                  :key="company.id"
                   :label="company.name"
                   :value="company.id"
                   :selected="(props.row.company && props.row.company.id == company.id)"
@@ -780,7 +806,7 @@
                 <option disabled label="Bitte auswählen" />
                 <option
                   v-for="department in user.departments"
-                  v-bind:key="department.id"
+                  :key="department.id"
                   :label="department.name"
                   :value="department.id"
                   :selected="(props.row.department && props.row.department.id == department.id)"
@@ -796,7 +822,7 @@
                 <option disabled label="Bitte auswählen" />
                 <option
                   v-for="location in user.locations"
-                  v-bind:key="location.id"
+                  :key="location.id"
                   :label="location.name"
                   :value="location.id"
                   :selected="(props.row.location && props.row.location.id == location.id)"
@@ -879,10 +905,14 @@
 
           <!-- Dates -->
           <template v-slot:body-cell-updated_at="props">
-            <q-td v-if="settings.bShowDates" :props="props">{{ props.row.updated_at }}</q-td>
+            <q-td v-if="settings.bShowDates" :props="props">
+              {{ props.row.updated_at }}
+            </q-td>
           </template>
           <template v-slot:body-cell-created_at="props">
-            <q-td v-if="settings.bShowDates" :props="props">{{ props.row.created_at }}</q-td>
+            <q-td v-if="settings.bShowDates" :props="props">
+              {{ props.row.created_at }}
+            </q-td>
           </template>
 
           <!-- Action Buttons -->
@@ -948,7 +978,6 @@
                                         </div>
                                     </q-container>
                             </q-dialog> -->
-
               </div>
             </q-td>
           </template>
@@ -963,7 +992,7 @@
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { setTimeout } from 'timers'
-import {mask} from 'vue-the-mask'
+import { mask } from 'vue-the-mask'
 import dayjs from 'dayjs'
 import UserDataModal from '~/components/BackendUserDataModal'
 import Print from '~/components/BackendUsersPrint'
@@ -1265,7 +1294,7 @@ export default {
       const lowerTerms = terms ? terms.toLowerCase() : ''
       return rows.filter(
         row => cols.some(function (col) {
-          return (JSON.stringify(cellValue(col,row)) + '').toLowerCase().indexOf(lowerTerms) !== -1
+          return (JSON.stringify(cellValue(col, row)) + '').toLowerCase().indexOf(lowerTerms) !== -1
         })
       )
     },
@@ -1275,9 +1304,9 @@ export default {
 
       if (sortBy) {
         data.sort((a, b) => {
-          let x  = descending ? b : a
+          let x = descending ? b : a
           let xf = x[sortBy]
-          let y  = descending ? a : b
+          let y = descending ? a : b
           let yf = y[sortBy]
 
           switch (sortBy) {
@@ -1318,7 +1347,6 @@ export default {
               return parseFloat(x[sortBy]) - parseFloat(y[sortBy])
               break
           }
-
         })
       }
 
@@ -1341,19 +1369,19 @@ export default {
 
     filterBasic (sSearch, sWhere) {
       if (!sSearch) return true
-      if ( !this.bExtendedFilter ) return true
+      if (!this.bExtendedFilter) return true
       return sWhere.toLowerCase().includes(sSearch.toLowerCase())
     },
 
     filterPan (sSearch, sWhere) {
       if (!sSearch) return true
-      if ( !this.bExtendedFilter ) return true
+      if (!this.bExtendedFilter) return true
       return sWhere.toLowerCase().includes(sSearch.replace(' ', '').toLowerCase())
     },
 
     filterId (sSearch, sWhere) {
       if (!sSearch) return true
-      if ( !this.bExtendedFilter ) return true
+      if (!this.bExtendedFilter) return true
       return sWhere == sSearch
     },
 
@@ -1677,7 +1705,7 @@ export default {
         }
 
         _this.$q.notify({
-          message: _this.$t('attribute_unsaved') + "<br />" + errText,
+          message: _this.$t('attribute_unsaved') + '<br />' + errText,
           color: 'error',
           timeout: 6000
         })
@@ -1717,11 +1745,10 @@ export default {
         var tmpUsers = _this.copyObject(users)
         for (var i in tmpUsers) {
           var tmpUser = tmpUsers[i]
-          _this.selected.splice( _this.findKeyById(_this.selected, tmpUser), 1)
-          _this.usersCreatedOld.splice( _this.findKeyById(_this.usersCreatedOld, tmpUser), 1)
+          _this.selected.splice(_this.findKeyById(_this.selected, tmpUser), 1)
+          _this.usersCreatedOld.splice(_this.findKeyById(_this.usersCreatedOld, tmpUser), 1)
           _this.usersCreated.splice(_this.findKeyById(_this.usersCreated, tmpUser), 1)
         }
-
       })
     },
 
