@@ -6,6 +6,7 @@
     /* don't shorten cell contents */
     white-space: normal !important;
   }
+
 }
 
 // Sort
@@ -19,12 +20,33 @@
   background: gainsboro;
 }
 
+
+
 // My Data-Table
 .my-data-table {
   /* max height is important */
   .q-table__middle{
     max-height: 75vh;
   }
+
+  // Cut Table Cells
+
+  td {
+
+    .max_lines {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 5; /* number of lines to show */
+      -webkit-box-orient: vertical;
+    }
+
+    /* number of lines to show */
+    &.max_lines_1 { -webkit-line-clamp: 1;}
+    &.max_lines_2 { -webkit-line-clamp: 2;}
+    &.max_lines_3 { -webkit-line-clamp: 3;}
+  }
+
 
   thead tr th{
     position: sticky;

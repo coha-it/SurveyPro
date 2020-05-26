@@ -41,15 +41,22 @@
         :pagination.sync="pagination"
         dense
       >
-        <template v-slot:body-cell-action="props">
+        <template v-slot:body-cell="props">
           <q-td :props="props">
-            <q-btn
-              :label="$t('edit')"
-              size="sm"
-              :to="{ name: 'backend.survey', params: {id: props.row.id } }"
-              unelevated
-              outline
-            />
+            <template v-if="props.col.field === 'action'">
+              <q-btn
+                :label="$t('edit')"
+                size="sm"
+                :to="{ name: 'backend.survey', params: {id: props.row.id } }"
+                unelevated
+                outline
+              />
+            </template>
+            <template v-else>
+              <span class="max_lines max_lines_4">
+                {{ props.value }}
+              </span>
+            </template>
           </q-td>
         </template>
       </q-table>
