@@ -48,7 +48,7 @@
 
             <q-item>
               <q-item-section style="max-width:400px;">
-                <q-input v-model="iCreateUsersNumber" outlined clearable label="Benutzeranzahl" required hide-details type="number" />
+                <q-input v-model="iCreateUsersNumber" outlined clearable label="Benutzeranzahl" required hide-details type="number" autofocus />
               </q-item-section>
             </q-item>
 

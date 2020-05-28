@@ -162,7 +162,14 @@
                 <!-- Description Long -->
                 <q-item>
                   <q-item-section>
+                    <HtmlEditor
+                      v-if="oSurvey.use_html"
+                      :model="oSurvey"
+                      field="desc_long"
+                      :disable="surveyIsUneditable()"
+                    />
                     <q-input
+                      v-else
                       v-model="oSurvey.desc_long"
                       type="textarea"
                       :disable="surveyIsUneditable()"
@@ -175,6 +182,8 @@
                     />
                   </q-item-section>
                 </q-item>
+
+                <br>
 
                 <q-item-label>Konfigurations-Einstellungen</q-item-label>
 
@@ -234,6 +243,27 @@
                       caption
                     >
                       Diese Umfrage ist öffentlich verfügbar. Im Standard sind Umfragen nicht öffentlich
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item>
+                  <q-item-section side top>
+                    <q-checkbox
+                      :value="oSurvey.use_html || 0"
+                      :disable="surveyIsUneditable()"
+                      color="orange"
+                      :true-value="1"
+                      :false-value="0"
+                      @input="changeUseHtml"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>HTML</q-item-label>
+                    <q-item-label
+                      caption
+                    >
+                      Benutze HTML Inhalte bei Beischreibungstexten. Warnung!
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -919,7 +949,14 @@
 
                                         <q-item>
                                           <q-item-section>
+                                            <HtmlEditor
+                                              v-if="oSurvey.use_html"
+                                              :model="props.row"
+                                              field="description"
+                                              :disable="surveyIsUneditable()"
+                                            />
                                             <q-input
+                                              v-else
                                               v-model="props.row.description"
                                               type="textarea"
                                               :disable="surveyIsUneditable()"
@@ -1811,11 +1848,13 @@
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import UserDataModal from '~/components/BackendUserDataModal'
+import HtmlEditor from '~/components/Backend/HtmlEditor'
 
 export default {
 
   components: {
-    UserDataModal
+    UserDataModal,
+    HtmlEditor
   },
 
   data () {
@@ -2320,6 +2359,52 @@ export default {
   },
 
   methods: {
+
+    changeUseHtml () {
+      if (!this.oSurvey.use_html) {
+        this.askUseHtml()
+      } else {
+        this.dontUseHtml()
+      }
+    },
+
+    askUseHtml () {
+      this.$q.dialog({
+        title: 'HTML benutzen?',
+        message: 'Einverständniserklärung: Sie erklären sich damit einverstanden keinen schädlichen Code bewusst oder unbewusst in die Eingabe-Felder einzufügen.',
+        persistent: true,
+        options: {
+          type: 'checkbox',
+          model: [],
+          isValid: model => model.includes('use_html'),
+          items: [
+            { label: 'Ich habe die oben gezeigte Einverständniserklärung gelesen, verstanden und akzeptiere diese', value: 'use_html' }
+          ]
+        },
+        ok: {
+          label: 'Einverstanden',
+          color: 'warning',
+          unelevated: true
+        },
+        cancel: {
+          label: 'Abbruch',
+          outline: true,
+          unelevated: true
+        }
+      }).onOk(data => {
+        this.useHtml()
+      }).onCancel(data => {
+        this.dontUseHtml()
+      })
+    },
+
+    useHtml () {
+      this.$set(this.oSurvey, 'use_html', 1)
+    },
+
+    dontUseHtml () {
+      this.$set(this.oSurvey, 'use_html', 0)
+    },
 
     tryDeleteSurvey () {
       this.$q.dialog({
@@ -3523,6 +3608,8 @@ export default {
       var tmp = {
         active: 1,
         only_editable_by_creator: 1,
+        is_public: 0,
+        use_html: 0,
         questions: []
       }
 

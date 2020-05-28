@@ -138,6 +138,14 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasOne('App\UserRight', 'user_id');
     }
 
+    public function canUseHtml()
+    {
+        return $this->isAdminUser() || (
+                $this->right &&
+                $this->right->use_html
+        );
+    }
+
     /**
      * Get the pan record associated with the user.
      */

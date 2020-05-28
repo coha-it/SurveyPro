@@ -84,14 +84,14 @@ export default {
         'is_finished',    // 0 .. 1
         'has_ended',      // 0 .. 1
         'has_started',    // 1 .. 0
-        'start_datetime'  // 1 .. 0
+        'start_datetime'  // 0 .. 1
       ], [
         'desc',           // 1 .. 0
         'desc',           // 1 .. 0
         'asc',            // 0 .. 1
         'asc',            // 0 .. 1
         'desc',           // 1 .. 0
-        'desc',           // 1 .. 0
+        'asc'             // 0 .. 1
       ])
 
       // Set

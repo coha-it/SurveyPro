@@ -28,7 +28,15 @@
               <div class="text-overline">{{ $t('Question') }} {{ getQuestionPosition() }} / {{ oSurvey.question_count }}</div>
               <h1 class="text-black">{{ question.title }}</h1>
               <div class="text-subtitle1 text-black">{{ question.subtitle }}</div>
-              <p class="text-body2">{{ question.description }}</p>
+              <div class="text-body2">
+                <div
+                  v-if="oSurvey.use_html"
+                  v-html="question.description"
+                />
+                <p v-else>
+                  {{ question.description }}
+                </p>
+              </div>
             </div>
 
             <!-- if checkboxes -->

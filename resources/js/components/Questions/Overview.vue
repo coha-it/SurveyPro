@@ -4,7 +4,9 @@
       <q-toolbar>
         <div class="q-mx-sm q-my-md">
           <h4 style="margin: 0;">
-            <div class="text-caption text-gray">{{ getAuthor() }}</div>
+            <div class="text-caption text-gray">
+              {{ getAuthor() }}
+            </div>
             <span>{{ oSurvey.title }}</span>
           </h4>
         </div>
@@ -13,7 +15,13 @@
     <q-page-container class="bg-white">
       <q-page>
         <div class="q-px-lg q-pb-lg">
-          {{ oSurvey.desc_long || oSurvey.desc_short }}
+          <div
+            v-if="oSurvey.use_html && oSurvey.desc_long"
+            v-html="oSurvey.desc_long"
+          />
+          <div v-else>
+            {{ oSurvey.desc_long || oSurvey.desc_short }}
+          </div>
         </div>
 
         <q-list class="q-px-sm">

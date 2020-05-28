@@ -136,6 +136,9 @@ class BackendSurveyCtrl extends Controller
             $survey = $self->createdSurveys()->create($reqSurvey);
         }
 
+        // Check use HTML
+        $this->setUseHtml($self, $survey, $reqSurvey);
+
         // Connect survey with group
         $this->connectSurveyAndGroups($self, $survey, $reqSurvey['groups'] ?? []);
 
@@ -153,6 +156,12 @@ class BackendSurveyCtrl extends Controller
 
         // Return the Survey
         return $survey;
+    }
+
+    // Set the Use of HTML by User-Rights
+    public function setUseHtml($self, $survey, $reqSurvey) {
+        $survey->use_html = $self->canUseHtml() && $reqSurvey['use_html'] ? 1 : 0;
+        $survey->save();
     }
 
     // Update the Created Survey
