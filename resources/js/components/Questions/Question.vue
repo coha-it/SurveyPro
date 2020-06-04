@@ -283,7 +283,7 @@ export default {
       if (q.is_skippable) return true
 
       // If Text only
-      if (q.format === 'text_only' && q.users_awnser && q.users_awnser.comment) return true
+      if (q.format === 'comment_only' && q.users_awnser && q.users_awnser.comment) return true
 
       // Options Available
       if (q && q.users_awnser && q.users_awnser.awnser_options) {

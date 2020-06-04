@@ -865,7 +865,7 @@
 
                         <!-- Expandable Area -->
                         <!-- v-show="props.expand" -->
-                        <q-tr v-show="questionIsExpanded(props.row.id)" :props="props" class="expandable-row">
+                        <q-tr v-if="questionIsExpanded(props.row.id)" :props="props" class="expandable-row">
                           <q-td colspan="100%">
                             <div class="text-left">
                               <template v-if="props.row">
@@ -1538,15 +1538,19 @@
                 </q-item>
 
                 <q-item>
-                  <q-btn label="Neue Frage hinzufügen" icon="plus_one" @click="addNewQuestion()" />&nbsp; &nbsp;
                   <q-btn
+                    label="Neue Frage hinzufügen"
+                    icon="plus_one"
+                    @click="addNewQuestion()"
+                  />
+                  &nbsp; &nbsp;
+                  <q-btn
+                    label="Letzte Frage duplizieren"
                     :disabled="oSurvey.questions.length <= 0"
                     color="primary"
+                    icon="control_point_duplicate"
                     @click="duplicateLastQuestion()"
-                  >
-                    <q-icon name="control_point_duplicate" left />
-                    Letzte Frage duplizieren
-                  </q-btn>
+                  />
                 </q-item>
 
                 <q-separator />
@@ -2041,9 +2045,9 @@ export default {
           icon: 'check_box'
         },
         {
-          label: 'Nur Text "text_only"',
-          id: 'text_only',
-          description: 'Nur Text "text_only"',
+          label: 'Nur Text "comment_only"',
+          id: 'comment_only',
+          description: 'Nur Text "comment_only"',
           icon: 'textsms'
         }
       ],

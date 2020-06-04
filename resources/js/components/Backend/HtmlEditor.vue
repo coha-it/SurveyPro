@@ -1,5 +1,6 @@
 <template>
   <q-editor
+    v-if="model && field && model[field]"
     v-model="model[field]"
     :disable="disable"
     :toolbar="toolbar"
