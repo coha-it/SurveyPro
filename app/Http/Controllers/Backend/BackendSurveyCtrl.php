@@ -95,23 +95,22 @@ class BackendSurveyCtrl extends Controller
             $tmp = $reqQuestion;
             $bIsNew = array_key_exists('is_new', $reqQuestion) ? $reqQuestion['is_new'] : false;
 
+            // Unset
             unset($tmp['options']);
             unset($tmp['is_new']);
 
             // Req Question Id
             $reqQuestionId = array_key_exists('id', $reqQuestion) ? $reqQuestion['id'] : null;
+            $questions = $survey->questions();
 
             // If Is New
             if($bIsNew) {
                 unset($tmp['id']);
                 $tmp['created_by'] = $self->id;
-                $question = $survey->questions()->updateOrCreate($tmp);
+                $question = $questions->updateOrCreate($tmp);
             }
             else {
-                $question = $survey->questions()->updateOrCreate(
-                    ['id' => $reqQuestionId],
-                    $tmp
-                );
+                $question = $questions->updateOrCreate(['id' => $reqQuestionId], $tmp);
             }
 
             // Save Question

@@ -874,32 +874,20 @@
                                   <div class="row">
                                     <div class="col col-12 col-sm-6 col-md-6">
                                       <q-list subheader two-line flat>
-                                        <q-item-label header>
-                                          Allgemeine Frage-Einstellungen für Frage-ID: #{{ props.row.id }}
-                                        </q-item-label>
-                                        <q-item>
-                                          <q-item-section>
-                                            <q-btn color="primary" label="Vorlage laden" @click="askLoadPreset(props.row)" />
-                                          </q-item-section>
-                                        </q-item>
-
                                         <q-item>
                                           <q-item-section side top>
-                                            <q-checkbox
-                                              v-model="props.row.is_skippable"
-                                              :disable="surveyIsUneditable()"
-                                              color="primary"
-                                              :true-value="1"
-                                              :false-value="0"
-                                            />
-                                          </q-item-section>
-                                          <q-item-section>
-                                            <q-item-label>Überspringbar</q-item-label>
-                                            <q-item-label caption>
-                                              Ist diese Frage überspringbar
-                                            </q-item-label>
+                                            <q-btn color="primary" label="Vorlage laden" icon="get_app" unelevated size="small" @click="askLoadPreset(props.row)" />
                                           </q-item-section>
                                         </q-item>
+                                      </q-list>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col col-12 col-sm-6 col-md-6">
+                                      <q-list subheader two-line flat>
+                                        <q-item-label header>
+                                          Text-Einstellungen [ID: #{{ props.row.id }}]
+                                        </q-item-label>
 
                                         <q-item>
                                           <q-item-section>
@@ -981,10 +969,30 @@
                                     </div>
 
                                     <div class="col col-12 col-sm-6 col-md-6">
-                                      <q-list subheader two-line flat>
+                                      <q-list subheader two-line flat dense>
                                         <q-item-label header>
-                                          Kommentar-Einstellungen
+                                          Einstellungen
                                         </q-item-label>
+
+                                        <q-item>
+                                          <q-item-section side top>
+                                            <q-checkbox
+                                              v-model="props.row.is_skippable"
+                                              :disable="surveyIsUneditable()"
+                                              color="primary"
+                                              :true-value="1"
+                                              :false-value="0"
+                                            />
+                                          </q-item-section>
+                                          <q-item-section>
+                                            <q-item-label>Überspringbar</q-item-label>
+                                            <q-item-label caption>
+                                              Ist diese Frage überspringbar
+                                            </q-item-label>
+                                          </q-item-section>
+                                        </q-item>
+
+                                        <q-separator inset="item" />
 
                                         <q-item>
                                           <q-item-section side top>
@@ -1001,7 +1009,9 @@
                                           </q-item-section>
                                         </q-item>
 
-                                        <template v-if="props.row.is_commentable || true">
+                                        <q-separator inset="item" />
+
+                                        <template v-if="props.row.is_commentable">
                                           <q-item>
                                             <q-item-section side top>
                                               <q-checkbox
@@ -1016,6 +1026,7 @@
                                               <q-item-label>Kommentar ist erforderlich</q-item-label>
                                             </q-item-section>
                                           </q-item>
+                                          <q-separator inset="item" />
 
                                           <q-item>
                                             <q-item-section side top>
@@ -1031,9 +1042,11 @@
                                               <q-item-label>Kommentar ist eine Nummer</q-item-label>
                                             </q-item-section>
                                           </q-item>
+                                          <q-separator inset="item" />
 
                                           <q-item>
                                             <q-item-section>
+                                              <br>
                                               <q-input
                                                 v-model="props.row.comment_max_signs"
                                                 :disable="surveyIsUneditable()"
@@ -1041,9 +1054,12 @@
                                                 persistent-hint
                                                 outlined
                                                 placeholder="1 - 255"
+                                                pattern="[0-9]"
                                                 type="number"
                                                 label="Kommentar: Maximale Zeichen"
                                                 required
+                                                :error="! (props.row.comment_max_signs >= 0)"
+                                                error-message="Bitte maximale Zeichen für Kommentar angeben"
                                               >
                                                 <template v-slot:append>
                                                   <q-icon :name="help_icon">
@@ -1059,62 +1075,14 @@
                                           </q-item>
                                         </template>
                                       </q-list>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col col-12 col-sm-12 col-md-12 col-lg-6">
                                       <q-list subheader two-line flat>
                                         <q-item-label header>
                                           Frage-Optionen
                                         </q-item-label>
-                                        <q-item>
-                                          <q-item-section>
-                                            <div class="row">
-                                              <div class="col" xl="3" md="3" sm="6" xs="12">
-                                                <q-input
-                                                  v-model="props.row.min_options"
-                                                  :disable="surveyIsUneditable()"
-                                                  dense
-                                                  outlined
-                                                  placeholder="1 - 255"
-                                                  type="number"
-                                                  :max="parseInt(props.row.max_options)"
-                                                  label="Minimale Optionen"
-                                                  required
-                                                >
-                                                  <template v-slot:append>
-                                                    <q-icon :name="help_icon">
-                                                      <q-tooltip
-                                                        self="center middle"
-                                                      >
-                                                        Minimal wählbare Optionen
-                                                      </q-tooltip>
-                                                    </q-icon>
-                                                  </template>
-                                                </q-input>
-                                              </div>
-                                              <div class="col" xl="3" md="3" sm="6" xs="12">
-                                                <q-input
-                                                  v-model="props.row.max_options"
-                                                  :disable="surveyIsUneditable()"
-                                                  dense
-                                                  outlined
-                                                  placeholder="1 - 255"
-                                                  type="number"
-                                                  :min="parseInt(props.row.min_options)"
-                                                  label="Maximale Optionen"
-                                                  required
-                                                >
-                                                  <template v-slot:append>
-                                                    <q-icon :name="help_icon">
-                                                      <q-tooltip
-                                                        self="center middle"
-                                                      >
-                                                        Maximale wählbare Optionen
-                                                      </q-tooltip>
-                                                    </q-icon>
-                                                  </template>
-                                                </q-input>
-                                              </div>
-                                            </div>
-                                          </q-item-section>
-                                        </q-item>
                                         <q-item>
                                           <q-item-section>
                                             <q-select
@@ -1138,7 +1106,9 @@
                                                     <q-icon :name="scope.opt.icon" />
                                                   </q-item-section>
                                                   <q-item-section>
-                                                    <q-item-label v-html="scope.opt.label" />
+                                                    <q-item-label>
+                                                      {{ scope.opt.label }}
+                                                    </q-item-label>
                                                     <q-item-label caption>
                                                       {{ scope.opt.description }}
                                                     </q-item-label>
@@ -1155,7 +1125,9 @@
                                                     <q-icon :name="scope.opt.icon" />
                                                   </q-item-section>
                                                   <q-item-section>
-                                                    <q-item-label v-html="scope.opt.label" />
+                                                    <q-item-label>
+                                                      {{ scope.opt.label }}
+                                                    </q-item-label>
                                                     <q-item-label caption>
                                                       {{ scope.opt.description }}
                                                     </q-item-label>
@@ -1167,9 +1139,79 @@
                                         </q-item>
                                       </q-list>
                                     </div>
-                                  </div>
-                                  <div class="row">
-                                    <div class="col" xl="12" sm="12" xs="12">
+                                    <div class="col col-12 col-sm-12 col-md-12 col-lg-6">
+                                      <template v-if="['comment_only', 'slider', 'slider_vert'].includes(props.row.format)">
+                                        <!-- -->
+                                      </template>
+                                      <template v-else>
+                                        <q-item-label header>
+                                          Bestimmt die Minimale und Maximale Anzahl an auswählbaren optionen
+                                        </q-item-label>
+                                        <q-item>
+                                          <q-item-section class="q-px-md">
+                                            <q-range
+                                              :value="getRangeModel(props.row)"
+                                              :min="0"
+                                              :max="props.row.options.length"
+                                              label-always
+                                              drag-range
+                                              label
+                                              markers
+                                              snap
+                                              :left-label-value="getRangeLabel(props.row, 'left')"
+                                              :right-label-value="getRangeLabel(props.row, 'right')"
+                                              @input="updateRangeModel(props.row, $event)"
+                                            />
+                                          </q-item-section>
+                                        </q-item>
+                                      </template>
+
+                                      <!--
+                                                  <q-input
+                                                    v-model="props.row.min_options"
+                                                    :disable="surveyIsUneditable()"
+                                                    dense
+                                                    outlined
+                                                    placeholder="1 - 255"
+                                                    type="number"
+                                                    :max="parseInt(props.row.max_options)"
+                                                    label="Minimale Optionen"
+                                                    required
+                                                  >
+                                                    <template v-slot:append>
+                                                      <q-icon :name="help_icon">
+                                                        <q-tooltip
+                                                          self="center middle"
+                                                        >
+                                                          Minimal wählbare Optionen
+                                                        </q-tooltip>
+                                                      </q-icon>
+                                                    </template>
+                                                  </q-input>
+                                                  <q-input
+                                                    v-model="props.row.max_options"
+                                                    :disable="surveyIsUneditable()"
+                                                    dense
+                                                    outlined
+                                                    placeholder="1 - 255"
+                                                    type="number"
+                                                    :min="parseInt(props.row.min_options)"
+                                                    label="Maximale Optionen"
+                                                    required
+                                                  >
+                                                    <template v-slot:append>
+                                                      <q-icon :name="help_icon">
+                                                        <q-tooltip
+                                                          self="center middle"
+                                                        >
+                                                          Maximale wählbare Optionen
+                                                        </q-tooltip>
+                                                      </q-icon>
+                                                    </template>
+                                                  </q-input>
+                                                -->
+                                    </div>
+                                    <div class="col col-12 col-sm-12 col-md-12 col-lg-12">
                                       <q-list subheader two-line flat>
                                         <q-item-label header>
                                           Optionen:
@@ -1190,7 +1232,7 @@
                                                 height="auto"
                                               >
                                                 <span>
-                                                  <q-btn label="Löschen" icon="delete" flat rounded unelevated />
+                                                  <q-btn color="warning" label="Löschen" icon="delete" size="md" unelevated />
                                                   <q-popup-edit
                                                     single-line
                                                     persistent
@@ -1203,7 +1245,7 @@
                                                   >
                                                     <div class="row" align="center">
                                                       <div class="col text-center" cols="12" sm="12">
-                                                        Möchten Sie wirklich {{ aSelectedOptions.length }} Optionen löschen?
+                                                        <p>Möchten Sie wirklich {{ aSelectedOptions.length }} Optionen löschen?</p>
                                                         <q-btn
                                                           v-close-popup
                                                           depressed
@@ -1235,6 +1277,7 @@
                                                 min-height="85px"
                                                 height="auto"
                                               >
+                                                <p>Hier stehen alle möglichen Frageoptionen</p>
                                                 <div class="flex-grow-1" />
                                               </q-toolbar>
 
@@ -1525,6 +1568,8 @@
                                           </q-item-section>
                                         </q-item>
                                       </q-list>
+                                      <br>
+                                      <br>
                                     </div>
                                   </div>
                                 </div>
@@ -2363,6 +2408,36 @@ export default {
   },
 
   methods: {
+
+    getRangeModel (item) {
+      return {
+        min: item.min_options,
+        max: item.max_options
+      }
+    },
+
+    getRangeLabel (item, dir) {
+      const min = item.min_options
+      const max = item.max_options
+
+      if (min === max) {
+        return 'Genau: ' + min + ' Optionen'
+      }
+
+      switch (dir) {
+        case 'left':
+          return 'Von ' + min + ' Optionen'
+
+        case 'right':
+          return 'Bis ' + max + '  Optionen'
+      }
+    },
+
+    updateRangeModel (item, self) {
+      console.log('updateRangeModel')
+      item.min_options = self.min
+      item.max_options = self.max
+    },
 
     changeUseHtml () {
       if (!this.oSurvey.use_html) {
@@ -3277,12 +3352,13 @@ export default {
 
     addNewQuestion () {
       return this.addQuestion({
-        id: this.getRandomId(),
+        id: null,
         options: [],
         is_commentable: 1,
         comment_is_required: 0,
         comment_is_number: 0,
-        is_skippable: 0
+        is_skippable: 0,
+        format: 'comment_only'
       })
     },
 

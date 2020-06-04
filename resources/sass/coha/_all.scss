@@ -497,3 +497,9 @@ select {
     &::before{ content: "„";}
     &::after {content:"“";}
 }
+
+// Quasar Editor
+// QEditor
+.q-editor__toolbar {
+  flex-wrap: wrap;
+}

@@ -144,3 +144,72 @@
   50% {box-shadow: 0px 0px 12px 2px #54646c54;}
   100% {box-shadow: 0px 0px 22px 10px #54646c54;}
 }
+
+
+
+.progress {
+  display: none;
+}
+
+.survey-progress-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  align-self: normal;
+
+  .progress {
+    height: 100%;
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+
+    &:not(.away) {
+        cursor: pointer;
+    }
+
+    &.awnsered {
+      .inner {
+        background-color: var(--q-color-positive);
+      }
+    }
+    &.skipped {
+      .inner {
+        background: #bbbd5e;
+      }
+    }
+    &.away {
+      .inner {
+        opacity: .3;
+      }
+      &.unawnsered {
+        pointer-events: none;
+      }
+    }
+    &.curr {
+      .inner {
+        opacity: 1;
+      }
+    }
+
+    &.passed {
+      .inner {
+        opacity: 1;
+      }
+    }
+
+    .inner {
+      height: 9px;
+      background: #6f6f6f;
+      display: inline-block;
+      width: 100%;
+      border-radius: 10px;
+      margin: 3px;
+      transition: 200ms;
+    }
+
+  }
+
+}

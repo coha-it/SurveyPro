@@ -4,16 +4,16 @@
       <q-toolbar>
         <!-- Progress -->
         <div class="survey-progress-wrapper">
-          <template v-for="question in oSurvey.questions">
-            <router-link
-              :key="question.id"
-              :to="getQuestionHash(question)"
-              :class="getProgressClasses(oSurvey, question)"
+          <template v-for="q in oSurvey.questions">
+            <span
+              :key="q.id"
+              :class="getProgressClasses(oSurvey, q)"
+              @click="changeQuestion(q)"
             >
               <span class="inner">&nbsp;</span>
-            </router-link>
-            <!-- :to="getQuestionHash(question)" -->
-            <!-- question.users_awnser -->
+            </span>
+            <!-- :to="getQuestionHash(q)" -->
+            <!-- q.users_awnser -->
           </template>
         </div>
       </q-toolbar>
@@ -202,7 +202,7 @@
               :disable="!questionSubmittable(question)"
               color="primary"
               class="full-width"
-              @click="updateOrCreateAwnser(question)"
+              @click="updateOrCreateAwnser(question, true)"
             />
           </template>
         </template>
@@ -239,6 +239,18 @@ export default {
   },
 
   methods: {
+
+    changeQuestion (clickedQuestion) {
+      // Update Current Question
+      let currQ = this.question
+      if (currQ.users_awnser) {
+        this.updateOrCreateAwnser(this.question, false)
+      }
+
+      // Route to new clicked Question
+      let to = this.getQuestionHash(clickedQuestion)
+      this.$router.push(to)
+    },
 
     isSkipped (q) {
       return q.users_awnser && q.users_awnser.skipped
@@ -337,7 +349,7 @@ export default {
     nextUnawnseredQuestion (q) {
       // Get next Unawnsered Questions
       const nextUaQuestions = this.oSurvey.questions.filter(e =>
-        (!e.users_awnser || e.users_awnser.skipped) && // Where already Awnsered And
+        (!e.users_awnser || e.users_awnser.skipped || !this.questionSubmittable(e)) && // Where already Awnsered And
         e.order > q.order // Where order is bigger
       )
 
@@ -453,12 +465,12 @@ export default {
       this.sendAwnser(q)
     },
 
-    updateOrCreateAwnser (q) {
+    updateOrCreateAwnser (q, bNextQ) {
       q.users_awnser.skipped = 0
-      this.sendAwnser(q)
+      this.sendAwnser(q, bNextQ)
     },
 
-    sendAwnser (question) {
+    sendAwnser (question, bNextQ) {
       this.$store
         .dispatch('surveys/updateOrCreateAwnser', {
           survey_id: question.survey_id,
@@ -475,7 +487,9 @@ export default {
             question.users_awnser = this.copyObject(e.data)
 
             // Next Question
-            this.nextUnawnseredQuestion(question)
+            if (bNextQ) {
+              this.nextUnawnseredQuestion(question)
+            }
           }
         })
         .catch((e) => {
@@ -487,3 +501,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: .02em;
+  color: #000;
+}
+
+</style>
