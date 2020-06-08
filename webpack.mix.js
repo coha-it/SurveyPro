@@ -29,6 +29,22 @@ mix.webpackConfig({
       '~': path.join(__dirname, './resources/js')
     }
   },
+  module: {
+    rules: [
+      {
+        test: /\.pug$/,
+        oneOf: [
+          {
+            resourceQuery: /^\?vue/,
+            use: ['pug-plain-loader']
+          },
+          {
+            use: ['raw-loader', 'pug-plain-loader']
+          }
+        ]
+      }
+    ]
+  },
   output: {
     chunkFilename: 'dist/js/[chunkhash].js',
     path: mix.config.hmr ? '/' : path.resolve(__dirname, './public' /* /build */)
