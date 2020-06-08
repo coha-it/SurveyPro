@@ -210,7 +210,19 @@
       transition: 200ms;
     }
   }
+
+  @media (max-width: 550px) {
+    // On Thin Mode
+    &.thin {
+      .progress .inner {
+        margin: 1px;
+        height: 8px;
+      }
+    }
+  }
+
 }
+
 
 // Preview
 .survey.wrapper.preview {

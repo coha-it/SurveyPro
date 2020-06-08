@@ -14,7 +14,7 @@ span
       q-card-section
         .text-h6 Vorschaumodus
       q-card-section.q-pt-none
-        Preview(:o-survey='oSurvey', :b-preview='true')
+        Preview(:o-survey='oSurvey', :b-preview='true', :key="key")
 </template>
 <script>
 import Preview from '~/components/SurveyDetails'
@@ -34,8 +34,13 @@ export default {
   data () {
     return {
       max: true,
-      bDialog: false
+      bDialog: false,
+      key: 1
     }
+  },
+
+  mounted () {
+    window.addEventListener('mouseup', this.refresh)
   },
 
   methods: {
@@ -55,8 +60,16 @@ export default {
       //   window.location.hash = ''
       // }
     },
-    log () {
-      console.log('mouseup')
+    refresh () {
+      setTimeout(() => {
+        this.key += 1
+      }, 1)
+    },
+    copyObject (obj) {
+      if (typeof obj !== 'undefined') {
+        var copy = JSON.parse(JSON.stringify(obj))
+        if (copy) return copy
+      }
     }
   }
 }

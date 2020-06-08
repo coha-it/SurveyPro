@@ -3,7 +3,7 @@
     <q-header class="bg-white text-primary">
       <q-toolbar>
         <!-- Progress -->
-        <div class="survey-progress-wrapper">
+        <div :class="'survey-progress-wrapper ' + (oSurvey.questions.length > 15 ? 'thin' : null)">
           <template v-for="q in oSurvey.questions">
             <span
               :key="q.id"
@@ -112,44 +112,19 @@
 
             <div style="text-align: center">
               <div v-if="question.is_commentable" class="comment_wrapper q-pa-md">
-                <template v-if="question.users_awnser">
-                  <div v-if="question.users_awnser.comment" class="comment_inner">
-                    <p class="user_comment">
-                      {{ question.users_awnser.comment }}
-                    </p>
+                <template v-if="questionHasComment()">
+                  <div class="user_comment_wrapper">
+                    <div class="user_comment">
+                      <textarea
+                        ref="user_comment"
+                        v-model="question.users_awnser.comment"
+                        :autofocus="true"
+                        placeholder="Ihr Kommentar"
+                        class="input"
+                      />
+                    </div>
                   </div>
-
-                  <q-btn
-                    :label="question.users_awnser.comment == '' ? 'Kommentar hinzufügen' : 'Kommentar bearbeiten'"
-                    icon="chat"
-                    size="md"
-                    flat
-                    rounded
-                    color="grey"
-                    @click.native="question_dialog = true"
-                  />
-                  <q-dialog v-model="question_dialog">
-                    <q-card style="min-width: 350px">
-                      <q-card-section>
-                        <div class="text-h6">Kommentar:</div>
-                      </q-card-section>
-
-                      <q-card-section class="q-pt-none">
-                        <q-input
-                          v-model="question.users_awnser.comment"
-                          dense
-                          autofocus
-                          :type="question.comment_is_number ? 'number' : 'text'"
-                          :inputmode="question.comment_is_number ? 'decimal' : null"
-                          @keyup.enter="question_dialog = false"
-                        />
-                      </q-card-section>
-
-                      <q-card-actions align="right" class="text-primary">
-                        <q-btn v-close-popup flat label="Übernehmen" />
-                      </q-card-actions>
-                    </q-card>
-                  </q-dialog>
+                  <q-btn label="Kommentar entfernen" size="sm" unelevated flat rounded @click="tryDeleteComment" />
                 </template>
 
                 <template v-else>
@@ -160,7 +135,7 @@
                     flat
                     rounded
                     color="grey"
-                    @click="findOrCreateAwnser(question); question_dialog = true"
+                    @click="createComment(question)"
                   />
                 </template>
               </div>
@@ -279,22 +254,84 @@ export default {
 
   data () {
     return {
-      question_dialog: false
+      //
     }
   },
 
   methods: {
 
-    changeQuestion (clickedQuestion) {
-      // Update Current Question
-      let currQ = this.question
-      if (currQ.users_awnser) {
-        this.updateOrCreateAwnser(this.question, false)
+    questionHasComment () {
+      const q = this.question
+      return q.users_awnser && typeof q.users_awnser.comment === 'string'
+    },
+
+    createComment (question) {
+      let awnser = this.findOrCreateAwnser(question)
+
+      // If Comment isnt a string
+      if (typeof awnser.comment !== 'string') {
+        // Set as a string
+        awnser.comment = ''
       }
 
-      // Route to new clicked Question
-      let to = this.getQuestionHash(clickedQuestion)
-      this.$router.push(to)
+      if (this.$refs.user_comment) this.focusCommentInput()
+
+      this.$nextTick(() => {
+        if (this.$refs.user_comment) this.focusCommentInput()
+      })
+
+      setTimeout(() => {
+        this.focusCommentInput()
+      }, 5)
+    },
+
+    getAwnser () {
+      const question = this.question
+      return question && question.users_awnser ? question.users_awnser : {}
+    },
+
+    getComment () {
+      const awnser = this.getAwnser()
+      return awnser && awnser.comment ? awnser.comment : ''
+    },
+
+    tryDeleteComment () {
+      this.$q.dialog({
+        title: 'Kommentar Löschen?',
+        message: 'Möchten Sie wirklich Ihren Kommentar löschen? ' +
+                  (this.getComment() ? 'Ihr Kommentar: "' + this.getComment() + '"' : ''),
+        ok: {
+          label: 'Löschen',
+          unelevated: true
+        },
+        cancel: {
+          label: 'Zurück',
+          unelevated: true
+        }
+      }).onOk(() => {
+        this.question.users_awnser.comment = null
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
+    },
+
+    changeQuestion (clickedQuestion) {
+      let currQ = this.question
+      // If its another question
+      if (currQ.id === clickedQuestion.id) {
+        return true
+      } else {
+        // Update Current Question
+        if (currQ.users_awnser) {
+          this.updateOrCreateAwnser(this.question, false)
+        }
+
+        // Route to new clicked Question
+        let to = this.getQuestionHash(clickedQuestion)
+        this.$router.push(to)
+      }
     },
 
     isSkipped (q) {
@@ -413,15 +450,14 @@ export default {
       else if (question.order > viewedQ.order) r.push('away')
       else r.push('curr')
 
-      // If Question is Skipped
       if (this.isSkipped(question)) {
+        // If Question is Skipped
         r.push('skipped')
-      }
-      // If Question is Awnsered
-      else if (
+      } else if (
         question.users_awnser &&
         this.questionSubmittable(question)
       ) {
+        // If Question is Awnsered
         r.push('awnsered')
       } else {
         r.push('unawnsered')
@@ -440,7 +476,7 @@ export default {
       return Math.max.apply(Math, question.options.map(option => option.order))
     },
     questionHasAwnsers (question) {
-      return this.firstAwnser(question) ? true : false
+      return !!this.firstAwnser(question)
     },
     getSliderLabel (question) {
       let o = this.firstAwnser(question)
@@ -476,11 +512,17 @@ export default {
       // Select
       this.toggleAwnserOption(question, option)
     },
+
+    focusCommentInput () {
+      this.$refs.user_comment.focus()
+    },
+
     findOrCreateAwnser (oQuestion) {
       if (!oQuestion.users_awnser) {
         oQuestion.users_awnser = {
           question_id: oQuestion.id,
-          awnser_options: []
+          awnser_options: [],
+          comment: ''
         }
       }
       return oQuestion.users_awnser

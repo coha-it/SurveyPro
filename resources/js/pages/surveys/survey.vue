@@ -1,8 +1,10 @@
 <template>
-  <SurveyDetails
-    v-if="oSurvey"
-    :o-survey="oSurvey"
-  />
+  <transition name="fade" mode="out-in">
+    <SurveyDetails
+      v-if="oSurvey"
+      :o-survey="oSurvey"
+    />
+  </transition>
 </template>
 
 <script>

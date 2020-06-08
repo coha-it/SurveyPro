@@ -1,51 +1,49 @@
 <template>
-  <transition name="fade" mode="out-in">
-    <div :class="'survey wrapper ' + (bPreview ? 'preview' : null)">
-      <div v-if="bPreview">
-        <q-btn
-          label="CHANGE"
-          icon="refresh"
-          unelevated
-          @click="oSurvey = copyObject(oSurvey)"
-        />
-      </div>
-      <div class="inner">
-        <div :key="overviewIsViewed()">
-          <div v-if="oSurvey">
-            <!-- Overview -->
-            <Overview
-              v-if="overviewIsViewed()"
-              :hashes="hashes"
-              :o-survey="oSurvey"
-              :get-question-hash="getQuestionHash"
-              :get-overview-hash="getOverviewHash"
-              :b-preview="bPreview"
-            />
+  <div :class="'survey wrapper ' + (bPreview ? 'preview' : null)">
+    <div v-if="bPreview">
+      <q-btn
+        label="CHANGE"
+        icon="refresh"
+        unelevated
+        @click="oSurvey = copyObject(oSurvey)"
+      />
+    </div>
+    <div class="inner">
+      <div :key="overviewIsViewed()">
+        <div v-if="oSurvey">
+          <!-- Overview -->
+          <Overview
+            v-if="overviewIsViewed()"
+            :hashes="hashes"
+            :o-survey="oSurvey"
+            :get-question-hash="getQuestionHash"
+            :get-overview-hash="getOverviewHash"
+            :b-preview="bPreview"
+          />
 
-            <!-- Questions -->
-            <Question
-              v-else
-              :hashes="hashes"
-              :o-survey="oSurvey"
-              :question="question"
-              :get-viewed-question="getViewedQuestion"
-              :get-question-hash="getQuestionHash"
-              :get-overview-hash="getOverviewHash"
-              :question-is-viewed="questionIsViewed"
-              :get-position-by-id="getPositionById"
-              :find-by-key="findByKey"
-              :copy-object="copyObject"
-              :is-light="isLight"
-              :is-dark="isDark"
-              :light-or-dark="lightOrDark"
-              :question-transition="questionTransition"
-              :b-preview="bPreview"
-            />
-          </div>
+          <!-- Questions -->
+          <Question
+            v-else
+            :hashes="hashes"
+            :o-survey="oSurvey"
+            :question="question"
+            :get-viewed-question="getViewedQuestion"
+            :get-question-hash="getQuestionHash"
+            :get-overview-hash="getOverviewHash"
+            :question-is-viewed="questionIsViewed"
+            :get-position-by-id="getPositionById"
+            :find-by-key="findByKey"
+            :copy-object="copyObject"
+            :is-light="isLight"
+            :is-dark="isDark"
+            :light-or-dark="lightOrDark"
+            :question-transition="questionTransition"
+            :b-preview="bPreview"
+          />
         </div>
       </div>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>

@@ -68,9 +68,16 @@
                   {{ form.pin.length + ' / ' + (pin_maxlength) }}
                 </template>
               </q-input><br>
-              <q-btn color="primary" large block :loading="form.busy" type="submit">
-                {{ $t('login') }}
-              </q-btn>
+              <q-btn
+                :label="$t('login')"
+                color="primary"
+                large
+                block
+                :loading="form.busy"
+                type="submit"
+                unelevated
+                class="full-width"
+              />
             </q-form>
           </div>
         </div>
