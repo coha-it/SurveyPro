@@ -121,10 +121,19 @@
                         :autofocus="true"
                         placeholder="Ihr Kommentar"
                         class="input"
+                        tabindex="1"
                       />
                     </div>
                   </div>
-                  <q-btn label="Kommentar entfernen" size="sm" unelevated flat rounded @click="tryDeleteComment" />
+                  <q-btn
+                    label="Kommentar entfernen"
+                    size="sm"
+                    unelevated
+                    flat
+                    rounded
+                    tabindex="5"
+                    @click="tryDeleteComment"
+                  />
                 </template>
 
                 <template v-else>
@@ -167,6 +176,7 @@
               label="Frage überspringen"
               color="primary"
               class="full-width"
+              tabindex="2"
               @click="skipQuestion(question)"
             />
           </template>
@@ -177,6 +187,7 @@
               :disable="!questionSubmittable(question)"
               color="primary"
               class="full-width"
+              tabindex="2"
               @click="updateOrCreateAwnser(question, true)"
             />
           </template>
