@@ -343,212 +343,76 @@
 
                         <div class="row">
                           <div class="col col-12 col-sm-6 col-md-6">
-                            a
-                            <Datepicker />
-                            b
-                            <!--
-                            <q-input
-                              :value="getDateFormat(oSurvey.start_datetime)"
+                            <Datepicker
+                              s-model="start_datetime"
+                              s-label="Beginnt am"
+                              s-color="green"
+                              s-header-color="green"
+                              s-icon="event_available"
+                              :options="getMinStartDate"
+                              :events="events"
+                              :colors="eventColor"
+                              :get-dates-diff-days="getDatesDiffDays"
+                              :s-value="getDateFormat(oSurvey.start_datetime)"
+
+                              :o-survey="oSurvey"
                               :disable="surveyIsUneditable()"
-                              label="Beginnt am"
-                              placeholder="Bitte auswählen"
-                              readonly
-                              disabled
-                              color="teal"
-                              standout
-                            >
-                              <template v-slot:prepend>
-                                <q-icon name="event_available" />
-                              </template>
-                              <q-popup-proxy
-                                ref="qDateProxy"
-                                transition-show="scale"
-                                transition-hide="scale"
-                              >
-                                <q-date
-                                  v-model="oSurvey.start_datetime"
-                                  :events="events"
-                                  :event-color="eventColor"
-                                  :disable="surveyIsUneditable()"
-                                  required
-                                  :options="getMinStartDate"
-                                  :selected-items-text="getDatesDiffDays() + ' Tage Zeit'"
-                                  color="secondary"
-                                  header-color="primary"
-                                  :mask="datepicker_mask"
-                                >
-                                  <div class="row items-center justify-end q-gutter-sm">
-                                    <q-btn
-                                      v-close-popup
-                                      :disable="!oSurvey.active"
-                                      :label="$t('remove')"
-                                      color="warning"
-                                      flat
-                                      @click="oSurvey.start_datetime = null"
-                                    />
-                                    <q-space />
-                                    <q-btn
-                                      v-close-popup
-                                      :label="$t('ok')"
-                                      color="primary"
-                                      unelevated
-                                    />
-                                  </div>
-                                </q-date>
-                              </q-popup-proxy>
-                            </q-input>
-                            -->
+                              :mask="datepicker_mask"
+                            />
                           </div>
                           <div class="col col-12 col-sm-6 col-md-6">
-                            <q-input
-                              v-if="oSurvey.start_datetime"
-                              :value="getTimeFormat(oSurvey.start_datetime)"
+                            <Datepicker
+                              :time="true"
+                              s-model="start_datetime"
+                              s-label="Beginnt um"
+                              s-color="green"
+                              s-header-color="green"
+                              s-icon="schedule"
+                              :options="getMinStartTime"
+                              :s-value="getTimeFormat(oSurvey.start_datetime)"
+
+                              :o-survey="oSurvey"
                               :disable="surveyIsUneditable()"
-                              label="Beginnt um"
-                              placeholder="Bitte auswählen"
-                              readonly
-                              :rules="required"
-                              disabled
-                              standout
-                            >
-                              <template v-slot:prepend>
-                                <q-icon name="schedule" />
-                              </template>
-                              <q-popup-proxy
-                                ref="qDateProxy"
-                                transition-show="scale"
-                                transition-hide="scale"
-                              >
-                                <q-time
-                                  v-model="oSurvey.start_datetime"
-                                  format24h
-                                  :disable="surveyIsUneditable()"
-                                  :options="getMinStartTime"
-                                  :mask="datepicker_mask"
-                                  color="green"
-                                >
-                                  <div class="row items-center justify-end q-gutter-sm">
-                                    <q-btn
-                                      v-close-popup
-                                      :disable="!oSurvey.active"
-                                      :label="$t('remove')"
-                                      color="warning"
-                                      flat
-                                      @click="oSurvey.start_datetime = null"
-                                    />
-                                    <q-space />
-                                    <q-btn
-                                      v-close-popup
-                                      :label="$t('ok')"
-                                      color="primary"
-                                      unelevated
-                                    />
-                                  </div>
-                                </q-time>
-                              </q-popup-proxy>
-                            </q-input>
+                              :mask="datepicker_mask"
+                            />
                           </div>
                         </div>
 
-                        <div v-if="oSurvey.start_datetime" class="row">
+                        <div class="row">
                           <div class="col col-12 col-sm-6 col-md-6">
-                            <q-input
-                              :value="getDateFormat(oSurvey.end_datetime)"
-                              :disable="surveyIsUneditable()"
-                              label="Endet am"
-                              readonly
-                              :rules="required"
-                              disabled
-                              standout
-                            >
-                              <template v-slot:prepend>
-                                <q-icon name="event_busy" />
-                              </template>
-                              <q-popup-proxy
-                                ref="qDateProxy"
-                                transition-show="scale"
-                                transition-hide="scale"
-                              >
-                                <q-date
-                                  v-model="oSurvey.end_datetime"
+                            <Datepicker
+                              s-model="end_datetime"
+                              s-label="Endet am"
+                              s-color="primary"
+                              s-header-color="primary"
+                              s-icon="event_busy"
+                              :options="getMaxEndDate"
+                              :events="events"
+                              :colors="eventColor"
+                              :get-dates-diff-days="getDatesDiffDays"
+                              :s-value="getDateFormat(oSurvey.end_datetime)"
+                              :b-range="true"
 
-                                  :events="events"
-                                  :event-color="eventColor"
-                                  :disable="surveyIsUneditable()"
-                                  required
-                                  :options="getMaxEndDate"
-                                  range
-                                  color="grey"
-                                  header-color="primary"
-                                  :mask="datepicker_mask"
-                                >
-                                  <div class="row items-center justify-end q-gutter-sm">
-                                    <q-btn
-                                      v-close-popup
-                                      :disable="!oSurvey.active"
-                                      :label="$t('remove')"
-                                      color="warning"
-                                      flat
-                                      @click="oSurvey.end_datetime = null"
-                                    />
-                                    <q-space />
-                                    <q-btn
-                                      v-close-popup
-                                      :label="$t('ok')"
-                                      color="primary"
-                                      unelevated
-                                    />
-                                  </div>
-                                </q-date>
-                              </q-popup-proxy>
-                            </q-input>
+                              :o-survey="oSurvey"
+                              :disable="surveyIsUneditable()"
+                              :mask="datepicker_mask"
+                            />
                           </div>
                           <div class="col col-12 col-sm-6 col-md-6">
-                            <q-input
-                              :value="getTimeFormat(oSurvey.end_datetime)"
+                            <Datepicker
+                              :time="true"
+                              s-model="end_datetime"
+                              s-label="Endet um"
+                              s-color="primary"
+                              s-header-color="primary"
+                              s-icon="timelapse"
+                              :options="getMaxEndTime"
+                              :s-value="getTimeFormat(oSurvey.end_datetime)"
+
+                              :o-survey="oSurvey"
                               :disable="surveyIsUneditable()"
-                              label="Endet um"
-                              readonly
-                              :rules="required"
-                              icon="schedule"
-                              standout
-                            >
-                              <template v-slot:prepend>
-                                <q-icon name="timelapse" />
-                              </template>
-                              <q-popup-proxy
-                                ref="qDateProxy"
-                                transition-show="scale"
-                                transition-hide="scale"
-                              >
-                                <q-time
-                                  v-model="oSurvey.end_datetime"
-                                  format24h
-                                  :disable="surveyIsUneditable()"
-                                  :mask="datepicker_mask"
-                                  color="grey"
-                                  :options="getMaxEndTime"
-                                >
-                                  <div class="row items-center justify-end q-gutter-sm">
-                                    <q-btn
-                                      v-close-popup
-                                      :disable="!oSurvey.active"
-                                      :label="$t('remove')"
-                                      color="warning"
-                                      flat
-                                      @click="oSurvey.end_datetime = null"
-                                    />
-                                    <q-space />
-                                    <q-btn
-                                      v-close-popup
-                                      :label="$t('ok')"
-                                      color="primary"
-                                      unelevated
-                                    />
-                                  </div>
-                                </q-time>
-                              </q-popup-proxy>
-                            </q-input>
+                              :mask="datepicker_mask"
+                            />
                           </div>
                         </div>
 
