@@ -31,7 +31,7 @@ Route::group(['middleware' => 'guest:api'], function () {
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('logout', 'Auth\LoginController@logout');
 
-    Route::get('/user', 'User\UserController@self');
+    Route::get('user', 'User\UserController@self');
 
     // Get all users surveys which he is membering
     Route::get('surveys-membering', 'SurveyCtrl@getMemberingSurveys');

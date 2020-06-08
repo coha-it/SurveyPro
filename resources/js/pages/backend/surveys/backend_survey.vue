@@ -343,6 +343,10 @@
 
                         <div class="row">
                           <div class="col col-12 col-sm-6 col-md-6">
+                            a
+                            <Datepicker />
+                            b
+                            <!--
                             <q-input
                               :value="getDateFormat(oSurvey.start_datetime)"
                               :disable="surveyIsUneditable()"
@@ -363,7 +367,6 @@
                               >
                                 <q-date
                                   v-model="oSurvey.start_datetime"
-
                                   :events="events"
                                   :event-color="eventColor"
                                   :disable="surveyIsUneditable()"
@@ -377,14 +380,24 @@
                                   <div class="row items-center justify-end q-gutter-sm">
                                     <q-btn
                                       v-close-popup
-                                      :label="$t('closer_button')"
-                                      color="primary"
+                                      :disable="!oSurvey.active"
+                                      :label="$t('remove')"
+                                      color="warning"
                                       flat
+                                      @click="oSurvey.start_datetime = null"
+                                    />
+                                    <q-space />
+                                    <q-btn
+                                      v-close-popup
+                                      :label="$t('ok')"
+                                      color="primary"
+                                      unelevated
                                     />
                                   </div>
                                 </q-date>
                               </q-popup-proxy>
                             </q-input>
+                            -->
                           </div>
                           <div class="col col-12 col-sm-6 col-md-6">
                             <q-input
@@ -417,9 +430,18 @@
                                   <div class="row items-center justify-end q-gutter-sm">
                                     <q-btn
                                       v-close-popup
-                                      :label="$t('closer_button')"
-                                      color="primary"
+                                      :disable="!oSurvey.active"
+                                      :label="$t('remove')"
+                                      color="warning"
                                       flat
+                                      @click="oSurvey.start_datetime = null"
+                                    />
+                                    <q-space />
+                                    <q-btn
+                                      v-close-popup
+                                      :label="$t('ok')"
+                                      color="primary"
+                                      unelevated
                                     />
                                   </div>
                                 </q-time>
@@ -463,9 +485,18 @@
                                   <div class="row items-center justify-end q-gutter-sm">
                                     <q-btn
                                       v-close-popup
-                                      :label="$t('closer_button')"
-                                      color="primary"
+                                      :disable="!oSurvey.active"
+                                      :label="$t('remove')"
+                                      color="warning"
                                       flat
+                                      @click="oSurvey.end_datetime = null"
+                                    />
+                                    <q-space />
+                                    <q-btn
+                                      v-close-popup
+                                      :label="$t('ok')"
+                                      color="primary"
+                                      unelevated
                                     />
                                   </div>
                                 </q-date>
@@ -501,9 +532,18 @@
                                   <div class="row items-center justify-end q-gutter-sm">
                                     <q-btn
                                       v-close-popup
-                                      :label="$t('closer_button')"
-                                      color="primary"
+                                      :disable="!oSurvey.active"
+                                      :label="$t('remove')"
+                                      color="warning"
                                       flat
+                                      @click="oSurvey.end_datetime = null"
+                                    />
+                                    <q-space />
+                                    <q-btn
+                                      v-close-popup
+                                      :label="$t('ok')"
+                                      color="primary"
+                                      unelevated
                                     />
                                   </div>
                                 </q-time>
@@ -1896,14 +1936,16 @@
 // import axios from 'axios'
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
-import UserDataModal from '~/components/BackendUserDataModal'
+import UserDataModal from '~/components/Backend/UserDataModal'
 import HtmlEditor from '~/components/Backend/HtmlEditor'
+import Datepicker from '~/components/Backend/SurveyDatepicker'
 
 export default {
 
   components: {
     UserDataModal,
-    HtmlEditor
+    HtmlEditor,
+    Datepicker
   },
 
   data () {
@@ -3686,7 +3728,7 @@ export default {
       this.bEdit = false
 
       var tmp = {
-        active: 1,
+        active: 0,
         only_editable_by_creator: 1,
         is_public: 0,
         use_html: 0,

@@ -168,13 +168,20 @@ class BackendSurveyCtrl extends Controller
     {
         // 1. Validate the Requests
         $request->validate([
-            'survey' => 'required',
-            'survey.start_datetime' => 'required|date_format:Y-m-d H:i:s',
-            'survey.end_datetime' => 'required|date_format:Y-m-d H:i:s'
+            'survey' => 'required'
         ]);
 
         $reqSurvey = $request->survey;
         $self = $request->user();
+
+        // If Activated
+        if($reqSurvey['active']) {
+            // Validate Start and End Datetime
+            $request->validate([
+                'survey.start_datetime' => 'required|date_format:Y-m-d H:i:s',
+                'survey.end_datetime' => 'required|date_format:Y-m-d H:i:s'
+            ]);
+        }
 
         // 3. Check if Request has ID
         if(

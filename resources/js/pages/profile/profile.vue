@@ -196,7 +196,7 @@
 <script>
 import Form from 'vform'
 import { mapGetters } from 'vuex'
-// import UserDataModal from '~/components/BackendUserDataModal'
+// import UserDataModal from '~/components/Backend/UserDataModal'
 
 export default {
   scrollToTop: false,
