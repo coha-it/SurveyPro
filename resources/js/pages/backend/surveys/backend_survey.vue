@@ -90,14 +90,14 @@
             indicator-color="white"
             class="bg-primary text-white shadow-2"
           >
-            <q-tab name="basis" label="Basis" icon="settings" @click="changeTab('basis')" />
             <q-tab
-              name="fragen"
-              label="Fragen"
-              icon="question_answer"
-              @click="changeTab('fragen')"
+              v-for="(tab) in tabs"
+              :key="tab.name"
+              :name="tab.name"
+              :label="tab.label"
+              :icon="tab.icon"
+              @click="changeTab(tab.name)"
             />
-            <q-tab name="gruppen" label="Gruppen" icon="group" @click="changeTab('gruppen')" />
           </q-tabs>
 
           <q-separator />
@@ -1569,6 +1569,9 @@
                 unelevated
                 outlined
               />
+              <q-space />
+              &nbsp;
+              <Preview :o-survey="oSurvey" />
               &nbsp;
               <q-btn
                 v-if="surveyIsEditable()"
@@ -1582,6 +1585,7 @@
                 @click="tryUpdateSurvey"
               />
               &nbsp;
+
               <!-- <q-btn
                 color="primary"
                 flat
@@ -1803,17 +1807,22 @@ import dayjs from 'dayjs'
 import UserDataModal from '~/components/Backend/UserDataModal'
 import HtmlEditor from '~/components/Backend/HtmlEditor'
 import Datepicker from '~/components/Backend/SurveyDatepicker'
+import Preview from '~/components/Backend/SurveyPreview'
 
 export default {
 
   components: {
     UserDataModal,
     HtmlEditor,
-    Datepicker
+    Datepicker,
+    Preview
   },
 
   data () {
     return {
+
+      // Preview
+      bShowPreview: false,
 
       // Import Dialog
       bImportDialog: false,
@@ -2177,6 +2186,23 @@ export default {
 
       // Tabs
       active_tab: 'basis',
+      tabs: [
+        {
+          name: 'basis',
+          label: 'Basis',
+          icon: 'settings'
+        },
+        {
+          name: 'fragen',
+          label: 'Fragen',
+          icon: 'question_answer'
+        },
+        {
+          name: 'gruppen',
+          label: 'Gruppen',
+          icon: 'group'
+        }
+      ],
 
       // Back Route
       oBackRoute: { name: 'backend.surveys' },
@@ -2292,7 +2318,7 @@ export default {
     var params = route.params
     var id = parseInt(params.id)
 
-    if (params.id == 'create') {
+    if (params.id === 'create') {
       this.startCreateMode()
     } else if (typeof id === 'number') {
       this.$store.dispatch('surveys/fetchBackendSurveyAllowed', id)
@@ -3294,8 +3320,8 @@ export default {
     },
 
     duplicateLastQuestion () {
-      var aQ = this.oSurvey.questions
-      var oLastQ = aQ[aQ.length - 1]
+      let aQ = this.oSurvey.questions
+      let oLastQ = aQ[aQ.length - 1]
       this.duplicateQuestion(oLastQ)
     },
 
@@ -3305,8 +3331,11 @@ export default {
 
     checkTabForHash () {
       if (window.location.hash) {
-        var tab = window.location.hash.substr(1)
-        if (tab) this.active_tab = tab
+        let tab = window.location.hash.substr(1)
+
+        if (tab && this.tabs.find(t => t.name === tab)) {
+          this.active_tab = tab
+        }
       }
     },
 

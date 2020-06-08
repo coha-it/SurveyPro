@@ -124,11 +124,26 @@
 <script>
 export default {
   props: {
-    hashes: Object,
-    oSurvey: Object,
-    getQuestionHash: Function,
-    getOverviewHash: Function,
-    getProgressClasses: Function,
+    hashes: {
+      type: Object,
+      required: true
+    },
+    oSurvey: {
+      type: Object,
+      required: true
+    },
+    getQuestionHash: {
+      type: Function,
+      required: true
+    },
+    getOverviewHash: {
+      type: Function,
+      required: true
+    },
+    bPreview: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data () {

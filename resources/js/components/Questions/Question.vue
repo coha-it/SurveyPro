@@ -20,7 +20,7 @@
     </q-header>
     <q-page-container>
       <q-page class="q-pb-xl">
-        <transition :name="question_transition" mode="out-in">
+        <transition :name="questionTransition" mode="out-in">
           <!-- The Question -->
           <!-- Single Question here -->
           <div v-if="questionIsViewed(question)" :key="question.id">
@@ -213,23 +213,68 @@
 </template>
 
 <script>
-/* eslint-disable vue/require-default-prop */
 export default {
   props: {
-    hashes: Object,
-    oSurvey: Object,
-    question: Object,
-    getViewedQuestion: Function,
-    getQuestionHash: Function,
-    getOverviewHash: Function,
-    questionIsViewed: Function,
-    getPositionById: Function,
-    findByKey: Function,
-    copyObject: Function,
-    isLight: Function,
-    isDark: Function,
-    lightOrDark: Function,
-    question_transition: String
+    hashes: {
+      type: Object,
+      required: true
+    },
+    oSurvey: {
+      type: Object,
+      required: true
+    },
+    question: {
+      type: Object,
+      default: null
+    },
+    getViewedQuestion: {
+      type: Function,
+      required: true
+    },
+    getQuestionHash: {
+      type: Function,
+      required: true
+    },
+    getOverviewHash: {
+      type: Function,
+      required: true
+    },
+    questionIsViewed: {
+      type: Function,
+      required: true
+    },
+    getPositionById: {
+      type: Function,
+      required: true
+    },
+    findByKey: {
+      type: Function,
+      required: true
+    },
+    copyObject: {
+      type: Function,
+      required: true
+    },
+    isLight: {
+      type: Function,
+      required: true
+    },
+    isDark: {
+      type: Function,
+      required: true
+    },
+    lightOrDark: {
+      type: Function,
+      required: true
+    },
+    questionTransition: {
+      type: String,
+      required: true
+    },
+    bPreview: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data () {
@@ -462,7 +507,7 @@ export default {
       q.users_awnser.awnser_options = [{}]
       q.users_awnser.comment = null
       q.users_awnser.skipped = 1
-      this.sendAwnser(q)
+      this.sendAwnser(q, true)
     },
 
     updateOrCreateAwnser (q, bNextQ) {
@@ -471,32 +516,39 @@ export default {
     },
 
     sendAwnser (question, bNextQ) {
-      this.$store
-        .dispatch('surveys/updateOrCreateAwnser', {
-          survey_id: question.survey_id,
-          question_id: question.id,
-          awnser: question.users_awnser
-        })
-        .then((e) => {
-          // Success
-          if (!e || !e.response || !e.response.data || !e.response.data.error) {
-            // _t.showSnackbarSuccess(_t.$t('data_saved'))
-            console.log('data saved')
+      if (this.bPreview) {
+        // Next Question
+        if (bNextQ) {
+          this.nextUnawnseredQuestion(question)
+        }
+      } else {
+        this.$store
+          .dispatch('surveys/updateOrCreateAwnser', {
+            survey_id: question.survey_id,
+            question_id: question.id,
+            awnser: question.users_awnser
+          })
+          .then((e) => {
+            // Success
+            if (!e || !e.response || !e.response.data || !e.response.data.error) {
+              // _t.showSnackbarSuccess(_t.$t('data_saved'))
+              console.log('data saved')
 
-            // Update in Model
-            question.users_awnser = this.copyObject(e.data)
+              // Update in Model
+              question.users_awnser = this.copyObject(e.data)
 
-            // Next Question
-            if (bNextQ) {
-              this.nextUnawnseredQuestion(question)
+              // Next Question
+              if (bNextQ) {
+                this.nextUnawnseredQuestion(question)
+              }
             }
-          }
-        })
-        .catch((e) => {
-          // Error
-          console.log(e)
-          this.showSnackbarError(this.$t('data_unsaved') + '<br />' + e)
-        })
+          })
+          .catch((e) => {
+            // Error
+            console.log(e)
+            this.showSnackbarError(this.$t('data_unsaved') + '<br />' + e)
+          })
+      }
     }
   }
 }

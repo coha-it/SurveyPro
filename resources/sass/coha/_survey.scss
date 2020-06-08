@@ -209,7 +209,14 @@
       margin: 3px;
       transition: 200ms;
     }
-
   }
+}
 
+// Preview
+.survey.wrapper.preview {
+  .survey-progress-wrapper {
+    .progress {
+      pointer-events: all !important;
+    }
+  }
 }

@@ -323,7 +323,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function fillableSurveys()
     {
-        return $this->memberingSurveys()->where('is_fillable', true)->whereNull('user_finished');
+        return $this
+                ->memberingSurveys()
+                ->where('is_fillable', true)
+                ->whereNull('user_finished');
     }
 
     /**
