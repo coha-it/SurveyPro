@@ -533,7 +533,7 @@ export default {
         oQuestion.users_awnser = {
           question_id: oQuestion.id,
           awnser_options: [],
-          comment: ''
+          comment: null
         }
       }
       return oQuestion.users_awnser
