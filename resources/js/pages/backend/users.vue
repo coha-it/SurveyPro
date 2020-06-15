@@ -103,7 +103,7 @@
       </q-dialog>
       &nbsp;
 
-      <FileImport ref="FileImport" />
+      <CsvUsersImport ref="CsvUsersImport" />
 
       &nbsp;
     </p>
@@ -998,7 +998,7 @@ import UserDataModal from '~/components/Backend/UserDataModal'
 import Print from '~/components/Backend/UsersPrint'
 import BulkProfileChanges from '~/components/Backend/UserBulkProfileChanges'
 import BulkGroupChanges from '~/components/Backend/UserBulkGroupChanges'
-import FileImport from '~/components/Backend/FileImport'
+import CsvUsersImport from '~/components/Backend/CsvUsersImport'
 import { type } from 'os'
 
 export default {
@@ -1009,7 +1009,7 @@ export default {
     Print,
     BulkProfileChanges,
     BulkGroupChanges,
-    FileImport
+    CsvUsersImport
   },
 
   directives: {
@@ -1446,7 +1446,7 @@ export default {
 
         // If Imported Users - Activate View
         if (imported) {
-          _this.$refs.FileImport.closeDialog()
+          _this.$refs.CsvUsersImport.closeDialog()
           _this.settings.bShowContactMailData = true
           console.log('import created successfully')
         }

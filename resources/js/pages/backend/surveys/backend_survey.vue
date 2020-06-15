@@ -183,9 +183,9 @@
                   </q-item-section>
                 </q-item>
 
-                <br>
-
-                <q-item-label>Konfigurations-Einstellungen</q-item-label>
+                <q-item-label header>
+                  Konfigurations-Einstellungen
+                </q-item-label>
 
                 <q-item>
                   <q-item-section side top>
@@ -686,68 +686,78 @@
                             </q-popup-edit>
                           </q-td>
 
-                          <q-td key="is_skippable" :props="props">
-                            <q-checkbox
-                              v-model="props.row.is_skippable"
-                              :true-value="1"
-                              :false-value="0"
-                            />
-                          </q-td>
+                          <template v-if="isInfoblock(props)">
+                            <q-td key="is_skippable" :props="props" />
+                            <q-td key="is_commentable" :props="props" />
+                            <q-td key="min_options" :props="props" />
+                            <q-td key="max_options" :props="props" />
+                          </template>
 
-                          <q-td key="is_commentable" :props="props">
-                            <q-checkbox
-                              v-model="props.row.is_commentable"
-                              :true-value="1"
-                              :false-value="0"
-                            />
-                          </q-td>
+                          <template v-else>
+                            <q-td key="is_skippable" :props="props">
+                              <q-checkbox
+                                v-model="props.row.is_skippable"
+                                :true-value="1"
+                                :false-value="0"
+                              />
+                            </q-td>
 
-                          <q-td key="min_options" :props="props">
-                            {{ props.row.min_options }}
-                            <q-popup-edit
-                              v-model="props.row.min_options"
-                              buttons
-                              single-line
-                              persistent
-                              :cover="false"
-                              self="center left"
-                              anchor="center right"
-                              :offset="[5, 0]"
-                              @save="save(props.row)"
-                            >
-                              <q-input
+                            <q-td key="is_commentable" :props="props">
+                              <q-checkbox
+                                v-model="props.row.is_commentable"
+                                :true-value="1"
+                                :false-value="0"
+                              />
+                            </q-td>
+
+                            <q-td key="min_options" :props="props">
+                              {{ props.row.min_options }}
+                              <q-popup-edit
                                 v-model="props.row.min_options"
-                                :label="$t('min_options')"
-                                :max="parseInt(props.row.max_options)"
-                                autofocus
-                                type="number"
-                              />
-                            </q-popup-edit>
-                          </q-td>
+                                buttons
+                                single-line
+                                persistent
+                                :cover="false"
+                                self="center left"
+                                anchor="center right"
+                                :offset="[5, 0]"
+                                @save="save(props.row)"
+                              >
+                                <q-input
+                                  v-model="props.row.min_options"
+                                  :label="$t('min_options')"
+                                  :max="parseInt(props.row.max_options)"
+                                  autofocus
+                                  type="number"
+                                />
+                              </q-popup-edit>
+                            </q-td>
 
-                          <q-td key="max_options" :props="props">
-                            {{ props.row.max_options }}
-                            <q-popup-edit
-                              v-model="props.row.max_options"
-                              buttons
-                              single-line
-                              persistent
-                              :cover="false"
-                              self="center left"
-                              anchor="center right"
-                              :offset="[5, 0]"
-                              @save="save(props.row)"
-                            >
-                              <q-input
+                            <q-td key="max_options" :props="props">
+                              {{ props.row.max_options }}
+                              <q-popup-edit
                                 v-model="props.row.max_options"
-                                :label="$t('max_options')"
-                                :min="parseInt(props.row.min_options)"
-                                :max="10"
-                                autofocus
-                                type="number"
-                              />
-                            </q-popup-edit>
-                          </q-td>
+                                buttons
+                                single-line
+                                persistent
+                                :cover="false"
+                                self="center left"
+                                anchor="center right"
+                                :offset="[5, 0]"
+                                @save="save(props.row)"
+                              >
+                                <q-input
+                                  v-model="props.row.max_options"
+                                  :label="$t('max_options')"
+                                  :min="parseInt(props.row.min_options)"
+                                  :max="10"
+                                  autofocus
+                                  type="number"
+                                />
+                              </q-popup-edit>
+                            </q-td>
+
+                          </template>
 
                           <!-- ID -->
                           <!-- <q-td auto-width>
@@ -787,7 +797,7 @@
                                     </div>
                                   </div>
                                   <div class="row">
-                                    <div class="col col-12 col-sm-6 col-md-6">
+                                    <div :class="isInfoblock(props) ? 'col-12' : 'col col-12 col-sm-6 col-md-6'">
                                       <q-list subheader two-line flat>
                                         <q-item-label header>
                                           Text-Einstellungen [ID: #{{ props.row.id }}]
@@ -841,6 +851,7 @@
 
                                         <q-item>
                                           <q-item-section>
+                                            help
                                             <HtmlEditor
                                               v-if="oSurvey.use_html"
                                               :model="props.row"
@@ -872,7 +883,7 @@
                                       </q-list>
                                     </div>
 
-                                    <div class="col col-12 col-sm-6 col-md-6">
+                                    <div v-if="props.row.format !== 'info_only'" class="col col-12 col-sm-6 col-md-6">
                                       <q-list subheader two-line flat dense>
                                         <q-item-label header>
                                           Einstellungen
@@ -1044,10 +1055,7 @@
                                       </q-list>
                                     </div>
                                     <div class="col col-12 col-sm-12 col-md-12 col-lg-6">
-                                      <template v-if="['comment_only', 'slider', 'slider_vert'].includes(props.row.format)">
-                                        <!-- -->
-                                      </template>
-                                      <template v-else>
+                                      <template v-if="formatWithMultipleOptions(props.row.format)">
                                         <q-item-label header>
                                           Bestimmt die Minimale und Maximale Anzahl an auswählbaren optionen
                                         </q-item-label>
@@ -1117,13 +1125,12 @@
                                     </div>
                                     <div class="col col-12 col-sm-12 col-md-12 col-lg-12">
                                       <q-list subheader two-line flat>
-                                        <q-item-label header>
-                                          Optionen:
-                                        </q-item-label>
-                                        <q-item>
-                                          <q-item-section>
-                                            <!-- -->
-                                            <template>
+                                        <template v-if="formatWithOptions(props.row.format)">
+                                          <q-item-label header>
+                                            Optionen:
+                                          </q-item-label>
+                                          <q-item>
+                                            <q-item-section>
                                               <!-- Selected Toolbar -->
                                               <q-toolbar
                                                 v-if="aSelectedOptions && aSelectedOptions.length"
@@ -1389,10 +1396,10 @@
 
                                                     <!-- ID -->
                                                     <!-- <q-td auto-width>
-                                                      <span>
-                                                        <small style="word-break: break-all">{{ option.row.id }}</small>
-                                                      </span>
-                                                    </q-td> -->
+                                                        <span>
+                                                          <small style="word-break: break-all">{{ option.row.id }}</small>
+                                                        </span>
+                                                      </q-td> -->
 
                                                     <!-- Actions -->
                                                     <q-td auto-width>
@@ -1454,8 +1461,8 @@
                                                       outline
                                                       @click="addNewOption(props.row)"
                                                     />
-                                                    &nbsp;
-                                                    &nbsp;
+                                                      &nbsp;
+                                                      &nbsp;
                                                     <q-btn
                                                       label="Letzte Option duplizieren"
                                                       color="primary"
@@ -1468,9 +1475,9 @@
                                                   </q-td>
                                                 </template>
                                               </q-table>
-                                            </template>
-                                          </q-item-section>
-                                        </q-item>
+                                            </q-item-section>
+                                          </q-item>
+                                        </template>
                                       </q-list>
                                       <br>
                                       <br>
@@ -1485,25 +1492,33 @@
                     </q-table>
                   </q-item-section>
                 </q-item>
-
-                <q-item>
-                  <q-btn
-                    label="Neue Frage hinzufügen"
-                    icon="plus_one"
-                    @click="addNewQuestion()"
-                  />
-                  &nbsp; &nbsp;
-                  <q-btn
-                    label="Letzte Frage duplizieren"
-                    :disabled="oSurvey.questions.length <= 0"
-                    color="primary"
-                    icon="control_point_duplicate"
-                    @click="duplicateLastQuestion()"
-                  />
-                </q-item>
-
-                <q-separator />
               </q-list>
+
+              <div class="q-pa-md">
+                <q-btn
+                  label="Textblock"
+                  icon="text_snippet"
+                  unelevated
+                  outline
+                  @click="addNewTextblock()"
+                />
+                <q-btn
+                  label="Neue Frage"
+                  icon="control_point"
+                  unelevated
+                  outline
+                  @click="addNewQuestion()"
+                />
+                &nbsp;
+                <q-btn
+                  label="Letzte Frage duplizieren"
+                  :disabled="oSurvey.questions.length <= 0"
+                  color="primary"
+                  icon="control_point_duplicate"
+                  unelevated
+                  @click="duplicateLastQuestion()"
+                />
+              </div>
             </q-tab-panel>
 
             <!-- Gruppeneinstellungen -->
@@ -1557,10 +1572,8 @@
             </q-tab-panel>
           </q-tab-panels>
 
-          <q-list>
-            <q-item>
-              <q-input v-model="oSurvey.title" required :rules="required" style="display: none;" />
-
+          <div class="row justify-between q-pa-md">
+            <div class="text-left">
               <q-btn
                 color="grey"
                 dark
@@ -1569,10 +1582,9 @@
                 unelevated
                 outlined
               />
-              <q-space />
-              &nbsp;
+            </div>
+            <div class="text-right">
               <Preview :o-survey="oSurvey" />
-              &nbsp;
               <q-btn
                 v-if="surveyIsEditable()"
                 color="primary"
@@ -1584,28 +1596,11 @@
                 icon="save"
                 @click="tryUpdateSurvey"
               />
-              &nbsp;
+            </div>
+          </div>
 
-              <!-- <q-btn
-                color="primary"
-                flat
-                round
-                icon="settings"
-              >
-                <q-menu dense>
-                  <q-list style="min-width: 100px">
-                    <q-item v-close-popup :disabled="surveyIsUneditable() || isUnsaved()" clickable>
-                      <q-item-section>
-                        Export
-                      </q-item-section>
-                      <q-item-section avatar>
-                        <q-icon name="export" />
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-              </q-btn> -->
-
+          <q-list>
+            <q-item>
               <q-page-sticky position="bottom-right" :offset="[18, 18]" style="z-index: 999">
                 <q-btn
                   v-show="isUnsaved()"
@@ -2005,10 +2000,16 @@ export default {
           icon: 'check_box'
         },
         {
-          label: 'Nur Text "comment_only"',
+          label: 'Nur Kommentar "comment_only"',
           id: 'comment_only',
-          description: 'Nur Text "comment_only"',
+          description: 'Nur Kommentar "comment_only"',
           icon: 'textsms'
+        },
+        {
+          label: 'Reiner Texblock "Info Only"',
+          id: 'info_only',
+          description: 'Nur Informationen / Text. Keine Angaben oder Antwortoptionen möglich "Info Only"',
+          icon: 'text_snippet'
         }
       ],
 
@@ -2341,6 +2342,23 @@ export default {
 
   methods: {
 
+    isInfoblock (props) {
+      return props.row.format === 'info_only'
+    },
+
+    isNoInfoblock (props) {
+      return !this.isInfoblock(props)
+    },
+
+    formatWithOptions (format) {
+      console.log('format', format)
+      return !['comment_only', 'info_only'].includes(format)
+    },
+
+    formatWithMultipleOptions (format) {
+      return !['comment_only', 'slider', 'slider_vert', 'info_only'].includes(format)
+    },
+
     getRangeModel (item) {
       return {
         min: item.min_options,
@@ -2627,7 +2645,7 @@ export default {
       question.max_options = 1
 
       this.addOption({
-        id: null,
+        id: this.getRandomId(),
         question_id: question.id,
         title: 'Nein',
         value: -1,
@@ -2635,7 +2653,7 @@ export default {
       }, question)
 
       this.addOption({
-        id: null,
+        id: this.getRandomId(),
         question_id: question.id,
         title: 'Ja',
         value: 1,
@@ -3003,7 +3021,7 @@ export default {
     },
 
     questionIsExpanded (id) {
-      return this.questions_extended.find(e => e == id)
+      return this.questions_extended.find(e => parseInt(e) === parseInt(id))
     },
 
     expandQuestion (question) {
@@ -3141,25 +3159,25 @@ export default {
     },
 
     deleteOptionFrontend (option, question) {
-      var pos = this.getPositionById(option, question.options) // Get Option's Position inside Question
+      const pos = this.getPositionById(option, question.options) // Get Option's Position inside Question
       question.options.splice(pos, 1) // Remove from Question-Options
       this.reorderOptions(question) // Reorder Options
     },
 
     deleteOptions (aOptions) {
       // Vars
-      var aQs = this.oSurvey.questions
+      const aQs = this.oSurvey.questions
 
       // Delete for Request
       for (const i in aOptions) {
-        var o = aOptions[i]
+        const o = aOptions[i]
         this.deleteOptionBackend(o)
       }
 
       // Delete for Frontend
-      for (var i = aOptions.length - 1; i >= 0; i--) {
-        var o = aOptions[i]
-        var q = this.findById(aQs, o.question_id)
+      for (let i = aOptions.length - 1; i >= 0; i--) {
+        const o = aOptions[i]
+        const q = this.findById(aQs, o.question_id)
         this.deleteOptionFrontend(o, q)
       }
 
@@ -3282,16 +3300,21 @@ export default {
       return q
     },
 
-    addNewQuestion () {
+    addNewQuestion (format = 'comment_only') {
       return this.addQuestion({
-        id: null,
+        id: this.getRandomId(),
         options: [],
         is_commentable: 1,
         comment_is_required: 0,
         comment_is_number: 0,
+        comment_max_signs: 150,
         is_skippable: 0,
-        format: 'comment_only'
+        format: format
       })
+    },
+
+    addNewTextblock () {
+      this.addNewQuestion('info_only')
     },
 
     duplicateQuestion (question) {

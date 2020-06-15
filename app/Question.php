@@ -71,4 +71,8 @@ class Question extends Model
         return parent::delete();
     }
 
+    public function isSkippable() {
+        return $this->is_skippable || $this->format === 'info_only';
+    }
+
 }

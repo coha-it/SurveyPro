@@ -1,6 +1,5 @@
 <template>
   <q-editor
-    v-if="model && field && model[field]"
     v-model="model[field]"
     :disable="disable"
     :toolbar="toolbar"
@@ -113,6 +112,15 @@ export default {
         times_new_roman: 'Times New Roman',
         verdana: 'Verdana'
       }
+    }
+  },
+
+  methods: {
+    isAvailable () {
+      const model = this.model
+      const field = this.field
+
+      return model && field && typeof model[field] !== 'undefined'
     }
   }
 }

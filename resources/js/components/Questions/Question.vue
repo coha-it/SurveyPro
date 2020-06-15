@@ -111,7 +111,7 @@
             </template>
 
             <div style="text-align: center">
-              <div v-if="question.is_commentable" class="comment_wrapper q-pa-md">
+              <div v-if="isCommentable(question)" class="comment_wrapper q-pa-md">
                 <template v-if="questionHasComment()">
                   <div class="user_comment_wrapper">
                     <div class="user_comment">
@@ -171,9 +171,9 @@
         <!-- <q-btn flat icon="keyboard_arrow_left" :to="beforeQuestionRoute(question)" /> -->
         <q-btn flat icon="keyboard_arrow_left" @click="$router.back()" />
         <template v-if="question">
-          <template v-if="question.is_skippable && !hasAwnser(question)">
+          <template v-if="questionIsSkippable(question) && !hasAwnser(question)">
             <q-btn
-              label="Frage überspringen"
+              :label="isInfoblock() ? 'Weiter' : 'Frage überspringen'"
               color="primary"
               class="full-width"
               tabindex="2"
@@ -270,6 +270,22 @@ export default {
   },
 
   methods: {
+
+    questionIsSkippable (question = this.question) {
+      return question.is_skippable || this.isInfoblock(question)
+    },
+
+    isInfoblock (question = this.question) {
+      return question.format === 'info_only'
+    },
+
+    isNoInfoblock (question = this.question) {
+      return !this.isInfoblock(question)
+    },
+
+    isCommentable (question = this.question) {
+      return question.is_commentable && this.isNoInfoblock(question)
+    },
 
     questionHasComment () {
       const q = this.question

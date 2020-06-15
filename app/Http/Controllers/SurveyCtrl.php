@@ -60,8 +60,8 @@ class SurveyCtrl extends Controller
         $reqAw['user_id']   = Auth()->user()->id;
         unset($reqAw['awnser_options']); // Remove Useless
 
-        // If Question is Skippable
-        if(!$question->is_skippable) {
+        // If Question is not Skippable
+        if(!$question->isSkippable()) {
             // Not Skippable
             $reqAw['skipped'] = 0;
         }
