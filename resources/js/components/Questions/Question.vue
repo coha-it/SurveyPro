@@ -93,7 +93,7 @@
                 :vertical="question.format === 'slider_vert'"
                 :reverse="question.format === 'slider_vert'"
                 @change="sliderChange"
-                @mousedown.native="sliderInput"
+                @input="sliderChange"
               />
               <template v-if="questionHasAwnsers(question)">
                 <transition name="fade" mode="out-in">
@@ -503,6 +503,9 @@ export default {
     },
     sliderInput (e) {
       console.log(e)
+    },
+    sliderMouseMove (e) {
+      console.log('slidermousemove', e)
     },
     sliderChange (order) {
       var question = this.getViewedQuestion(this.oSurvey)
