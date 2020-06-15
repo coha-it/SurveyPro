@@ -513,7 +513,7 @@
                                 Duplizieren
                               </q-item-section>
                             </q-item>
-                            <q-item v-close-popup clickable @click="bDeleteQuestionDialog = true">
+                            <q-item v-close-popup clickable @click="tryDeleteQuestions(selected)">
                               <q-item-section side>
                                 <q-icon name="delete" />
                               </q-item-section>
@@ -526,7 +526,7 @@
                                 <q-icon name="arrow_drop_up" />
                               </q-item-section>
                               <q-item-section>
-                                Position Hoch
+                                Position hoch
                               </q-item-section>
                             </q-item>
                             <q-item clickable @click="moveSelectedDown()">
@@ -534,7 +534,7 @@
                                 <q-icon name="arrow_drop_down" />
                               </q-item-section>
                               <q-item-section>
-                                Position Runter
+                                Position runter
                               </q-item-section>
                             </q-item>
                           </q-list>
@@ -542,35 +542,6 @@
                       </q-btn>
                       <div class="flex-grow-1" />
                     </q-toolbar>
-
-                    <!-- Delete - Dialog -->
-                    <q-dialog
-                      v-model="bDeleteQuestionDialog"
-                      max-width="500"
-                      dark
-                      content-class="naked dark centered"
-                    >
-                      <h2 class="display-2">
-                        Fragen Löschen?
-                      </h2>
-                      <p>Möchten Sie {{ selected.length }} Fragen löschen?</p>
-                      <div class="container fluid">
-                        <div class="row" align="center">
-                          <div class="col text-center" cols="12" sm="12">
-                            <q-btn depressed outlined @click="bDeleteQuestionDialog = false">
-                              Abbruch
-                            </q-btn>
-                            <q-btn
-                              depressed
-                              color="error"
-                              @click.prevent="deleteQuestions(selected)"
-                            >
-                              Löschen
-                            </q-btn>
-                          </div>
-                        </div>
-                      </div>
-                    </q-dialog>
 
                     <q-table
                       v-model="selected"
@@ -707,6 +678,7 @@
                                 v-model="props.row.is_commentable"
                                 :true-value="1"
                                 :false-value="0"
+                                :disable="questionIsCommentOnly(props.row)"
                               />
                             </q-td>
 
@@ -851,7 +823,6 @@
 
                                         <q-item>
                                           <q-item-section>
-                                            help
                                             <HtmlEditor
                                               v-if="oSurvey.use_html"
                                               :model="props.row"
@@ -913,7 +884,7 @@
                                           <q-item-section side top>
                                             <q-checkbox
                                               v-model="props.row.is_commentable"
-                                              :disable="surveyIsUneditable()"
+                                              :disable="surveyIsUneditable() || questionIsCommentOnly(props.row)"
                                               color="primary"
                                               :true-value="1"
                                               :false-value="0"
@@ -1011,6 +982,7 @@
                                               map-options
                                               required
                                               :error="!props.row.format"
+                                              @input="questionFormatChanged(props.row)"
                                             >
                                               <template v-slot:selected-item="scope">
                                                 <q-item
@@ -1502,6 +1474,7 @@
                   outline
                   @click="addNewTextblock()"
                 />
+                &nbsp;
                 <q-btn
                   label="Neue Frage"
                   icon="control_point"
@@ -2025,7 +1998,6 @@ export default {
       bFabButtonInner: false,
 
       // Questions
-      bDeleteQuestionDialog: false,
       sSearch: '',
       pagination: {
         sortBy: 'order',
@@ -2286,8 +2258,8 @@ export default {
     },
 
     oSurvey: {
-      handler () {
-        // console.log('oSurvey Changed');
+      handler (before, after) {
+        // console.log('oSurvey Changed', before, after)
         // this.$refs.form.validate();
       },
       deep: true
@@ -2342,6 +2314,38 @@ export default {
 
   methods: {
 
+    questionIsCommentOnly (question) {
+      return question.format === 'comment_only'
+    },
+
+    questionFormatChanged (question) {
+      const format = question.format
+      switch (format) {
+        case 'info_only':
+          question.min_options = 0
+          question.max_options = 0
+          question.is_commentable = 0
+          question.comment_is_required = 0
+          question.is_skippable = 1
+          break
+
+        case 'comment_only':
+          question.min_options = 0
+          question.max_options = 0
+          question.is_commentable = 1
+          break
+
+        case 'slider':
+        case 'slider_vert':
+          question.min_options = 1
+          question.max_options = 1
+          break
+
+        default:
+          break
+      }
+    },
+
     isInfoblock (props) {
       return props.row.format === 'info_only'
     },
@@ -2351,7 +2355,6 @@ export default {
     },
 
     formatWithOptions (format) {
-      console.log('format', format)
       return !['comment_only', 'info_only'].includes(format)
     },
 
@@ -2987,24 +2990,56 @@ export default {
           // inline: true
           items: this.question_presets
         },
-        cancel: true,
-        persistent: false
-      }).onOk(selected => {
-        // Get specific Presets
-        var preset = this.findById(this.question_presets, selected)
-
-        // If Preset Exists
-        if (preset && preset.load) {
-          // Do Basic for Presets
-          this.deleteOptions(question.options)
-
-          // Load Preset into Question
-          preset.load(this, question)
+        ok: {
+          label: 'Vorlage Laden',
+          color: 'red',
+          unelevated: true
+        },
+        cancel: {
+          label: 'Zurück',
+          unelevated: true
         }
-      }).onCancel(() => {
-        // console.log('>>>> Cancel')
-      }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
+      }).onOk(selected => {
+        // Ask Again
+        this.$q.dialog({
+          title: 'Fragen-Details werden überschrieben',
+          message: 'Die Optionen der Frage werden dabei überschrieben und mit denen der Vorlage ersetzt. Einverstanden?',
+          ok: {
+            label: 'Vorlage Laden',
+            color: 'red',
+            unelevated: true
+          },
+          cancel: {
+            label: 'Zurück',
+            unelevated: true
+          }
+        }).onOk(() => {
+          // Get specific Presets
+          var preset = this.findById(this.question_presets, selected)
+
+          // If Preset Exists
+          if (preset && preset.load) {
+            // Do Basic for Presets
+            this.deleteOptions(question.options)
+
+            // Load Preset into Question
+            preset.load(this, question)
+
+            this.$q.notify({
+              message: 'Vorlage geladen',
+              position: 'top-right',
+              color: 'green',
+              timeout: 3000
+            })
+          }
+        }).onCancel(() => {
+          this.$q.notify({
+            message: 'Abgebrochen',
+            position: 'top-right',
+            color: 'grey',
+            timeout: 1500
+          })
+        })
       })
     },
 
@@ -3123,7 +3158,26 @@ export default {
       }
     },
 
-    deleteQuestions (selected) {
+    tryDeleteQuestions (selected = this.selected) {
+      this.$q.dialog({
+        title: 'Fragen Löschen?',
+        message: 'Möchten Sie ' + this.selected.length + ' Fragen löschen?',
+        ok: {
+          label: 'Löschen',
+          unelevated: true,
+          color: 'red'
+        },
+        cancel: {
+          label: 'Zurück',
+          unelevated: true
+        }
+      }).onOk(() => {
+        this.deleteQuestions(selected)
+      }).onCancel(() => {
+      }).onDismiss(() => {})
+    },
+
+    deleteQuestions (selected = this.selected) {
       // Delete Them from Arrays
       this.oSurvey.questions = this.oSurvey.questions.filter(function (x) {
         return selected.indexOf(x) < 0
@@ -3143,9 +3197,6 @@ export default {
 
       // Reorder Questions
       this.reorderQuestions()
-
-      // Close Dialog
-      this.bDeleteQuestionDialog = false
     },
 
     deleteOption (o, q) {
@@ -3208,27 +3259,27 @@ export default {
       this.selected.sort((a, b) => (a.order > b.order ? 1 : -1))
     },
 
-    moveSelectedUp () {
+    moveSelectedUp (iValue = 1) {
       this.sortSelectedByOrder()
       for (var i = 0; i < this.selected.length; i++) {
-        this.moveUp(this.selected[i], this.oSurvey.questions)
+        this.moveUp(this.selected[i], this.oSurvey.questions, iValue)
       }
     },
 
-    moveSelectedDown () {
+    moveSelectedDown (iValue = 1) {
       this.sortSelectedByOrder()
       for (var i = this.selected.length - 1; i >= 0; i--) {
-        this.moveDown(this.selected[i], this.oSurvey.questions)
+        this.moveDown(this.selected[i], this.oSurvey.questions, iValue)
       }
     },
 
-    moveUp (oElem, aList) {
+    moveUp (oElem, aList, iValue = 1) {
       console.log(oElem, aList)
-      this.move(oElem, aList, -1)
+      this.move(oElem, aList, -(iValue))
     },
 
-    moveDown (oElem, aList) {
-      this.move(oElem, aList, 1)
+    moveDown (oElem, aList, iValue = 1) {
+      this.move(oElem, aList, iValue)
     },
 
     getPositionById (oItem, oObject) {
@@ -3305,6 +3356,7 @@ export default {
         id: this.getRandomId(),
         options: [],
         is_commentable: 1,
+        description: '',
         comment_is_required: 0,
         comment_is_number: 0,
         comment_max_signs: 150,

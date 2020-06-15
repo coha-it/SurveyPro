@@ -25,9 +25,15 @@
           <!-- Single Question here -->
           <div v-if="questionIsViewed(question)" :key="question.id">
             <div class="q-mb-md q-px-md q-pb-md q-pt-sm">
-              <div class="text-overline">{{ $t('Question') }} {{ getQuestionPosition() }} / {{ oSurvey.question_count }}</div>
-              <h1 class="text-black">{{ question.title }}</h1>
-              <div class="text-subtitle1 text-black">{{ question.subtitle }}</div>
+              <div class="text-overline">
+                {{ $t('Question') }} {{ getQuestionPosition() }} / {{ oSurvey.question_count }}
+              </div>
+              <h1 class="text-black">
+                {{ question.title }}
+              </h1>
+              <div class="text-subtitle1 text-black">
+                {{ question.subtitle }}
+              </div>
               <div class="text-body2">
                 <div
                   v-if="oSurvey.use_html"
@@ -102,8 +108,12 @@
                     class="selected-option coha"
                     :style="'color:'+getSliderColor()"
                   >
-                    <div class="subtitle">{{ firstAwnser(question).subtitle }}</div>
-                    <div class="description">{{ firstAwnser(question).description }}</div>
+                    <div class="subtitle">
+                      {{ firstAwnser(question).subtitle }}
+                    </div>
+                    <div class="description">
+                      {{ firstAwnser(question).description }}
+                    </div>
                   <!-- {{ firstAwnser(question) }} -->
                   </div>
                 </transition>
