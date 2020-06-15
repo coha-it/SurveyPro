@@ -162,24 +162,32 @@
                 <!-- Description Long -->
                 <q-item>
                   <q-item-section>
-                    <HtmlEditor
-                      v-if="oSurvey.use_html"
-                      :model="oSurvey"
-                      field="desc_long"
-                      :disable="surveyIsUneditable()"
-                    />
-                    <q-input
-                      v-else
-                      v-model="oSurvey.desc_long"
-                      type="textarea"
-                      :disable="surveyIsUneditable()"
-                      outlined
-                      dense
-                      persistent-hint
-                      hint="Lange Beschreibung der Umfrage"
-                      label="Langbeschreibung"
-                      required
-                    />
+                    <template v-if="oSurvey.use_html">
+                      <q-item-label>
+                        <HtmlEditor
+                          :model="oSurvey"
+                          field="desc_long"
+                          :disable="surveyIsUneditable()"
+                        />
+                      </q-item-label>
+                      <q-item-label caption>
+                        Beschreibung
+                      </q-item-label>
+                    </template>
+
+                    <template v-else>
+                      <q-input
+                        v-model="oSurvey.desc_long"
+                        type="textarea"
+                        :disable="surveyIsUneditable()"
+                        outlined
+                        dense
+                        persistent-hint
+                        hint="Lange Beschreibung der Umfrage"
+                        label="Langbeschreibung"
+                        required
+                      />
+                    </template>
                   </q-item-section>
                 </q-item>
 
@@ -728,7 +736,6 @@
                                 />
                               </q-popup-edit>
                             </q-td>
-
                           </template>
 
                           <!-- ID -->
@@ -1531,6 +1538,7 @@
                             <q-icon name="group" />
                           </q-item-section>
                           <q-item-section>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
                             <q-item-label v-html="scope.opt.name" />
                             <q-item-label caption>
                               {{ scope.opt.description_public }}
@@ -1724,6 +1732,7 @@
                       <q-icon :name="scope.opt.icon" />
                     </q-item-section>
                     <q-item-section>
+                      <!-- eslint-disable-next-line vue/no-v-html -->
                       <q-item-label v-html="scope.opt.label" />
                       <q-item-label caption>
                         {{ scope.opt.description }}
@@ -3580,7 +3589,7 @@ export default {
     },
 
     isSameDay (dates) {
-      if (dates && dates[0] == dates[1]) {
+      if (dates && dates[0] === dates[1]) {
         return true
       }
       return false
@@ -3608,13 +3617,13 @@ export default {
     // updateDatetimes() {
     //   if(this.oSurvey) {
 
-    //     var d1 = (this.aDates[0]) ? this.aDates[0].substr(0, 10) : '';
-    //     var d2 = (this.aDates[1]) ? this.aDates[1].substr(0, 10) : '';
+    //     var d1 = (this.aDates[0]) ? this.aDates[0].substr(0, 10) : ''
+    //     var d2 = (this.aDates[1]) ? this.aDates[1].substr(0, 10) : ''
 
-    //     var t1 = (this.oTimes.sStartTime) ? ' ' + this.oTimes.sStartTime + ':00'   : '';
-    //     var t2 = (this.oTimes.sEndTime)   ? ' ' + this.oTimes.sEndTime   + ':00'   : '';
+    //     var t1 = (this.oTimes.sStartTime) ? ' ' + this.oTimes.sStartTime + ':00'   : ''
+    //     var t2 = (this.oTimes.sEndTime)   ? ' ' + this.oTimes.sEndTime   + ':00'   : ''
 
-    //     var tmp = '';
+    //     var tmp = ''
 
     //     if(d1 > d2) {
     //       tmp = d2;
@@ -3622,8 +3631,8 @@ export default {
     //       d1 = tmp;
     //     }
 
-    //     this.oSurvey.start_datetime = d1 + t1 ;
-    //     this.oSurvey.end_datetime   = d2 + t2 ;
+    //     this.oSurvey.start_datetime = d1 + t1
+    //     this.oSurvey.end_datetime   = d2 + t2
     //   }
     // },
 

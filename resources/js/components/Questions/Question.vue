@@ -371,8 +371,8 @@ export default {
       }
     },
 
-    isSkipped (q) {
-      return q.users_awnser && q.users_awnser.skipped
+    isSkipped (question) {
+      return question.users_awnser && question.users_awnser.skipped
     },
 
     hasAwnser (q) {
@@ -487,14 +487,11 @@ export default {
       else if (question.order > viewedQ.order) r.push('away')
       else r.push('curr')
 
-      if (this.isSkipped(question)) {
-        // If Question is Skipped
+      if (this.isInfoblock(question)) {
+        r.push('infoblock')
+      } else if (this.isSkipped(question)) {
         r.push('skipped')
-      } else if (
-        question.users_awnser &&
-        this.questionSubmittable(question)
-      ) {
-        // If Question is Awnsered
+      } else if (question.users_awnser && this.questionSubmittable(question)) {
         r.push('awnsered')
       } else {
         r.push('unawnsered')

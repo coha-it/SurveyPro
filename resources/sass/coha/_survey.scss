@@ -170,6 +170,7 @@
         cursor: pointer;
     }
 
+    &.infoblock,
     &.awnsered {
       .inner {
         background-color: var(--q-color-positive);
