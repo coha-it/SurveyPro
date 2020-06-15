@@ -178,8 +178,7 @@
     </q-page-container>
     <q-footer bordered class="bg-white text-primary">
       <q-toolbar>
-        <!-- <q-btn flat icon="keyboard_arrow_left" :to="beforeQuestionRoute(question)" /> -->
-        <q-btn flat icon="keyboard_arrow_left" @click="$router.back()" />
+        <q-btn flat icon="keyboard_arrow_down" :to="hashes.overview" />
         <template v-if="question">
           <template v-if="questionIsSkippable(question) && !hasAwnser(question)">
             <q-btn
@@ -202,7 +201,7 @@
             />
           </template>
         </template>
-        <q-btn flat icon="keyboard_arrow_down" :to="hashes.overview" />
+        <q-btn flat disable icon="help_outline" _click="$router.back()" />
       </q-toolbar>
     </q-footer>
   </q-layout>
