@@ -38,38 +38,37 @@ q-layout(view='hHr lpr fFr')
       q-btn.full-width(v-if='notAllQuestionsAwnsered()' :label="noQuestionsAwnsered() ? 'Umfrage Beginnen' : 'Umfrage fortsetzen'" color='primary' :to='getSelectableQuestionHash()' @click='getSelectableQuestion()')
       q-btn.full-width(v-else-if='!oSurvey.user_finished' label='Umfrage abschließen' color='primary' @click='bTryFinishDialog = true')
       q-btn.q-px-sm(flat='' icon='help_outline' disable _click='$router.back()')
-      q-dialog(v-model='bTryFinishDialog' persistent)
+      q-dialog(v-model='bTryFinishDialog')
         q-card
           q-card-section.row.items-center
             q-avatar(icon='warning' color='white' text-color='primary')
-              span.q-ml-sm
-                div
-                  b Hinweis!
-                |                 Nach dem Abschlie&szlig;en ist die Umfrage nichtmehr bearbeitbar
+            span.q-ml-sm
+              div
+                b Hinweis!
+              |                 Nach dem Abschlie&szlig;en ist die Umfrage nichtmehr bearbeitbar
           q-card-actions(align='right')
-            q-btn(v-close-popup='' flat='' label='Abbruch' color='primary')
-              q-space
-                q-btn(v-close-popup='' icon='check' unelevated='' label='Umfrage abschließen' color='primary' @click='finishSurvey')
+            q-btn(v-close-popup='' flat='' label='Zurück' color='primary')
+            q-space
+            q-btn(v-close-popup='' icon='check' unelevated='' label='Umfrage abschließen' color='primary' @click='finishSurvey')
       q-dialog(v-model='bFinishedSurveyDialog' content-class='naked centered finished_survey_dialog' persistent='')
         q-card
           q-card-section.text-center.full-height
             .justify-center.full-height.full-width.text-center.items-center.flex.column
               q-icon.text-green(name='check_circle' style='font-size: 8rem;')
+              br
+              template(v-if='oSurvey.desc_after_submit')
+                // eslint-disable-next-line vue/no-v-html
+                div(v-if='oSurvey.use_html' v-html='oSurvey.desc_after_submit')
+                div(v-else) {{ oSurvey.desc_after_submit }}
+              template(v-else)
+                h1.q-mb-xs
+                  | Vielen Dank!
                 br
-                template(v-if='oSurvey.desc_after_submit')
-                  // eslint-disable-next-line vue/no-v-html
-                  div(v-if='oSurvey.use_html' v-html='oSurvey.desc_after_submit')
-                  div(v-else)
-                      | {{ oSurvey.desc_after_submit }}
-                template(v-else)
-                  h1.q-mb-xs
-                    | Vielen Dank!
-                  br
-                  h6.q-ma-xs
-                    | Ihre Umfrage wurden erfolgreich ausgef&uuml;llt.
+                h6.q-ma-xs
+                  | Ihre Umfrage wurden erfolgreich ausgef&uuml;llt.
           q-card-actions(align='right')
             q-space
-              q-btn(v-close-popup='' unelevated='' label='Ok' color='primary' @click="$router.push('/')")
+            q-btn(v-close-popup='' unelevated='' label='Ok' color='primary' @click="$router.push('/')")
 </template>
 
 <script>
