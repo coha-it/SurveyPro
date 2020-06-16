@@ -33,10 +33,10 @@ q-layout(view='hHr lpr fFr')
         .text-center
           q-btn(v-if="listIsLimited()", :label="extendQuestionListLabel()", size="md", icon-right="keyboard_arrow_down" unelevated, rounded, outline, color="grey-6", @click="bLimited = false")
   q-footer.bg-white.text-primary(bordered='')
-    q-toolbar.row.justify-between.q-pa-none
-      q-btn.q-px-sm(flat='' icon='keyboard_arrow_down' :to="'/'")
+    q-toolbar.row.justify-between.q-pa-xs
+      q-btn.q-px-sm.my-stack-btn(label='Zurück' stack flat='' icon='keyboard_arrow_down' :to="'/'")
       q-btn.full-width(v-if='notAllQuestionsAwnsered()' :label="noQuestionsAwnsered() ? 'Umfrage Beginnen' : 'Umfrage fortsetzen'" color='primary' :to='getSelectableQuestionHash()' @click='getSelectableQuestion()')
-      q-btn.full-width(v-else-if='!oSurvey.user_finished' label='Umfrage abschließen' color='primary' icon='check_circle' @click='bTryFinishDialog = true')
+      q-btn.full-width(v-else-if='!oSurvey.user_finished' label='Umfrage abschließen' color='primary' @click='bTryFinishDialog = true')
       q-btn.q-px-sm(flat='' icon='help_outline' disable _click='$router.back()')
       q-dialog(v-model='bTryFinishDialog' persistent)
         q-card

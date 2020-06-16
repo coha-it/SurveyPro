@@ -224,12 +224,23 @@
 
 }
 
-
 // Preview
 .survey.wrapper.preview {
   .survey-progress-wrapper {
     .progress {
       pointer-events: all !important;
     }
+  }
+}
+
+.my-stack-btn .q-btn__content {
+  .q-icon {
+    height: 70%;
+    margin-top: -4px;
+  }
+  .block {
+    font-size: 9px;
+    margin-bottom: 2px;
+    line-height: 1;
   }
 }
