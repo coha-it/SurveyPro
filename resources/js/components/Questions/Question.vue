@@ -121,43 +121,11 @@
             </template>
 
             <div style="text-align: center">
-              <div v-if="isCommentable(question)" class="comment_wrapper q-pa-md">
-                <template v-if="questionHasComment()">
-                  <div class="user_comment_wrapper">
-                    <div class="user_comment">
-                      <textarea
-                        ref="user_comment"
-                        v-model="question.users_awnser.comment"
-                        :autofocus="true"
-                        placeholder="Ihr Kommentar"
-                        class="input"
-                        tabindex="1"
-                      />
-                    </div>
-                  </div>
-                  <q-btn
-                    label="Kommentar entfernen"
-                    size="sm"
-                    unelevated
-                    flat
-                    rounded
-                    tabindex="5"
-                    @click="tryDeleteComment"
-                  />
-                </template>
-
-                <template v-else>
-                  <q-btn
-                    label="Kommentar hinzufügen"
-                    icon="chat"
-                    size="md"
-                    flat
-                    rounded
-                    color="grey"
-                    @click="createComment(question)"
-                  />
-                </template>
-              </div>
+              <QuestionComment
+                :question="question"
+                :is-no-infoblock="isNoInfoblock"
+                :find-or-create-awnser="findOrCreateAwnser"
+              />
 
               <div v-if="question.is_skippable" class="skippable-wrapper q-pa-md">
                 <q-btn
@@ -208,7 +176,14 @@
 </template>
 
 <script>
+import QuestionComment from '~/components/Questions/QuestionComment'
+
 export default {
+
+  components: {
+    QuestionComment
+  },
+
   props: {
     hashes: {
       type: Object,
@@ -290,67 +265,6 @@ export default {
 
     isNoInfoblock (question = this.question) {
       return !this.isInfoblock(question)
-    },
-
-    isCommentable (question = this.question) {
-      return question.is_commentable && this.isNoInfoblock(question)
-    },
-
-    questionHasComment () {
-      const q = this.question
-      return q.users_awnser && typeof q.users_awnser.comment === 'string'
-    },
-
-    createComment (question) {
-      let awnser = this.findOrCreateAwnser(question)
-
-      // If Comment isnt a string
-      if (typeof awnser.comment !== 'string') {
-        // Set as a string
-        awnser.comment = ''
-      }
-
-      if (this.$refs.user_comment) this.focusCommentInput()
-
-      this.$nextTick(() => {
-        if (this.$refs.user_comment) this.focusCommentInput()
-      })
-
-      setTimeout(() => {
-        this.focusCommentInput()
-      }, 5)
-    },
-
-    getAwnser () {
-      const question = this.question
-      return question && question.users_awnser ? question.users_awnser : {}
-    },
-
-    getComment () {
-      const awnser = this.getAwnser()
-      return awnser && awnser.comment ? awnser.comment : ''
-    },
-
-    tryDeleteComment () {
-      this.$q.dialog({
-        title: 'Kommentar Löschen?',
-        message: 'Möchten Sie wirklich Ihren Kommentar löschen? ' +
-                  (this.getComment() ? 'Ihr Kommentar: "' + this.getComment() + '"' : ''),
-        ok: {
-          label: 'Löschen',
-          unelevated: true
-        },
-        cancel: {
-          label: 'Zurück',
-          unelevated: true
-        }
-      }).onOk(() => {
-        this.question.users_awnser.comment = null
-      }).onCancel(() => {
-        // console.log('>>>> Cancel')
-      }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
-      })
     },
 
     changeQuestion (clickedQuestion) {
@@ -547,10 +461,6 @@ export default {
 
       // Select
       this.toggleAwnserOption(question, option)
-    },
-
-    focusCommentInput () {
-      this.$refs.user_comment.focus()
     },
 
     findOrCreateAwnser (oQuestion) {
