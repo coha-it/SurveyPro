@@ -1,146 +1,75 @@
-<template>
-  <q-layout view="hHr lpr fFr">
-    <q-header class="bg-white text-primary">
-      <q-toolbar>
-        <div class="q-mx-sm q-my-md">
-          <h4 style="margin: 0;">
-            <div class="text-caption text-gray">
-              {{ getAuthor() }}
-            </div>
-            <span>{{ oSurvey.title }}</span>
-          </h4>
-        </div>
-      </q-toolbar>
-    </q-header>
-    <q-page-container class="bg-white">
-      <q-page>
-        <div class="q-px-lg q-pb-lg">
-          <!-- HTML -->
-          <template v-if="oSurvey.use_html">
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-html="getDescription(oSurvey)" />
-          </template>
-
-          <!-- No HTML -->
-          <template v-else>
-            <div>
-              {{ getDescription(oSurvey) }}
-            </div>
-          </template>
-        </div>
-
-        <q-list class="q-px-sm">
-          <template v-for="question in oSurvey.questions">
-            <div :key="question.id">
-              <q-item
-                :to="getQuestionHash(question)"
-                :class="getQuestionClasses(question)"
-                :disable="questionIsUnselectable(question)"
-              >
-                <q-item-section>
-                  <q-item-label>{{ question.title }}</q-item-label>
-                  <q-item-label caption lines="2">{{ question.subtitle || question.description }}</q-item-label>
-                </q-item-section>
-
-                <q-item-section side top>
-                  <template v-if="question.users_awnser">
-                    <q-item-label caption>
-                      {{ questionIsSkipped(question) ? 'Übersprungen' : 'Beantwortet' }}
-                    </q-item-label>
-                    <q-icon
-                      :name="questionIsSkipped(question) ? 'redo' : 'check'"
-                      :color="questionIsSkipped(question) ? 'yellow-9' : 'green'"
-                    />
-                  </template>
-                </q-item-section>
-              </q-item>
-              <q-separator spaced inset />
-            </div>
-          </template>
-        </q-list>
-      </q-page>
-    </q-page-container>
-    <q-footer bordered class="bg-white text-primary">
-      <q-toolbar>
-        <q-btn flat icon="keyboard_arrow_left" @click="$router.back()" />
-
-        <q-btn
-          v-if="notAllQuestionsAwnsered()"
-          :label="noQuestionsAwnsered() ? 'Umfrage Beginnen' : 'Umfrage fortsetzen'"
-          color="primary"
-          class="full-width"
-          :to="getSelectableQuestionHash()"
-          @click="getSelectableQuestion()"
-        />
-
-        <q-btn
-          v-else-if="!oSurvey.user_finished"
-          label="Umfrage abschließen"
-          color="primary"
-          class="full-width"
-          icon="check_circle"
-          @click="bTryFinishDialog = true"
-        />
-
-        <q-dialog v-model="bTryFinishDialog" persistent>
-          <q-card>
-            <q-card-section class="row items-center">
-              <q-avatar icon="warning" color="white" text-color="primary" />
-              <span class="q-ml-sm">
-                <div><b>Hinweis!</b></div>
-                Nach dem Abschließen ist die Umfrage nichtmehr bearbeitbar
-              </span>
-            </q-card-section>
-
-            <q-card-actions align="right">
-              <q-btn v-close-popup flat label="Abbruch" color="primary" />
-              <q-space />
-              <q-btn v-close-popup icon="check" unelevated label="Umfrage abschließen" color="primary" @click="finishSurvey" />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-
-        <q-dialog
-          v-model="bFinishedSurveyDialog"
-          content-class="naked centered finished_survey_dialog"
-          persistent
-        >
-          <q-card>
-            <q-card-section class="text-center full-height">
-              <div class="justify-center full-height full-width text-center items-center flex column">
-                <q-icon name="check_circle" class="text-green" style="font-size: 8rem;" />
-                <br>
-                <template v-if="oSurvey.desc_after_submit">
-                  <!-- eslint-disable-next-line vue/no-v-html -->
-                  <div v-if="oSurvey.use_html" v-html="oSurvey.desc_after_submit" />
-                  <div v-else>
-                    {{ oSurvey.desc_after_submit }}
-                  </div>
-                </template>
-
-                <template v-else>
-                  <h1 class="q-mb-xs">
-                    Vielen Dank!
-                  </h1>
-                  <br>
-                  <h6 class="q-ma-xs">
-                    Ihre Umfrage wurden erfolgreich ausgefüllt.
-                  </h6>
-                </template>
-              </div>
-            </q-card-section>
-
-            <q-card-actions align="right">
-              <q-space />
-              <q-btn v-close-popup unelevated label="Ok" color="primary" @click="$router.push('/')" />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-
-        <q-btn flat icon="keyboard_arrow_down" :to="'/'" />
-      </q-toolbar>
-    </q-footer>
-  </q-layout>
+<template lang="pug">
+q-layout(view='hHr lpr fFr')
+  q-header.bg-white.text-primary
+    q-toolbar
+      .q-mx-sm.q-my-md
+        h4(style='margin: 0;')
+          .text-caption.text-gray
+            | {{ getAuthor() }}
+          span {{ oSurvey.title }}
+  q-page-container.bg-white
+    q-page
+      .q-px-lg.q-pb-lg
+        template(v-if='oSurvey.use_html')
+          div(v-html='getDescription(oSurvey)')
+        template(v-else)
+          div
+            | {{ getDescription(oSurvey) }}
+      q-list.q-px-sm
+        template(v-for='(question, key) in oSurvey.questions')
+          div(v-if='listIsUnlimited(key)' :key='question.id')
+            q-item(:to='getQuestionHash(question)' :class='getQuestionClasses(question)' :disable='questionIsUnselectable(question)')
+              q-item-section
+                q-item-label {{ question.title }}
+                q-item-label(caption lines='2') {{ question.subtitle || question.description }}
+                q-item-label.users_awnser(v-if="true || allQuestionsAwnsered()" caption)
+                  | {{ getUsersAwnser(question) }}
+              q-item-section(side='' top='')
+                template(v-if='question.users_awnser')
+                  q-item-label(caption='')
+                    | {{ questionIsSkipped(question) ? &apos;&Uuml;bersprungen&apos; : &apos;Beantwortet&apos; }}
+                  q-icon(:name="questionIsSkipped(question) ? 'redo' : 'check'" :color="questionIsSkipped(question) ? 'yellow-9' : 'green'")
+            q-separator(spaced='' inset='')
+        .text-center
+          q-btn(v-if="listIsLimited()", :label="extendQuestionListLabel()", size="md", icon-right="keyboard_arrow_down" unelevated, rounded, outline, color="grey-6", @click="bLimited = false")
+  q-footer.bg-white.text-primary(bordered='')
+    q-toolbar
+      q-btn(flat='' icon='keyboard_arrow_down' :to="'/'")
+      q-btn.full-width(v-if='notAllQuestionsAwnsered()' :label="noQuestionsAwnsered() ? 'Umfrage Beginnen' : 'Umfrage fortsetzen'" color='primary' :to='getSelectableQuestionHash()' @click='getSelectableQuestion()')
+      q-btn.full-width(v-else-if='!oSurvey.user_finished' label='Umfrage abschließen' color='primary' icon='check_circle' @click='bTryFinishDialog = true')
+      q-btn(flat='' icon='help_outline' disable _click='$router.back()')
+      q-dialog(v-model='bTryFinishDialog' persistent='')
+        q-card
+          q-card-section.row.items-center
+            q-avatar(icon='warning' color='white' text-color='primary')
+              span.q-ml-sm
+                div
+                  b Hinweis!
+                |                 Nach dem Abschlie&szlig;en ist die Umfrage nichtmehr bearbeitbar
+          q-card-actions(align='right')
+            q-btn(v-close-popup='' flat='' label='Abbruch' color='primary')
+              q-space
+                q-btn(v-close-popup='' icon='check' unelevated='' label='Umfrage abschließen' color='primary' @click='finishSurvey')
+      q-dialog(v-model='bFinishedSurveyDialog' content-class='naked centered finished_survey_dialog' persistent='')
+        q-card
+          q-card-section.text-center.full-height
+            .justify-center.full-height.full-width.text-center.items-center.flex.column
+              q-icon.text-green(name='check_circle' style='font-size: 8rem;')
+                br
+                template(v-if='oSurvey.desc_after_submit')
+                  // eslint-disable-next-line vue/no-v-html
+                  div(v-if='oSurvey.use_html' v-html='oSurvey.desc_after_submit')
+                  div(v-else)
+                      | {{ oSurvey.desc_after_submit }}
+                template(v-else)
+                  h1.q-mb-xs
+                    | Vielen Dank!
+                  br
+                  h6.q-ma-xs
+                    | Ihre Umfrage wurden erfolgreich ausgef&uuml;llt.
+          q-card-actions(align='right')
+            q-space
+              q-btn(v-close-popup='' unelevated='' label='Ok' color='primary' @click="$router.push('/')")
 </template>
 
 <script>
@@ -171,11 +100,60 @@ export default {
   data () {
     return {
       bTryFinishDialog: false,
-      bFinishedSurveyDialog: false
+      bFinishedSurveyDialog: false,
+
+      // Limit list
+      iListLimit: 4,
+      bLimited: true
     }
   },
 
+  created () {
+    // Limit List
+    this.bLimited = true
+  },
+
   methods: {
+
+    getUsersAwnser (question) {
+      // Check if User has awnsered
+      if (!question.users_awnser) return
+
+      // Constants
+      const sep = ' | '
+      const awnser = question.users_awnser
+      const comment = awnser.comment
+      const options = awnser.awnser_options
+      const sOption = options.map(e =>
+        (e.title ? e.title : '') +
+        (e.subtitle ? sep + e.subtitle : '') +
+        (e.description ? sep + e.description : '')
+      )[0]
+
+      // Variables
+      let s = ''
+      s += comment ? 'Kommentar: ' + comment + '\n' : ''
+      s += sOption ? 'Ausgewählt: ' + sOption + '\n' : ''
+
+      // Returning Variable
+      return s
+    },
+
+    listIsLimited (i = this.oSurvey.questions.length - 1) {
+      return (i >= this.iListLimit) && (this.bLimited)
+    },
+
+    listIsUnlimited (i = this.oSurvey.questions.length - 1) {
+      return !this.listIsLimited(i)
+    },
+
+    extendQuestionListLabel () {
+      const max = this.oSurvey.questions.length
+      const lim = this.iListLimit
+
+      // 'Alle Fragen anzeigen'
+      return (max - lim) + ' weitere Fragen anzeigen'
+    },
 
     getDescription (survey = this.oSurvey) {
       switch (true) {
@@ -330,3 +308,10 @@ export default {
   }
 }
 </script>
+<style lang="sass" scoped>
+.users_awnser
+  white-space: pre-line
+  line-height: 1.5 !important
+  padding-left: 7px
+  border-left: 3px solid #4eb052
+</style>
