@@ -2,14 +2,14 @@
 q-layout(view='hHr lpr fFr')
   q-header.bg-white.text-primary
     q-toolbar
-      .q-mx-sm.q-my-md
+      .q-mx-sm.q-mt-md
         h4(style='margin: 0;')
           .text-caption.text-gray
             | {{ getAuthor() }}
           span {{ oSurvey.title }}
   q-page-container.bg-white
     q-page
-      .q-px-lg.q-pb-lg
+      .q-px-lg.q-pb-lg.q-mt-md
         template(v-if='oSurvey.use_html')
           div(v-html='getDescription(oSurvey)')
         template(v-else)
@@ -33,12 +33,12 @@ q-layout(view='hHr lpr fFr')
         .text-center
           q-btn(v-if="listIsLimited()", :label="extendQuestionListLabel()", size="md", icon-right="keyboard_arrow_down" unelevated, rounded, outline, color="grey-6", @click="bLimited = false")
   q-footer.bg-white.text-primary(bordered='')
-    q-toolbar
-      q-btn(flat='' icon='keyboard_arrow_down' :to="'/'")
+    q-toolbar.row.justify-between.q-pa-none
+      q-btn.q-px-sm(flat='' icon='keyboard_arrow_down' :to="'/'")
       q-btn.full-width(v-if='notAllQuestionsAwnsered()' :label="noQuestionsAwnsered() ? 'Umfrage Beginnen' : 'Umfrage fortsetzen'" color='primary' :to='getSelectableQuestionHash()' @click='getSelectableQuestion()')
       q-btn.full-width(v-else-if='!oSurvey.user_finished' label='Umfrage abschließen' color='primary' icon='check_circle' @click='bTryFinishDialog = true')
-      q-btn(flat='' icon='help_outline' disable _click='$router.back()')
-      q-dialog(v-model='bTryFinishDialog' persistent='')
+      q-btn.q-px-sm(flat='' icon='help_outline' disable _click='$router.back()')
+      q-dialog(v-model='bTryFinishDialog' persistent)
         q-card
           q-card-section.row.items-center
             q-avatar(icon='warning' color='white' text-color='primary')

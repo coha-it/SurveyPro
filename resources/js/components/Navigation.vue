@@ -61,10 +61,6 @@ import { mapGetters } from 'vuex'
 
 export default {
 
-  computed: mapGetters({
-    user: 'auth/user'
-  }),
-
   data () {
     return {
       bLeft: false,
@@ -72,9 +68,9 @@ export default {
       sidenav: [
         {
           pages: [
-            { title: 'sidenav.home', icon: 'home', route: { name:'home' } },
+            { title: 'sidenav.home', icon: 'home', route: { name: 'home' } },
             { title: 'sidenav.surveys', icon: 'poll', route: { name: 'surveys' } },
-            { title: 'sidenav.profile', icon: 'person', route: { name:'profile' } },
+            { title: 'sidenav.settings', icon: 'settings', route: { name: 'settings' } },
             { title: 'sidenav.faq', icon: 'help', route: { name: 'faq' } }
           ]
         },
@@ -93,6 +89,10 @@ export default {
       logoutDialog: false
     }
   },
+
+  computed: mapGetters({
+    user: 'auth/user'
+  }),
 
   mounted () {
     //

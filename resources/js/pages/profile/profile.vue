@@ -4,8 +4,8 @@
     <alert-success :form="form" :message="$t('info_updated')" />
     <alert-error :form="form" :message="$t('error_alert_text') + (response)" />
 
-    <h1>{{ $t('profile.h1') }}</h1>
-    <p>{{ $t('your_info') }}</p>
+    <h1>{{ $t('settings') }}</h1>
+    <p>{{ $t('your settings') }}</p>
 
     <q-form style="max-width: 550px;" @submit.prevent="update" @keydown="form.onKeydown($event)">
       <div class="container">
@@ -15,7 +15,6 @@
 
           <div class="row">
             <div class="pa-0 col">
-
               <!-- Email -->
               <q-input
                 ref="email"

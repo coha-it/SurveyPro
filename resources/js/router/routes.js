@@ -32,7 +32,7 @@ export default [
       { path: '/surveys', name: 'surveys', component: page('surveys/surveys.vue') },
 
       // Account Settings
-      { path: '/profile', name: 'profile', component: page('profile/profile.vue'), meta: { title: 'profile.title' } }
+      { path: '/settings', name: 'settings', component: page('profile/profile.vue'), meta: { title: 'profile.title' } }
 
       // Old Settings
       // { path: '/settings',

@@ -33,6 +33,7 @@
     "pr_title": "Neues Passwort",
     "pr_desc": "Vergeben Sie ein neues Passwort für Ihr Benutzerkonto",
     "settings": "Einstellungen",
+    "your settings": "Ihre Einstellungen",
     "profile": {
       "title": "Profil",
       "h1": "Profil",
@@ -111,6 +112,7 @@
       "profile": "Konto",
       "surveys": "Ihre Umfragen",
       "faq": "FAQ  /  Hilfe",
+      "settings": "Einstellungen",
 
       "backend": {
         "title": "Administration",
