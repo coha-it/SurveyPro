@@ -1,17 +1,17 @@
-<template>
-    <div>
-      <q-btn rounded icon="mdi-chevron-left" :to="to" flat color="blue-grey" style="color: #FF0080; padding-left: 0;" :label="$t('back')" />
-    </div>
+<template lang="pug">
+div
+  q-btn(rounded icon="mdi-chevron-left" :to="to" flat color="blue-grey" style="color: #FF0080; padding-left: 0;" :label="$t('back')")
 </template>
-
-<style lang="scss" scoped>
-.v-btn {margin-left: -10px;}
-</style>
 
 <script>
 export default {
-    props: [
-        'to'
-    ]
+  props: [
+    'to'
+  ]
 }
 </script>
+
+<style lang="sass" scoped>
+.v-btn
+  margin-left: -10px
+</style>

@@ -107,6 +107,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             // Get Survey(s)
             Route::get('surveys-allowed', 'Backend\BackendSurveyCtrl@getAllowedSurveys');
             Route::get('survey-allowed',  'Backend\BackendSurveyCtrl@getAllowedSurvey')->name('backend.survey');
+            Route::post('surveys-allowed-filtered', 'Backend\BackendSurveyCtrl@getAllowedFilteredSurveys');
 
             // Change Surveys
             Route::patch('update-allowed-survey', 'Backend\BackendSurveyCtrl@tryUpdateAllowedSurvey');

@@ -3,7 +3,7 @@ q-card
   q-card-section
     // New Company
     q-btn(color='primary' depressed='' dark='' @click='createDialog = true') {{ sCreateText }}
-    q-dialog(v-model='createDialog' persistent='')
+    q-dialog(v-model='createDialog' persistent)
       q-card(style='min-width: 350px')
         q-card-section
           .text-h6 {{ sCreateText }}
@@ -14,7 +14,7 @@ q-card
             q-input(v-model='item.description_mods' :label='sInputLabel3' required='')
         q-card-actions.text-primary(align='right')
           q-btn(v-close-popup='' flat='' :label="$t('cancel')")
-            q-btn(v-close-popup='' flat='' :label="$t('save')" @click='createModel(item)')
+          q-btn(v-close-popup='' flat='' :label="$t('save')" @click='createModel(item)')
     .flex-grow-1
   q-table.elevation-1.my-sticky-header-table(v-if='aHeaders' :columns='aHeaders' :data='oModels' :items-per-page='20')
     template(v-slot:body-cell-name='props')
