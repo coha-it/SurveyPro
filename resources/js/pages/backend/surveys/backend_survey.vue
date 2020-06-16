@@ -486,89 +486,19 @@
                 <q-item>
                   <q-item-section>
                     <!-- No Select Toolbar -->
-                    <q-toolbar
-                      v-if="selected.length <= 0"
-                      class="coha--toolbar"
-                      :flat="sSearch == ''"
-                      floating
-                      style="min-height:100px"
-                      height="auto"
-                    >
-                      <div class="flex-grow-1" />
-                      <!-- <q-input
-                        v-model="sSearch"
-                        style="max-width: 400px;"
-                        :label="$t('Search')"
-                        autocomplete="off"
-                        append-icon="search"
-                        hide-details
-                        outlined
-                      /> -->
-                      <q-input
-                        v-model="pagination.rowsPerPage"
-                        number
-                        type="number"
-                        hide-details
-                        style="max-width: 150px;"
-                        label="Fragen pro Seite"
-                        class="ml-5"
-                        outlined
-                      />
-                    </q-toolbar>
-
-                    <q-toolbar
-                      v-else
-                      class="coha--toolbar bg-primary text-white"
-                      :flat="sSearch == ''"
-                      color="primary"
-                      dark
-                      floating
-                      style="min-height:100px"
-                      height="auto"
-                    >
-                      <q-btn :label="selected.length + ' ' + $t('edit')" unelevated rounded icon="mdi-pencil">
-                        <q-menu right offset-y>
-                          <q-list style="min-width: 100px">
-                            <q-item v-close-popup clickable @click="duplicateSelectedQuestions()">
-                              <q-item-section side>
-                                <q-icon name="control_point_duplicate" />
-                              </q-item-section>
-                              <q-item-section>
-                                Duplizieren
-                              </q-item-section>
-                            </q-item>
-                            <q-item v-close-popup clickable @click="tryDeleteQuestions(selected)">
-                              <q-item-section side>
-                                <q-icon name="delete" />
-                              </q-item-section>
-                              <q-item-section>
-                                Löschen
-                              </q-item-section>
-                            </q-item>
-                            <q-item clickable @click="moveSelectedUp()">
-                              <q-item-section side>
-                                <q-icon name="arrow_drop_up" />
-                              </q-item-section>
-                              <q-item-section>
-                                Position hoch
-                              </q-item-section>
-                            </q-item>
-                            <q-item clickable @click="moveSelectedDown()">
-                              <q-item-section side>
-                                <q-icon name="arrow_drop_down" />
-                              </q-item-section>
-                              <q-item-section>
-                                Position runter
-                              </q-item-section>
-                            </q-item>
-                          </q-list>
-                        </q-menu>
-                      </q-btn>
-                      <div class="flex-grow-1" />
-                    </q-toolbar>
+                    <SurveyQuestionsToolbar
+                      :o-survey="oSurvey"
+                      :pagination="pagination"
+                      :try-delete-questions="tryDeleteQuestions"
+                      :duplicate-selected-questions="duplicateSelectedQuestions"
+                      :move-selected-up="moveSelectedUp"
+                      :move-selected-down="moveSelectedDown"
+                      :selected="selected"
+                    />
 
                     <q-table
                       v-model="selected"
+                      :filter="pagination.search"
                       :columns="headers"
                       :data="oSurvey.questions"
                       dense
@@ -578,13 +508,10 @@
                       :selected.sync="selected"
                       show-expand
                       :expanded.sync="expanded"
-                      :search="sSearch"
                       :sort-by="['order']"
                       :sort-desc="[false]"
                       :pagination.sync="pagination"
-                      :footer-props="{
-                        showFirstLastPage: true,
-                      }"
+                      :hide-pagination="true"
                       class="my-data-table f-height questions-table"
                     >
                       <template v-slot:body="props">
@@ -1112,7 +1039,7 @@
                                               <q-toolbar
                                                 v-if="aSelectedOptions && aSelectedOptions.length"
                                                 class="coha--toolbar"
-                                                :flat="sSearch == ''"
+                                                :flat="pagination.search === ''"
                                                 color="primary"
                                                 dark
                                                 floating
@@ -1160,7 +1087,7 @@
                                               <q-toolbar
                                                 v-else
                                                 class="coha--toolbar"
-                                                :flat="sSearch == ''"
+                                                :flat="pagination.search == ''"
                                                 floating
                                                 min-height="85px"
                                                 height="auto"
@@ -1467,6 +1394,16 @@
                         </q-tr>
                       </template>
                     </q-table>
+
+                    <SurveyQuestionsToolbar
+                      :o-survey="oSurvey"
+                      :pagination="pagination"
+                      :try-delete-questions="tryDeleteQuestions"
+                      :duplicate-selected-questions="duplicateSelectedQuestions"
+                      :move-selected-up="moveSelectedUp"
+                      :move-selected-down="moveSelectedDown"
+                      :selected="selected"
+                    />
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -1474,6 +1411,7 @@
               <div class="q-pa-md">
                 <q-btn
                   label="Textblock"
+                  :disabled="!!pagination.search"
                   icon="text_snippet"
                   unelevated
                   outline
@@ -1482,6 +1420,7 @@
                 &nbsp;
                 <q-btn
                   label="Neue Frage"
+                  :disabled="!!pagination.search"
                   icon="control_point"
                   unelevated
                   outline
@@ -1490,7 +1429,7 @@
                 &nbsp;
                 <q-btn
                   label="Letzte Frage duplizieren"
-                  :disabled="oSurvey.questions.length <= 0"
+                  :disabled="!!pagination.search || oSurvey.questions.length <= 0"
                   color="primary"
                   icon="control_point_duplicate"
                   unelevated
@@ -1783,6 +1722,7 @@ import UserDataModal from '~/components/Backend/UserDataModal'
 import HtmlEditor from '~/components/Backend/HtmlEditor'
 import Datepicker from '~/components/Backend/SurveyDatepicker'
 import Preview from '~/components/Backend/SurveyPreview'
+import SurveyQuestionsToolbar from '~/components/Backend/SurveyQuestionsToolbar'
 
 export default {
 
@@ -1790,7 +1730,8 @@ export default {
     UserDataModal,
     HtmlEditor,
     Datepicker,
-    Preview
+    Preview,
+    SurveyQuestionsToolbar
   },
 
   data () {
@@ -2005,12 +1946,13 @@ export default {
       bFabButtonInner: false,
 
       // Questions
-      sSearch: '',
       pagination: {
         sortBy: 'order',
         descending: false,
         page: 1,
-        rowsPerPage: 100
+        rowsPerPage: 10,
+        max_pages: 6,
+        search: ''
       },
       headers: [
         {
@@ -3749,10 +3691,11 @@ export default {
         ok: {
           label: 'Zurücksetzen',
           color: 'warning',
-          depressed: true
+          unelevated: true
         },
         cancel: {
-          label: 'Abbruch'
+          label: 'Abbruch',
+          unelevated: true
         },
         persistent: true
       }).onOk(() => {
