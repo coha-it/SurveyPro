@@ -964,68 +964,56 @@
                                           Bestimmt die Minimale und Maximale Anzahl an auswählbaren optionen
                                         </q-item-label>
                                         <q-item>
-                                          <q-item-section class="q-px-md">
-                                            <q-range
-                                              :value="getRangeModel(props.row)"
-                                              :min="0"
-                                              :max="props.row.options.length"
-                                              label-always
-                                              drag-range
-                                              label
-                                              markers
-                                              snap
-                                              :left-label-value="getRangeLabel(props.row, 'left')"
-                                              :right-label-value="getRangeLabel(props.row, 'right')"
-                                              @input="updateRangeModel(props.row, $event)"
-                                            />
+                                          <q-item-section class="row q-px-md">
+                                            <div class="col-12 col-md-6 col-lg-6">
+                                              <q-input
+                                                v-model="props.row.min_options"
+                                                :disable="surveyIsUneditable()"
+                                                dense
+                                                outlined
+                                                placeholder="1 - 255"
+                                                type="number"
+                                                :max="parseInt(props.row.max_options)"
+                                                label="Minimale Optionen"
+                                                required
+                                                @change="onChangeMinMaxOptions(props)"
+                                                @input="onChangeMinMaxOptions(props)"
+                                              >
+                                                <template v-slot:append>
+                                                  <q-icon :name="help_icon">
+                                                    <q-tooltip self="center middle">
+                                                      Minimal wählbare Optionen
+                                                    </q-tooltip>
+                                                  </q-icon>
+                                                </template>
+                                              </q-input>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-6">
+                                              <q-input
+                                                v-model="props.row.max_options"
+                                                :disable="surveyIsUneditable()"
+                                                dense
+                                                outlined
+                                                placeholder="1 - 255"
+                                                type="number"
+                                                :min="parseInt(props.row.min_options)"
+                                                label="Maximale Optionen"
+                                                required
+                                                @change="onChangeMinMaxOptions(props)"
+                                                @input="onChangeMinMaxOptions(props)"
+                                              >
+                                                <template v-slot:append>
+                                                  <q-icon :name="help_icon">
+                                                    <q-tooltip self="center middle">
+                                                      Maximale wählbare Optionen
+                                                    </q-tooltip>
+                                                  </q-icon>
+                                                </template>
+                                              </q-input>
+                                            </div>
                                           </q-item-section>
                                         </q-item>
                                       </template>
-
-                                      <!--
-                                                  <q-input
-                                                    v-model="props.row.min_options"
-                                                    :disable="surveyIsUneditable()"
-                                                    dense
-                                                    outlined
-                                                    placeholder="1 - 255"
-                                                    type="number"
-                                                    :max="parseInt(props.row.max_options)"
-                                                    label="Minimale Optionen"
-                                                    required
-                                                  >
-                                                    <template v-slot:append>
-                                                      <q-icon :name="help_icon">
-                                                        <q-tooltip
-                                                          self="center middle"
-                                                        >
-                                                          Minimal wählbare Optionen
-                                                        </q-tooltip>
-                                                      </q-icon>
-                                                    </template>
-                                                  </q-input>
-                                                  <q-input
-                                                    v-model="props.row.max_options"
-                                                    :disable="surveyIsUneditable()"
-                                                    dense
-                                                    outlined
-                                                    placeholder="1 - 255"
-                                                    type="number"
-                                                    :min="parseInt(props.row.min_options)"
-                                                    label="Maximale Optionen"
-                                                    required
-                                                  >
-                                                    <template v-slot:append>
-                                                      <q-icon :name="help_icon">
-                                                        <q-tooltip
-                                                          self="center middle"
-                                                        >
-                                                          Maximale wählbare Optionen
-                                                        </q-tooltip>
-                                                      </q-icon>
-                                                    </template>
-                                                  </q-input>
-                                                -->
                                     </div>
                                     <div class="col col-12 col-sm-12 col-md-12 col-lg-12">
                                       <q-list subheader two-line flat>
@@ -2263,6 +2251,30 @@ export default {
 
   methods: {
 
+    onChangeMinMaxOptions (props) {
+      const min = props.row.min_options
+      const max = props.row.max_options
+
+      switch (true) {
+        case min < 0:
+          props.row.min_options = 0
+          break
+
+        case max < 0:
+          props.row.max_options = 0
+          break
+
+        case min > max:
+          props.row.min_options = max
+          break
+
+        default:
+          props.row.min_options = parseInt(min)
+          props.row.max_options = parseInt(max)
+          break
+      }
+    },
+
     questionIsCommentOnly (question) {
       return question.format === 'comment_only'
     },
@@ -2309,36 +2321,6 @@ export default {
 
     formatWithMultipleOptions (format) {
       return !['comment_only', 'slider', 'slider_vert', 'info_only'].includes(format)
-    },
-
-    getRangeModel (item) {
-      return {
-        min: item.min_options,
-        max: item.max_options
-      }
-    },
-
-    getRangeLabel (item, dir) {
-      const min = item.min_options
-      const max = item.max_options
-
-      if (min === max) {
-        return 'Genau: ' + min + ' Optionen'
-      }
-
-      switch (dir) {
-        case 'left':
-          return 'Von ' + min + ' Optionen'
-
-        case 'right':
-          return 'Bis ' + max + '  Optionen'
-      }
-    },
-
-    updateRangeModel (item, self) {
-      console.log('updateRangeModel')
-      item.min_options = self.min
-      item.max_options = self.max
     },
 
     changeUseHtml () {

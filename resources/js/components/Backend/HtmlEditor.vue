@@ -2,6 +2,14 @@
   <span>
     <template v-if="useHtml">
       <q-item-label>
+        <!-- <q-btn
+          v-if="false || !model[field]"
+          :label="label + ' hinzufügen'"
+          color="secondary"
+          outline
+          unelevated
+          @click="model[field] = ' '"
+        /> -->
         <q-editor
           v-model="model[field]"
           :disable="disable"
@@ -32,15 +40,7 @@
         :label="label"
         :hint="hint"
         required
-      >
-        <template v-slot:append>
-          <q-icon :name="help_icon">
-            <q-tooltip self="center middle">
-              Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt.
-            </q-tooltip>
-          </q-icon>
-        </template>
-      </q-input>
+      />
     </template>
   </span>
 </template>
@@ -160,6 +160,13 @@ export default {
         times_new_roman: 'Times New Roman',
         verdana: 'Verdana'
       }
+    }
+  },
+
+  created () {
+    // If Model is empty - fill empty String
+    if (!this.model[this.field]) {
+      this.model[this.field] = ''
     }
   },
 
