@@ -106,7 +106,9 @@
             <!-- Einstellungen -->
             <q-tab-panel name="basis">
               <q-list subheader two-line flat>
-                <q-item-label>Textliche Einstellungen</q-item-label>
+                <q-item-label header>
+                  Textliche Einstellungen
+                </q-item-label>
 
                 <!-- Title -->
                 <q-item>
@@ -162,32 +164,14 @@
                 <!-- Description Long -->
                 <q-item>
                   <q-item-section>
-                    <template v-if="oSurvey.use_html">
-                      <q-item-label>
-                        <HtmlEditor
-                          :model="oSurvey"
-                          field="desc_long"
-                          :disable="surveyIsUneditable()"
-                        />
-                      </q-item-label>
-                      <q-item-label caption>
-                        Beschreibung
-                      </q-item-label>
-                    </template>
-
-                    <template v-else>
-                      <q-input
-                        v-model="oSurvey.desc_long"
-                        type="textarea"
-                        :disable="surveyIsUneditable()"
-                        outlined
-                        dense
-                        persistent-hint
-                        hint="Lange Beschreibung der Umfrage"
-                        label="Langbeschreibung"
-                        required
-                      />
-                    </template>
+                    <HtmlEditor
+                      :model="oSurvey"
+                      field="desc_long"
+                      :disable="surveyIsUneditable()"
+                      :use-html="oSurvey.use_html"
+                      placeholder="Bitte hier die Beschreibung der Umfrage einfügen"
+                      label="Langbeschreibung der Umfrage"
+                    />
                   </q-item-section>
                 </q-item>
 
@@ -460,6 +444,38 @@
                       subtitle="Zeit für die Umfrage"
                     />
                   </div>
+                </q-item>
+
+                <q-item-label header>
+                  Abschluss-Texte
+                </q-item-label>
+
+                <q-item>
+                  <q-item-section>
+                    <HtmlEditor
+                      :model="oSurvey"
+                      field="desc_before_submit"
+                      :disable="surveyIsUneditable()"
+                      :use-html="oSurvey.use_html"
+                      placeholder="z.B.: `Ihre Daten werden stets anonym und vertraulich behandelt ...´ "
+                      label="Beschreibung vor Abschluss der Umfrage"
+                      hint="Die Beschreibung/Texte kurz vor dem Abschließen der Umfrage"
+                    />
+                  </q-item-section>
+                </q-item>
+
+                <q-item>
+                  <q-item-section>
+                    <HtmlEditor
+                      :model="oSurvey"
+                      field="desc_after_submit"
+                      :disable="surveyIsUneditable()"
+                      :use-html="oSurvey.use_html"
+                      placeholder="z.B.: `Vielen Dank! Ihre Umfrageergebnisse wurden erfolgreich ausgefüllt´ "
+                      label="Beschreibung nach Abschluss der Umfrage"
+                      hint="Die Beschreibung/Texte kurz nach dem Abschließen der Umfrage"
+                    />
+                  </q-item-section>
                 </q-item>
               </q-list>
             </q-tab-panel>
@@ -831,31 +847,13 @@
                                         <q-item>
                                           <q-item-section>
                                             <HtmlEditor
-                                              v-if="oSurvey.use_html"
                                               :model="props.row"
                                               field="description"
                                               :disable="surveyIsUneditable()"
-                                            />
-                                            <q-input
-                                              v-else
-                                              v-model="props.row.description"
-                                              type="textarea"
-                                              :disable="surveyIsUneditable()"
-                                              dense
-                                              persistent-hint
-                                              outlined
+                                              :use-html="oSurvey.use_html"
                                               placeholder="z.B.: 'Bewerten Sie diese Umfrage bitte mit 0 (negativ) bis 10 (positiv) Punkten' "
-                                              label="Beschreibung"
-                                              required
-                                            >
-                                              <template v-slot:append>
-                                                <q-icon :name="help_icon">
-                                                  <q-tooltip self="center middle">
-                                                    Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt.
-                                                  </q-tooltip>
-                                                </q-icon>
-                                              </template>
-                                            </q-input>
+                                              label="Beschreibung der Frage"
+                                            />
                                           </q-item-section>
                                         </q-item>
                                       </q-list>

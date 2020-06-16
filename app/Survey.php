@@ -33,6 +33,8 @@ class Survey extends Model
         'title',
         'desc_short',
         'desc_long',
+        'desc_before_submit',
+        'desc_after_submit',
         'start_datetime',
         'end_datetime',
         'is_finished',

@@ -15,13 +15,18 @@
     <q-page-container class="bg-white">
       <q-page>
         <div class="q-px-lg q-pb-lg">
-          <div
-            v-if="oSurvey.use_html && oSurvey.desc_long"
-            v-html="oSurvey.desc_long"
-          />
-          <div v-else>
-            {{ oSurvey.desc_long || oSurvey.desc_short }}
-          </div>
+          <!-- HTML -->
+          <template v-if="oSurvey.use_html">
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-html="getDescription(oSurvey)" />
+          </template>
+
+          <!-- No HTML -->
+          <template v-else>
+            <div>
+              {{ getDescription(oSurvey) }}
+            </div>
+          </template>
         </div>
 
         <q-list class="q-px-sm">
@@ -60,7 +65,7 @@
         <q-btn flat icon="keyboard_arrow_left" @click="$router.back()" />
 
         <q-btn
-          v-if="!allQuestionsAwnsered()"
+          v-if="notAllQuestionsAwnsered()"
           :label="noQuestionsAwnsered() ? 'Umfrage Beginnen' : 'Umfrage fortsetzen'"
           color="primary"
           class="full-width"
@@ -80,8 +85,11 @@
         <q-dialog v-model="bTryFinishDialog" persistent>
           <q-card>
             <q-card-section class="row items-center">
-              <q-avatar icon="warning" color="white" text-color="green" />
-              <span class="q-ml-sm">Nach dem Abschließen ist die Umfrage nichtmehr bearbeitbar</span>
+              <q-avatar icon="warning" color="white" text-color="primary" />
+              <span class="q-ml-sm">
+                <div><b>Hinweis!</b></div>
+                Nach dem Abschließen ist die Umfrage nichtmehr bearbeitbar
+              </span>
             </q-card-section>
 
             <q-card-actions align="right">
@@ -102,9 +110,23 @@
               <div class="justify-center full-height full-width text-center items-center flex column">
                 <q-icon name="check_circle" class="text-green" style="font-size: 8rem;" />
                 <br>
-                <h1 class="q-mb-xs">Vielen Dank!</h1>
-                <br>
-                <h6 class="q-ma-xs">Ihre Umfrageergebnisse wurden erfolgreich ausgefüllt</h6>
+                <template v-if="oSurvey.desc_after_submit">
+                  <!-- eslint-disable-next-line vue/no-v-html -->
+                  <div v-if="oSurvey.use_html" v-html="oSurvey.desc_after_submit" />
+                  <div v-else>
+                    {{ oSurvey.desc_after_submit }}
+                  </div>
+                </template>
+
+                <template v-else>
+                  <h1 class="q-mb-xs">
+                    Vielen Dank!
+                  </h1>
+                  <br>
+                  <h6 class="q-ma-xs">
+                    Ihre Umfrageergebnisse wurden erfolgreich ausgefüllt
+                  </h6>
+                </template>
               </div>
             </q-card-section>
 
@@ -155,6 +177,22 @@ export default {
 
   methods: {
 
+    getDescription (survey = this.oSurvey) {
+      switch (true) {
+        case this.allQuestionsAwnsered() && !!survey.desc_before_submit && survey.desc_before_submit !== '<br>':
+          return survey.desc_before_submit
+
+        case !!survey.desc_long:
+          return survey.desc_long
+
+        case !!survey.desc_short:
+          return survey.desc_short
+
+        default:
+          return ''
+      }
+    },
+
     getAuthor () {
       if (this.oSurvey.author) {
         return this.$t('From') + ' ' + (this.oSurvey.author)
@@ -199,6 +237,9 @@ export default {
     },
     allQuestionsAwnsered: function () {
       return this.countAwnseredQuestions() === this.oSurvey.question_count
+    },
+    notAllQuestionsAwnsered: function () {
+      return !this.allQuestionsAwnsered()
     },
     noQuestionsAwnsered: function () {
       return this.countAwnseredQuestions() === 0

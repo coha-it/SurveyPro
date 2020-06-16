@@ -1,16 +1,48 @@
 <template>
-  <q-editor
-    v-model="model[field]"
-    :disable="disable"
-    :toolbar="toolbar"
-    :fonts="fonts"
-    min-height="5rem"
-    hint="Lange Beschreibung der Umfrage"
-    label="Langbeschreibung"
-    outlined
-    persistent-hint
-    required
-  />
+  <span>
+    <template v-if="useHtml">
+      <q-item-label>
+        <q-editor
+          v-model="model[field]"
+          :disable="disable"
+          :toolbar="toolbar"
+          :fonts="fonts"
+          min-height="5rem"
+          :hint="hint"
+          :label="label"
+          :placeholder="placeholder"
+          outlined
+          persistent-hint
+          required
+        />
+      </q-item-label>
+      <q-item-label caption class="q-px-md">
+        {{ label }}
+      </q-item-label>
+    </template>
+    <template v-else>
+      <q-input
+        v-model="model[field]"
+        type="textarea"
+        :disable="disable"
+        dense
+        persistent-hint
+        outlined
+        :placeholder="placeholder"
+        :label="label"
+        :hint="hint"
+        required
+      >
+        <template v-slot:append>
+          <q-icon :name="help_icon">
+            <q-tooltip self="center middle">
+              Beschreibung der Umfrage. Wird unter Titel / Subtitel klein angezeigt.
+            </q-tooltip>
+          </q-icon>
+        </template>
+      </q-input>
+    </template>
+  </span>
 </template>
 
 <script>
@@ -27,6 +59,22 @@ export default {
     disable: {
       type: Boolean,
       default: false
+    },
+    useHtml: {
+      type: Number,
+      default: 0
+    },
+    hint: {
+      type: String,
+      default: 'Lange Beschreibung der Umfrage'
+    },
+    label: {
+      type: String,
+      default: 'Langbeschreibung'
+    },
+    placeholder: {
+      type: String,
+      default: 'Bitte hier Ihre Beschreibung einfügen'
     }
   },
 
