@@ -124,7 +124,7 @@
                   </h1>
                   <br>
                   <h6 class="q-ma-xs">
-                    Ihre Umfrageergebnisse wurden erfolgreich ausgefüllt
+                    Ihre Umfrage wurden erfolgreich ausgefüllt.
                   </h6>
                 </template>
               </div>
