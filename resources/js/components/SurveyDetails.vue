@@ -19,6 +19,8 @@
             :get-question-hash="getQuestionHash"
             :get-overview-hash="getOverviewHash"
             :b-preview="bPreview"
+            :is-infoblock="isInfoblock"
+            :is-no-infoblock="isNoInfoblock"
           />
 
           <!-- Questions -->
@@ -39,6 +41,8 @@
             :light-or-dark="lightOrDark"
             :question-transition="questionTransition"
             :b-preview="bPreview"
+            :is-infoblock="isInfoblock"
+            :is-no-infoblock="isNoInfoblock"
           />
         </div>
       </div>
@@ -103,6 +107,14 @@ export default {
   },
 
   methods: {
+
+    isInfoblock (question = this.question) {
+      return question.format === 'info_only'
+    },
+
+    isNoInfoblock (question = this.question) {
+      return !this.isInfoblock(question)
+    },
 
     nextQuestion (q) {
       return this.getQuestion(q, +1)

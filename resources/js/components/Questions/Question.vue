@@ -244,6 +244,14 @@ export default {
     bPreview: {
       type: Boolean,
       default: false
+    },
+    isInfoblock: {
+      type: Function,
+      required: true
+    },
+    isNoInfoblock: {
+      type: Function,
+      required: true
     }
   },
 
@@ -257,14 +265,6 @@ export default {
 
     questionIsSkippable (question = this.question) {
       return question.is_skippable || this.isInfoblock(question)
-    },
-
-    isInfoblock (question = this.question) {
-      return question.format === 'info_only'
-    },
-
-    isNoInfoblock (question = this.question) {
-      return !this.isInfoblock(question)
     },
 
     changeQuestion (clickedQuestion) {
@@ -285,7 +285,7 @@ export default {
     },
 
     isSkipped (question) {
-      return question.users_awnser && question.users_awnser.skipped
+      return question.users_awnser && question.users_awnser.skipped && this.isNoInfoblock(question)
     },
 
     hasAwnser (q) {
@@ -381,7 +381,12 @@ export default {
     nextUnawnseredQuestion (q) {
       // Get next Unawnsered Questions
       const nextUaQuestions = this.oSurvey.questions.filter(e =>
-        (!e.users_awnser || e.users_awnser.skipped || !this.questionSubmittable(e)) && // Where already Awnsered And
+        // Where already Awnsered And
+        (
+          !e.users_awnser ||
+          this.isSkipped(e) ||
+          !this.questionSubmittable(e)
+        ) &&
         e.order > q.order // Where order is bigger
       )
 
@@ -396,18 +401,36 @@ export default {
       var viewedQ = this.getViewedQuestion(survey)
 
       // Get Viewed Question
-      if (question.order < viewedQ.order) r.push('passed')
-      else if (question.order > viewedQ.order) r.push('away')
-      else r.push('curr')
+      switch (true) {
+        case (question.order < viewedQ.order):
+          r.push('passed')
+          break
 
-      if (this.isInfoblock(question)) {
-        r.push('infoblock')
-      } else if (this.isSkipped(question)) {
-        r.push('skipped')
-      } else if (question.users_awnser && this.questionSubmittable(question)) {
-        r.push('awnsered')
-      } else {
-        r.push('unawnsered')
+        case (question.order > viewedQ.order):
+          r.push('away')
+          break
+
+        default:
+          r.push('curr')
+          break
+      }
+
+      switch (true) {
+        case this.isInfoblock(question):
+          r.push('infoblock')
+          break
+
+        case this.isSkipped(question):
+          r.push('skipped')
+          break
+
+        case question.users_awnser && this.questionSubmittable(question):
+          r.push('awnsered')
+          break
+
+        default:
+          r.push('unawnsered')
+          break
       }
 
       return r.join(' ')

@@ -165,22 +165,37 @@
     align-items: center;
     justify-content: center;
     align-self: center;
+    transition: 200ms;
 
     &:not(.unawnsered) {
         cursor: pointer;
     }
 
-    &.infoblock,
-    &.awnsered {
+    // Only Awnsered and passed Infoblocks
+    &.awnsered .inner {
+      background-color: var(--q-color-positive);
+    }
+
+    &.infoblock {
+      &.away {
+        width: 35%;
+      }
+      &.passed {
+        width: 35%;
+      }
+      &.active {
+        width: 100%;
+      }
       .inner {
-        background-color: var(--q-color-positive);
+        background: #7a99d2;
       }
     }
-    &.skipped {
-      .inner {
-        background: #bbbd5e;
-      }
+
+    // Skipped Awnseres
+    &.skipped .inner {
+      background: #bbbd5e;
     }
+
     &.away {
       .inner {
         opacity: .3;

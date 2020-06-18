@@ -26,9 +26,15 @@ q-layout(view='hHr lpr fFr')
                   | {{ getUsersAwnser(question) }}
               q-item-section(side='' top='')
                 template(v-if='question.users_awnser')
-                  q-item-label(caption='')
-                    | {{ questionIsSkipped(question) ? &apos;&Uuml;bersprungen&apos; : &apos;Beantwortet&apos; }}
-                  q-icon(:name="questionIsSkipped(question) ? 'redo' : 'check'" :color="questionIsSkipped(question) ? 'yellow-9' : 'green'")
+                  template(v-if='!questionIsSkipped(question)')
+                    q-item-label(caption) Beantwortet
+                    q-icon(name="check" color="green")
+                  template(v-else-if='isInfoblock(question)')
+                    q-item-label(caption) Gelesen
+                    q-icon(name="check" color="green")
+                  template(v-else)
+                    q-item-label(caption) &Uuml;bersprungen
+                    q-icon(name="redo" color="yellow-9")
             q-separator(spaced='' inset='')
         .text-center
           q-btn(v-if="listIsLimited()", :label="extendQuestionListLabel()", size="md", icon-right="keyboard_arrow_down" unelevated, rounded, outline, color="grey-6", @click="bLimited = false")
@@ -93,6 +99,14 @@ export default {
     bPreview: {
       type: Boolean,
       default: false
+    },
+    isInfoblock: {
+      type: Function,
+      required: true
+    },
+    isNoInfoblock: {
+      type: Function,
+      required: true
     }
   },
 
@@ -225,15 +239,21 @@ export default {
       return q.users_awnser && q.users_awnser.skipped
     },
     getQuestionClasses (q) {
-      if (this.questionIsSkipped(q)) {
-        return 'bg-yellow-1'
+      const yellow = 'bg-yellow-1'
+      const green = 'bg-green-1'
+      let sClass = ''
+      switch (true) {
+        case this.isInfoblock(q):
+          sClass = green
+          break
+        case this.questionIsSkipped(q) === 1:
+          sClass = yellow
+          break
+        case q.users_awnser !== null:
+          sClass = green
+          break
       }
-
-      if (q.users_awnser) {
-        return 'bg-green-1'
-      }
-
-      return 'f'
+      return sClass
     },
     finishSurvey () {
       this.$store
