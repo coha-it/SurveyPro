@@ -29,40 +29,6 @@ class BackendSurveyCtrl extends Controller
         return $request->user()->allowedSurveys()->toJson();
     }
 
-    public function search($a, $b) {
-        return strpos(strtolower($a), strtolower($b)) !== false;
-    }
-
-    public function getAllowedFilteredSurveys(Request $request) {
-        $search = $request->search;
-        return $request
-                ->user()
-                ->allowedSurveys()
-                ->filter(function ($value, $key) use ($search) {
-                    if(!$search) return true;
-
-                    switch ($search) {
-                        case $value->id == $search:
-                        case $this->search($value->title, $search):
-                            return true;
-                            break;
-
-                        default:
-                            return false;
-                            break;
-                    }
-                })
-                ->map
-                ->only([
-                    'id',
-                    'title',
-                    'desc_short',
-                    'desc_long'
-                ])
-                ->take(5)
-                ->toArray();
-    }
-
     // Get the Allowed Survey
     public function getAllowedSurvey(Request $request) {
         // Validate

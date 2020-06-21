@@ -83,6 +83,10 @@ export default [
         path: 'statistics',
         name: 'backend.statistics',
         component: page('backend/statistics.vue')
+      }, {
+        path: 'statistic',
+        name: 'backend.statistic',
+        component: page('backend/statistic.vue')
       }
     ]
   },

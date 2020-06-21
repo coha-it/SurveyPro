@@ -81,7 +81,7 @@ export default {
             { title: 'sidenav.backend.surveys', icon: 'analytics', route: { name: 'backend.surveys' }, sPermission: 'create_surveys' },
             { title: 'sidenav.backend.groups', icon: 'group_add', route: { name: 'backend.groups' }, sPermission: 'create_groups' },
             { title: 'sidenav.backend.pan', icon: 'person_add', route: { name: 'backend.users' }, sPermission: 'create_users' },
-            { title: 'sidenav.backend.statistics', icon: 'pie_chart', route: { name: 'backend.statistics' } }
+            { title: 'sidenav.backend.statistic', icon: 'pie_chart', route: { name: 'backend.statistic' } }
           ]
         }
       ],
