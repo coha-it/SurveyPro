@@ -2,7 +2,21 @@
 div
   h1 Statistics
   q-btn(label="reload" @click="getSurveyStatistics()")
-  div.code.c_code(style='max-height: unset;') {{ surveyStats }}
+  div(v-if="stats")
+    span(v-for='head in stats.header') {{ head }};
+    div(v-for='(tr, i) in stats.data')
+      span {{ i }}
+      span(v-for='td in tr') {{ td }};
+  q-markup-table(v-if="stats" dense cell)
+    thead
+      tr
+        th
+        th(v-for='head in stats.header') {{ head }}
+    tbody
+      tr(v-for='(tr, i) in stats.data')
+        td {{ i }}
+        td(v-for='td in tr') {{ td }}
+  div.code.c_code(style='max-height: unset;') {{ stats }}
 </template>
 <script>
 import axios from 'axios'
@@ -13,7 +27,7 @@ export default {
   data () {
     return {
       ids: [],
-      surveyStats: null
+      stats: null
     }
   },
 
@@ -44,7 +58,7 @@ export default {
       axios
         .post('/api/backend/surveys-statistics', { ids: ids })
         .then((res) => {
-          this.surveyStats = res.data
+          this.stats = res.data
         })
     }
   }
