@@ -42,7 +42,7 @@ class SurveyFinished extends Model
      */
     public function user()
     {
-        return $this->hasOne('App\User', 'user_id');
+        return $this->hasOne('App\User', 'id', 'user_id');
     }
 
     /**

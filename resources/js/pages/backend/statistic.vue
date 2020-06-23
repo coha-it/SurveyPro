@@ -1,12 +1,21 @@
 <template lang="pug">
 div
   h1 Statistics
-  q-btn(label="reload" @click="getSurveyStatistics()")
+  q-btn(label="stats 1" unelevated color="primary" outline @click="getSurveyStatistics(1)")
+  | &nbsp;
+  q-btn(label="stats 2" unelevated color="primary" outline @click="getSurveyStatistics(2)")
   div(v-if="stats")
     span(v-for='head in stats.header') {{ head }};
     div(v-for='(tr, i) in stats.data')
       span {{ i }}
       span(v-for='td in tr') {{ td }};
+  template(v-if='stats && stats.surveys')
+    div(v-for="survey in stats.surveys")
+      q-table(
+        :columns="survey.questions"
+        :data="survey.awnsers"
+        dense
+      )
   q-markup-table(v-if="stats" dense cell)
     thead
       tr
@@ -41,11 +50,14 @@ export default {
     this.initUrlQuerys()
 
     if (this.ids) {
-      this.getSurveyStatistics(this.ids)
+      this.getSurveyStatistics(2, this.ids)
     }
   },
 
   methods: {
+    log (data) {
+      console.log(data)
+    },
     initUrlQuerys () {
       try {
         this.ids = this.$route.query.ids
@@ -54,9 +66,12 @@ export default {
       }
     },
 
-    getSurveyStatistics (ids = this.ids) {
+    getSurveyStatistics (type = 1, ids = this.ids) {
       axios
-        .post('/api/backend/surveys-statistics', { ids: ids })
+        .post('/api/backend/surveys-statistics', {
+          type: type,
+          ids: ids
+        })
         .then((res) => {
           this.stats = res.data
         })
