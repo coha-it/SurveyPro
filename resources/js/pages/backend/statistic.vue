@@ -14,6 +14,7 @@ div
       q-table(
         :columns="survey.questions"
         :data="survey.awnsers"
+        :pagination="pagination"
         dense
       )
   q-markup-table(v-if="stats" dense cell)
@@ -36,7 +37,14 @@ export default {
   data () {
     return {
       ids: [],
-      stats: null
+      stats: null,
+      pagination: {
+        sortBy: 'desc',
+        descending: false,
+        page: 2,
+        rowsPerPage: null
+        // rowsNumber: xx if getting data from a server
+      }
     }
   },
 
