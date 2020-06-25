@@ -446,6 +446,59 @@
                         </q-item-section>
                       </q-item>
 
+                      <q-dialog v-model="entranceMail.dialog" max-width="770px">
+                        <q-card>
+                          <q-card-section>
+                            <div class="text-h6">
+                              Send multiple Entrance-Mails
+                            </div>
+                          </q-card-section>
+
+                          <q-card-section class="q-pt-none">
+                            {{ 'Try send Entrance-Mail for ' + (selected.length) + ' Users' }}
+                          </q-card-section>
+
+                          <q-card-section class="q-pt-none">
+                            <q-input
+                              v-model="entranceMail.subject"
+                              filled
+                              label="E-Mail Betreff"
+                              hint="Subject / E-Mail Betreff"
+                              placeholder="z.B.: 'Herzlich Willkommen liebe Umfrage-Teilnehmer!' ..."
+                            />
+                            <br>
+                            <q-input
+                              v-model="entranceMail.text"
+                              filled
+                              clearable
+                              type="textarea"
+                              label="E-Mail Text"
+                              hint="Zusätzlicher Text. In der E-Mail. Oberhalb der Zugangsdaten"
+                              placeholder="(Optionaler Text) z.B.: 'Im Auftrag der Firma-XYZ versenden wir Ihnen ...'"
+                            />
+                            <br>
+                            <q-input
+                              v-model="entranceMail.signature"
+                              filled
+                              label="E-Mail Signatur"
+                              hint="Signature / E-Mail Signatur. Innerhalb der E-Mail. Unterhalb der Zugangsdaten"
+                              placeholder="(Optionaler Text) z.B.: 'Gekennzeichnet, Author-Name / Firma'"
+                            />
+                            <br>
+                            <q-checkbox
+                              v-model="entranceMail.checkbox"
+                              label="Ich möchte einen generierten Zugang einem oder mehreren Befragungs-Teilnehmer via E-Mail zusenden. Mir ist bewusst dass ich versendete E-Mails nicht löschen oder rückgängig machen kann."
+                            />
+                            <br>
+                          </q-card-section>
+
+                          <q-card-actions align="right">
+                            <q-btn v-close-popup label="Abbruch" unelevated color="grey" />
+                            <q-space />
+                            <q-btn v-close-popup :disable="!entranceMail.checkbox" label="E-Mails versenden" unelevated color="red" @click="sendEntranceMails()" />
+                          </q-card-actions>
+                        </q-card>
+                      </q-dialog>
                       <q-separator />
                     </q-list>
                   </q-menu>
@@ -457,7 +510,9 @@
                 <div class="flex-grow-1" />
                 <q-input v-model="pagination.rowsPerPage" outlined dark number type="number" hide-details style="max-width: 150px;" label="Zeilen pro Seite" class="ml-5" outline />
                 <q-btn
-                  flat round dense
+                  flat
+                  round
+                  dense
                   :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
                   class="q-ml-md"
                   @click="props.toggleFullscreen"
@@ -934,7 +989,7 @@
                   <q-tooltip>{{ $t('save') }}</q-tooltip>
                 </span>
 
-                <span v-if="settings.bShowContactMailData && isSaved(props.row) && props.row.pan.contact_mail">
+                <!-- <span v-if="settings.bShowContactMailData && isSaved(props.row) && props.row.pan.contact_mail">
                   <q-btn
                     size="sm"
                     flat
@@ -947,7 +1002,7 @@
                     @click="trySendEntranceMail(props.row)"
                   />
                   <q-tooltip>{{ $t('Versende Zugangs-Mail') }}</q-tooltip>
-                </span>
+                </span> -->
 
                 <span v-if="isUnsaved(props.row)">
                   <q-btn
@@ -991,7 +1046,7 @@
 /* eslint-disable eqeqeq */
 import axios from 'axios'
 import { mapGetters } from 'vuex'
-import { setTimeout } from 'timers'
+// import { setTimeout } from 'timers'
 import { mask } from 'vue-the-mask'
 import dayjs from 'dayjs'
 import UserDataModal from '~/components/Backend/UserDataModal'
@@ -999,7 +1054,7 @@ import Print from '~/components/Backend/UsersPrint'
 import BulkProfileChanges from '~/components/Backend/UserBulkProfileChanges'
 import BulkGroupChanges from '~/components/Backend/UserBulkGroupChanges'
 import CsvUsersImport from '~/components/Backend/CsvUsersImport'
-import { type } from 'os'
+// import { type } from 'os'
 
 export default {
   middleware: 'canCreateUsers',
@@ -1018,6 +1073,16 @@ export default {
 
   data () {
     return {
+
+      // Entrance Mails
+      entranceMail: {
+        dialog: false,
+        subject: 'Herzlich Willkommen',
+        text: '',
+        signature: '',
+        checkbox: false
+      },
+
       pinLength: 4,
       panLength: 6,
       panTokens: {
@@ -1214,7 +1279,6 @@ export default {
   created: function () {
     this.$store.dispatch('users/fetchUsersCreated')
     this.$store.dispatch('users/fetchGroupsModerating')
-
     this.getSettings()
   },
 
@@ -1534,34 +1598,30 @@ export default {
       Object.assign(item, JSON.parse(JSON.stringify(this.usersCreatedOld[key])))
     },
 
-    trySendEntranceMail (user) {
-      let pan = user.pan ?? {}
-      let msg = pan && pan.pan ? 'Pan: "' + pan.pan : 'No Pan!'
-      msg += pan && pan.contact_mail ? '" E-Mail: "' + pan.contact_mail : ' No Contact-Mail '
-      msg += '"'
+    // trySendEntranceMail (user) {
+    //   let pan = user.pan ?? {}
+    //   let msg = pan && pan.pan ? 'Pan: "' + pan.pan : 'No Pan!'
+    //   msg += pan && pan.contact_mail ? '" E-Mail: "' + pan.contact_mail : ' No Contact-Mail '
+    //   msg += '"'
 
-      this.$q.dialog({
-        title: 'Send Entrance-Mail for User',
-        message: msg,
-        ok: {
-          label: 'E-Mail versenden',
-          color: 'negative',
-          unelevated: true
-        },
-        cancel: {
-          label: 'Abbruch',
-          unelevated: true
-        }
-      }).onOk(() => {
-        this.sendEntranceMail(user)
-      }).onCancel(() => {
-        // console.log('Cancel')
-      }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
-      })
-    },
+    //   this.$q.dialog({
+    //     title: 'Send Entrance-Mail for User',
+    //     message: msg,
+    //     ok: {
+    //       label: 'E-Mail versenden',
+    //       color: 'negative',
+    //       unelevated: true
+    //     },
+    //     cancel: {
+    //       label: 'Abbruch',
+    //       unelevated: true
+    //     }
+    //   }).onOk(() => {
+    //     this.sendEntranceMail(user)
+    //   })
+    // },
 
-    sendEntranceMail (user) {
+    async sendEntranceMail (user) {
       if (user.pan && user.pan.contact_mail) {
         // Try Sending Mail
         this.loading = true
@@ -1573,8 +1633,9 @@ export default {
           timeout: 5000
         })
 
-        axios.post('/api/send-entrance-mail', {
-          id: user.id
+        await axios.post('/api/send-entrance-mail', {
+          id: user.id,
+          entrance: this.entranceMail
         }).then((e) => {
           this.$q.notify({
             message: this.$t('Success sending E-Mail to ' + user.pan.contact_mail),
@@ -1609,31 +1670,11 @@ export default {
     },
 
     trySendEntranceMails () {
-      let len = this.selected.length ?? 'some'
-
-      this.$q.dialog({
-        title: 'Send multiple Entrance-Mails',
-        message: 'Try send Entrance-Mail for ' + len + ' Users',
-        ok: {
-          label: 'E-Mails versenden',
-          color: 'negative',
-          unelevated: true
-        },
-        cancel: {
-          label: 'Abbruch',
-          unelevated: true
-        }
-      }).onOk(() => {
-        this.sendEntranceMails()
-      }).onCancel(() => {
-        // console.log('Cancel')
-      }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
-      })
+      this.entranceMail.dialog = true
+      this.entranceMail.checkbox = false
     },
 
-    sendEntranceMails () {
-      let users = this.selected
+    sendEntranceMails (users = this.selected) {
       for (var i in users) {
         var user = users[i]
         this.sendEntranceMail(user)

@@ -26,7 +26,7 @@ class MailCtrl extends Controller
 
         // Validate Data
         $request->validate([
-            'id' => 'required',
+            'id' => 'required'
         ]);
 
         // Get Created User with Relation
@@ -34,12 +34,22 @@ class MailCtrl extends Controller
         $email = $panUser->pan->contact_mail;
 
         // Send Mail
-        Mail::send('emails.entrance', ['user' => $panUser], function ($mail) use ($panUser, $email) {
-            $mail
-                ->from('it@corporate-happiness.de', env('APP_NAME'))
-                ->to($email)
-                ->subject('Welcome - Your Entrance-Informatio');
-        });
+        Mail::send(
+            'emails.entrance',
+            [
+                'user'      => $panUser,
+                'signature' => $request->entrance['signature'] ?? '',
+                'text'      => $request->entrance['text'] ?? '',
+            ],
+            function ($mail) use ($request, $email) {
+                $mail
+                    ->from('it@corporate-happiness.de', env('APP_NAME'))
+                    ->to($email)
+                    ->subject(
+                        $request->entrance['subject'] ?? __('Welcome - Your Entrance-Information')
+                    );
+            }
+        );
 
         $response = '';
         $response .= ($this->correct_format($email)) ? null: "Wrong Format! \n";

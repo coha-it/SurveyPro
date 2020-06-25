@@ -9,8 +9,8 @@
                       font-family: \'Helvetica Neue\',Helvetica,Arial,sans-serif;
                       background: #E8D03E;
                       text-align: center;
-                      padding: 20px;
-                      margin: 5px 20px;
+                      padding: 2px 20px 20px;
+                      margin: 2px 20px 5px;
                       font-size: 18px;
                       box-shadow: 0 6px 33px -9px rgba(0, 0, 0, 0.28);
       ';
@@ -53,6 +53,12 @@
       ';
     @endphp
 
+  @if($text)
+  <p style="padding: 0 20px 5px;">
+    {{ $text }}
+  </p>
+  @endif
+
   <div class="login_wrapper" style="{{ $login_style }}">
     <img style="width: 120px;" width="120px" src="https://dreamteam-survey.s3.eu-central-1.amazonaws.com/images/corporate-happiness-gmbh-logo-full-white.svg" class="logo">
 
@@ -87,8 +93,14 @@
 
   </div>
 
+  @if($signature)
+  <p style="padding: 5px 20px;">
+    {{ $signature }}
+  </p>
+  @endif
+
 @stop
 
 @section('footer')
-  Jo
+
 @endsection
