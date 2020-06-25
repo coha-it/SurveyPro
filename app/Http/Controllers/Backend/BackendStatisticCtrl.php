@@ -36,7 +36,6 @@ class BackendStatisticCtrl extends Controller
             // Build DAta
             $id = $ids[$i];
             $survey = $request->user()->allowedSurveys()->find($id)->getSelfWithRelations();
-            $finishedSurveys = $survey->usersFinished;
 
             // Build Response Array
             $statistics['surveys'][$id] = [
@@ -69,7 +68,7 @@ class BackendStatisticCtrl extends Controller
 
 
             // 1. Go throug all Users
-            foreach ($finishedSurveys as $finishedSurvey) {
+            foreach ($survey->usersFinished as $finishedSurvey) {
                 // Empty Array
                 $user = $finishedSurvey->user;
                 $arr = [
