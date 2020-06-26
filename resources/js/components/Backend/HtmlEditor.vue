@@ -165,9 +165,9 @@ export default {
 
   created () {
     // If Model is empty - fill empty String
-    if (!this.model[this.field]) {
-      this.model[this.field] = ''
-    }
+    // if (!this.model[this.field]) {
+    //   this.model[this.field] = ''
+    // }
   },
 
   methods: {

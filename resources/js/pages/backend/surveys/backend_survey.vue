@@ -829,7 +829,7 @@
 
                                         <q-separator inset="item" />
 
-                                        <template v-if="props.row.is_commentable">
+                                        <template v-show="props.row.is_commentable">
                                           <q-item>
                                             <q-item-section side top>
                                               <q-checkbox
@@ -896,6 +896,20 @@
                                             <q-item>
                                               <q-item-section>
                                                 <q-input
+                                                  v-model.lazy="props.row.settings.comment_add_text"
+                                                  :disable="surveyIsUneditable()"
+                                                  dense
+                                                  persistent-hint
+                                                  outlined
+                                                  label="Kommentar Hinzufügen Text"
+                                                  placeholder="Kommentar hinzufügen"
+                                                />
+                                              </q-item-section>
+                                            </q-item>
+
+                                            <q-item>
+                                              <q-item-section>
+                                                <q-input
                                                   v-model.lazy="props.row.settings.comment_placeholder"
                                                   :disable="surveyIsUneditable()"
                                                   dense
@@ -921,19 +935,8 @@
                                               </q-item-section>
                                             </q-item>
 
-                                            <q-item>
-                                              <q-item-section>
-                                                <q-input
-                                                  v-model.lazy="props.row.settings.comment_add_text"
-                                                  :disable="surveyIsUneditable()"
-                                                  dense
-                                                  persistent-hint
-                                                  outlined
-                                                  label="Kommentar Hinzufügen Text"
-                                                  placeholder="Kommentar hinzufügen"
-                                                />
-                                              </q-item-section>
-                                            </q-item>
+
+
                                             <!--
                                                v-if="!Object.values(props.row.settings).join('')"
                                             -->
@@ -1314,25 +1317,27 @@
 
                                                     <!-- Color -->
                                                     <q-td>
-                                                      <q-btn
-                                                        class="c-code-text"
-                                                        unelevated
-                                                        rounded
-                                                        size="md"
-                                                        :style="'text-transform: uppercase; background-color: ' + option.row.color"
-                                                      >
-                                                        <span :class="getNegativeColor(option.row.color)">
-                                                          {{ option.row.color || 'no color' }}
-                                                        </span>
-                                                        <q-popup-proxy transition-show="scale" transition-hide="scale">
-                                                          <q-color
-                                                            v-model="option.row.color"
-                                                            :palette="colorPalette"
-                                                            default-view="palette"
-                                                          />
-                                                        </q-popup-proxy>
-                                                      </q-btn>
-                                                      <q-btn v-if="option.row.color" size="sm" icon="clear" rounded flat round @click="option.row.color = ''" />
+                                                      <div style="display: flex">
+                                                        <q-btn
+                                                          class="c-code-text"
+                                                          unelevated
+                                                          rounded
+                                                          size="sm"
+                                                          :style="'text-transform: uppercase; background-color: ' + option.row.color"
+                                                        >
+                                                          <span :class="getNegativeColor(option.row.color)">
+                                                            {{ option.row.color || 'no color' }}
+                                                          </span>
+                                                          <q-popup-proxy transition-show="scale" transition-hide="scale">
+                                                            <q-color
+                                                              v-model="option.row.color"
+                                                              :palette="colorPalette"
+                                                              default-view="palette"
+                                                            />
+                                                          </q-popup-proxy>
+                                                        </q-btn>
+                                                        <q-btn v-if="option.row.color" size="sm" icon="clear" rounded flat round @click="option.row.color = ''" />
+                                                      </div>
                                                     </q-td>
 
                                                     <!-- ID -->
@@ -1346,7 +1351,7 @@
                                                     <q-td auto-width>
                                                       <!-- Delete - Dialog -->
                                                       <q-btn
-                                                        icon="settings"
+                                                        icon="more_vert"
                                                         flat
                                                         round
                                                       >
@@ -3780,7 +3785,7 @@ export default {
       if (itemL && itemR) {
         // Differences
         if (JSON.stringify(itemR) !== JSON.stringify(itemL)) {
-          // console.log(JSON.stringify(itemR), JSON.stringify(itemL));
+          console.log(JSON.stringify(itemR), JSON.stringify(itemL))
           bReturn = false
         } else {
           bReturn = true
