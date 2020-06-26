@@ -19,6 +19,15 @@ class Question extends Model
     protected $with = ['options'];
 
     /**
+     * Cast Column to specific Data-Type
+     *
+     * @var array
+     */
+    protected $casts = [
+        'settings' => 'array'
+    ];
+
+    /**
      * The attributes that are not mass assignable.
      *
      * @var array

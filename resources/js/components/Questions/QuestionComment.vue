@@ -9,14 +9,30 @@
           :type="question.comment_is_number ? 'number' : ''"
           :required="question.comment_is_required"
           :autofocus='true'
-          placeholder='Ihr Kommentar'
+          :placeholder="getQuestionSetting('comment_placeholder', 'Ihr Kommentar')"
           tabindex='1'
           @focus='textFocus'
           @blur='textBlur'
         )
-    q-btn(label='Kommentar entfernen' size='sm' unelevated='' flat='' rounded='' tabindex='5' @click='tryDeleteComment')
-  template(v-else='')
-    q-btn(label='Kommentar hinzufügen' icon='chat' size='md' flat='' rounded='' color='grey' @click='createComment(question)')
+    q-btn(
+      :label="getQuestionSetting('comment_remove_text', 'Kommentar entfernen')"
+      size='sm'
+      unelevated=''
+      flat=''
+      rounded=''
+      tabindex='5'
+      @click='tryDeleteComment'
+    )
+  template(v-else)
+    q-btn(
+      :label="getQuestionSetting('comment_add_text', 'Kommentar hinzufügen')"
+      icon='chat'
+      size='md'
+      flat=''
+      rounded=''
+      color='grey'
+      @click='createComment(question)'
+    )
 </template>
 <script>
 export default {
@@ -45,6 +61,15 @@ export default {
   },
 
   methods: {
+    getQuestionSetting (field, alternative) {
+      const question = this.question
+
+      if (question && question.settings && question.settings[field]) {
+        return question.settings[field]
+      }
+      return alternative
+    },
+
     isCommentable (question = this.question) {
       return question.is_commentable && this.isNoInfoblock(question)
     },

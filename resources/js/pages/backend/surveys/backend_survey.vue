@@ -862,9 +862,9 @@
                                           </q-item>
                                           <q-separator inset="item" />
 
+                                          <br>
                                           <q-item>
                                             <q-item-section>
-                                              <br>
                                               <q-input
                                                 v-model="props.row.comment_max_signs"
                                                 :disable="surveyIsUneditable()"
@@ -890,6 +890,73 @@
                                                 </template>
                                               </q-input>
                                             </q-item-section>
+                                          </q-item>
+
+                                          <template v-if="props.row.settings">
+                                            <q-item>
+                                              <q-item-section>
+                                                <q-input
+                                                  v-model.lazy="props.row.settings.comment_placeholder"
+                                                  :disable="surveyIsUneditable()"
+                                                  dense
+                                                  persistent-hint
+                                                  outlined
+                                                  label="Kommentar Platzhalter"
+                                                  placeholder="Ihr Kommentar"
+                                                />
+                                              </q-item-section>
+                                            </q-item>
+
+                                            <q-item>
+                                              <q-item-section>
+                                                <q-input
+                                                  v-model.lazy="props.row.settings.comment_remove_text"
+                                                  :disable="surveyIsUneditable()"
+                                                  dense
+                                                  persistent-hint
+                                                  outlined
+                                                  label="Kommentar Entfernungs-Text"
+                                                  placeholder="Kommentar entfernen"
+                                                />
+                                              </q-item-section>
+                                            </q-item>
+
+                                            <q-item>
+                                              <q-item-section>
+                                                <q-input
+                                                  v-model.lazy="props.row.settings.comment_add_text"
+                                                  :disable="surveyIsUneditable()"
+                                                  dense
+                                                  persistent-hint
+                                                  outlined
+                                                  label="Kommentar Hinzufügen Text"
+                                                  placeholder="Kommentar hinzufügen"
+                                                />
+                                              </q-item-section>
+                                            </q-item>
+                                            <!--
+                                               v-if="!Object.values(props.row.settings).join('')"
+                                            -->
+                                            <br>
+                                            <q-item>
+                                              <q-btn
+                                                label="Kommentar-Einstellungen entfernen"
+                                                size="sm"
+                                                unelevated
+                                                color="grey"
+                                                @click="props.row.settings = null"
+                                              />
+                                            </q-item>
+                                          </template>
+
+                                          <q-item v-else>
+                                            <q-btn
+                                              label="Zusätzliche Kommentar-Einstellungen"
+                                              size="sm"
+                                              unelevated
+                                              color="primary"
+                                              @click="props.row.settings = {}"
+                                            />
                                           </q-item>
                                         </template>
                                       </q-list>
