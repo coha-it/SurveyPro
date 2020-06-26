@@ -46,7 +46,15 @@ export default {
       type: Function,
       required: true
     },
+    isInfoblock: {
+      type: Function,
+      required: true
+    },
     findOrCreateAwnser: {
+      type: Function,
+      required: true
+    },
+    getUserAwnseres: {
       type: Function,
       required: true
     },
@@ -71,7 +79,16 @@ export default {
     },
 
     isCommentable (question = this.question) {
-      return question.is_commentable && this.isNoInfoblock(question)
+      // If its an Info-Block
+      if (this.isInfoblock(question)) return false
+
+      // Is NOT commentable
+      if (!question.is_commentable) return false
+
+      // If Users-Awnser is hiding the comment
+      if (this.getUserAwnseres(question).some(e => { return !!(e.settings && e.settings.hide_comment) })) return false
+
+      return true
     },
 
     questionHasComment () {

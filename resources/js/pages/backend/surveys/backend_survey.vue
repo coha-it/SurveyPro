@@ -1102,39 +1102,14 @@
                                                 height="auto"
                                               >
                                                 <span>
-                                                  <q-btn color="warning" label="Löschen" icon="delete" size="md" unelevated />
-                                                  <q-popup-edit
-                                                    single-line
-                                                    persistent
-                                                    :cover="false"
-                                                    self="center left"
-                                                    anchor="center right"
-                                                    :offset="[5, 0]"
-                                                    value="1"
-                                                    @save="save(option.row)"
-                                                  >
-                                                    <div class="row" align="center">
-                                                      <div class="col text-center" cols="12" sm="12">
-                                                        <p>Möchten Sie wirklich {{ aSelectedOptions.length }} Optionen löschen?</p>
-                                                        <q-btn
-                                                          v-close-popup
-                                                          depressed
-                                                          color="grey"
-                                                          outlined
-                                                          flat
-                                                          size="sm"
-                                                        >Abbruch</q-btn>
-                                                        <q-btn
-                                                          v-close-popup
-                                                          depressed
-                                                          flat
-                                                          color="red"
-                                                          size="sm"
-                                                          @click="deleteOptions(aSelectedOptions)"
-                                                        >Löschen</q-btn>
-                                                      </div>
-                                                    </div>
-                                                  </q-popup-edit>
+                                                  <q-btn
+                                                    color="warning"
+                                                    label="Löschen"
+                                                    icon="delete"
+                                                    size="md"
+                                                    unelevated
+                                                    @click="tryDeleteOptions(aSelectedOptions)"
+                                                  />
                                                 </span>
                                               </q-toolbar>
 
@@ -1219,8 +1194,15 @@
                                                   </q-th>
                                                 </template>
 
+                                                <template v-slot:header-cell-actions="props">
+                                                  <q-th :props="props">
+                                                    <span>{{ props.col.label }}</span>
+                                                  </q-th>
+                                                </template>
+
                                                 <!-- Body Slots -->
                                                 <template v-slot:body="option">
+                                                  <!-- Body Slot -->
                                                   <q-tr :props="option">
                                                     <!-- Selected -->
                                                     <q-td auto-width>
@@ -1364,51 +1346,64 @@
                                                     <q-td auto-width>
                                                       <!-- Delete - Dialog -->
                                                       <q-btn
-                                                        unelevated
+                                                        icon="settings"
+                                                        flat
                                                         round
-                                                        outlined
-                                                        color="red"
-                                                        dark
-                                                        icon="delete"
-                                                        size="sm"
-                                                      />
-                                                      <q-popup-edit
-                                                        value="1"
-                                                        single-line
-                                                        persistent
-                                                        :cover="false"
-                                                        self="center left"
-                                                        anchor="center right"
-                                                        :offset="[5, 0]"
-                                                        @save="save(option.row)"
                                                       >
-                                                        <div class="row" align="center">
-                                                          <div class="col text-center" cols="12" sm="12">
-                                                            Möchten Sie diese Option löschen?
-                                                            <q-btn
-                                                              v-close-popup
-                                                              depressed
-                                                              color="grey"
-                                                              outlined
-                                                              size="sm"
+                                                        <q-menu dense auto-close>
+                                                          <q-list style="min-width: 100px">
+                                                            <q-item
+                                                              v-if="option.row.settings === null"
+                                                              clickable
+                                                              @click="option.row.settings = {}"
                                                             >
-                                                              Abbruch
-                                                            </q-btn>
-                                                            <q-btn
-                                                              v-close-popup
-                                                              depressed
-                                                              color="red"
-                                                              size="sm"
-                                                              @click.prevent="deleteOption(option.row, props.row)"
+                                                              <q-item-section>
+                                                                Weitere Einstellungen
+                                                              </q-item-section>
+                                                            </q-item>
+                                                            <q-item
+                                                              v-else
+                                                              clickable
+                                                              @click="tryDeleteOptionSettings(option.row)"
                                                             >
-                                                              Löschen
-                                                            </q-btn>
-                                                          </div>
-                                                        </div>
-                                                      </q-popup-edit>
+                                                              <q-item-section>
+                                                                Optionseinstellungen entfernen
+                                                              </q-item-section>
+                                                            </q-item>
+                                                            <q-separator />
+                                                            <q-item
+                                                              clickable
+                                                              @click="tryDeleteOption(option.row, props.row)"
+                                                            >
+                                                              <q-item-section>Option Entfernen</q-item-section>
+                                                            </q-item>
+                                                          </q-list>
+                                                        </q-menu>
+                                                      </q-btn>
+                                                    </q-td>
+                                                  </q-tr>
+
+                                                  <!-- Body Expansion Slot: Erweiterte Einstellungen -->
+                                                  <q-tr v-if="option.row.settings !== null" :props="option">
+                                                    <q-td colspan="100%">
+                                                      <div class="text-left">
+                                                        <template v-if="props.row.is_commentable">
+                                                          <q-checkbox
+                                                            v-model="option.row.settings.comment_required"
+                                                            label="Option erfordert einen Kommentar"
+                                                            :toggle-indeterminate="false"
+                                                          />
+                                                          <q-checkbox
+                                                            v-model="option.row.settings.hide_comment"
+                                                            label="Option blendet Kommentar aus"
+                                                            :toggle-indeterminate="false"
+                                                          />
+                                                        </template>
+                                                      </div>
                                                     </q-td>
                                                   </q-tr>
                                                 </template>
+
                                                 <template v-slot:bottom-row>
                                                   <q-td colspan="100%">
                                                     <q-btn
@@ -3195,6 +3190,64 @@ export default {
 
       // Reorder Questions
       this.reorderQuestions()
+    },
+
+    tryDeleteOptionSettings (option) {
+      this.$q.dialog({
+        title: 'Optionseinstellungen entfernen?',
+        message: 'Die zusätzlichen Einstellungen für diese Option werden entfernen',
+        ok: {
+          label: 'Einstellungen entfernen',
+          color: 'warning',
+          unelevated: true
+        },
+        cancel: {
+          label: 'Zurück',
+          unelevated: true
+        },
+        persistent: true
+      }).onOk(() => {
+        option.settings = null
+      })
+    },
+
+    tryDeleteOption (o, q) {
+      this.$q.dialog({
+        title: 'Option Löschen?',
+        message: 'Option wirklich löschen?',
+        ok: {
+          label: 'Option löschen',
+          color: 'red',
+          unelevated: true
+        },
+        cancel: {
+          label: 'Zurück',
+          unelevated: true
+        },
+        persistent: true
+      }).onOk(() => {
+        this.deleteOption(o, q)
+      })
+    },
+
+    tryDeleteOptions (selected) {
+      const len = selected.length
+      this.$q.dialog({
+        title: 'Optionen Löschen?',
+        message: 'Möchten Sie wirklich "' + len + '" Optionen löschen?',
+        ok: {
+          label: '"' + len + '" Optionen löschen',
+          color: 'red',
+          unelevated: true
+        },
+        cancel: {
+          label: 'Zurück',
+          unelevated: true
+        },
+        persistent: true
+      }).onOk(() => {
+        this.deleteOptions(selected)
+      })
     },
 
     deleteOption (o, q) {

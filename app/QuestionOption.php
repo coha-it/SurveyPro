@@ -18,6 +18,15 @@ class QuestionOption extends Model
     protected $dates = ['deleted_at'];
 
     /**
+     * Cast Column to specific Data-Type
+     *
+     * @var array
+     */
+    protected $casts = [
+        'settings' => 'array'
+    ];
+
+    /**
      * The attributes that are not mass assignable.
      *
      * @var array

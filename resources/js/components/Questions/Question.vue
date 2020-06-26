@@ -128,7 +128,9 @@
               <QuestionComment
                 :question="question"
                 :is-no-infoblock="isNoInfoblock"
+                :is-infoblock="isInfoblock"
                 :find-or-create-awnser="findOrCreateAwnser"
+                :get-user-awnseres="getUserAwnseres"
                 :text-focus="textFocus"
                 :text-blur="textBlur"
               />
@@ -168,7 +170,7 @@
             <q-btn
               ref="saveButton"
               label="Antwort speichern"
-              :disable="!questionSubmittable(question)"
+              :disable="questionUnsubmittable(question)"
               color="primary"
               class="full-width"
               tabindex="2"
@@ -350,11 +352,35 @@ export default {
     getQuestionPosition () {
       return this.getPositionById(this.question, this.oSurvey.questions) + 1
     },
+    questionUnsubmittable (q) {
+      return !this.questionSubmittable(q)
+    },
+    getUserAwnseres (question = this.question) {
+      if (
+        question &&
+        question.users_awnser &&
+        question.users_awnser.awnser_options
+      ) {
+        return question.users_awnser.awnser_options
+      }
+      return {}
+    },
+    usersAwnserRequiresComment (question = this.question) {
+      return !!(
+        question &&
+        question.users_awnser &&
+        question.users_awnser.awnser_options &&
+        this.getUserAwnseres(question).some(e => { return !!(e.settings && e.settings.comment_required) })
+      )
+    },
     questionSubmittable (q) {
       // Skippable
       if (q.is_skippable) return true
 
-      // If Text only
+      // If Comment Required
+      if (this.usersAwnserRequiresComment(q) && !q.users_awnser.comment) return false
+
+      // If Comment-only
       if (q.format === 'comment_only' && q.users_awnser && q.users_awnser.comment) return true
 
       // Options Available
@@ -489,10 +515,10 @@ export default {
       return (o && o.color && this.isLight(o.color)) ? 'black' : 'white'
     },
     sliderInput (e) {
-      console.log(e)
+      // console.log(e)
     },
     sliderMouseMove (e) {
-      console.log('slidermousemove', e)
+      // console.log('slidermousemove', e)
     },
     sliderChange (order) {
       var question = this.getViewedQuestion(this.oSurvey)
@@ -571,7 +597,6 @@ export default {
             // Success
             if (!e || !e.response || !e.response.data || !e.response.data.error) {
               // _t.showSnackbarSuccess(_t.$t('data_saved'))
-              console.log('data saved')
 
               // Update in Model
               question.users_awnser = this.copyObject(e.data)
@@ -584,7 +609,6 @@ export default {
           })
           .catch((e) => {
             // Error
-            console.log(e)
             this.showSnackbarError(this.$t('data_unsaved') + '<br />' + e)
           })
       }
