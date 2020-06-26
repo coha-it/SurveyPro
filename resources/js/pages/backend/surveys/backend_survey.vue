@@ -1403,9 +1403,9 @@
                                                             :true-value="1"
                                                           />
                                                         </template>
-                                                        <br><br>
+                                                        <!-- <br><br>
                                                         {{ option.row.settings }}
-                                                        <br><br>
+                                                        <br><br> -->
                                                       </div>
                                                     </q-td>
                                                   </q-tr>
