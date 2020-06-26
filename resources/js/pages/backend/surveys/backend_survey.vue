@@ -1392,13 +1392,20 @@
                                                             v-model="option.row.settings.comment_required"
                                                             label="Option erfordert einen Kommentar"
                                                             :toggle-indeterminate="false"
+                                                            :false-value="null"
+                                                            :true-value="1"
                                                           />
                                                           <q-checkbox
                                                             v-model="option.row.settings.hide_comment"
                                                             label="Option blendet Kommentar aus"
                                                             :toggle-indeterminate="false"
+                                                            :false-value="null"
+                                                            :true-value="1"
                                                           />
                                                         </template>
+                                                        <br><br>
+                                                        {{ option.row.settings }}
+                                                        <br><br>
                                                       </div>
                                                     </q-td>
                                                   </q-tr>
