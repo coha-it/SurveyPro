@@ -3,7 +3,17 @@
   template(v-if='questionHasComment()')
     .user_comment_wrapper
       .user_comment
-        textarea.input(ref='user_comment' v-model='question.users_awnser.comment' :type="question.comment_is_number ? 'number' : ''" :required="question.comment_is_required" :autofocus='true' placeholder='Ihr Kommentar' tabindex='1')
+        textarea.input(
+          ref='user_comment'
+          v-model='question.users_awnser.comment'
+          :type="question.comment_is_number ? 'number' : ''"
+          :required="question.comment_is_required"
+          :autofocus='true'
+          placeholder='Ihr Kommentar'
+          tabindex='1'
+          @focus='textFocus'
+          @blur='textBlur'
+        )
     q-btn(label='Kommentar entfernen' size='sm' unelevated='' flat='' rounded='' tabindex='5' @click='tryDeleteComment')
   template(v-else='')
     q-btn(label='Kommentar hinzufügen' icon='chat' size='md' flat='' rounded='' color='grey' @click='createComment(question)')
@@ -21,6 +31,14 @@ export default {
       required: true
     },
     findOrCreateAwnser: {
+      type: Function,
+      required: true
+    },
+    textFocus: {
+      type: Function,
+      required: true
+    },
+    textBlur: {
       type: Function,
       required: true
     }

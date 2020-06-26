@@ -66,8 +66,39 @@
     }
   }
 
+  // After / Before
+  &:after,
+  &:before {
+    margin: auto;
+    position: absolute;
+    font-size: 14px;
+    color: #989898;
+  }
+  &:before {
+    content: attr(first-option);
+  }
+
+  &:after {
+    content: attr(last-option);
+  }
+
   &[aria-orientation="horizontal"] {
     max-width: 350px;
+
+    &:after,
+    &:before {
+      padding: 0 12px;
+      top: 0px;
+    }
+
+    &:before {
+      right: 100%;
+    }
+
+    &:after {
+      left: 100%;
+    }
+
     .q-slider__track-container {
       height: 6px;
     }
@@ -77,10 +108,28 @@
     min-height: 200px;
     height: 30vh;
     max-height: 660px;
+
+    &:after,
+    &:before {
+      padding: 12px 0;
+      left: 0px;
+      right: 0;
+      text-align: center;
+    }
+
+    &:before {
+      top: 100%;
+    }
+
+    &:after {
+      bottom: 100%;
+    }
+
     .q-slider__track-container {
       width: 6px;
     }
   }
+
 }
 
 
@@ -236,7 +285,6 @@
       }
     }
   }
-
 }
 
 // Preview

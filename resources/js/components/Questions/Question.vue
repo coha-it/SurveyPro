@@ -84,23 +84,27 @@
 
             <!-- If Else Slider -->
             <template v-else-if="question.format.indexOf('slider') !== -1">
-              <q-slider
-                :value="getSelectedSliderOptionOrder(question)"
-                :min="getFirstQuestionOption(question)"
-                :max="getLastQuestionOption(question)"
-                :step="1"
-                label
-                :label-value="getSliderLabel(question)"
-                :style="'color:'+getSliderColor()"
-                :label-text-color="getSliderTextColor(question)"
-                class="coha--rating-slider"
-                label-always
-                markers
-                :vertical="question.format === 'slider_vert'"
-                :reverse="question.format === 'slider_vert'"
-                @change="sliderChange"
-                @input="sliderChange"
-              />
+              <div class="slider-wrapper">
+                <q-slider
+                  :value="getSelectedSliderOptionOrder(question)"
+                  :min="getFirstQuestionOption(question)"
+                  :max="getLastQuestionOption(question)"
+                  :step="1"
+                  label
+                  :label-value="getSliderLabel(question)"
+                  :style="'color:'+getSliderColor()"
+                  :label-text-color="getSliderTextColor(question)"
+                  class="coha--rating-slider"
+                  label-always
+                  markers
+                  :vertical="question.format === 'slider_vert'"
+                  :reverse="question.format === 'slider_vert'"
+                  :first-option="question.options && question.options.length > 0 ? question.options[0].title : null"
+                  :last-option="question.options && question.options.length > 0 ? question.options[question.options.length - 1].title : null"
+                  @change="sliderChange"
+                  @input="sliderChange"
+                />
+              </div>
               <template v-if="questionHasAwnsers(question)">
                 <transition name="fade" mode="out-in">
                   <div
@@ -125,6 +129,8 @@
                 :question="question"
                 :is-no-infoblock="isNoInfoblock"
                 :find-or-create-awnser="findOrCreateAwnser"
+                :text-focus="textFocus"
+                :text-blur="textBlur"
               />
 
               <div v-if="question.is_skippable" class="skippable-wrapper q-pa-md">
@@ -160,6 +166,7 @@
 
           <template v-else>
             <q-btn
+              ref="saveButton"
               label="Antwort speichern"
               :disable="!questionSubmittable(question)"
               color="primary"
@@ -257,11 +264,32 @@ export default {
 
   data () {
     return {
-      //
+      textFocused: false
     }
   },
 
+  mounted () {
+    document.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && (!this.textFocused || (e.ctrlKey || e.metaKey))) {
+        // code for enter (or (without focus) CMD+Enter or CTRL+Enter)
+        this.$refs.saveButton.click()
+      }
+    })
+  },
+
+  created () {
+
+  },
+
   methods: {
+
+    textFocus () {
+      this.textFocused = true
+    },
+
+    textBlur () {
+      this.textFocused = false
+    },
 
     questionIsSkippable (question = this.question) {
       return question.is_skippable || this.isInfoblock(question)
